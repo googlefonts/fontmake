@@ -1,0 +1,9 @@
+build
+*.pyc
+
+*.ufo
+*.otf
+*.ttf
+*.ttx
+*.glyphs
+*.designspace
