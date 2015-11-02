@@ -7,3 +7,5 @@ build
 *.ttx
 *.glyphs
 *.designspace
+*.log
+*.fpr
