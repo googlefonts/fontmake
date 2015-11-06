@@ -58,7 +58,8 @@ class FontProject:
         ttf = compileTTF(ufo)
         ttf.save(ttf_path)
 
-    def run_all(self, glyphs_path, fea_path=None, interpolate=False):
+    def run_all(
+        self, glyphs_path, fea_path=None, compatible=False, interpolate=False):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         if interpolate:
@@ -74,7 +75,11 @@ class FontProject:
 
         print '>> Converting curves to quadratic'
         start_t = time()
-        print fonts_to_quadratic(ufos, compatible=True)
+        if compatible:
+            print fonts_to_quadratic(*ufos)
+        else:
+            for ufo in ufos:
+                print fonts_to_quadratic(ufo)
         t = time() - start_t
         print '[took %f seconds]' % t
 
@@ -102,12 +107,14 @@ class FontProject:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('glyphs_path', metavar='GLYPHS_PATH')
+    parser.add_argument('-c', '--compatible', action='store_true')
     parser.add_argument('-i', '--interpolate', action='store_true')
     parser.add_argument('-f', '--fea-path')
     args = parser.parse_args()
 
     project = FontProject('src', 'out')
-    project.run_all(args.glyphs_path, args.fea_path, args.interpolate)
+    project.run_all(
+        args.glyphs_path, args.fea_path, args.compatible, args.interpolate)
 
 
 if __name__ == '__main__':
