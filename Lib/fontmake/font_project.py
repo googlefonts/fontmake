@@ -72,19 +72,19 @@ class FontProject:
             print '>> Saving OTF for ' + ufo.info.postscriptFullName
             self.save_otf(ufo)
 
-        print '>> Converting curves to quadratic'
         start_t = time()
         if compatible:
+            print '>> Converting curves to quadratic'
             print fonts_to_quadratic(*ufos)
         else:
             for ufo in ufos:
-                print fonts_to_quadratic(ufo)
+                print '>> Converting curves for ' + ufo.info.postscriptFullName
+                print fonts_to_quadratic(ufo) + '\n'
         t = time() - start_t
         print '[took %f seconds]' % t
 
         for ufo in ufos:
-            name = ufo.info.postscriptFullName
-            print '>> Saving TTF for ' + name
+            print '>> Saving TTF for ' + ufo.info.postscriptFullName
             self.save_ttf(ufo)
 
     def _output_dir(self, ext):
