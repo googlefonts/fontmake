@@ -15,6 +15,7 @@
 
 import os
 from os import path
+import re
 from time import time
 
 from cu2qu import fonts_to_quadratic
@@ -29,6 +30,19 @@ class FontProject:
     def __init__(self, src_dir, out_dir):
         self.src_dir = src_dir
         self.out_dir = out_dir
+
+    def preprocess(self, glyphs_path):
+        """Return Glyphs source with illegal glyph names changed."""
+
+        with open(glyphs_path) as fp:
+            text = fp.read()
+        names = re.findall('\nglyphname = "(.+-.+)";\n', text)
+        for old_name in names:
+            new_name = old_name.replace('-', '_')
+            print('Found illegal glyph name "%s", replacing all instances in '
+                  'source with "%s".' % (old_name, new_name))
+            text = text.replace(old_name, new_name)
+        return text
 
     def build_masters(self, glyphs_path):
         """Build master UFOs from Glyphs source."""
@@ -58,8 +72,16 @@ class FontProject:
         ttf.save(ttf_path)
 
     def run_all(
-        self, glyphs_path, fea_path=None, compatible=False, interpolate=False):
+        self, glyphs_path, fea_path=None, compatible=False, interpolate=False,
+        preprocess=True):
         """Run toolchain from Glyphs source to OpenType binaries."""
+
+        if preprocess:
+            print '>> Checking Glyphs source for illegal glyph names'
+            glyphs_source = self.preprocess(glyphs_path)
+            glyphs_path = 'tmp.glyphs'
+            with open(glyphs_path, 'w') as fp:
+                fp.write(glyphs_source)
 
         if interpolate:
             print '>> Interpolating master UFOs from Glyphs source'
@@ -67,6 +89,9 @@ class FontProject:
         else:
             print '>> Loading master UFOs from Glyphs source'
             ufos = self.build_masters(glyphs_path)
+
+        if preprocess:
+            os.remove(glyphs_path)
 
         for ufo in ufos:
             print '>> Saving OTF for ' + ufo.info.postscriptFullName
