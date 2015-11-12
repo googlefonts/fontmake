@@ -44,18 +44,16 @@ class FontProject:
             text = text.replace(old_name, new_name)
         return text
 
-    def build_masters(self, glyphs_path):
+    def build_masters(self, glyphs_path, italic=False):
         """Build master UFOs from Glyphs source."""
 
-        return build_masters(
-            glyphs_path, self.src_dir, 'Italic' in glyphs_path)
+        return build_masters(glyphs_path, self.src_dir, italic)
 
-    def build_instances(self, glyphs_path):
+    def build_instances(self, glyphs_path, italic=False):
         """Build instance UFOs from Glyphs source."""
 
         out_dir = self._output_dir('ufo')
-        return build_instances(
-            glyphs_path, self.src_dir, out_dir, 'Italic' in glyphs_path)
+        return build_instances(glyphs_path, self.src_dir, out_dir, italic)
 
     def save_otf(self, ufo):
         """Build OTF from UFO."""
@@ -76,6 +74,8 @@ class FontProject:
         preprocess=True):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
+        italic = 'Italic' in glyphs_path
+
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
             glyphs_source = self.preprocess(glyphs_path)
@@ -85,10 +85,10 @@ class FontProject:
 
         if interpolate:
             print '>> Interpolating master UFOs from Glyphs source'
-            ufos = self.build_instances(glyphs_path)
+            ufos = self.build_instances(glyphs_path, italic)
         else:
             print '>> Loading master UFOs from Glyphs source'
-            ufos = self.build_masters(glyphs_path)
+            ufos = self.build_masters(glyphs_path, italic)
 
         if preprocess:
             os.remove(glyphs_path)
