@@ -18,6 +18,7 @@ from os import path
 import re
 from time import time
 
+from booleanOperations import BooleanOperationManager
 from cu2qu import fonts_to_quadratic
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from robofab.world import OpenFont
@@ -55,6 +56,15 @@ class FontProject:
         out_dir = self._output_dir('ufo')
         return build_instances(glyphs_path, self.src_dir, out_dir, italic)
 
+    def remove_overlaps(self, ufo):
+        """Remove overlaps in a UFO's glyphs' contours."""
+
+        for glyph in ufo:
+            manager = BooleanOperationManager()
+            contours = glyph.contours
+            glyph.clearContours()
+            manager.union(contours, glyph.getPointPen())
+
     def save_otf(self, ufo):
         """Build OTF from UFO."""
 
@@ -71,7 +81,7 @@ class FontProject:
 
     def run_all(
         self, glyphs_path, fea_path=None, compatible=False, interpolate=False,
-        preprocess=True):
+        remove_overlaps=True, preprocess=True):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         italic = 'Italic' in glyphs_path
@@ -92,6 +102,11 @@ class FontProject:
 
         if preprocess:
             os.remove(glyphs_path)
+
+        if remove_overlaps and not compatible:
+            for ufo in ufos:
+                print '>> Removing overlaps for ' + ufo.info.postscriptFullName
+                self.remove_overlaps(ufo)
 
         for ufo in ufos:
             print '>> Saving OTF for ' + ufo.info.postscriptFullName
