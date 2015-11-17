@@ -80,7 +80,7 @@ class FontProject:
         ttf.save(ttf_path)
 
     def run_all(
-        self, glyphs_path, fea_path=None, compatible=False, interpolate=False,
+        self, glyphs_path, interpolate=False, compatible=False,
         remove_overlaps=True, preprocess=True):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
