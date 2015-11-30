@@ -115,11 +115,11 @@ class FontProject:
         start_t = time()
         if compatible:
             print '>> Converting curves to quadratic'
-            print fonts_to_quadratic(*ufos)
+            print fonts_to_quadratic(*ufos, dump_report=True)
         else:
             for ufo in ufos:
                 print '>> Converting curves for ' + ufo.info.postscriptFullName
-                print fonts_to_quadratic(ufo) + '\n'
+                print fonts_to_quadratic(ufo, dump_report=True)
         t = time() - start_t
         print '[took %f seconds]' % t
 
