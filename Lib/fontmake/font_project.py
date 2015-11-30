@@ -14,7 +14,6 @@
 
 
 import os
-from os import path
 import re
 from time import time
 
@@ -27,10 +26,6 @@ from ufo2ft import compileOTF, compileTTF
 
 class FontProject:
     """Provides methods for building fonts."""
-
-    def __init__(self, src_dir, out_dir):
-        self.src_dir = src_dir
-        self.out_dir = out_dir
 
     def preprocess(self, glyphs_path):
         """Return Glyphs source with illegal glyph names changed."""
@@ -45,16 +40,18 @@ class FontProject:
             text = text.replace(old_name, new_name)
         return text
 
-    def build_masters(self, glyphs_path, italic=False):
+    def build_masters(self, glyphs_path, is_italic=False):
         """Build master UFOs from Glyphs source."""
 
-        return build_masters(glyphs_path, self.src_dir, italic)
+        master_dir = self._output_dir('ufo')
+        return build_masters(glyphs_path, master_dir, is_italic)
 
-    def build_instances(self, glyphs_path, italic=False):
+    def build_instances(self, glyphs_path, is_italic=False):
         """Build instance UFOs from Glyphs source."""
 
-        out_dir = self._output_dir('ufo')
-        return build_instances(glyphs_path, self.src_dir, out_dir, italic)
+        master_dir = self._output_dir('ufo')
+        instance_dir = self._output_dir('ufo', is_instance=True)
+        return build_instances(glyphs_path, master_dir, instance_dir, is_italic)
 
     def remove_overlaps(self, ufo):
         """Remove overlaps in a UFO's glyphs' contours."""
@@ -65,17 +62,17 @@ class FontProject:
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
 
-    def save_otf(self, ufo):
+    def save_otf(self, ufo, is_instance=False):
         """Build OTF from UFO."""
 
-        otf_path = self._output_path(ufo, 'otf')
+        otf_path = self._output_path(ufo, 'otf', is_instance)
         otf = compileOTF(ufo)
         otf.save(otf_path)
 
-    def save_ttf(self, ufo):
+    def save_ttf(self, ufo, is_instance=False):
         """Build TTF from UFO."""
 
-        ttf_path = self._output_path(ufo, 'ttf')
+        ttf_path = self._output_path(ufo, 'ttf', is_instance)
         ttf = compileTTF(ufo)
         ttf.save(ttf_path)
 
@@ -84,7 +81,7 @@ class FontProject:
         remove_overlaps=True, preprocess=True):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
-        italic = 'Italic' in glyphs_path
+        is_italic = 'Italic' in glyphs_path
 
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
@@ -95,10 +92,10 @@ class FontProject:
 
         if interpolate:
             print '>> Interpolating master UFOs from Glyphs source'
-            ufos = self.build_instances(glyphs_path, italic)
+            ufos = self.build_instances(glyphs_path, is_italic)
         else:
             print '>> Loading master UFOs from Glyphs source'
-            ufos = self.build_masters(glyphs_path, italic)
+            ufos = self.build_masters(glyphs_path, is_italic)
 
         if preprocess:
             os.remove(glyphs_path)
@@ -110,7 +107,7 @@ class FontProject:
 
         for ufo in ufos:
             print '>> Saving OTF for ' + ufo.info.postscriptFullName
-            self.save_otf(ufo)
+            self.save_otf(ufo, is_instance=interpolate)
 
         start_t = time()
         if compatible:
@@ -125,19 +122,20 @@ class FontProject:
 
         for ufo in ufos:
             print '>> Saving TTF for ' + ufo.info.postscriptFullName
-            self.save_ttf(ufo)
+            self.save_ttf(ufo, is_instance=interpolate)
 
-    def _output_dir(self, ext):
+    def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
 
-        return path.join(self.out_dir, ext.lower())
+        dir_prefix = 'instance_' if is_instance else 'master_'
+        return os.path.join(dir_prefix + ext)
 
-    def _output_path(self, ufo, ext):
+    def _output_path(self, ufo, ext, is_instance=False):
         """Generate output path for a UFO with given directory and extension."""
 
         family = ufo.info.familyName.replace(' ', '')
         style = ufo.info.styleName.replace(' ', '')
-        out_dir = self._output_dir(ext)
-        if not path.exists(out_dir):
+        out_dir = self._output_dir(ext, is_instance)
+        if not os.path.exists(out_dir):
             os.makedirs(out_dir)
-        return path.join(out_dir, '%s-%s.%s' % (family, style, ext))
+        return os.path.join(out_dir, '%s-%s.%s' % (family, style, ext))

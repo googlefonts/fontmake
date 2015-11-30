@@ -24,7 +24,7 @@ def main():
     parser.add_argument('-i', '--interpolate', action='store_true')
     args = parser.parse_args()
 
-    project = FontProject('src', 'out')
+    project = FontProject()
     project.run_all(
         args.glyphs_path, args.interpolate, args.compatible)
 
