@@ -19,7 +19,7 @@ import re
 from time import time
 
 from booleanOperations import BooleanOperationManager
-from cu2qu import fonts_to_quadratic
+from cu2qu.rf import fonts_to_quadratic
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
