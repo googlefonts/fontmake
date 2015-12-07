@@ -7,7 +7,7 @@ together compile fonts from various sources (.glyphs, .ufo) into binaries (.otf,
 ### Install
 
 ```bash
-sudo python setup.py install
+sudo python setup.py develop
 ```
 
 ### Run

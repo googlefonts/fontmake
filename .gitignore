@@ -1,11 +1,3 @@
 build
 *.pyc
-
-*.ufo
-*.otf
-*.ttf
-*.ttx
-*.glyphs
-*.designspace
-*.log
-*.fpr
+*.egg-info/
