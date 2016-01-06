@@ -28,15 +28,23 @@ class FontProject:
     """Provides methods for building fonts."""
 
     def preprocess(self, glyphs_path):
-        """Return Glyphs source with illegal glyph names changed."""
+        """Return Glyphs source with illegal glyph/class names changed."""
 
         with open(glyphs_path) as fp:
             text = fp.read()
-        names = re.findall('\nglyphname = "(.+-.+)";\n', text)
+        names = set(re.findall('\n(?:glyph)?name = "(.+-.+)";\n', text))
+
+        if names:
+            num_names = len(names)
+            printed_names = sorted(names)[:5]
+            if num_names > 5:
+                printed_names.append('...')
+            print('Found %s glyph names containing hyphens: %s' % (
+                num_names, ', '.join(printed_names)))
+            print('Replacing all hyphens with underscores.')
+
         for old_name in names:
             new_name = old_name.replace('-', '_')
-            print('Found illegal glyph name "%s", replacing all instances in '
-                  'source with "%s".' % (old_name, new_name))
             text = text.replace(old_name, new_name)
         return text
 
