@@ -22,6 +22,7 @@ from cu2qu.rf import fonts_to_quadratic
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
+from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
 
 class FontProject:
@@ -70,18 +71,18 @@ class FontProject:
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
 
-    def save_otf(self, ufo, is_instance=False):
+    def save_otf(self, ufo, is_instance=False, kern_writer=KernFeatureWriter):
         """Build OTF from UFO."""
 
         otf_path = self._output_path(ufo, 'otf', is_instance)
-        otf = compileOTF(ufo)
+        otf = compileOTF(ufo, kernWriter=kern_writer)
         otf.save(otf_path)
 
-    def save_ttf(self, ufo, is_instance=False):
+    def save_ttf(self, ufo, is_instance=False, kern_writer=KernFeatureWriter):
         """Build TTF from UFO."""
 
         ttf_path = self._output_path(ufo, 'ttf', is_instance)
-        ttf = compileTTF(ufo)
+        ttf = compileTTF(ufo, kernWriter=kern_writer)
         ttf.save(ttf_path)
 
     def run_all(
@@ -115,7 +116,8 @@ class FontProject:
 
         for ufo in ufos:
             print '>> Saving OTF for ' + ufo.info.postscriptFullName
-            self.save_otf(ufo, is_instance=interpolate)
+            self.save_otf(ufo, is_instance=interpolate,
+                          kern_writer=GlyphsKernWriter)
 
         start_t = time()
         if compatible:
@@ -130,7 +132,8 @@ class FontProject:
 
         for ufo in ufos:
             print '>> Saving TTF for ' + ufo.info.postscriptFullName
-            self.save_ttf(ufo, is_instance=interpolate)
+            self.save_ttf(ufo, is_instance=interpolate,
+                          kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
@@ -147,3 +150,11 @@ class FontProject:
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, '%s-%s.%s' % (family, style, ext))
+
+
+class GlyphsKernWriter(KernFeatureWriter):
+    """A ufo2ft kerning feature writer which looks for UFO kerning groups with
+    names matching the old MMK pattern (which is used by Glyphs)."""
+
+    leftUfoGroupRe = r"@MMK_L_(.+)"
+    rightUfoGroupRe = r"@MMK_R_(.+)"
