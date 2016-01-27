@@ -7,6 +7,7 @@ together compile fonts from various sources (.glyphs, .ufo) into binaries (.otf,
 ### Install
 
 ```bash
+sudo python -m pip install -r requirements.txt
 sudo python setup.py develop
 ```
 
