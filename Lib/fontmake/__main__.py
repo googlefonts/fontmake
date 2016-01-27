@@ -22,6 +22,10 @@ def main():
     parser.add_argument('glyphs_path', metavar='GLYPHS_PATH')
     parser.add_argument('-c', '--compatible', action='store_true')
     parser.add_argument('-i', '--interpolate', action='store_true')
+    parser.add_argument('--use_mti', action='store_true')
+    parser.add_argument('--gdef_path')
+    parser.add_argument('--gpos_path')
+    parser.add_argument('--gsub_path')
     args = vars(parser.parse_args())
 
     glyphs_path = args.pop('glyphs_path')

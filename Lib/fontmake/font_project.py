@@ -71,14 +71,16 @@ class FontProject:
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
 
-    def save_otf(self, ufo, is_instance=False, kern_writer=KernFeatureWriter):
+    def save_otf(self, ufo, is_instance=False, mti_feafiles=None,
+                 kern_writer=KernFeatureWriter):
         """Build OTF from UFO."""
 
         otf_path = self._output_path(ufo, 'otf', is_instance)
         otf = compileOTF(ufo, kernWriter=kern_writer)
         otf.save(otf_path)
 
-    def save_ttf(self, ufo, is_instance=False, kern_writer=KernFeatureWriter):
+    def save_ttf(self, ufo, is_instance=False, mti_feafiles=None,
+                 kern_writer=KernFeatureWriter):
         """Build TTF from UFO."""
 
         ttf_path = self._output_path(ufo, 'ttf', is_instance)
@@ -86,11 +88,17 @@ class FontProject:
         ttf.save(ttf_path)
 
     def run_all(
-        self, glyphs_path, interpolate=False, compatible=False,
-        remove_overlaps=True, preprocess=True):
+        self, glyphs_path, preprocess=True, interpolate=False,
+        compatible=False, remove_overlaps=True,
+        use_mti=False, gdef_path=None, gpos_path=None, gsub_path=None):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         is_italic = 'Italic' in glyphs_path
+
+        mti_feafiles = None
+        if use_mti:
+            mti_feafiles = {
+                'GDEF': gdef_path, 'GPOS': gpos_path, 'GSUB': gsub_path}
 
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
@@ -116,8 +124,9 @@ class FontProject:
 
         for ufo in ufos:
             print '>> Saving OTF for ' + ufo.info.postscriptFullName
-            self.save_otf(ufo, is_instance=interpolate,
-                          kern_writer=GlyphsKernWriter)
+            self.save_otf(
+                ufo, is_instance=interpolate, mti_feafiles=mti_feafiles,
+                kern_writer=GlyphsKernWriter)
 
         start_t = time()
         if compatible:
@@ -132,8 +141,9 @@ class FontProject:
 
         for ufo in ufos:
             print '>> Saving TTF for ' + ufo.info.postscriptFullName
-            self.save_ttf(ufo, is_instance=interpolate,
-                          kern_writer=GlyphsKernWriter)
+            self.save_ttf(
+                ufo, is_instance=interpolate, mti_feafiles=mti_feafiles,
+                kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
