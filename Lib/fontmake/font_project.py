@@ -15,12 +15,12 @@
 
 import os
 import re
+import tempfile
 from time import time
 
 from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
 from glyphs2ufo.glyphslib import build_masters, build_instances
-from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
@@ -103,8 +103,8 @@ class FontProject:
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
             glyphs_source = self.preprocess(glyphs_path)
-            glyphs_path = 'tmp.glyphs'
-            with open(glyphs_path, 'w') as fp:
+            fd, glyphs_path = tempfile.mkstemp()
+            with os.fdopen(fd, 'w') as fp:
                 fp.write(glyphs_source)
 
         if interpolate:
