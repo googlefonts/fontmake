@@ -14,6 +14,7 @@
 
 
 import os
+import plistlib
 import re
 import tempfile
 from time import time
@@ -76,7 +77,7 @@ class FontProject:
         """Build OTF from UFO."""
 
         otf_path = self._output_path(ufo, 'otf', is_instance)
-        otf = compileOTF(ufo, kernWriter=kern_writer)
+        otf = compileOTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
 
     def save_ttf(self, ufo, is_instance=False, mti_feafiles=None,
@@ -84,21 +85,23 @@ class FontProject:
         """Build TTF from UFO."""
 
         ttf_path = self._output_path(ufo, 'ttf', is_instance)
-        ttf = compileTTF(ufo, kernWriter=kern_writer)
+        ttf = compileTTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         ttf.save(ttf_path)
 
     def run_all(
         self, glyphs_path, preprocess=True, interpolate=False,
-        compatible=False, remove_overlaps=True,
-        use_mti=False, gdef_path=None, gpos_path=None, gsub_path=None):
+        compatible=False, remove_overlaps=True, mti_source=None):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         is_italic = 'Italic' in glyphs_path
 
-        mti_feafiles = None
-        if use_mti:
-            mti_feafiles = {
-                'GDEF': gdef_path, 'GPOS': gpos_path, 'GSUB': gsub_path}
+        mti_paths = {}
+        if mti_source:
+            mti_paths = plistlib.readPlist(mti_source)
+            src_dir = os.path.dirname(glyphs_path)
+            for paths in mti_paths.values():
+                for table in ('GDEF', 'GPOS', 'GSUB'):
+                    paths[table] = os.path.join(src_dir, paths[table])
 
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
@@ -123,9 +126,10 @@ class FontProject:
                 self.remove_overlaps(ufo)
 
         for ufo in ufos:
-            print '>> Saving OTF for ' + ufo.info.postscriptFullName
+            name = ufo.info.postscriptFullName
+            print '>> Saving OTF for ' + name
             self.save_otf(
-                ufo, is_instance=interpolate, mti_feafiles=mti_feafiles,
+                ufo, is_instance=interpolate, mti_feafiles=mti_paths.get(name),
                 kern_writer=GlyphsKernWriter)
 
         start_t = time()
@@ -140,9 +144,10 @@ class FontProject:
         print '[took %f seconds]' % t
 
         for ufo in ufos:
-            print '>> Saving TTF for ' + ufo.info.postscriptFullName
+            name = ufo.info.postscriptFullName
+            print '>> Saving TTF for ' + name
             self.save_ttf(
-                ufo, is_instance=interpolate, mti_feafiles=mti_feafiles,
+                ufo, is_instance=interpolate, mti_feafiles=mti_paths.get(name),
                 kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):
