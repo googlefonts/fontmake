@@ -64,13 +64,37 @@ class FontProject:
         return build_instances(glyphs_path, master_dir, instance_dir, is_italic)
 
     def remove_overlaps(self, ufo):
-        """Remove overlaps in a UFO's glyphs' contours."""
+        """Remove overlaps in a UFO's glyphs' contours, decomposing first."""
 
         for glyph in ufo:
+            self.decompose_glyph(ufo, glyph)
             manager = BooleanOperationManager()
             contours = glyph.contours
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
+
+    def decompose_glyph(self, ufo, glyph):
+        """Moves the components of a glyph to its outline."""
+
+        self._deep_copy_contours(ufo, glyph, glyph, (0, 0), (1, 1))
+        glyph.clearComponents()
+
+    def _deep_copy_contours(self, ufo, parent, component, offset, scale):
+        """Copy contours from component to parent, including nested components."""
+
+        for nested in component.components:
+            self._deep_copy_contours(
+                ufo, parent, ufo[nested.baseGlyph],
+                (offset[0] + nested.offset[0], offset[1] + nested.offset[1]),
+                (scale[0] * nested.scale[0], scale[1] * nested.scale[1]))
+
+        if component == parent:
+            return
+        for contour in component:
+            contour = contour.copy()
+            contour.scale(scale)
+            contour.move(offset)
+            parent.appendContour(contour)
 
     def save_otf(self, ufo, is_instance=False, mti_feafiles=None,
                  kern_writer=KernFeatureWriter):
