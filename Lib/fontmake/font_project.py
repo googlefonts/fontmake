@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import glob
 import os
 import plistlib
 import re
@@ -23,8 +24,18 @@ from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from ufo2ft import compileOTF, compileTTF
+from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
+try:
+    from defcon.objects import Font
+    OpenUfo = Font
+except ImportError:
+    try:
+        from robofab.world import OpenFont
+        OpenUfo = OpenFont
+    except ImportError:
+        raise ImportError("Couldn't import from defcon or robofab.")
 
 class FontProject:
     """Provides methods for building fonts."""
@@ -96,36 +107,22 @@ class FontProject:
             contour.move(offset)
             parent.appendContour(contour)
 
-    def save_otf(self, ufo, is_instance=False, mti_feafiles=None,
-                 kern_writer=KernFeatureWriter):
-        """Build OTF from UFO."""
+    def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
+                 mti_feafiles=None, kern_writer=KernFeatureWriter):
+        """Build OpenType binary from UFO."""
 
-        otf_path = self._output_path(ufo, 'otf', is_instance)
-        otf = compileOTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
+        fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
+        otf_path = self._output_path(ufo, 'ttf' if ttf else 'otf', is_instance)
+        otf_compiler = compileTTF if ttf else compileOTF
+        otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
+                           kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
 
-    def save_ttf(self, ufo, is_instance=False, mti_feafiles=None,
-                 kern_writer=KernFeatureWriter):
-        """Build TTF from UFO."""
-
-        ttf_path = self._output_path(ufo, 'ttf', is_instance)
-        ttf = compileTTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
-        ttf.save(ttf_path)
-
-    def run_all(
-        self, glyphs_path, preprocess=True, interpolate=False,
-        compatible=False, remove_overlaps=True, mti_source=None):
+    def run_from_glyphs(
+            self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         is_italic = 'Italic' in glyphs_path
-
-        mti_paths = {}
-        if mti_source:
-            mti_paths = plistlib.readPlist(mti_source)
-            src_dir = os.path.dirname(glyphs_path)
-            for paths in mti_paths.values():
-                for table in ('GDEF', 'GPOS', 'GSUB'):
-                    paths[table] = os.path.join(src_dir, paths[table])
 
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
@@ -144,17 +141,37 @@ class FontProject:
         if preprocess:
             os.remove(glyphs_path)
 
+        self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
+
+    def run_from_ufos(
+            self, ufos, is_instance=False, compatible=False,
+            remove_overlaps=True, mti_source=None, use_afdko=False):
+        """Run toolchain from UFO sources to OpenType binaries."""
+
+        if isinstance(ufos, str):
+            ufos = glob.glob(ufos)
+        if isinstance(ufos[0], str):
+            ufos = [OpenUfo(ufo) for ufo in ufos]
+
         if remove_overlaps and not compatible:
             for ufo in ufos:
                 print '>> Removing overlaps for ' + ufo.info.postscriptFullName
                 self.remove_overlaps(ufo)
 
+        mti_paths = {}
+        if mti_source:
+            mti_paths = plistlib.readPlist(mti_source)
+            src_dir = os.path.dirname(mti_source)
+            for paths in mti_paths.values():
+                for table in ('GDEF', 'GPOS', 'GSUB'):
+                    paths[table] = os.path.join(src_dir, paths[table])
+
         for ufo in ufos:
             name = ufo.info.postscriptFullName
             print '>> Saving OTF for ' + name
             self.save_otf(
-                ufo, is_instance=interpolate, mti_feafiles=mti_paths.get(name),
-                kern_writer=GlyphsKernWriter)
+                ufo, is_instance=is_instance, use_afdko=use_afdko,
+                mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
 
         start_t = time()
         if compatible:
@@ -170,9 +187,9 @@ class FontProject:
         for ufo in ufos:
             name = ufo.info.postscriptFullName
             print '>> Saving TTF for ' + name
-            self.save_ttf(
-                ufo, is_instance=interpolate, mti_feafiles=mti_paths.get(name),
-                kern_writer=GlyphsKernWriter)
+            self.save_otf(
+                ufo, ttf=True, is_instance=is_instance, use_afdko=use_afdko,
+                mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
@@ -197,3 +214,49 @@ class GlyphsKernWriter(KernFeatureWriter):
 
     leftUfoGroupRe = r"@MMK_L_(.+)"
     rightUfoGroupRe = r"@MMK_R_(.+)"
+
+
+class FDKFeatureCompiler(FeatureOTFCompiler):
+    """An OTF compiler which uses the AFDKO to compile feature syntax."""
+
+    def setupFile_featureTables(self):
+        if self.mtiFeaFiles is not None:
+            super(FDKFeatureCompiler, self).setupFile_featureTables()
+
+        elif not self.features.strip():
+            return
+
+        import subprocess
+        from fontTools.ttLib import TTFont
+        from fontTools.misc.py23 import tostr
+
+        fd, outline_path = tempfile.mkstemp()
+        os.close(fd)
+        self.outline.save(outline_path)
+
+        fd, feasrc_path = tempfile.mkstemp()
+        os.close(fd)
+
+        fd, fea_path = tempfile.mkstemp()
+        with open(fea_path, "w") as feafile:
+            feafile.write(self.features)
+        os.close(fd)
+
+        report = tostr(subprocess.check_output([
+            "makeotf", "-o", feasrc_path, "-f", outline_path,
+            "-ff", fea_path]))
+        os.remove(outline_path)
+        os.remove(fea_path)
+
+        print(report)
+        success = "Done." in report
+        if success:
+            feasrc = TTFont(feasrc_path)
+            for table in ["GDEF", "GPOS", "GSUB"]:
+                if table in feasrc:
+                    self.outline[table] = feasrc[table]
+
+        feasrc.close()
+        os.remove(feasrc_path)
+        if not success:
+            raise ValueError("Feature syntax compilation failed.")

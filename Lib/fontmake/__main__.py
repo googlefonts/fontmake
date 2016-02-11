@@ -19,15 +19,32 @@ from fontmake.font_project import FontProject
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('glyphs_path', metavar='GLYPHS_PATH')
+    parser.add_argument('-g', '--glyphs-path')
+    parser.add_argument('-u', '--ufo-paths', nargs='+')
     parser.add_argument('-c', '--compatible', action='store_true')
-    parser.add_argument('-i', '--interpolate', action='store_true')
+    parser.add_argument('-i', '--interpolate', action='store_true',
+                        help='interpolate masters (Glyphs source only)')
     parser.add_argument('--mti-source')
+    parser.add_argument('--use-afdko', action='store_true')
     args = vars(parser.parse_args())
 
-    glyphs_path = args.pop('glyphs_path')
     project = FontProject()
-    project.run_all(glyphs_path, **args)
+
+    glyphs_path = args.pop('glyphs_path')
+    ufo_paths = args.pop('ufo_paths')
+    if not sum(1 for p in [glyphs_path, ufo_paths] if p) == 1:
+        raise ValueError('Exactly one source type required (Glyphs or UFO).')
+
+    if glyphs_path:
+        project.run_from_glyphs(glyphs_path, **args)
+
+    else:
+        excluded = 'interpolate'
+        if args[excluded]:
+            raise ValueError(
+                '"%s" argument only available for Glyphs source' % excluded)
+        del args[excluded]
+        project.run_from_ufos(ufo_paths, **args)
 
 
 if __name__ == '__main__':

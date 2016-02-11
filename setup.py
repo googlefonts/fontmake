@@ -20,5 +20,10 @@ setup(
     name='fontmake',
     version='1.0',
     packages=['fontmake'],
-    package_dir={'': 'Lib'}
+    package_dir={'': 'Lib'},
+    entry_points={
+        'console_scripts': [
+            'fontmake = fontmake.__main__:main'
+        ]
+    }
 )
