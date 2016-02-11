@@ -24,6 +24,7 @@ from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from ufo2ft import compileOTF, compileTTF
+from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
 OpenUfo = None
@@ -110,13 +111,15 @@ class FontProject:
             contour.move(offset)
             parent.appendContour(contour)
 
-    def save_otf(self, ufo, ttf=False, is_instance=False,
+    def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
                  mti_feafiles=None, kern_writer=KernFeatureWriter):
         """Build OpenType binary from UFO."""
 
+        fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
         otf_path = self._output_path(ufo, 'ttf' if ttf else 'otf', is_instance)
         otf_compiler = compileTTF if ttf else compileOTF
-        otf = otf_compiler(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
+        otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
+                           kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
 
     def run_from_glyphs(
@@ -146,7 +149,7 @@ class FontProject:
 
     def run_from_ufos(
             self, ufos, is_instance=False, compatible=False,
-            remove_overlaps=True, mti_source=None):
+            remove_overlaps=True, mti_source=None, use_afdko=False):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if isinstance(ufos, str):
@@ -171,7 +174,7 @@ class FontProject:
             name = ufo.info.postscriptFullName
             print '>> Saving OTF for ' + name
             self.save_otf(
-                ufo, is_instance=is_instance,
+                ufo, is_instance=is_instance, use_afdko=use_afdko,
                 mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
 
         start_t = time()
@@ -189,7 +192,7 @@ class FontProject:
             name = ufo.info.postscriptFullName
             print '>> Saving TTF for ' + name
             self.save_otf(
-                ufo, ttf=True, is_instance=is_instance,
+                ufo, ttf=True, is_instance=is_instance, use_afdko=use_afdko,
                 mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):
@@ -215,3 +218,49 @@ class GlyphsKernWriter(KernFeatureWriter):
 
     leftUfoGroupRe = r"@MMK_L_(.+)"
     rightUfoGroupRe = r"@MMK_R_(.+)"
+
+
+class FDKFeatureCompiler(FeatureOTFCompiler):
+    """An OTF compiler which uses the AFDKO to compile feature syntax."""
+
+    def setupFile_featureTables(self):
+        if self.mtiFeaFiles is not None:
+            super(FDKFeatureCompiler, self).setupFile_featureTables()
+
+        elif not self.features.strip():
+            return
+
+        import subprocess
+        from fontTools.ttLib import TTFont
+        from fontTools.misc.py23 import tostr
+
+        fd, outline_path = tempfile.mkstemp()
+        os.close(fd)
+        self.outline.save(outline_path)
+
+        fd, feasrc_path = tempfile.mkstemp()
+        os.close(fd)
+
+        fd, fea_path = tempfile.mkstemp()
+        with open(fea_path, "w") as feafile:
+            feafile.write(self.features)
+        os.close(fd)
+
+        report = tostr(subprocess.check_output([
+            "makeotf", "-o", feasrc_path, "-f", outline_path,
+            "-ff", fea_path]))
+        os.remove(outline_path)
+        os.remove(fea_path)
+
+        print(report)
+        success = "Done." in report
+        if success:
+            feasrc = TTFont(feasrc_path)
+            for table in ["GDEF", "GPOS", "GSUB"]:
+                if table in feasrc:
+                    self.outline[table] = feasrc[table]
+
+        feasrc.close()
+        os.remove(feasrc_path)
+        if not success:
+            raise ValueError("Feature syntax compilation failed.")

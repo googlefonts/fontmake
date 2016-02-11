@@ -24,6 +24,7 @@ def main():
     parser.add_argument('-c', '--compatible', action='store_true')
     parser.add_argument('-i', '--interpolate', action='store_true')
     parser.add_argument('--mti-source')
+    parser.add_argument('--use-afdko', action='store_true')
     args = vars(parser.parse_args())
 
     project = FontProject()
