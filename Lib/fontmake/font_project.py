@@ -110,21 +110,14 @@ class FontProject:
             contour.move(offset)
             parent.appendContour(contour)
 
-    def save_otf(self, ufo, is_instance=False, mti_feafiles=None,
-                 kern_writer=KernFeatureWriter):
-        """Build OTF from UFO."""
+    def save_otf(self, ufo, ttf=False, is_instance=False,
+                 mti_feafiles=None, kern_writer=KernFeatureWriter):
+        """Build OpenType binary from UFO."""
 
-        otf_path = self._output_path(ufo, 'otf', is_instance)
-        otf = compileOTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
+        otf_path = self._output_path(ufo, 'ttf' if ttf else 'otf', is_instance)
+        otf_compiler = compileTTF if ttf else compileOTF
+        otf = otf_compiler(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
-
-    def save_ttf(self, ufo, is_instance=False, mti_feafiles=None,
-                 kern_writer=KernFeatureWriter):
-        """Build TTF from UFO."""
-
-        ttf_path = self._output_path(ufo, 'ttf', is_instance)
-        ttf = compileTTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
-        ttf.save(ttf_path)
 
     def run_from_glyphs(
             self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
@@ -178,8 +171,8 @@ class FontProject:
             name = ufo.info.postscriptFullName
             print '>> Saving OTF for ' + name
             self.save_otf(
-                ufo, is_instance=is_instance, mti_feafiles=mti_paths.get(name),
-                kern_writer=GlyphsKernWriter)
+                ufo, is_instance=is_instance,
+                mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
 
         start_t = time()
         if compatible:
@@ -195,9 +188,9 @@ class FontProject:
         for ufo in ufos:
             name = ufo.info.postscriptFullName
             print '>> Saving TTF for ' + name
-            self.save_ttf(
-                ufo, is_instance=is_instance, mti_feafiles=mti_paths.get(name),
-                kern_writer=GlyphsKernWriter)
+            self.save_otf(
+                ufo, ttf=True, is_instance=is_instance,
+                mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
