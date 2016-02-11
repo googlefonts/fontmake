@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import glob
 import os
 import plistlib
 import re
@@ -25,6 +26,19 @@ from glyphs2ufo.glyphslib import build_masters, build_instances
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
+OpenUfo = None
+try:
+    from defcon.objects import Font
+    OpenUfo = Font
+except ImportError:
+    pass
+try:
+    from robofab.world import OpenFont
+    OpenUfo = OpenFont
+except ImportError:
+    pass
+if OpenUfo is None:
+    raise ImportError("Couldn't import from defcon or robofab.")
 
 class FontProject:
     """Provides methods for building fonts."""
@@ -112,20 +126,11 @@ class FontProject:
         ttf = compileTTF(ufo, kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         ttf.save(ttf_path)
 
-    def run_all(
-        self, glyphs_path, preprocess=True, interpolate=False,
-        compatible=False, remove_overlaps=True, mti_source=None):
+    def run_from_glyphs(
+            self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         is_italic = 'Italic' in glyphs_path
-
-        mti_paths = {}
-        if mti_source:
-            mti_paths = plistlib.readPlist(mti_source)
-            src_dir = os.path.dirname(glyphs_path)
-            for paths in mti_paths.values():
-                for table in ('GDEF', 'GPOS', 'GSUB'):
-                    paths[table] = os.path.join(src_dir, paths[table])
 
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
@@ -144,16 +149,36 @@ class FontProject:
         if preprocess:
             os.remove(glyphs_path)
 
+        self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
+
+    def run_from_ufos(
+            self, ufos, is_instance=False, compatible=False,
+            remove_overlaps=True, mti_source=None):
+        """Run toolchain from UFO sources to OpenType binaries."""
+
+        if isinstance(ufos, str):
+            ufos = glob.glob(ufos)
+        if isinstance(ufos[0], str):
+            ufos = [OpenUfo(ufo) for ufo in ufos]
+
         if remove_overlaps and not compatible:
             for ufo in ufos:
                 print '>> Removing overlaps for ' + ufo.info.postscriptFullName
                 self.remove_overlaps(ufo)
 
+        mti_paths = {}
+        if mti_source:
+            mti_paths = plistlib.readPlist(mti_source)
+            src_dir = os.path.dirname(glyphs_path)
+            for paths in mti_paths.values():
+                for table in ('GDEF', 'GPOS', 'GSUB'):
+                    paths[table] = os.path.join(src_dir, paths[table])
+
         for ufo in ufos:
             name = ufo.info.postscriptFullName
             print '>> Saving OTF for ' + name
             self.save_otf(
-                ufo, is_instance=interpolate, mti_feafiles=mti_paths.get(name),
+                ufo, is_instance=is_instance, mti_feafiles=mti_paths.get(name),
                 kern_writer=GlyphsKernWriter)
 
         start_t = time()
@@ -171,7 +196,7 @@ class FontProject:
             name = ufo.info.postscriptFullName
             print '>> Saving TTF for ' + name
             self.save_ttf(
-                ufo, is_instance=interpolate, mti_feafiles=mti_paths.get(name),
+                ufo, is_instance=is_instance, mti_feafiles=mti_paths.get(name),
                 kern_writer=GlyphsKernWriter)
 
     def _output_dir(self, ext, is_instance=False):

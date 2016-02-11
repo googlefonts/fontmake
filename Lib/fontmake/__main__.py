@@ -19,15 +19,24 @@ from fontmake.font_project import FontProject
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('glyphs_path', metavar='GLYPHS_PATH')
+    parser.add_argument('-g', '--glyphs-path')
+    parser.add_argument('-u', '--ufo-paths', nargs='+')
     parser.add_argument('-c', '--compatible', action='store_true')
     parser.add_argument('-i', '--interpolate', action='store_true')
     parser.add_argument('--mti-source')
     args = vars(parser.parse_args())
 
-    glyphs_path = args.pop('glyphs_path')
     project = FontProject()
-    project.run_all(glyphs_path, **args)
+
+    glyphs_path = args.pop('glyphs_path')
+    ufo_paths = args.pop('ufo_paths')
+    if glyphs_path:
+        if ufo_paths:
+            raise ValueError('Only one source type allowed (Glyphs or UFO).')
+        project.run_from_glyphs(glyphs_path, **args)
+    else:
+        del args['interpolate']
+        project.run_from_ufos(ufo_paths, **args)
 
 
 if __name__ == '__main__':
