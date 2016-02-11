@@ -27,19 +27,15 @@ from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
-OpenUfo = None
 try:
     from defcon.objects import Font
     OpenUfo = Font
 except ImportError:
-    pass
-try:
-    from robofab.world import OpenFont
-    OpenUfo = OpenFont
-except ImportError:
-    pass
-if OpenUfo is None:
-    raise ImportError("Couldn't import from defcon or robofab.")
+    try:
+        from robofab.world import OpenFont
+        OpenUfo = OpenFont
+    except ImportError:
+        raise ImportError("Couldn't import from defcon or robofab.")
 
 class FontProject:
     """Provides methods for building fonts."""
@@ -165,7 +161,7 @@ class FontProject:
         mti_paths = {}
         if mti_source:
             mti_paths = plistlib.readPlist(mti_source)
-            src_dir = os.path.dirname(glyphs_path)
+            src_dir = os.path.dirname(mti_source)
             for paths in mti_paths.values():
                 for table in ('GDEF', 'GPOS', 'GSUB'):
                     paths[table] = os.path.join(src_dir, paths[table])

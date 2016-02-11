@@ -22,7 +22,8 @@ def main():
     parser.add_argument('-g', '--glyphs-path')
     parser.add_argument('-u', '--ufo-paths', nargs='+')
     parser.add_argument('-c', '--compatible', action='store_true')
-    parser.add_argument('-i', '--interpolate', action='store_true')
+    parser.add_argument('-i', '--interpolate', action='store_true',
+                        help='interpolate masters (Glyphs source only)')
     parser.add_argument('--mti-source')
     parser.add_argument('--use-afdko', action='store_true')
     args = vars(parser.parse_args())
@@ -31,12 +32,18 @@ def main():
 
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
+    if not sum(1 for p in [glyphs_path, ufo_paths] if p) == 1:
+        raise ValueError('Exactly one source type required (Glyphs or UFO).')
+
     if glyphs_path:
-        if ufo_paths:
-            raise ValueError('Only one source type allowed (Glyphs or UFO).')
         project.run_from_glyphs(glyphs_path, **args)
+
     else:
-        del args['interpolate']
+        excluded = 'interpolate'
+        if args[excluded]:
+            raise ValueError(
+                '"%s" argument only available for Glyphs source' % excluded)
+        del args[excluded]
         project.run_from_ufos(ufo_paths, **args)
 
 
