@@ -155,7 +155,7 @@ class FontProject:
 
         if remove_overlaps and not compatible:
             for ufo in ufos:
-                print '>> Removing overlaps for ' + ufo.info.postscriptFullName
+                print '>> Removing overlaps for ' + self._font_name(ufo)
                 self.remove_overlaps(ufo)
 
         mti_paths = {}
@@ -167,7 +167,7 @@ class FontProject:
                     paths[table] = os.path.join(src_dir, paths[table])
 
         for ufo in ufos:
-            name = ufo.info.postscriptFullName
+            name = self._font_name(ufo)
             print '>> Saving OTF for ' + name
             self.save_otf(
                 ufo, is_instance=is_instance, use_afdko=use_afdko,
@@ -179,17 +179,21 @@ class FontProject:
             fonts_to_quadratic(ufos, dump_stats=True)
         else:
             for ufo in ufos:
-                print '>> Converting curves for ' + ufo.info.postscriptFullName
+                print '>> Converting curves for ' + self._font_name(ufo)
                 fonts_to_quadratic([ufo], dump_stats=True)
         t = time() - start_t
         print '[took %f seconds]' % t
 
         for ufo in ufos:
-            name = ufo.info.postscriptFullName
+            name = self._font_name(ufo)
             print '>> Saving TTF for ' + name
             self.save_otf(
                 ufo, ttf=True, is_instance=is_instance, use_afdko=use_afdko,
                 mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
+
+    def _font_name(self, ufo):
+        return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
+                          ufo.info.styleName.replace(' ', ''))
 
     def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
