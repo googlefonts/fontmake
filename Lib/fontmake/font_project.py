@@ -87,24 +87,24 @@ class FontProject:
     def decompose_glyph(self, ufo, glyph):
         """Moves the components of a glyph to its outline."""
 
-        self._deep_copy_contours(ufo, glyph, glyph, (0, 0), (1, 1))
+        self._deep_copy_contours(ufo, glyph, glyph, [], [])
         glyph.clearComponents()
 
-    def _deep_copy_contours(self, ufo, parent, component, offset, scale):
+    def _deep_copy_contours(self, ufo, parent, component, scales, offsets):
         """Copy contours from component to parent, including nested components."""
 
         for nested in component.components:
             self._deep_copy_contours(
                 ufo, parent, ufo[nested.baseGlyph],
-                (offset[0] + nested.offset[0], offset[1] + nested.offset[1]),
-                (scale[0] * nested.scale[0], scale[1] * nested.scale[1]))
+                [nested.scale] + scales, [nested.offset] + offsets)
 
         if component == parent:
             return
         for contour in component:
             contour = contour.copy()
-            contour.scale(scale)
-            contour.move(offset)
+            for scale, offset in zip(scales, offsets):
+                contour.scale(scale)
+                contour.move(offset)
             parent.appendContour(contour)
 
     def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
