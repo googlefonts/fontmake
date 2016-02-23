@@ -204,12 +204,10 @@ class FontProject:
     def _output_path(self, ufo, ext, is_instance=False):
         """Generate output path for a UFO with given directory and extension."""
 
-        family = ufo.info.familyName.replace(' ', '')
-        style = ufo.info.styleName.replace(' ', '')
         out_dir = self._output_dir(ext, is_instance)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
-        return os.path.join(out_dir, '%s-%s.%s' % (family, style, ext))
+        return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))
 
 
 class GlyphsKernWriter(KernFeatureWriter):
