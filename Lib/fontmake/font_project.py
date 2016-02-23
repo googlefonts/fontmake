@@ -22,6 +22,7 @@ from time import time
 
 from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
+from fontTools.misc.transform import Identity
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
@@ -87,24 +88,28 @@ class FontProject:
     def decompose_glyph(self, ufo, glyph):
         """Moves the components of a glyph to its outline."""
 
-        self._deep_copy_contours(ufo, glyph, glyph, [], [])
+        self._deep_copy_contours(ufo, glyph, glyph, Identity, Identity)
         glyph.clearComponents()
 
-    def _deep_copy_contours(self, ufo, parent, component, scales, offsets):
+    def _deep_copy_contours(self, ufo, parent, component,
+                            scale_matrix, offset_matrix):
         """Copy contours from component to parent, including nested components."""
+
+        scale = (scale_matrix[0], scale_matrix[3])
+        offset = offset_matrix[4:]
 
         for nested in component.components:
             self._deep_copy_contours(
                 ufo, parent, ufo[nested.baseGlyph],
-                [nested.scale] + scales, [nested.offset] + offsets)
+                scale_matrix.scale(*nested.scale),
+                offset_matrix.scale(*scale).translate(*nested.offset))
 
         if component == parent:
             return
         for contour in component:
             contour = contour.copy()
-            for scale, offset in zip(scales, offsets):
-                contour.scale(scale)
-                contour.move(offset)
+            contour.scale(scale)
+            contour.move(offset)
             parent.appendContour(contour)
 
     def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
