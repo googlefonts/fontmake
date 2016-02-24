@@ -145,9 +145,8 @@ class FontProject:
                            kern_writer=GlyphsKernWriter, **kwargs)
 
     def run_from_ufos(
-            self, ufos, is_instance=False, compatible=False,
-            remove_overlaps=True, mti_source=None, use_afdko=False,
-            kern_writer=KernFeatureWriter):
+            self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
+            **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if isinstance(ufos, str):
@@ -171,9 +170,7 @@ class FontProject:
         for ufo in ufos:
             name = self._font_name(ufo)
             print '>> Saving OTF for ' + name
-            self.save_otf(
-                ufo, is_instance=is_instance, use_afdko=use_afdko,
-                mti_feafiles=mti_paths.get(name), kern_writer=kern_writer)
+            self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
 
         start_t = time()
         if compatible:
@@ -190,8 +187,7 @@ class FontProject:
             name = self._font_name(ufo)
             print '>> Saving TTF for ' + name
             self.save_otf(
-                ufo, ttf=True, is_instance=is_instance, use_afdko=use_afdko,
-                mti_feafiles=mti_paths.get(name), kern_writer=kern_writer)
+                ufo, ttf=True, mti_feafiles=mti_paths.get(name), **kwargs)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
