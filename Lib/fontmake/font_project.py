@@ -238,8 +238,7 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
         os.close(fd)
 
         fd, fea_path = tempfile.mkstemp()
-        with open(fea_path, "w") as feafile:
-            feafile.write(self.features)
+        os.write(fd, self.features)
         os.close(fd)
 
         report = tostr(subprocess.check_output([
