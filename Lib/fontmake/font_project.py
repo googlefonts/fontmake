@@ -126,15 +126,17 @@ class FontProject:
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphs2ufo."""
 
-        lib_prefix = 'com.schriftgestaltung.'
-        keep_glyphs = set(ufo.lib.get(lib_prefix + 'Keep Glyphs', []))
+        font_lib_prefix = 'com.schriftgestaltung.'
+        glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
+
+        keep_glyphs = set(ufo.lib.get(font_lib_prefix + 'Keep Glyphs', []))
 
         include = []
         glyph_order = ufo.lib['public.glyphOrder']
         for glyph_name in glyph_order:
             glyph = ufo[glyph_name]
             if ((keep_glyphs and glyph_name not in keep_glyphs) or
-                not glyph.lib.get(lib_prefix + 'Glyphs.Export', True)):
+                not glyph.lib.get(glyph_lib_prefix + 'Export', True)):
                 continue
             include.append(glyph_name)
 
@@ -149,7 +151,8 @@ class FontProject:
         opt.recalc_timestamp = True
         opt.canonical_order = True
 
-        opt.glyph_names = ufo.lib.get(lib_prefix + "Don't use Production Names")
+        opt.glyph_names = ufo.lib.get(
+            font_lib_prefix + "Don't use Production Names")
 
         font = subset.load_font(otf_path, opt, lazy=False)
         subsetter = subset.Subsetter(options=opt)
