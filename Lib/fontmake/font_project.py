@@ -141,11 +141,12 @@ class FontProject:
         if preprocess:
             os.remove(glyphs_path)
 
-        self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
+        self.run_from_ufos(ufos, is_instance=interpolate,
+                           kern_writer=GlyphsKernWriter, **kwargs)
 
     def run_from_ufos(
-            self, ufos, is_instance=False, compatible=False,
-            remove_overlaps=True, mti_source=None, use_afdko=False):
+            self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
+            **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if isinstance(ufos, str):
@@ -169,9 +170,7 @@ class FontProject:
         for ufo in ufos:
             name = self._font_name(ufo)
             print '>> Saving OTF for ' + name
-            self.save_otf(
-                ufo, is_instance=is_instance, use_afdko=use_afdko,
-                mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
+            self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
 
         start_t = time()
         if compatible:
@@ -188,8 +187,7 @@ class FontProject:
             name = self._font_name(ufo)
             print '>> Saving TTF for ' + name
             self.save_otf(
-                ufo, ttf=True, is_instance=is_instance, use_afdko=use_afdko,
-                mti_feafiles=mti_paths.get(name), kern_writer=GlyphsKernWriter)
+                ufo, ttf=True, mti_feafiles=mti_paths.get(name), **kwargs)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
@@ -240,8 +238,7 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
         os.close(fd)
 
         fd, fea_path = tempfile.mkstemp()
-        with open(fea_path, "w") as feafile:
-            feafile.write(self.features)
+        os.write(fd, self.features)
         os.close(fd)
 
         report = tostr(subprocess.check_output([
