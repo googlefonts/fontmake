@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import collections
 import glob
 import os
 import plistlib
@@ -22,6 +23,7 @@ from time import time
 
 from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
+from fontTools import subset
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
@@ -108,7 +110,7 @@ class FontProject:
             parent.appendContour(contour)
 
     def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
-                 mti_feafiles=None, kern_writer=KernFeatureWriter):
+                 mti_feafiles=None, kern_writer=KernFeatureWriter, subset=True):
         """Build OpenType binary from UFO."""
 
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
@@ -117,6 +119,46 @@ class FontProject:
         otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
                            kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
+
+        if subset:
+            self.subset_otf_from_ufo(otf_path, ufo)
+
+    def subset_otf_from_ufo(self, otf_path, ufo):
+        """Subset a font using export flags set by glyphs2ufo."""
+
+        font_lib_prefix = 'com.schriftgestaltung.'
+        glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
+
+        keep_glyphs = set(ufo.lib.get(font_lib_prefix + 'Keep Glyphs', []))
+
+        include = []
+        glyph_order = ufo.lib['public.glyphOrder']
+        for glyph_name in glyph_order:
+            glyph = ufo[glyph_name]
+            if ((keep_glyphs and glyph_name not in keep_glyphs) or
+                not glyph.lib.get(glyph_lib_prefix + 'Export', True)):
+                continue
+            include.append(glyph_name)
+
+        # copied from nototools.subset
+        opt = subset.Options()
+        opt.name_IDs = ['*']
+        opt.name_legacy = True
+        opt.name_languages = ['*']
+        opt.layout_features = ['*']
+        opt.notdef_outline = True
+        opt.recalc_bounds = True
+        opt.recalc_timestamp = True
+        opt.canonical_order = True
+
+        opt.glyph_names = ufo.lib.get(
+            font_lib_prefix + "Don't use Production Names")
+
+        font = subset.load_font(otf_path, opt, lazy=False)
+        subsetter = subset.Subsetter(options=opt)
+        subsetter.populate(glyphs=include)
+        subsetter.subset(font)
+        subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
             self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
