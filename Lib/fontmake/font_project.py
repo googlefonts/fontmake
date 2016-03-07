@@ -169,9 +169,10 @@ class FontProject:
         if preprocess:
             print '>> Checking Glyphs source for illegal glyph names'
             glyphs_source = self.preprocess(glyphs_path)
-            fd, glyphs_path = tempfile.mkstemp()
-            with os.fdopen(fd, 'w') as fp:
-                fp.write(glyphs_source)
+            tmp_glyphs_file = tempfile.NamedTemporaryFile()
+            glyphs_path = tmp_glyphs_file.name
+            tmp_glyphs_file.write(glyphs_source)
+            tmp_glyphs_file.seek(0)
 
         if interpolate:
             print '>> Interpolating master UFOs from Glyphs source'
@@ -179,9 +180,6 @@ class FontProject:
         else:
             print '>> Loading master UFOs from Glyphs source'
             ufos = self.build_masters(glyphs_path, is_italic)
-
-        if preprocess:
-            os.remove(glyphs_path)
 
         self.run_from_ufos(ufos, is_instance=interpolate,
                            kern_writer=GlyphsKernWriter, **kwargs)
