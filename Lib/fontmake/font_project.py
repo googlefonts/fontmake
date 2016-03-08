@@ -181,8 +181,7 @@ class FontProject:
             print '>> Loading master UFOs from Glyphs source'
             ufos = self.build_masters(glyphs_path, is_italic)
 
-        self.run_from_ufos(ufos, is_instance=interpolate,
-                           kern_writer=GlyphsKernWriter, **kwargs)
+        self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
 
     def run_from_ufos(
             self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
@@ -246,14 +245,6 @@ class FontProject:
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))
-
-
-class GlyphsKernWriter(KernFeatureWriter):
-    """A ufo2ft kerning feature writer which looks for UFO kerning groups with
-    names matching the old MMK pattern (which is used by Glyphs)."""
-
-    leftUfoGroupRe = r"@MMK_L_(.+)"
-    rightUfoGroupRe = r"@MMK_R_(.+)"
 
 
 class FDKFeatureCompiler(FeatureOTFCompiler):
