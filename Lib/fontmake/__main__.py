@@ -21,6 +21,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('-g', '--glyphs-path')
     parser.add_argument('-u', '--ufo-paths', nargs='+')
+    parser.add_argument('-m', '--mm-designspace')
     parser.add_argument('-c', '--compatible', action='store_true')
     parser.add_argument('-i', '--interpolate', action='store_true',
                         help='interpolate masters (Glyphs source only)')
@@ -32,19 +33,24 @@ def main():
 
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
-    if not sum(1 for p in [glyphs_path, ufo_paths] if p) == 1:
+    designspace_path = args.pop('mm_designspace')
+    if not sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) == 1:
         raise ValueError('Exactly one source type required (Glyphs or UFO).')
 
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
-
     else:
         excluded = 'interpolate'
         if args[excluded]:
             raise ValueError(
                 '"%s" argument only available for Glyphs source' % excluded)
         del args[excluded]
+
+    if ufo_paths:
         project.run_from_ufos(ufo_paths, **args)
+
+    elif designspace_path:
+        project.run_from_designspace(designspace_path, **args)
 
 
 if __name__ == '__main__':

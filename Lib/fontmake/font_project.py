@@ -25,6 +25,7 @@ from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
 from fontTools import subset
 from glyphs2ufo.glyphslib import build_masters, build_instances
+from mutatorMath.ufo import build as build_designspace
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
@@ -182,6 +183,18 @@ class FontProject:
             ufos = self.build_masters(glyphs_path, is_italic)
 
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
+
+    def run_from_designspace(self, designspace_path, **kwargs):
+        """Run toolchain from a MutatorMath design space document to OpenType
+        binaries.
+        """
+
+        print '>> Interpolating master UFOs from design space'
+        results = build_designspace(designspace_path)
+        ufos = []
+        for result in results:
+            ufos.extend(result.values())
+        self.run_from_ufos(ufos, **kwargs)
 
     def run_from_ufos(
             self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
