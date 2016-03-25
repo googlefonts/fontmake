@@ -74,9 +74,9 @@ class FontProject:
     def remove_overlaps(self, ufo):
         """Remove overlaps in a UFO's glyphs' contours, decomposing first."""
 
+        manager = BooleanOperationManager()
         for glyph in ufo:
             self.decompose_glyph(ufo, glyph)
-            manager = BooleanOperationManager()
             contours = list(glyph)
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
