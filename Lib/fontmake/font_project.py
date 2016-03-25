@@ -25,19 +25,12 @@ from booleanOperations import BooleanOperationManager
 from cu2qu.rf import fonts_to_quadratic
 from fontTools import subset
 from glyphs2ufo.glyphslib import build_masters, build_instances
+from mutatorMath.ufo import build as build_designspace
+from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
-try:
-    from defcon.objects import Font
-    OpenUfo = Font
-except ImportError:
-    try:
-        from robofab.world import OpenFont
-        OpenUfo = OpenFont
-    except ImportError:
-        raise ImportError("Couldn't import from defcon or robofab.")
 
 class FontProject:
     """Provides methods for building fonts."""
@@ -183,6 +176,18 @@ class FontProject:
 
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
 
+    def run_from_designspace(self, designspace_path, **kwargs):
+        """Run toolchain from a MutatorMath design space document to OpenType
+        binaries.
+        """
+
+        print '>> Interpolating master UFOs from design space'
+        results = build_designspace(designspace_path)
+        ufos = []
+        for result in results:
+            ufos.extend(result.values())
+        self.run_from_ufos(ufos, **kwargs)
+
     def run_from_ufos(
             self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
             **kwargs):
@@ -191,7 +196,7 @@ class FontProject:
         if isinstance(ufos, str):
             ufos = glob.glob(ufos)
         if isinstance(ufos[0], str):
-            ufos = [OpenUfo(ufo) for ufo in ufos]
+            ufos = [OpenFont(ufo) for ufo in ufos]
 
         if remove_overlaps and not compatible:
             for ufo in ufos:
