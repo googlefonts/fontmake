@@ -26,19 +26,11 @@ from cu2qu.rf import fonts_to_quadratic
 from fontTools import subset
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
+from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
-try:
-    from defcon.objects import Font
-    OpenUfo = Font
-except ImportError:
-    try:
-        from robofab.world import OpenFont
-        OpenUfo = OpenFont
-    except ImportError:
-        raise ImportError("Couldn't import from defcon or robofab.")
 
 class FontProject:
     """Provides methods for building fonts."""
@@ -204,7 +196,7 @@ class FontProject:
         if isinstance(ufos, str):
             ufos = glob.glob(ufos)
         if isinstance(ufos[0], str):
-            ufos = [OpenUfo(ufo) for ufo in ufos]
+            ufos = [OpenFont(ufo) for ufo in ufos]
 
         if remove_overlaps and not compatible:
             for ufo in ufos:
