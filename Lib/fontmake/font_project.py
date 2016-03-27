@@ -37,7 +37,8 @@ from ufo2ft.makeotfParts import FeatureOTFCompiler
 class FontProject:
     """Provides methods for building fonts."""
 
-    def preprocess(self, glyphs_path):
+    @staticmethod
+    def preprocess(glyphs_path):
         """Return Glyphs source with illegal glyph/class names changed."""
 
         with open(glyphs_path) as fp:
