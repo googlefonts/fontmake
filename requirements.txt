@@ -1,6 +1,5 @@
 # for ufo2ft
 git+https://github.com/behdad/fonttools.git
-git+https://github.com/typesupply/feaTools.git
 
 # for booleanOperations
 cython
