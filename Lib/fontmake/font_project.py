@@ -32,7 +32,6 @@ from glyphs2ufo.glyphslib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
-from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
 
 class FontProject:
@@ -100,14 +99,14 @@ class FontProject:
             component.draw(TransformPen(parent.getPen(), transformation))
 
     def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
-                 mti_feafiles=None, kern_writer=KernFeatureWriter, subset=True):
+                 mti_feafiles=None, subset=True):
         """Build OpenType binary from UFO."""
 
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
         otf_path = self._output_path(ufo, 'ttf' if ttf else 'otf', is_instance)
         otf_compiler = compileTTF if ttf else compileOTF
         otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                           kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
+                           mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
 
         if subset:
