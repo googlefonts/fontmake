@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+from __future__ import print_function, division, absolute_import
+
 import collections
 import glob
 import os
@@ -156,7 +158,7 @@ class FontProject:
         is_italic = 'Italic' in glyphs_path
 
         if preprocess:
-            print '>> Checking Glyphs source for illegal glyph names'
+            print('>> Checking Glyphs source for illegal glyph names')
             glyphs_source = self.preprocess(glyphs_path)
             tmp_glyphs_file = tempfile.NamedTemporaryFile()
             glyphs_path = tmp_glyphs_file.name
@@ -164,10 +166,10 @@ class FontProject:
             tmp_glyphs_file.seek(0)
 
         if interpolate:
-            print '>> Interpolating master UFOs from Glyphs source'
+            print('>> Interpolating master UFOs from Glyphs source')
             ufos = self.build_instances(glyphs_path, is_italic)
         else:
-            print '>> Loading master UFOs from Glyphs source'
+            print('>> Loading master UFOs from Glyphs source')
             ufos = self.build_masters(glyphs_path, is_italic)
 
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
@@ -177,7 +179,7 @@ class FontProject:
         binaries.
         """
 
-        print '>> Interpolating master UFOs from design space'
+        print('>> Interpolating master UFOs from design space')
         results = build_designspace(designspace_path)
         ufos = []
         for result in results:
@@ -196,7 +198,7 @@ class FontProject:
 
         if remove_overlaps and not compatible:
             for ufo in ufos:
-                print '>> Removing overlaps for ' + self._font_name(ufo)
+                print('>> Removing overlaps for ' + self._font_name(ufo))
                 self.remove_overlaps(ufo)
 
         mti_paths = {}
@@ -209,23 +211,23 @@ class FontProject:
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            print '>> Saving OTF for ' + name
+            print('>> Saving OTF for ' + name)
             self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
 
         start_t = time()
         if compatible:
-            print '>> Converting curves to quadratic'
+            print('>> Converting curves to quadratic')
             fonts_to_quadratic(ufos, dump_stats=True)
         else:
             for ufo in ufos:
-                print '>> Converting curves for ' + self._font_name(ufo)
+                print('>> Converting curves for ' + self._font_name(ufo))
                 fonts_to_quadratic([ufo], dump_stats=True)
         t = time() - start_t
-        print '[took %f seconds]' % t
+        print('[took %f seconds]' % t)
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            print '>> Saving TTF for ' + name
+            print('>> Saving TTF for ' + name)
             self.save_otf(
                 ufo, ttf=True, mti_feafiles=mti_paths.get(name), **kwargs)
 
