@@ -15,13 +15,12 @@
 
 from __future__ import print_function, division, absolute_import
 
-import collections
 import glob
 import os
 import plistlib
 import re
 import tempfile
-from time import time
+import time
 
 from booleanOperations import BooleanOperationManager
 from cu2qu import fonts_to_quadratic
@@ -214,7 +213,7 @@ class FontProject:
             print('>> Saving OTF for ' + name)
             self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
 
-        start_t = time()
+        start_t = time.time()
         if compatible:
             print('>> Converting curves to quadratic')
             fonts_to_quadratic(ufos, dump_stats=True)
@@ -222,7 +221,7 @@ class FontProject:
             for ufo in ufos:
                 print('>> Converting curves for ' + self._font_name(ufo))
                 fonts_to_quadratic([ufo], dump_stats=True)
-        t = time() - start_t
+        t = time.time() - start_t
         print('[took %f seconds]' % t)
 
         for ufo in ufos:
