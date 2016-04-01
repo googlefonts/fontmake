@@ -22,11 +22,13 @@ import tempfile
 from time import time
 
 from booleanOperations import BooleanOperationManager
-from cu2qu.rf import fonts_to_quadratic
+from cu2qu import fonts_to_quadratic
+from defcon import Font
 from fontTools import subset
+from fontTools.misc.transform import Identity
+from fontTools.pens.transformPen import TransformPen
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
-from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
@@ -75,32 +77,26 @@ class FontProject:
         for glyph in ufo:
             self.decompose_glyph(ufo, glyph)
             manager = BooleanOperationManager()
-            contours = glyph.contours
+            contours = [c for c in glyph]
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
 
     def decompose_glyph(self, ufo, glyph):
         """Moves the components of a glyph to its outline."""
 
-        self._deep_copy_contours(ufo, glyph, glyph, [], [])
+        self._deep_copy_contours(ufo, glyph, glyph, Identity)
         glyph.clearComponents()
 
-    def _deep_copy_contours(self, ufo, parent, component, scales, offsets):
+    def _deep_copy_contours(self, ufo, parent, component, transformation):
         """Copy contours from component to parent, including nested components."""
 
         for nested in component.components:
             self._deep_copy_contours(
                 ufo, parent, ufo[nested.baseGlyph],
-                [nested.scale] + scales, [nested.offset] + offsets)
+                transformation.transform(nested.transformation))
 
-        if component == parent:
-            return
-        for contour in component:
-            contour = contour.copy()
-            for scale, offset in zip(scales, offsets):
-                contour.scale(scale)
-                contour.move(offset)
-            parent.appendContour(contour)
+        if component != parent:
+            component.draw(TransformPen(parent.getPen(), transformation))
 
     def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
                  mti_feafiles=None, kern_writer=KernFeatureWriter, subset=True):
@@ -196,7 +192,7 @@ class FontProject:
         if isinstance(ufos, str):
             ufos = glob.glob(ufos)
         if isinstance(ufos[0], str):
-            ufos = [OpenFont(ufo) for ufo in ufos]
+            ufos = [Font(ufo) for ufo in ufos]
 
         if remove_overlaps and not compatible:
             for ufo in ufos:
