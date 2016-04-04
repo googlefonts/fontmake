@@ -23,7 +23,7 @@ import tempfile
 import time
 
 from booleanOperations import BooleanOperationManager
-from cu2qu import fonts_to_quadratic
+from cu2qu.ufo import fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
 from fontTools.misc.transform import Identity
