@@ -77,7 +77,7 @@ class FontProject:
         for glyph in ufo:
             self.decompose_glyph(ufo, glyph)
             manager = BooleanOperationManager()
-            contours = [c for c in glyph]
+            contours = list(glyph)
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
 
