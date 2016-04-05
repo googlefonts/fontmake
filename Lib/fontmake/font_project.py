@@ -13,23 +13,25 @@
 # limitations under the License.
 
 
-import collections
+from __future__ import print_function, division, absolute_import
+
 import glob
 import os
 import plistlib
 import re
 import tempfile
-from time import time
+import time
 
 from booleanOperations import BooleanOperationManager
-from cu2qu.rf import fonts_to_quadratic
+from cu2qu.ufo import fonts_to_quadratic
+from defcon import Font
 from fontTools import subset
+from fontTools.misc.transform import Identity
+from fontTools.pens.transformPen import TransformPen
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
-from robofab.world import OpenFont
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
-from ufo2ft.kernFeatureWriter import KernFeatureWriter
 
 
 class FontProject:
@@ -75,42 +77,36 @@ class FontProject:
         for glyph in ufo:
             self.decompose_glyph(ufo, glyph)
             manager = BooleanOperationManager()
-            contours = glyph.contours
+            contours = list(glyph)
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
 
     def decompose_glyph(self, ufo, glyph):
         """Moves the components of a glyph to its outline."""
 
-        self._deep_copy_contours(ufo, glyph, glyph, [], [])
+        self._deep_copy_contours(ufo, glyph, glyph, Identity)
         glyph.clearComponents()
 
-    def _deep_copy_contours(self, ufo, parent, component, scales, offsets):
+    def _deep_copy_contours(self, ufo, parent, component, transformation):
         """Copy contours from component to parent, including nested components."""
 
         for nested in component.components:
             self._deep_copy_contours(
                 ufo, parent, ufo[nested.baseGlyph],
-                [nested.scale] + scales, [nested.offset] + offsets)
+                transformation.transform(nested.transformation))
 
-        if component == parent:
-            return
-        for contour in component:
-            contour = contour.copy()
-            for scale, offset in zip(scales, offsets):
-                contour.scale(scale)
-                contour.move(offset)
-            parent.appendContour(contour)
+        if component != parent:
+            component.draw(TransformPen(parent.getPen(), transformation))
 
     def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
-                 mti_feafiles=None, kern_writer=KernFeatureWriter, subset=True):
+                 mti_feafiles=None, subset=True):
         """Build OpenType binary from UFO."""
 
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
         otf_path = self._output_path(ufo, 'ttf' if ttf else 'otf', is_instance)
         otf_compiler = compileTTF if ttf else compileOTF
         otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                           kernWriter=kern_writer, mtiFeaFiles=mti_feafiles)
+                           mtiFeaFiles=mti_feafiles)
         otf.save(otf_path)
 
         if subset:
@@ -160,7 +156,7 @@ class FontProject:
         is_italic = 'Italic' in glyphs_path
 
         if preprocess:
-            print '>> Checking Glyphs source for illegal glyph names'
+            print('>> Checking Glyphs source for illegal glyph names')
             glyphs_source = self.preprocess(glyphs_path)
             tmp_glyphs_file = tempfile.NamedTemporaryFile()
             glyphs_path = tmp_glyphs_file.name
@@ -168,10 +164,10 @@ class FontProject:
             tmp_glyphs_file.seek(0)
 
         if interpolate:
-            print '>> Interpolating master UFOs from Glyphs source'
+            print('>> Interpolating master UFOs from Glyphs source')
             ufos = self.build_instances(glyphs_path, is_italic)
         else:
-            print '>> Loading master UFOs from Glyphs source'
+            print('>> Loading master UFOs from Glyphs source')
             ufos = self.build_masters(glyphs_path, is_italic)
 
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
@@ -181,7 +177,7 @@ class FontProject:
         binaries.
         """
 
-        print '>> Interpolating master UFOs from design space'
+        print('>> Interpolating master UFOs from design space')
         results = build_designspace(designspace_path)
         ufos = []
         for result in results:
@@ -196,11 +192,11 @@ class FontProject:
         if isinstance(ufos, str):
             ufos = glob.glob(ufos)
         if isinstance(ufos[0], str):
-            ufos = [OpenFont(ufo) for ufo in ufos]
+            ufos = [Font(ufo) for ufo in ufos]
 
         if remove_overlaps and not compatible:
             for ufo in ufos:
-                print '>> Removing overlaps for ' + self._font_name(ufo)
+                print('>> Removing overlaps for ' + self._font_name(ufo))
                 self.remove_overlaps(ufo)
 
         mti_paths = {}
@@ -213,23 +209,23 @@ class FontProject:
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            print '>> Saving OTF for ' + name
+            print('>> Saving OTF for ' + name)
             self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
 
-        start_t = time()
+        start_t = time.time()
         if compatible:
-            print '>> Converting curves to quadratic'
+            print('>> Converting curves to quadratic')
             fonts_to_quadratic(ufos, dump_stats=True)
         else:
             for ufo in ufos:
-                print '>> Converting curves for ' + self._font_name(ufo)
+                print('>> Converting curves for ' + self._font_name(ufo))
                 fonts_to_quadratic([ufo], dump_stats=True)
-        t = time() - start_t
-        print '[took %f seconds]' % t
+        t = time.time() - start_t
+        print('[took %f seconds]' % t)
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            print '>> Saving TTF for ' + name
+            print('>> Saving TTF for ' + name)
             self.save_otf(
                 ufo, ttf=True, mti_feafiles=mti_paths.get(name), **kwargs)
 
