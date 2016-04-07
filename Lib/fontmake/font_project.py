@@ -83,11 +83,14 @@ class FontProject:
                 glyph.clearContours()
                 manager.union(contours, glyph.getPointPen())
 
-    def decompose_glyph(self, ufo, glyph):
-        """Moves the components of a glyph to its outline."""
+    def decompose_glyphs(self, ufos):
+        """Move components of UFOs' glyphs to their outlines."""
 
-        self._deep_copy_contours(ufo, glyph, glyph, Identity)
-        glyph.clearComponents()
+        for ufo in ufos:
+            print('>> Decomposing glyphs for ' + self._font_name(ufo))
+            for glyph in ufo:
+                self._deep_copy_contours(ufo, glyph, glyph, Identity)
+                glyph.clearComponents()
 
     def _deep_copy_contours(self, ufo, parent, component, transformation):
         """Copy contours from component to parent, including nested components."""
@@ -105,9 +108,7 @@ class FontProject:
 
         print('\n>> Building OTFs')
 
-        for ufo in ufos:
-            for glyph in ufo:
-                self.decompose_glyph(ufo, glyph)
+        self.decompose_glyphs(ufos)
         self.remove_overlaps(ufos)
         for ufo in ufos:
             self.save_otf(ufo, **kwargs)
