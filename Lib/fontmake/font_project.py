@@ -37,6 +37,9 @@ from ufo2ft.makeotfParts import FeatureOTFCompiler
 class FontProject:
     """Provides methods for building fonts."""
 
+    def __init__(self, compatible=False):
+        self.compatible = compatible
+
     def preprocess(self, glyphs_path):
         """Return Glyphs source with illegal glyph/class names changed."""
 
@@ -185,8 +188,7 @@ class FontProject:
         self.run_from_ufos(ufos, **kwargs)
 
     def run_from_ufos(
-            self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
-            **kwargs):
+            self, ufos, remove_overlaps=True, mti_source=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if isinstance(ufos, str):
@@ -194,7 +196,7 @@ class FontProject:
         if isinstance(ufos[0], str):
             ufos = [Font(ufo) for ufo in ufos]
 
-        if remove_overlaps and not compatible:
+        if remove_overlaps and not self.compatible:
             for ufo in ufos:
                 print('>> Removing overlaps for ' + self._font_name(ufo))
                 self.remove_overlaps(ufo)
@@ -213,7 +215,7 @@ class FontProject:
             self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
 
         start_t = time.time()
-        if compatible:
+        if self.compatible:
             print('>> Converting curves to quadratic')
             fonts_to_quadratic(ufos, dump_stats=True)
         else:
@@ -236,7 +238,9 @@ class FontProject:
     def _output_dir(self, ext, is_instance=False):
         """Generate an output directory."""
 
-        dir_prefix = 'instance_' if is_instance else 'master_'
+        dir_prefix = os.path.join(
+            'out_compatible' if self.compatible else 'out',
+            'instance_' if is_instance else 'master_')
         return os.path.join(dir_prefix + ext)
 
     def _output_path(self, ufo, ext, is_instance=False):

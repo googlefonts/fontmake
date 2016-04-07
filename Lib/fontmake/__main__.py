@@ -29,7 +29,7 @@ def main():
     parser.add_argument('--use-afdko', action='store_true')
     args = vars(parser.parse_args())
 
-    project = FontProject()
+    project = FontProject(compatible=args.pop('compatible'))
 
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
