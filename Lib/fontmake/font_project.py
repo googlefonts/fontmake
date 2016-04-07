@@ -72,14 +72,16 @@ class FontProject:
         instance_dir = self._output_dir('ufo', is_instance=True)
         return build_instances(glyphs_path, master_dir, instance_dir, is_italic)
 
-    def remove_overlaps(self, ufo):
-        """Remove overlaps in a UFO's glyphs' contours."""
+    def remove_overlaps(self, ufos):
+        """Remove overlaps in UFOs' glyphs' contours."""
 
         manager = BooleanOperationManager()
-        for glyph in ufo:
-            contours = list(glyph)
-            glyph.clearContours()
-            manager.union(contours, glyph.getPointPen())
+        for ufo in ufos:
+            print('>> Removing overlaps for ' + self._font_name(ufo))
+            for glyph in ufo:
+                contours = list(glyph)
+                glyph.clearContours()
+                manager.union(contours, glyph.getPointPen())
 
     def decompose_glyph(self, ufo, glyph):
         """Moves the components of a glyph to its outline."""
@@ -106,9 +108,7 @@ class FontProject:
         for ufo in ufos:
             for glyph in ufo:
                 self.decompose_glyph(ufo, glyph)
-        for ufo in ufos:
-            print('>> Removing overlaps for ' + self._font_name(ufo))
-            self.remove_overlaps(ufo)
+        self.remove_overlaps(ufos)
         for ufo in ufos:
             self.save_otf(ufo, **kwargs)
 
@@ -117,9 +117,7 @@ class FontProject:
 
         print('\n>> Building TTFs')
 
-        for ufo in ufos:
-            print('>> Removing overlaps for ' + self._font_name(ufo))
-            self.remove_overlaps(ufo)
+        self.remove_overlaps(ufos)
 
         start_t = time.time()
         for ufo in ufos:
