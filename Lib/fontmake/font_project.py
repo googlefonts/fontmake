@@ -110,8 +110,7 @@ class FontProject:
 
         self.decompose_glyphs(ufos)
         self.remove_overlaps(ufos)
-        for ufo in ufos:
-            self.save_otf(ufo, **kwargs)
+        self.save_otfs(ufos, **kwargs)
 
     def build_ttfs(self, ufos, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
@@ -126,8 +125,7 @@ class FontProject:
             font_to_quadratic(ufo, dump_stats=True)
         print('[took %f seconds]' % (time.time() - start_t))
 
-        for ufo in ufos:
-            self.save_otf(ufo, ttf=True, **kwargs)
+        self.save_otfs(ufos, ttf=True, **kwargs)
 
     def build_interpolatable_ttfs(self, ufos, **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines."""
@@ -139,28 +137,28 @@ class FontProject:
         fonts_to_quadratic(ufos, dump_stats=True)
         print('[took %f seconds]' % (time.time() - start_t))
 
-        for ufo in ufos:
-            self.save_otf(ufo, ttf=True, interpolatable=True, **kwargs)
+        self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
-    def save_otf(
-            self, ufo, ttf=False, interpolatable=False, mti_paths=None,
+    def save_otfs(
+            self, ufos, ttf=False, interpolatable=False, mti_paths=None,
             is_instance=False, use_afdko=False, subset=True):
-        """Write an OpenType binary."""
-
-        name = self._font_name(ufo)
-        print('>> Saving %s for %s' % (ext.upper(), name))
-        mti_feafiles = mti_paths and mti_paths.get(name)
+        """Write OpenType binaries."""
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
-        otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
         otf_compiler = compileTTF if ttf else compileOTF
-        otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                           mtiFeaFiles=mti_feafiles)
-        otf.save(otf_path)
 
-        if subset:
-            self.subset_otf_from_ufo(otf_path, ufo)
+        for ufo in ufos:
+            name = self._font_name(ufo)
+            print('>> Saving %s for %s' % (ext.upper(), name))
+
+            otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
+            otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
+                               mtiFeaFiles=(mti_paths and mti_paths.get(name)))
+            otf.save(otf_path)
+
+            if subset:
+                self.subset_otf_from_ufo(otf_path, ufo)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphs2ufo."""
