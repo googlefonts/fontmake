@@ -40,7 +40,8 @@ class FontProject:
     def __init__(self, compatible=False):
         self.compatible = compatible
 
-    def preprocess(self, glyphs_path):
+    @staticmethod
+    def preprocess(glyphs_path):
         """Return Glyphs source with illegal glyph/class names changed."""
 
         with open(glyphs_path) as fp:
@@ -77,9 +78,9 @@ class FontProject:
     def remove_overlaps(self, ufo):
         """Remove overlaps in a UFO's glyphs' contours, decomposing first."""
 
+        manager = BooleanOperationManager()
         for glyph in ufo:
             self.decompose_glyph(ufo, glyph)
-            manager = BooleanOperationManager()
             contours = list(glyph)
             glyph.clearContours()
             manager.union(contours, glyph.getPointPen())
