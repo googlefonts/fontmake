@@ -244,7 +244,7 @@ class FontProject:
         return os.path.join(dir_prefix + ext)
 
     def _output_path(self, ufo, ext, is_instance=False):
-        """Generate output path for a UFO with given directory and extension."""
+        """Generate output path for a font file with given extension."""
 
         out_dir = self._output_dir(ext, is_instance)
         if not os.path.exists(out_dir):
