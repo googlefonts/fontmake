@@ -59,18 +59,17 @@ class FontProject:
             text = text.replace(old_name, new_name)
         return text
 
-    def build_masters(self, glyphs_path, is_italic=False):
-        """Build master UFOs from Glyphs source."""
-
-        master_dir = self._output_dir('ufo')
-        return build_masters(glyphs_path, master_dir, is_italic)
-
-    def build_instances(self, glyphs_path, is_italic=False):
-        """Build instance UFOs from Glyphs source."""
+    def build_ufos(self, glyphs_path, is_italic=False, interpolate=False):
+        """Build UFOs from Glyphs source."""
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
-        return build_instances(glyphs_path, master_dir, instance_dir, is_italic)
+        if interpolate:
+            return build_instances(glyphs_path, master_dir, instance_dir,
+                                   is_italic)
+        else:
+            return build_masters(glyphs_path, master_dir, is_italic,
+                                 designspace_instance_dir=instance_dir)
 
     def remove_overlaps(self, ufos):
         """Remove overlaps in UFOs' glyphs' contours."""
@@ -211,13 +210,8 @@ class FontProject:
             tmp_glyphs_file.write(glyphs_source)
             tmp_glyphs_file.seek(0)
 
-        if interpolate:
-            print('>> Interpolating master UFOs from Glyphs source')
-            ufos = self.build_instances(glyphs_path, is_italic)
-        else:
-            print('>> Loading master UFOs from Glyphs source')
-            ufos = self.build_masters(glyphs_path, is_italic)
-
+        print('>> Building UFOs from Glyphs source')
+        ufos = self.build_ufos(glyphs_path, is_italic, interpolate)
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
 
     def run_from_designspace(self, designspace_path, **kwargs):
