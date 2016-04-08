@@ -212,8 +212,6 @@ class FontProject:
             tmp_glyphs_file.seek(0)
 
         if interpolate:
-            assert 'ttf-interpolatable' not in kwargs['output'], (
-                'Should be generating interpolatable TTFs from masters')
             print('>> Interpolating master UFOs from Glyphs source')
             ufos = self.build_instances(glyphs_path, is_italic)
         else:
