@@ -154,7 +154,7 @@ class FontProject:
 
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
             otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                               mtiFeaFiles=mti_paths.get(name) if mti_paths else None)
+                               mtiFeaFiles=mti_paths[name] if mti_paths is not None else None)
             otf.save(otf_path)
 
             if subset:
@@ -244,8 +244,9 @@ class FontProject:
                 ufo_paths = ufos
             ufos = [Font(path) for path in ufo_paths]
 
-        mti_paths = {}
+        mti_paths = None
         if mti_source:
+            mti_paths = {}
             mti_paths = plistlib.readPlist(mti_source)
             src_dir = os.path.dirname(mti_source)
             for paths in mti_paths.values():
