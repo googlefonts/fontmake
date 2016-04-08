@@ -154,7 +154,7 @@ class FontProject:
 
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
             otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                               mtiFeaFiles=(mti_paths and mti_paths.get(name)))
+                               mtiFeaFiles=mti_paths.get(name) if mti_paths else None)
             otf.save(otf_path)
 
             if subset:
