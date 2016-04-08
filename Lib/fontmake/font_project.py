@@ -23,7 +23,7 @@ import tempfile
 import time
 
 from booleanOperations import BooleanOperationManager
-from cu2qu.ufo import fonts_to_quadratic
+from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
 from fontTools.misc.transform import Identity
@@ -72,21 +72,25 @@ class FontProject:
         instance_dir = self._output_dir('ufo', is_instance=True)
         return build_instances(glyphs_path, master_dir, instance_dir, is_italic)
 
-    def remove_overlaps(self, ufo):
-        """Remove overlaps in a UFO's glyphs' contours, decomposing first."""
+    def remove_overlaps(self, ufos):
+        """Remove overlaps in UFOs' glyphs' contours."""
 
         manager = BooleanOperationManager()
-        for glyph in ufo:
-            self.decompose_glyph(ufo, glyph)
-            contours = list(glyph)
-            glyph.clearContours()
-            manager.union(contours, glyph.getPointPen())
+        for ufo in ufos:
+            print('>> Removing overlaps for ' + self._font_name(ufo))
+            for glyph in ufo:
+                contours = list(glyph)
+                glyph.clearContours()
+                manager.union(contours, glyph.getPointPen())
 
-    def decompose_glyph(self, ufo, glyph):
-        """Moves the components of a glyph to its outline."""
+    def decompose_glyphs(self, ufos):
+        """Move components of UFOs' glyphs to their outlines."""
 
-        self._deep_copy_contours(ufo, glyph, glyph, Identity)
-        glyph.clearComponents()
+        for ufo in ufos:
+            print('>> Decomposing glyphs for ' + self._font_name(ufo))
+            for glyph in ufo:
+                self._deep_copy_contours(ufo, glyph, glyph, Identity)
+                glyph.clearComponents()
 
     def _deep_copy_contours(self, ufo, parent, component, transformation):
         """Copy contours from component to parent, including nested components."""
@@ -99,19 +103,62 @@ class FontProject:
         if component != parent:
             component.draw(TransformPen(parent.getPen(), transformation))
 
-    def save_otf(self, ufo, ttf=False, is_instance=False, use_afdko=False,
-                 mti_feafiles=None, subset=True):
-        """Build OpenType binary from UFO."""
+    def build_otfs(self, ufos, **kwargs):
+        """Build OpenType binaries with CFF outlines."""
 
+        print('\n>> Building OTFs')
+
+        self.decompose_glyphs(ufos)
+        self.remove_overlaps(ufos)
+        self.save_otfs(ufos, **kwargs)
+
+    def build_ttfs(self, ufos, **kwargs):
+        """Build OpenType binaries with TrueType outlines."""
+
+        print('\n>> Building TTFs')
+
+        self.remove_overlaps(ufos)
+
+        start_t = time.time()
+        for ufo in ufos:
+            print('>> Converting curves for ' + self._font_name(ufo))
+            font_to_quadratic(ufo, dump_stats=True)
+        print('[took %f seconds]' % (time.time() - start_t))
+
+        self.save_otfs(ufos, ttf=True, **kwargs)
+
+    def build_interpolatable_ttfs(self, ufos, **kwargs):
+        """Build OpenType binaries with interpolatable TrueType outlines."""
+
+        print('\n>> Building interpolation-compatible TTFs')
+
+        print('>> Converting curves to quadratic')
+        start_t = time.time()
+        fonts_to_quadratic(ufos, dump_stats=True)
+        print('[took %f seconds]' % (time.time() - start_t))
+
+        self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
+
+    def save_otfs(
+            self, ufos, ttf=False, interpolatable=False, mti_paths=None,
+            is_instance=False, use_afdko=False, subset=True):
+        """Write OpenType binaries."""
+
+        ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
-        otf_path = self._output_path(ufo, 'ttf' if ttf else 'otf', is_instance)
         otf_compiler = compileTTF if ttf else compileOTF
-        otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                           mtiFeaFiles=mti_feafiles)
-        otf.save(otf_path)
 
-        if subset:
-            self.subset_otf_from_ufo(otf_path, ufo)
+        for ufo in ufos:
+            name = self._font_name(ufo)
+            print('>> Saving %s for %s' % (ext.upper(), name))
+
+            otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
+            otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
+                               mtiFeaFiles=(mti_paths and mti_paths.get(name)))
+            otf.save(otf_path)
+
+            if subset:
+                self.subset_otf_from_ufo(otf_path, ufo)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphs2ufo."""
@@ -185,20 +232,17 @@ class FontProject:
             ufos.extend(result.values())
         self.run_from_ufos(ufos, **kwargs)
 
-    def run_from_ufos(
-            self, ufos, compatible=False, remove_overlaps=True, mti_source=None,
-            **kwargs):
+    def run_from_ufos(self, ufos, output=(), mti_source=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
-        if isinstance(ufos, str):
-            ufos = glob.glob(ufos)
-        if isinstance(ufos[0], str):
-            ufos = [Font(ufo) for ufo in ufos]
-
-        if remove_overlaps and not compatible:
-            for ufo in ufos:
-                print('>> Removing overlaps for ' + self._font_name(ufo))
-                self.remove_overlaps(ufo)
+        if hasattr(ufos[0], 'path'):
+            ufo_paths = [ufo.path for ufo in ufos]
+        else:
+            if isinstance(ufos, str):
+                ufo_paths = glob.glob(ufos)
+            else:
+                ufo_paths = ufos
+            ufos = [Font(path) for path in ufo_paths]
 
         mti_paths = {}
         if mti_source:
@@ -208,42 +252,37 @@ class FontProject:
                 for table in ('GDEF', 'GPOS', 'GSUB'):
                     paths[table] = os.path.join(src_dir, paths[table])
 
-        for ufo in ufos:
-            name = self._font_name(ufo)
-            print('>> Saving OTF for ' + name)
-            self.save_otf(ufo, mti_feafiles=mti_paths.get(name), **kwargs)
+        need_reload = False
+        if 'otf' in output:
+            self.build_otfs(ufos, mti_paths=mti_paths, **kwargs)
+            need_reload = True
 
-        start_t = time.time()
-        if compatible:
-            print('>> Converting curves to quadratic')
-            fonts_to_quadratic(ufos, dump_stats=True)
-        else:
-            for ufo in ufos:
-                print('>> Converting curves for ' + self._font_name(ufo))
-                fonts_to_quadratic([ufo], dump_stats=True)
-        t = time.time() - start_t
-        print('[took %f seconds]' % t)
+        if 'ttf' in output:
+            if need_reload:
+                ufos = [Font(path) for path in ufo_paths]
+            self.build_ttfs(ufos, mti_paths=mti_paths, **kwargs)
+            need_reload = True
 
-        for ufo in ufos:
-            name = self._font_name(ufo)
-            print('>> Saving TTF for ' + name)
-            self.save_otf(
-                ufo, ttf=True, mti_feafiles=mti_paths.get(name), **kwargs)
+        if 'ttf-interpolatable' in output:
+            if need_reload:
+                ufos = [Font(path) for path in ufo_paths]
+            self.build_interpolatable_ttfs(ufos, mti_paths=mti_paths, **kwargs)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
 
-    def _output_dir(self, ext, is_instance=False):
+    def _output_dir(self, ext, is_instance=False, interpolatable=False):
         """Generate an output directory."""
 
         dir_prefix = 'instance_' if is_instance else 'master_'
-        return os.path.join(dir_prefix + ext)
+        dir_suffix = '_interpolatable' if interpolatable else ''
+        return dir_prefix + ext + dir_suffix
 
-    def _output_path(self, ufo, ext, is_instance=False):
-        """Generate output path for a UFO with given directory and extension."""
+    def _output_path(self, ufo, ext, is_instance=False, interpolatable=False):
+        """Generate output path for a font file with given extension."""
 
-        out_dir = self._output_dir(ext, is_instance)
+        out_dir = self._output_dir(ext, is_instance, interpolatable)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))
