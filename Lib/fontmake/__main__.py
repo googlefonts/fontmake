@@ -40,18 +40,20 @@ def main():
 
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
+
+    elif designspace_path:
+        project.run_from_designspace(designspace_path, **args)
+
     else:
         excluded = 'interpolate'
         if args[excluded]:
             raise ValueError(
-                '"%s" argument only available for Glyphs source' % excluded)
+                '"%s" argument only available for Glyphs or Designspace source'
+                % excluded)
         del args[excluded]
 
     if ufo_paths:
         project.run_from_ufos(ufo_paths, **args)
-
-    elif designspace_path:
-        project.run_from_designspace(designspace_path, **args)
 
 
 if __name__ == '__main__':

@@ -30,6 +30,7 @@ from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
 from glyphs2ufo.glyphslib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
+from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
@@ -214,16 +215,22 @@ class FontProject:
         ufos = self.build_ufos(glyphs_path, is_italic, interpolate)
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
 
-    def run_from_designspace(self, designspace_path, **kwargs):
+    def run_from_designspace(
+            self, designspace_path, interpolate=False, **kwargs):
         """Run toolchain from a MutatorMath design space document to OpenType
         binaries.
         """
 
-        print('>> Interpolating master UFOs from design space')
-        results = build_designspace(designspace_path)
-        ufos = []
-        for result in results:
-            ufos.extend(result.values())
+        if interpolate:
+            print('>> Interpolating master UFOs from design space')
+            results = build_designspace(
+                designspace_path, outputUFOFormatVersion=3)
+            ufos = []
+            for result in results:
+                ufos.extend(result.values())
+        else:
+            reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
+            ufos = reader.getSourcePaths()
         self.run_from_ufos(ufos, is_instance=True, **kwargs)
 
     def run_from_ufos(self, ufos, output=(), mti_source=None, **kwargs):
