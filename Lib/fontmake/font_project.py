@@ -236,6 +236,8 @@ class FontProject:
     def run_from_ufos(self, ufos, output=(), mti_source=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
+        if set(output) == set(['ufo']):
+            return
         if hasattr(ufos[0], 'path'):
             ufo_paths = [ufo.path for ufo in ufos]
         else:
