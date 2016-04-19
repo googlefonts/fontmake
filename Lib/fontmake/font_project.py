@@ -224,7 +224,7 @@ class FontProject:
         ufos = []
         for result in results:
             ufos.extend(result.values())
-        self.run_from_ufos(ufos, **kwargs)
+        self.run_from_ufos(ufos, is_instance=True, **kwargs)
 
     def run_from_ufos(self, ufos, output=(), mti_source=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
