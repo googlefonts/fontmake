@@ -8,5 +8,6 @@ cython
 git+https://github.com/googlei18n/cu2qu.git
 git+https://github.com/googlei18n/glyphs2ufo.git
 git+https://github.com/googlei18n/ufo2ft.git
+git+https://github.com/LettError/MutatorMath.git
 git+https://github.com/typemytype/booleanOperations.git
 git+https://github.com/typesupply/defcon.git@ufo3
