@@ -27,7 +27,7 @@ from booleanOperations import BooleanOperationManager
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
-from fontTools.misc.loggingTools import Timer
+from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
 from glyphs2ufo.glyphslib import build_masters, build_instances
@@ -36,7 +36,7 @@ from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
-timer = Timer(logging.getLogger('fontmake'), level=logging.WARNING)
+timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
 
 
 class FontProject:
@@ -65,8 +65,8 @@ class FontProject:
         return text
 
     def __init__(self, timing=False):
-        if not timing:
-            timer.logger.disabled = True
+        if timing:
+            configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
     def build_ufos(self, glyphs_path, is_italic=False, interpolate=False):
