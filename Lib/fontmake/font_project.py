@@ -16,6 +16,7 @@
 from __future__ import print_function, division, absolute_import
 
 import glob
+import logging
 import os
 import plistlib
 import re
@@ -26,6 +27,7 @@ from booleanOperations import BooleanOperationManager
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
+from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
 from glyphs2ufo.glyphslib import build_masters, build_instances
@@ -33,6 +35,8 @@ from mutatorMath.ufo import build as build_designspace
 from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
+
+timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
 
 
 class FontProject:
@@ -60,6 +64,11 @@ class FontProject:
             text = text.replace(old_name, new_name)
         return text
 
+    def __init__(self, timing=False):
+        if timing:
+            configLogger(logger=timer.logger, level=logging.DEBUG)
+
+    @timer()
     def build_ufos(self, glyphs_path, is_italic=False, interpolate=False):
         """Build UFOs from Glyphs source."""
 
@@ -72,6 +81,7 @@ class FontProject:
             return build_masters(glyphs_path, master_dir, is_italic,
                                  designspace_instance_dir=instance_dir)
 
+    @timer()
     def remove_overlaps(self, ufos):
         """Remove overlaps in UFOs' glyphs' contours."""
 
@@ -83,6 +93,7 @@ class FontProject:
                 glyph.clearContours()
                 manager.union(contours, glyph.getPointPen())
 
+    @timer()
     def decompose_glyphs(self, ufos):
         """Move components of UFOs' glyphs to their outlines."""
 
@@ -103,6 +114,15 @@ class FontProject:
         if component != parent:
             component.draw(TransformPen(parent.getPen(), transformation))
 
+    @timer()
+    def convert_curves(self, ufos, compatible=False):
+        if compatible:
+            fonts_to_quadratic(ufos, dump_stats=True)
+        else:
+            for ufo in ufos:
+                print('>> Converting curves for ' + self._font_name(ufo))
+                font_to_quadratic(ufo, dump_stats=True)
+
     def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""
 
@@ -118,13 +138,7 @@ class FontProject:
         print('\n>> Building TTFs')
 
         self.remove_overlaps(ufos)
-
-        start_t = time.time()
-        for ufo in ufos:
-            print('>> Converting curves for ' + self._font_name(ufo))
-            font_to_quadratic(ufo, dump_stats=True)
-        print('[took %f seconds]' % (time.time() - start_t))
-
+        self.convert_curves(ufos)
         self.save_otfs(ufos, ttf=True, **kwargs)
 
     def build_interpolatable_ttfs(self, ufos, **kwargs):
@@ -132,13 +146,10 @@ class FontProject:
 
         print('\n>> Building interpolation-compatible TTFs')
 
-        print('>> Converting curves to quadratic')
-        start_t = time.time()
-        fonts_to_quadratic(ufos, dump_stats=True)
-        print('[took %f seconds]' % (time.time() - start_t))
-
+        self.convert_curves(ufos, compatible=True)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
+    @timer()
     def save_otfs(
             self, ufos, ttf=False, interpolatable=False, mti_paths=None,
             is_instance=False, use_afdko=False, subset=True):
@@ -153,8 +164,9 @@ class FontProject:
             print('>> Saving %s for %s' % (ext.upper(), name))
 
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
-            otf = otf_compiler(ufo, featureCompilerClass=fea_compiler,
-                               mtiFeaFiles=mti_paths[name] if mti_paths is not None else None)
+            otf = otf_compiler(
+                ufo, featureCompilerClass=fea_compiler,
+                mtiFeaFiles=mti_paths[name] if mti_paths is not None else None)
             otf.save(otf_path)
 
             if subset:
