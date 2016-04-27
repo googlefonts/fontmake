@@ -30,7 +30,7 @@ from fontTools import subset
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
-from glyphs2ufo.glyphslib import build_masters, build_instances
+from glyphsLib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
 from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
@@ -173,7 +173,7 @@ class FontProject:
                 self.subset_otf_from_ufo(otf_path, ufo)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
-        """Subset a font using export flags set by glyphs2ufo."""
+        """Subset a font using export flags set by glyphsLib."""
 
         font_lib_prefix = 'com.schriftgestaltung.'
         glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
