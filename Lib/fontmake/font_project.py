@@ -30,6 +30,7 @@ from fontTools import subset
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
+from fontTools.ttLib import TTFont
 from glyphsLib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
 from mutatorMath.ufo.document import DesignSpaceDocumentReader
@@ -37,6 +38,9 @@ from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
 timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
+
+PUBLIC_PREFIX = 'public.'
+GLYPHS_PREFIX = 'com.schriftgestaltung.'
 
 
 class FontProject:
@@ -171,11 +175,12 @@ class FontProject:
 
             if subset:
                 self.subset_otf_from_ufo(otf_path, ufo)
+            self.rename_glyphs_from_ufo(otf_path, ufo)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
 
-        font_lib_prefix = 'com.schriftgestaltung.'
+        font_lib_prefix = GLYPHS_PREFIX
         glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
 
         keep_glyphs = set(ufo.lib.get(font_lib_prefix + 'Keep Glyphs', []))
@@ -200,14 +205,36 @@ class FontProject:
         opt.recalc_timestamp = True
         opt.canonical_order = True
 
-        opt.glyph_names = ufo.lib.get(
-            font_lib_prefix + "Don't use Production Names")
+        opt.glyph_names = True
 
         font = subset.load_font(otf_path, opt, lazy=False)
         subsetter = subset.Subsetter(options=opt)
         subsetter.populate(glyphs=include)
         subsetter.subset(font)
         subset.save_font(font, otf_path, opt)
+
+    def rename_glyphs_from_ufo(self, otf_path, ufo):
+        """Rename glyphs using glif.lib.public.postscriptNames in UFO."""
+
+        if ufo.lib.get(GLYPHS_PREFIX + "Don't use Production Names"):
+            return
+
+        rename_map = {}
+        for glyph in ufo:
+            production_name = glyph.lib.get(PUBLIC_PREFIX + 'postscriptName')
+            if production_name:
+                rename_map[glyph.name] = production_name
+        rename = lambda names: [rename_map.get(n, n) for n in names]
+
+        font = TTFont(otf_path)
+        font.setGlyphOrder(rename(font.getGlyphOrder()))
+        if 'CFF ' in font:
+            cff = font['CFF '].cff.topDictIndex[0]
+            char_strings = cff.CharStrings.charStrings
+            cff.CharStrings.charStrings = {
+                rename_map.get(n, n): v for n, v in char_strings.items()}
+            cff.charset = rename(cff.charset)
+        font.save(otf_path)
 
     def run_from_glyphs(
             self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
@@ -315,7 +342,6 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
             return
 
         import subprocess
-        from fontTools.ttLib import TTFont
         from fontTools.misc.py23 import tostr
 
         fd, outline_path = tempfile.mkstemp()
