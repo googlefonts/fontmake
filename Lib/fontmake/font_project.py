@@ -61,10 +61,10 @@ class FontProject:
                 printed_names.append('...')
             print('Found %s glyph names containing hyphens: %s' % (
                 num_names, ', '.join(printed_names)))
-            print('Replacing all hyphens with underscores.')
+            print('Replacing all hyphens with periods.')
 
         for old_name in names:
-            new_name = old_name.replace('-', '_')
+            new_name = old_name.replace('-', '.')
             text = text.replace(old_name, new_name)
         return text
 
