@@ -1,10 +1,8 @@
-# for ufo2ft
-git+https://github.com/behdad/fonttools.git
-
 # for booleanOperations
 cython
 
 # direct dependencies
+git+https://github.com/behdad/fonttools.git
 git+https://github.com/googlei18n/cu2qu.git
 git+https://github.com/googlei18n/glyphs2ufo.git
 git+https://github.com/googlei18n/ufo2ft.git

@@ -30,6 +30,7 @@ from fontTools import subset
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
+from fontTools.ttLib import TTFont
 from glyphsLib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
 from mutatorMath.ufo.document import DesignSpaceDocumentReader
@@ -37,6 +38,9 @@ from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
 timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
+
+PUBLIC_PREFIX = 'public.'
+GLYPHS_PREFIX = 'com.schriftgestaltung.'
 
 
 class FontProject:
@@ -57,10 +61,10 @@ class FontProject:
                 printed_names.append('...')
             print('Found %s glyph names containing hyphens: %s' % (
                 num_names, ', '.join(printed_names)))
-            print('Replacing all hyphens with underscores.')
+            print('Replacing all hyphens with periods.')
 
         for old_name in names:
-            new_name = old_name.replace('-', '_')
+            new_name = old_name.replace('-', '.')
             text = text.replace(old_name, new_name)
         return text
 
@@ -171,11 +175,12 @@ class FontProject:
 
             if subset:
                 self.subset_otf_from_ufo(otf_path, ufo)
+            self.rename_glyphs_from_ufo(otf_path, ufo)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
 
-        font_lib_prefix = 'com.schriftgestaltung.'
+        font_lib_prefix = GLYPHS_PREFIX
         glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
 
         keep_glyphs = set(ufo.lib.get(font_lib_prefix + 'Keep Glyphs', []))
@@ -200,14 +205,66 @@ class FontProject:
         opt.recalc_timestamp = True
         opt.canonical_order = True
 
-        opt.glyph_names = ufo.lib.get(
-            font_lib_prefix + "Don't use Production Names")
+        opt.glyph_names = True
 
         font = subset.load_font(otf_path, opt, lazy=False)
         subsetter = subset.Subsetter(options=opt)
         subsetter.populate(glyphs=include)
         subsetter.subset(font)
         subset.save_font(font, otf_path, opt)
+
+    def rename_glyphs_from_ufo(self, otf_path, ufo):
+        """Rename glyphs using glif.lib.public.postscriptNames in UFO."""
+
+        if ufo.lib.get(GLYPHS_PREFIX + "Don't use Production Names"):
+            return
+
+        rename_map = {
+            glyph.name: self.build_production_name(ufo, glyph) for glyph in ufo}
+        rename = lambda names: [rename_map[n] for n in names]
+
+        font = TTFont(otf_path)
+        font.setGlyphOrder(rename(font.getGlyphOrder()))
+        if 'CFF ' in font:
+            cff = font['CFF '].cff.topDictIndex[0]
+            char_strings = cff.CharStrings.charStrings
+            cff.CharStrings.charStrings = {
+                rename_map.get(n, n): v for n, v in char_strings.items()}
+            cff.charset = rename(cff.charset)
+        font.save(otf_path)
+
+    def build_production_name(self, ufo, glyph):
+        """Build a production name for a single glyph."""
+
+        # use name from Glyphs source if available
+        production_name = glyph.lib.get(PUBLIC_PREFIX + 'postscriptName')
+        if production_name:
+            return production_name
+
+        # use name derived from unicode value
+        unicode_val = glyph.unicode
+        if glyph.unicode is not None:
+            return '%s%04X' % (
+                'u' if unicode_val > 0xffff else 'uni', unicode_val)
+
+        # use production name + last (non-script) suffix if possible
+        parts = glyph.name.rsplit('.', 1)
+        if len(parts) == 2 and parts[0] in ufo:
+            return '%s.%s' % (
+                self.build_production_name(ufo, ufo[parts[0]]), parts[1])
+
+        # use ligature name, making sure to look up components with suffixes
+        parts = glyph.name.split('.', 1)
+        if len(parts) == 2:
+            liga_parts = ['%s.%s' % (n, parts[1]) for n in parts[0].split('_')]
+        else:
+            liga_parts = glyph.name.split('_')
+        if all(n in ufo for n in liga_parts):
+            unicode_vals = [ufo[n].unicode for n in liga_parts]
+            if all(unicode_vals):
+                return 'uni' + ''.join('%04X' % v for v in unicode_vals)
+
+        return glyph.name
 
     def run_from_glyphs(
             self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
@@ -315,7 +372,6 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
             return
 
         import subprocess
-        from fontTools.ttLib import TTFont
         from fontTools.misc.py23 import tostr
 
         fd, outline_path = tempfile.mkstemp()
