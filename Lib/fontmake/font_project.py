@@ -219,12 +219,9 @@ class FontProject:
         if ufo.lib.get(GLYPHS_PREFIX + "Don't use Production Names"):
             return
 
-        rename_map = {}
-        for glyph in ufo:
-            production_name = glyph.lib.get(PUBLIC_PREFIX + 'postscriptName')
-            if production_name:
-                rename_map[glyph.name] = production_name
-        rename = lambda names: [rename_map.get(n, n) for n in names]
+        rename_map = {
+            glyph.name: self.build_production_name(ufo, glyph) for glyph in ufo}
+        rename = lambda names: [rename_map[n] for n in names]
 
         font = TTFont(otf_path)
         font.setGlyphOrder(rename(font.getGlyphOrder()))
@@ -235,6 +232,39 @@ class FontProject:
                 rename_map.get(n, n): v for n, v in char_strings.items()}
             cff.charset = rename(cff.charset)
         font.save(otf_path)
+
+    def build_production_name(self, ufo, glyph):
+        """Build a production name for a single glyph."""
+
+        # use name from Glyphs source if available
+        production_name = glyph.lib.get(PUBLIC_PREFIX + 'postscriptName')
+        if production_name:
+            return production_name
+
+        # use name derived from unicode value
+        unicode_val = glyph.unicode
+        if glyph.unicode is not None:
+            return '%s%04X' % (
+                'u' if unicode_val > 0xffff else 'uni', unicode_val)
+
+        # use production name + last (non-script) suffix if possible
+        parts = glyph.name.rsplit('.', 1)
+        if len(parts) == 2 and parts[0] in ufo:
+            return '%s.%s' % (
+                self.build_production_name(ufo, ufo[parts[0]]), parts[1])
+
+        # use ligature name, making sure to look up components with suffixes
+        parts = glyph.name.split('.', 1)
+        if len(parts) == 2:
+            liga_parts = ['%s.%s' % (n, parts[1]) for n in parts[0].split('_')]
+        else:
+            liga_parts = glyph.name.split('_')
+        if all(n in ufo for n in liga_parts):
+            unicode_vals = [ufo[n].unicode for n in liga_parts]
+            if all(unicode_vals):
+                return 'uni' + ''.join('%04X' % v for v in unicode_vals)
+
+        return glyph.name
 
     def run_from_glyphs(
             self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
