@@ -182,10 +182,7 @@ class FontProject:
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
 
-        font_lib_prefix = GLYPHS_PREFIX
-        glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
-
-        keep_glyphs = set(ufo.lib.get(font_lib_prefix + 'Keep Glyphs', []))
+        keep_glyphs = set(ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs', []))
 
         include = []
         for old_name, new_name in zip(
@@ -193,7 +190,7 @@ class FontProject:
                 TTFont(otf_path).getGlyphOrder()):
             glyph = ufo[old_name]
             if ((keep_glyphs and old_name not in keep_glyphs) or
-                not glyph.lib.get(glyph_lib_prefix + 'Export', True)):
+                not glyph.lib.get(GLYPHS_PREFIX + 'Glyphs.Export', True)):
                 continue
             include.append(new_name)
 
