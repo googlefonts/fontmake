@@ -30,6 +30,7 @@ from fontTools import subset
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Identity
 from fontTools.pens.transformPen import TransformPen
+from fontTools.ttLib import TTFont
 from glyphsLib import build_masters, build_instances
 from mutatorMath.ufo import build as build_designspace
 from mutatorMath.ufo.document import DesignSpaceDocumentReader
@@ -37,6 +38,9 @@ from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
 timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
+
+PUBLIC_PREFIX = 'public.'
+GLYPHS_PREFIX = 'com.schriftgestaltung.'
 
 
 class FontProject:
@@ -57,10 +61,10 @@ class FontProject:
                 printed_names.append('...')
             print('Found %s glyph names containing hyphens: %s' % (
                 num_names, ', '.join(printed_names)))
-            print('Replacing all hyphens with underscores.')
+            print('Replacing all hyphens with periods.')
 
         for old_name in names:
-            new_name = old_name.replace('-', '_')
+            new_name = old_name.replace('-', '.')
             text = text.replace(old_name, new_name)
         return text
 
@@ -166,7 +170,10 @@ class FontProject:
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
             otf = otf_compiler(
                 ufo, featureCompilerClass=fea_compiler,
-                mtiFeaFiles=mti_paths[name] if mti_paths is not None else None)
+                mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
+                glyphOrder=ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
+                useProductionNames=not ufo.lib.get(
+                    GLYPHS_PREFIX + "Don't use Production Names"))
             otf.save(otf_path)
 
             if subset:
@@ -175,19 +182,17 @@ class FontProject:
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
 
-        font_lib_prefix = 'com.schriftgestaltung.'
-        glyph_lib_prefix = font_lib_prefix + 'Glyphs.'
-
-        keep_glyphs = set(ufo.lib.get(font_lib_prefix + 'Keep Glyphs', []))
+        keep_glyphs = set(ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs', []))
 
         include = []
-        glyph_order = ufo.lib['public.glyphOrder']
-        for glyph_name in glyph_order:
-            glyph = ufo[glyph_name]
-            if ((keep_glyphs and glyph_name not in keep_glyphs) or
-                not glyph.lib.get(glyph_lib_prefix + 'Export', True)):
+        for old_name, new_name in zip(
+                ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
+                TTFont(otf_path).getGlyphOrder()):
+            glyph = ufo[old_name]
+            if ((keep_glyphs and old_name not in keep_glyphs) or
+                not glyph.lib.get(GLYPHS_PREFIX + 'Glyphs.Export', True)):
                 continue
-            include.append(glyph_name)
+            include.append(new_name)
 
         # copied from nototools.subset
         opt = subset.Options()
@@ -200,8 +205,7 @@ class FontProject:
         opt.recalc_timestamp = True
         opt.canonical_order = True
 
-        opt.glyph_names = ufo.lib.get(
-            font_lib_prefix + "Don't use Production Names")
+        opt.glyph_names = True
 
         font = subset.load_font(otf_path, opt, lazy=False)
         subsetter = subset.Subsetter(options=opt)
@@ -315,7 +319,6 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
             return
 
         import subprocess
-        from fontTools.ttLib import TTFont
         from fontTools.misc.py23 import tostr
 
         fd, outline_path = tempfile.mkstemp()
