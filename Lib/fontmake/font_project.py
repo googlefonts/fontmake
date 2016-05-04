@@ -73,16 +73,15 @@ class FontProject:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_ufos(self, glyphs_path, is_italic=False, interpolate=False):
+    def build_ufos(self, glyphs_path, interpolate=False):
         """Build UFOs from Glyphs source."""
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
         if interpolate:
-            return build_instances(glyphs_path, master_dir, instance_dir,
-                                   is_italic)
+            return build_instances(glyphs_path, master_dir, instance_dir)
         else:
-            return build_masters(glyphs_path, master_dir, is_italic,
+            return build_masters(glyphs_path, master_dir,
                                  designspace_instance_dir=instance_dir)
 
     @timer()
@@ -217,8 +216,6 @@ class FontProject:
             self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
-        is_italic = 'Italic' in glyphs_path
-
         if preprocess:
             print('>> Checking Glyphs source for illegal glyph names')
             glyphs_source = self.preprocess(glyphs_path)
@@ -228,7 +225,7 @@ class FontProject:
             tmp_glyphs_file.seek(0)
 
         print('>> Building UFOs from Glyphs source')
-        ufos = self.build_ufos(glyphs_path, is_italic, interpolate)
+        ufos = self.build_ufos(glyphs_path, interpolate)
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
 
     def run_from_designspace(
