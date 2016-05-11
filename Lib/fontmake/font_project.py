@@ -21,7 +21,6 @@ import os
 import plistlib
 import re
 import tempfile
-import time
 
 from booleanOperations import BooleanOperationManager
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
