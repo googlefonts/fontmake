@@ -21,7 +21,6 @@ import os
 import plistlib
 import re
 import tempfile
-import time
 
 from booleanOperations import BooleanOperationManager
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
@@ -120,11 +119,11 @@ class FontProject:
     @timer()
     def convert_curves(self, ufos, compatible=False):
         if compatible:
-            fonts_to_quadratic(ufos, dump_stats=True)
+            fonts_to_quadratic(ufos, reverse_direction=True, dump_stats=True)
         else:
             for ufo in ufos:
                 print('>> Converting curves for ' + self._font_name(ufo))
-                font_to_quadratic(ufo, dump_stats=True)
+                font_to_quadratic(ufo, reverse_direction=True, dump_stats=True)
 
     def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""

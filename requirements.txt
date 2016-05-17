@@ -1,12 +1,20 @@
+# for fontMath
+git+https://github.com/robofab-developers/robofab.git
+
+# for MutatorMath
+git+https://github.com/typesupply/fontMath.git@ufo3
+git+https://github.com/unified-font-object/ufoLib.git
+
 # for ufo2ft
 git+https://github.com/behdad/fonttools.git
+git+https://github.com/googlei18n/compreffor.git
 
 # for booleanOperations
 cython
 
 # direct dependencies
 git+https://github.com/googlei18n/cu2qu.git
-git+https://github.com/googlei18n/glyphs2ufo.git
+git+https://github.com/googlei18n/glyphsLib.git
 git+https://github.com/googlei18n/ufo2ft.git
 git+https://github.com/LettError/MutatorMath.git
 git+https://github.com/typemytype/booleanOperations.git
