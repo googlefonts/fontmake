@@ -1,6 +1,3 @@
-# for fontMath
-git+https://github.com/robofab-developers/robofab.git
-
 # for MutatorMath
 git+https://github.com/typesupply/fontMath.git@ufo3
 git+https://github.com/unified-font-object/ufoLib.git
