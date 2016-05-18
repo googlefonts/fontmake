@@ -9,9 +9,21 @@ together compile fonts from various sources (.glyphs, .ufo) into binaries (.otf,
 
 ### Install
 
+Create new virtual environment (optional, but *recommended*):
 ```bash
-sudo python -m pip install -r requirements.txt
-sudo python setup.py develop
+python -m pip install --user virtualenv  # install virtualenv if not available
+python -m virtualenv env  # create environment named 'env' in current folder
+source env/bin/activate  # activate the environment (run `deactivate` to exit)
+```
+
+Install fontmake's dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+Install fontmake:
+```bash
+pip install -e .  # `-e` is for "editable" mode, only required for developers
 ```
 
 ### Run
