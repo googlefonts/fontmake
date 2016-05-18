@@ -1,3 +1,6 @@
+[![Travis Build Status](https://travis-ci.org/googlei18n/fontmake.svg)](https://travis-ci.org/googlei18n/fontmake)
+
+
 # fontmake
 
 This library provides a wrapper for several other Python libraries which
