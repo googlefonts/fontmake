@@ -1,0 +1,7897 @@
+FontDame GSUB table
+
+script table begin
+dev2	default		 15, 1, 20, 19, 3, 10, 6, 16, 0, 4, 18, 12, 5
+dev2	MAR 		 13, 15, 1, 20, 19, 3, 10, 6, 16, 0, 4, 18, 12
+dev2	NEP 		 14, 15, 1, 20, 19, 3, 11, 7, 17, 0, 4, 18, 12
+deva	default		 15, 1, 20, 2, 8, 21, 16, 0, 4, 18, 12, 5
+deva	MAR 		 13, 15, 1, 20, 2, 8, 21, 16, 0, 4, 18, 12
+deva	NEP 		 14, 15, 1, 20, 2, 9, 21, 17, 0, 4, 18, 12
+script table end
+
+
+feature table begin
+ 0	abvs	 25, 27, 28, 29, 31, 79
+ 1	akhn	 3
+ 2	blwf	 6
+ 3	blwf	 17
+ 4	blws	 87, 89, 90, 95, 96, 101, 102, 106
+ 5	calt	 118
+ 6	cjct	 19
+ 7	cjct	 20
+ 8	half	 9
+ 9	half	 10
+ 10	half	 11, 12
+ 11	half	 13, 14
+ 12	haln	 117
+ 13	locl	 0
+ 14	locl	 1
+ 15	nukt	 2
+ 16	pres	 21, 23
+ 17	pres	 22, 24
+ 18	psts	 110, 114, 116
+ 19	rkrf	 5, 7
+ 20	rphf	 4
+ 21	vatu	 15, 16, 17
+feature table end
+
+
+lookup	 0 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ladeva	ladevaMAR
+shadeva	shadevaMAR
+
+lookup end
+
+
+lookup	 1 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+jhadeva	jhadevaNEP
+fivedeva	fivedevaNEP
+eightdeva	eightdevaNEP
+ninedeva	ninedevaNEP
+jhanuktadeva	jhanuktadevaNEP
+jhaprehalfdeva	jhaprehalfdevaNEP
+jhanuktaprehalfdeva	jhanuktaprehalfdevaNEP
+jharadeva	jharadevaNEP
+jhanuktaradeva	jhanuktaradevaNEP
+jharaprehalfdeva	jharaprehalfdevaNEP
+jhanuktaraprehalfdeva	jhanuktaraprehalfdevaNEP
+
+lookup end
+
+
+lookup	 2 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ashortnuktadeva	ashortdeva	nuktadeva
+anuktadeva	adeva	nuktadeva
+aanuktadeva	aadeva	nuktadeva
+inuktadeva	ideva	nuktadeva
+iinuktadeva	iideva	nuktadeva
+unuktadeva	udeva	nuktadeva
+uunuktadeva	uudeva	nuktadeva
+rvocalicnuktadeva	rvocalicdeva	nuktadeva
+lvocalicnuktadeva	lvocalicdeva	nuktadeva
+ecandranuktadeva	ecandradeva	nuktadeva
+eshortnuktadeva	eshortdeva	nuktadeva
+enuktadeva	edeva	nuktadeva
+ainuktadeva	aideva	nuktadeva
+ocandranuktadeva	ocandradeva	nuktadeva
+oshortnuktadeva	oshortdeva	nuktadeva
+onuktadeva	odeva	nuktadeva
+aunuktadeva	audeva	nuktadeva
+qadeva	kadeva	nuktadeva
+khhadeva	khadeva	nuktadeva
+ghhadeva	gadeva	nuktadeva
+ghanuktadeva	ghadeva	nuktadeva
+nganuktadeva	ngadeva	nuktadeva
+canuktadeva	cadeva	nuktadeva
+chanuktadeva	chadeva	nuktadeva
+zadeva	jadeva	nuktadeva
+jhanuktadeva	jhadeva	nuktadeva
+nyanuktadeva	nyadeva	nuktadeva
+ttanuktadeva	ttadeva	nuktadeva
+tthanuktadeva	tthadeva	nuktadeva
+dddhadeva	ddadeva	nuktadeva
+rhadeva	ddhadeva	nuktadeva
+nnanuktadeva	nnadeva	nuktadeva
+tanuktadeva	tadeva	nuktadeva
+thanuktadeva	thadeva	nuktadeva
+danuktadeva	dadeva	nuktadeva
+dhanuktadeva	dhadeva	nuktadeva
+nnnadeva	nadeva	nuktadeva
+panuktadeva	padeva	nuktadeva
+fadeva	phadeva	nuktadeva
+banuktadeva	badeva	nuktadeva
+bhanuktadeva	bhadeva	nuktadeva
+manuktadeva	madeva	nuktadeva
+yyadeva	yadeva	nuktadeva
+rradeva	radeva	nuktadeva
+lanuktadeva	ladeva	nuktadeva
+llladeva	lladeva	nuktadeva
+vanuktadeva	vadeva	nuktadeva
+shanuktadeva	shadeva	nuktadeva
+ssanuktadeva	ssadeva	nuktadeva
+sanuktadeva	sadeva	nuktadeva
+hanuktadeva	hadeva	nuktadeva
+rrvocalicnuktadeva	rrvocalicdeva	nuktadeva
+llvocalicnuktadeva	llvocalicdeva	nuktadeva
+acandranuktadeva	acandradeva	nuktadeva
+lanuktadevaMAR	ladevaMAR	nuktadeva
+shanuktadevaMAR	shadevaMAR	nuktadeva
+jhanuktadevaNEP	jhadevaNEP	nuktadeva
+
+lookup end
+
+
+lookup	 3 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+kassadeva	kadeva	viramadeva	ssadeva
+janyadeva	jadeva	viramadeva	nyadeva
+
+lookup end
+
+
+lookup	 4 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+rephdeva	radeva	viramadeva
+
+lookup end
+
+
+lookup	 5 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+karadeva	kadeva	viramadeva	radeva
+kharadeva	khadeva	viramadeva	radeva
+garadeva	gadeva	viramadeva	radeva
+gharadeva	ghadeva	viramadeva	radeva
+ngaradeva	ngadeva	viramadeva	radeva
+caradeva	cadeva	viramadeva	radeva
+charadeva	chadeva	viramadeva	radeva
+jaradeva	jadeva	viramadeva	radeva
+jharadeva	jhadeva	viramadeva	radeva
+nyaradeva	nyadeva	viramadeva	radeva
+ttaradeva	ttadeva	viramadeva	radeva
+ttharadeva	tthadeva	viramadeva	radeva
+ddaradeva	ddadeva	viramadeva	radeva
+ddharadeva	ddhadeva	viramadeva	radeva
+nnaradeva	nnadeva	viramadeva	radeva
+taradeva	tadeva	viramadeva	radeva
+tharadeva	thadeva	viramadeva	radeva
+daradeva	dadeva	viramadeva	radeva
+dharadeva	dhadeva	viramadeva	radeva
+naradeva	nadeva	viramadeva	radeva
+nanuktaradeva	nnnadeva	viramadeva	radeva
+paradeva	padeva	viramadeva	radeva
+pharadeva	phadeva	viramadeva	radeva
+baradeva	badeva	viramadeva	radeva
+bharadeva	bhadeva	viramadeva	radeva
+maradeva	madeva	viramadeva	radeva
+yaradeva	yadeva	viramadeva	radeva
+raradeva	radeva	viramadeva	radeva
+ranuktaradeva	rradeva	viramadeva	radeva
+laradeva	ladeva	viramadeva	radeva
+llaradeva	lladeva	viramadeva	radeva
+llanuktaradeva	llladeva	viramadeva	radeva
+varadeva	vadeva	viramadeva	radeva
+sharadeva	shadeva	viramadeva	radeva
+ssaradeva	ssadeva	viramadeva	radeva
+saradeva	sadeva	viramadeva	radeva
+haradeva	hadeva	viramadeva	radeva
+kanuktaradeva	qadeva	viramadeva	radeva
+khanuktaradeva	khhadeva	viramadeva	radeva
+ganuktaradeva	ghhadeva	viramadeva	radeva
+januktaradeva	zadeva	viramadeva	radeva
+ddanuktaradeva	dddhadeva	viramadeva	radeva
+ddhanuktaradeva	rhadeva	viramadeva	radeva
+phanuktaradeva	fadeva	viramadeva	radeva
+yanuktaradeva	yyadeva	viramadeva	radeva
+marwariddaradeva	marwariddadeva	viramadeva	radeva
+zharadeva	zhadeva	viramadeva	radeva
+heavyyaradeva	heavyyadeva	viramadeva	radeva
+ghanuktaradeva	ghanuktadeva	viramadeva	radeva
+nganuktaradeva	nganuktadeva	viramadeva	radeva
+canuktaradeva	canuktadeva	viramadeva	radeva
+chanuktaradeva	chanuktadeva	viramadeva	radeva
+jhanuktaradeva	jhanuktadeva	viramadeva	radeva
+nyanuktaradeva	nyanuktadeva	viramadeva	radeva
+ttanuktaradeva	ttanuktadeva	viramadeva	radeva
+tthanuktaradeva	tthanuktadeva	viramadeva	radeva
+nnanuktaradeva	nnanuktadeva	viramadeva	radeva
+tanuktaradeva	tanuktadeva	viramadeva	radeva
+thanuktaradeva	thanuktadeva	viramadeva	radeva
+danuktaradeva	danuktadeva	viramadeva	radeva
+dhanuktaradeva	dhanuktadeva	viramadeva	radeva
+panuktaradeva	panuktadeva	viramadeva	radeva
+banuktaradeva	banuktadeva	viramadeva	radeva
+bhanuktaradeva	bhanuktadeva	viramadeva	radeva
+manuktaradeva	manuktadeva	viramadeva	radeva
+lanuktaradeva	lanuktadeva	viramadeva	radeva
+vanuktaradeva	vanuktadeva	viramadeva	radeva
+shanuktaradeva	shanuktadeva	viramadeva	radeva
+ssanuktaradeva	ssanuktadeva	viramadeva	radeva
+sanuktaradeva	sanuktadeva	viramadeva	radeva
+hanuktaradeva	hanuktadeva	viramadeva	radeva
+kassaradeva	kassadeva	viramadeva	radeva
+janyaradeva	janyadeva	viramadeva	radeva
+laradevaMAR	ladevaMAR	viramadeva	radeva
+lanuktaradevaMAR	lanuktadevaMAR	viramadeva	radeva
+sharadeva	shadevaMAR	viramadeva	radeva
+shanuktaradeva	shanuktadevaMAR	viramadeva	radeva
+jharadevaNEP	jhadevaNEP	viramadeva	radeva
+jhanuktaradevaNEP	jhanuktadevaNEP	viramadeva	radeva
+
+lookup end
+
+
+lookup	 6 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+vattudeva	radeva	viramadeva
+
+lookup end
+
+
+lookup	 7 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+glyph 	gabardeva, viramadeva, radeva	 2, 8
+glyph 	jabardeva, viramadeva, radeva	 2, 8
+glyph 	ddabardeva, viramadeva, radeva	 2, 8
+glyph 	babardeva, viramadeva, radeva	 2, 8
+
+lookup end
+
+
+lookup	 8 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+vattudeva	viramadeva	radeva
+
+lookup end
+
+
+lookup	 9 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+kaprehalfdeva	kadeva	viramadeva
+khaprehalfdeva	khadeva	viramadeva
+gaprehalfdeva	gadeva	viramadeva
+ghaprehalfdeva	ghadeva	viramadeva
+ngaprehalfdeva	ngadeva	viramadeva
+caprehalfdeva	cadeva	viramadeva
+chaprehalfdeva	chadeva	viramadeva
+japrehalfdeva	jadeva	viramadeva
+jhaprehalfdeva	jhadeva	viramadeva
+nyaprehalfdeva	nyadeva	viramadeva
+ttaprehalfdeva	ttadeva	viramadeva
+tthaprehalfdeva	tthadeva	viramadeva
+ddaprehalfdeva	ddadeva	viramadeva
+ddhaprehalfdeva	ddhadeva	viramadeva
+nnaprehalfdeva	nnadeva	viramadeva
+taprehalfdeva	tadeva	viramadeva
+thaprehalfdeva	thadeva	viramadeva
+daprehalfdeva	dadeva	viramadeva
+dhaprehalfdeva	dhadeva	viramadeva
+naprehalfdeva	nadeva	viramadeva
+nanuktaprehalfdeva	nnnadeva	viramadeva
+paprehalfdeva	padeva	viramadeva
+phaprehalfdeva	phadeva	viramadeva
+baprehalfdeva	badeva	viramadeva
+bhaprehalfdeva	bhadeva	viramadeva
+maprehalfdeva	madeva	viramadeva
+yaprehalfdeva	yadeva	viramadeva
+raprehalfdeva	radeva	viramadeva	uni200D
+raprehalfdeva	rradeva	viramadeva
+laprehalfdeva	ladeva	viramadeva
+llaprehalfdeva	lladeva	viramadeva
+llanuktaprehalfdeva	llladeva	viramadeva
+vaprehalfdeva	vadeva	viramadeva
+shaprehalfdeva	shadeva	viramadeva
+ssaprehalfdeva	ssadeva	viramadeva
+saprehalfdeva	sadeva	viramadeva
+haprehalfdeva	hadeva	viramadeva
+kanuktaprehalfdeva	qadeva	viramadeva
+khanuktaprehalfdeva	khhadeva	viramadeva
+ganuktaprehalfdeva	ghhadeva	viramadeva
+januktaprehalfdeva	zadeva	viramadeva
+ddanuktaprehalfdeva	dddhadeva	viramadeva
+ddhanuktaprehalfdeva	rhadeva	viramadeva
+phanuktaprehalfdeva	fadeva	viramadeva
+yanuktaprehalfdeva	yyadeva	viramadeva
+zhaprehalfdeva	zhadeva	viramadeva
+heavyyaprehalfdeva	heavyyadeva	viramadeva
+ghanuktaprehalfdeva	ghanuktadeva	viramadeva
+nganuktaprehalfdeva	nganuktadeva	viramadeva
+canuktaprehalfdeva	canuktadeva	viramadeva
+chanuktaprehalfdeva	chanuktadeva	viramadeva
+jhanuktaprehalfdeva	jhanuktadeva	viramadeva
+nyanuktaprehalfdeva	nyanuktadeva	viramadeva
+ttanuktaprehalfdeva	ttanuktadeva	viramadeva
+tthanuktaprehalfdeva	tthanuktadeva	viramadeva
+nnanuktaprehalfdeva	nnanuktadeva	viramadeva
+tanuktaprehalfdeva	tanuktadeva	viramadeva
+thanuktaprehalfdeva	thanuktadeva	viramadeva
+danuktaprehalfdeva	danuktadeva	viramadeva
+dhanuktaprehalfdeva	dhanuktadeva	viramadeva
+panuktaprehalfdeva	panuktadeva	viramadeva
+banuktaprehalfdeva	banuktadeva	viramadeva
+bhanuktaprehalfdeva	bhanuktadeva	viramadeva
+manuktaprehalfdeva	manuktadeva	viramadeva
+lanuktaprehalfdeva	lanuktadeva	viramadeva
+vanuktaprehalfdeva	vanuktadeva	viramadeva
+shanuktaprehalfdeva	shanuktadeva	viramadeva
+ssanuktaprehalfdeva	ssanuktadeva	viramadeva
+sanuktaprehalfdeva	sanuktadeva	viramadeva
+hanuktaprehalfdeva	hanuktadeva	viramadeva
+kassaprehalfdeva	kassadeva	viramadeva
+janyaprehalfdeva	janyadeva	viramadeva
+laprehalfdeva	ladevaMAR	viramadeva
+lanuktaprehalfdeva	lanuktadevaMAR	viramadeva
+shaprehalfdevaMAR	shadevaMAR	viramadeva
+shanuktaprehalfdevaMAR	shanuktadevaMAR	viramadeva
+jhaprehalfdevaNEP	jhadevaNEP	viramadeva
+jhanuktaprehalfdevaNEP	jhanuktadevaNEP	viramadeva
+
+lookup end
+
+
+lookup	 10 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+kaprehalfdeva	kadeva	viramadeva
+khaprehalfdeva	khadeva	viramadeva
+gaprehalfdeva	gadeva	viramadeva
+ghaprehalfdeva	ghadeva	viramadeva
+ngaprehalfdeva	ngadeva	viramadeva
+caprehalfdeva	cadeva	viramadeva
+chaprehalfdeva	chadeva	viramadeva	uni200D
+chaprehalfdevaNEP	chadeva	viramadeva
+japrehalfdeva	jadeva	viramadeva
+jhaprehalfdeva	jhadeva	viramadeva
+nyaprehalfdeva	nyadeva	viramadeva
+ttaprehalfdeva	ttadeva	viramadeva
+tthaprehalfdeva	tthadeva	viramadeva
+ddaprehalfdeva	ddadeva	viramadeva
+ddhaprehalfdeva	ddhadeva	viramadeva
+nnaprehalfdeva	nnadeva	viramadeva
+taprehalfdeva	tadeva	viramadeva
+thaprehalfdeva	thadeva	viramadeva
+daprehalfdeva	dadeva	viramadeva
+dhaprehalfdeva	dhadeva	viramadeva
+naprehalfdeva	nadeva	viramadeva
+nanuktaprehalfdeva	nnnadeva	viramadeva
+paprehalfdeva	padeva	viramadeva
+phaprehalfdeva	phadeva	viramadeva
+baprehalfdeva	badeva	viramadeva
+bhaprehalfdeva	bhadeva	viramadeva
+maprehalfdeva	madeva	viramadeva
+yaprehalfdeva	yadeva	viramadeva
+raprehalfdeva	radeva	viramadeva	uni200D
+raprehalfdeva	rradeva	viramadeva
+laprehalfdeva	ladeva	viramadeva
+llaprehalfdeva	lladeva	viramadeva
+llanuktaprehalfdeva	llladeva	viramadeva
+vaprehalfdeva	vadeva	viramadeva
+shaprehalfdeva	shadeva	viramadeva
+ssaprehalfdeva	ssadeva	viramadeva
+saprehalfdeva	sadeva	viramadeva
+haprehalfdeva	hadeva	viramadeva
+kanuktaprehalfdeva	qadeva	viramadeva
+khanuktaprehalfdeva	khhadeva	viramadeva
+ganuktaprehalfdeva	ghhadeva	viramadeva
+januktaprehalfdeva	zadeva	viramadeva
+ddanuktaprehalfdeva	dddhadeva	viramadeva
+ddhanuktaprehalfdeva	rhadeva	viramadeva
+phanuktaprehalfdeva	fadeva	viramadeva
+yanuktaprehalfdeva	yyadeva	viramadeva
+zhaprehalfdeva	zhadeva	viramadeva
+heavyyaprehalfdeva	heavyyadeva	viramadeva
+ghanuktaprehalfdeva	ghanuktadeva	viramadeva
+nganuktaprehalfdeva	nganuktadeva	viramadeva
+canuktaprehalfdeva	canuktadeva	viramadeva
+chanuktaprehalfdeva	chanuktadeva	viramadeva	uni200D
+chanuktaprehalfdevaNEP	chanuktadeva	viramadeva
+jhanuktaprehalfdeva	jhanuktadeva	viramadeva
+nyanuktaprehalfdeva	nyanuktadeva	viramadeva
+ttanuktaprehalfdeva	ttanuktadeva	viramadeva
+tthanuktaprehalfdeva	tthanuktadeva	viramadeva
+nnanuktaprehalfdeva	nnanuktadeva	viramadeva
+tanuktaprehalfdeva	tanuktadeva	viramadeva
+thanuktaprehalfdeva	thanuktadeva	viramadeva
+danuktaprehalfdeva	danuktadeva	viramadeva
+dhanuktaprehalfdeva	dhanuktadeva	viramadeva
+panuktaprehalfdeva	panuktadeva	viramadeva
+banuktaprehalfdeva	banuktadeva	viramadeva
+bhanuktaprehalfdeva	bhanuktadeva	viramadeva
+manuktaprehalfdeva	manuktadeva	viramadeva
+lanuktaprehalfdeva	lanuktadeva	viramadeva
+vanuktaprehalfdeva	vanuktadeva	viramadeva
+shanuktaprehalfdeva	shanuktadeva	viramadeva
+ssanuktaprehalfdeva	ssanuktadeva	viramadeva
+sanuktaprehalfdeva	sanuktadeva	viramadeva
+hanuktaprehalfdeva	hanuktadeva	viramadeva
+kassaprehalfdeva	kassadeva	viramadeva
+janyaprehalfdeva	janyadeva	viramadeva
+lanuktaprehalfdeva	lanuktadevaMAR	viramadeva
+jhaprehalfdevaNEP	jhadevaNEP	viramadeva
+jhanuktaprehalfdevaNEP	jhanuktadevaNEP	viramadeva
+
+lookup end
+
+
+lookup	 11 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+kaprehalfdeva	kadeva	viramadeva
+khaprehalfdeva	khadeva	viramadeva
+gaprehalfdeva	gadeva	viramadeva
+ghaprehalfdeva	ghadeva	viramadeva
+ngaprehalfdeva	ngadeva	viramadeva	uni200D
+caprehalfdeva	cadeva	viramadeva
+chaprehalfdeva	chadeva	viramadeva
+japrehalfdeva	jadeva	viramadeva
+jhaprehalfdeva	jhadeva	viramadeva
+nyaprehalfdeva	nyadeva	viramadeva
+ttaprehalfdeva	ttadeva	viramadeva	uni200D
+tthaprehalfdeva	tthadeva	viramadeva	uni200D
+ddaprehalfdeva	ddadeva	viramadeva	uni200D
+ddhaprehalfdeva	ddhadeva	viramadeva	uni200D
+nnaprehalfdeva	nnadeva	viramadeva
+taprehalfdeva	tadeva	viramadeva
+thaprehalfdeva	thadeva	viramadeva
+daprehalfdeva	dadeva	viramadeva	uni200D
+dhaprehalfdeva	dhadeva	viramadeva
+naprehalfdeva	nadeva	viramadeva
+nanuktaprehalfdeva	nnnadeva	viramadeva
+paprehalfdeva	padeva	viramadeva
+phaprehalfdeva	phadeva	viramadeva
+baprehalfdeva	badeva	viramadeva
+bhaprehalfdeva	bhadeva	viramadeva
+maprehalfdeva	madeva	viramadeva
+yaprehalfdeva	yadeva	viramadeva
+raprehalfdeva	radeva	viramadeva	uni200D
+raprehalfdeva	rradeva	viramadeva
+laprehalfdeva	ladeva	viramadeva
+llaprehalfdeva	lladeva	viramadeva
+llanuktaprehalfdeva	llladeva	viramadeva
+vaprehalfdeva	vadeva	viramadeva
+shaprehalfdeva	shadeva	viramadeva
+ssaprehalfdeva	ssadeva	viramadeva
+saprehalfdeva	sadeva	viramadeva
+haprehalfdeva	hadeva	viramadeva
+kanuktaprehalfdeva	qadeva	viramadeva
+khanuktaprehalfdeva	khhadeva	viramadeva
+ganuktaprehalfdeva	ghhadeva	viramadeva
+januktaprehalfdeva	zadeva	viramadeva
+ddanuktaprehalfdeva	dddhadeva	viramadeva	uni200D
+ddhanuktaprehalfdeva	rhadeva	viramadeva	uni200D
+phanuktaprehalfdeva	fadeva	viramadeva
+yanuktaprehalfdeva	yyadeva	viramadeva
+zhaprehalfdeva	zhadeva	viramadeva
+heavyyaprehalfdeva	heavyyadeva	viramadeva
+ghanuktaprehalfdeva	ghanuktadeva	viramadeva
+nganuktaprehalfdeva	nganuktadeva	viramadeva	uni200D
+canuktaprehalfdeva	canuktadeva	viramadeva
+chanuktaprehalfdeva	chanuktadeva	viramadeva
+jhanuktaprehalfdeva	jhanuktadeva	viramadeva
+nyanuktaprehalfdeva	nyanuktadeva	viramadeva
+ttanuktaprehalfdeva	ttanuktadeva	viramadeva	uni200D
+tthanuktaprehalfdeva	tthanuktadeva	viramadeva	uni200D
+nnanuktaprehalfdeva	nnanuktadeva	viramadeva
+tanuktaprehalfdeva	tanuktadeva	viramadeva
+thanuktaprehalfdeva	thanuktadeva	viramadeva
+danuktaprehalfdeva	danuktadeva	viramadeva	uni200D
+dhanuktaprehalfdeva	dhanuktadeva	viramadeva
+panuktaprehalfdeva	panuktadeva	viramadeva
+banuktaprehalfdeva	banuktadeva	viramadeva
+bhanuktaprehalfdeva	bhanuktadeva	viramadeva
+manuktaprehalfdeva	manuktadeva	viramadeva
+lanuktaprehalfdeva	lanuktadeva	viramadeva
+vanuktaprehalfdeva	vanuktadeva	viramadeva
+shanuktaprehalfdeva	shanuktadeva	viramadeva
+ssanuktaprehalfdeva	ssanuktadeva	viramadeva
+sanuktaprehalfdeva	sanuktadeva	viramadeva
+hanuktaprehalfdeva	hanuktadeva	viramadeva
+kassaprehalfdeva	kassadeva	viramadeva
+janyaprehalfdeva	janyadeva	viramadeva
+laprehalfdeva	ladevaMAR	viramadeva
+lanuktaprehalfdeva	lanuktadevaMAR	viramadeva
+shaprehalfdevaMAR	shadevaMAR	viramadeva
+shanuktaprehalfdevaMAR	shanuktadevaMAR	viramadeva
+
+lookup end
+
+
+lookup	 12 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+karaprehalfdeva	karadeva	viramadeva
+kharaprehalfdeva	kharadeva	viramadeva
+garaprehalfdeva	garadeva	viramadeva
+gharaprehalfdeva	gharadeva	viramadeva
+caraprehalfdeva	caradeva	viramadeva
+charaprehalfdeva	charadeva	viramadeva
+jaraprehalfdeva	jaradeva	viramadeva
+jharaprehalfdeva	jharadeva	viramadeva
+nyaraprehalfdeva	nyaradeva	viramadeva
+nnaraprehalfdeva	nnaradeva	viramadeva
+taraprehalfdeva	taradeva	viramadeva
+tharaprehalfdeva	tharadeva	viramadeva
+dharaprehalfdeva	dharadeva	viramadeva
+naraprehalfdeva	naradeva	viramadeva
+paraprehalfdeva	paradeva	viramadeva
+pharaprehalfdeva	pharadeva	viramadeva
+baraprehalfdeva	baradeva	viramadeva
+bharaprehalfdeva	bharadeva	viramadeva
+maraprehalfdeva	maradeva	viramadeva
+yaraprehalfdeva	yaradeva	viramadeva
+raraprehalfdeva	raradeva	viramadeva
+laraprehalfdeva	laradeva	viramadeva
+llaraprehalfdeva	llaradeva	viramadeva
+varaprehalfdeva	varadeva	viramadeva
+sharaprehalfdeva	sharadeva	viramadeva
+ssaraprehalfdeva	ssaradeva	viramadeva
+saraprehalfdeva	saradeva	viramadeva
+zharaprehalfdeva	zharadeva	viramadeva
+heavyyaraprehalfdeva	heavyyaradeva	viramadeva
+kassaraprehalfdeva	kassaradeva	viramadeva
+janyaraprehalfdeva	janyaradeva	viramadeva
+kanuktaraprehalfdeva	kanuktaradeva	viramadeva
+khanuktaraprehalfdeva	khanuktaradeva	viramadeva
+ganuktaraprehalfdeva	ganuktaradeva	viramadeva
+ghanuktaraprehalfdeva	ghanuktaradeva	viramadeva
+canuktaraprehalfdeva	canuktaradeva	viramadeva
+chanuktaraprehalfdeva	chanuktaradeva	viramadeva
+januktaraprehalfdeva	januktaradeva	viramadeva
+jhanuktaraprehalfdeva	jhanuktaradeva	viramadeva
+nyanuktaraprehalfdeva	nyanuktaradeva	viramadeva
+nnanuktaraprehalfdeva	nnanuktaradeva	viramadeva
+tanuktaraprehalfdeva	tanuktaradeva	viramadeva
+thanuktaraprehalfdeva	thanuktaradeva	viramadeva
+dhanuktaraprehalfdeva	dhanuktaradeva	viramadeva
+nanuktaraprehalfdeva	nanuktaradeva	viramadeva
+panuktaraprehalfdeva	panuktaradeva	viramadeva
+phanuktaraprehalfdeva	phanuktaradeva	viramadeva
+banuktaraprehalfdeva	banuktaradeva	viramadeva
+bhanuktaraprehalfdeva	bhanuktaradeva	viramadeva
+manuktaraprehalfdeva	manuktaradeva	viramadeva
+yanuktaraprehalfdeva	yanuktaradeva	viramadeva
+raraprehalfdeva	ranuktaradeva	viramadeva
+lanuktaraprehalfdeva	lanuktaradeva	viramadeva
+llanuktaraprehalfdeva	llanuktaradeva	viramadeva
+vanuktaraprehalfdeva	vanuktaradeva	viramadeva
+shanuktaraprehalfdeva	shanuktaradeva	viramadeva
+ssanuktaraprehalfdeva	ssanuktaradeva	viramadeva
+sanuktaraprehalfdeva	sanuktaradeva	viramadeva
+laraprehalfdeva	laradevaMAR	viramadeva
+lanuktaraprehalfdeva	lanuktaradevaMAR	viramadeva
+
+lookup end
+
+
+lookup	 13 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+kaprehalfdeva	kadeva	viramadeva
+khaprehalfdeva	khadeva	viramadeva
+gaprehalfdeva	gadeva	viramadeva
+ghaprehalfdeva	ghadeva	viramadeva
+ngaprehalfdeva	ngadeva	viramadeva	uni200D
+caprehalfdeva	cadeva	viramadeva
+chaprehalfdeva	chadeva	viramadeva	uni200D
+japrehalfdeva	jadeva	viramadeva
+nyaprehalfdeva	nyadeva	viramadeva
+ttaprehalfdeva	ttadeva	viramadeva	uni200D
+tthaprehalfdeva	tthadeva	viramadeva	uni200D
+ddaprehalfdeva	ddadeva	viramadeva	uni200D
+ddhaprehalfdeva	ddhadeva	viramadeva	uni200D
+nnaprehalfdeva	nnadeva	viramadeva
+taprehalfdeva	tadeva	viramadeva
+thaprehalfdeva	thadeva	viramadeva
+daprehalfdeva	dadeva	viramadeva	uni200D
+dhaprehalfdeva	dhadeva	viramadeva
+naprehalfdeva	nadeva	viramadeva
+nanuktaprehalfdeva	nnnadeva	viramadeva
+paprehalfdeva	padeva	viramadeva
+phaprehalfdeva	phadeva	viramadeva
+baprehalfdeva	badeva	viramadeva
+bhaprehalfdeva	bhadeva	viramadeva
+maprehalfdeva	madeva	viramadeva
+yaprehalfdeva	yadeva	viramadeva
+raprehalfdeva	radeva	viramadeva	uni200D
+raprehalfdeva	rradeva	viramadeva
+laprehalfdeva	ladeva	viramadeva
+llaprehalfdeva	lladeva	viramadeva
+llanuktaprehalfdeva	llladeva	viramadeva
+vaprehalfdeva	vadeva	viramadeva
+shaprehalfdeva	shadeva	viramadeva
+ssaprehalfdeva	ssadeva	viramadeva
+saprehalfdeva	sadeva	viramadeva
+haprehalfdeva	hadeva	viramadeva
+kanuktaprehalfdeva	qadeva	viramadeva
+khanuktaprehalfdeva	khhadeva	viramadeva
+ganuktaprehalfdeva	ghhadeva	viramadeva
+januktaprehalfdeva	zadeva	viramadeva
+ddanuktaprehalfdeva	dddhadeva	viramadeva	uni200D
+ddhanuktaprehalfdeva	rhadeva	viramadeva	uni200D
+phanuktaprehalfdeva	fadeva	viramadeva
+yanuktaprehalfdeva	yyadeva	viramadeva
+zhaprehalfdeva	zhadeva	viramadeva
+heavyyaprehalfdeva	heavyyadeva	viramadeva
+ghanuktaprehalfdeva	ghanuktadeva	viramadeva
+nganuktaprehalfdeva	nganuktadeva	viramadeva	uni200D
+canuktaprehalfdeva	canuktadeva	viramadeva
+chanuktaprehalfdeva	chanuktadeva	viramadeva	uni200D
+nyanuktaprehalfdeva	nyanuktadeva	viramadeva
+ttanuktaprehalfdeva	ttanuktadeva	viramadeva	uni200D
+tthanuktaprehalfdeva	tthanuktadeva	viramadeva	uni200D
+nnanuktaprehalfdeva	nnanuktadeva	viramadeva
+tanuktaprehalfdeva	tanuktadeva	viramadeva
+thanuktaprehalfdeva	thanuktadeva	viramadeva
+danuktaprehalfdeva	danuktadeva	viramadeva	uni200D
+dhanuktaprehalfdeva	dhanuktadeva	viramadeva
+panuktaprehalfdeva	panuktadeva	viramadeva
+banuktaprehalfdeva	banuktadeva	viramadeva
+bhanuktaprehalfdeva	bhanuktadeva	viramadeva
+manuktaprehalfdeva	manuktadeva	viramadeva
+lanuktaprehalfdeva	lanuktadeva	viramadeva
+vanuktaprehalfdeva	vanuktadeva	viramadeva
+shanuktaprehalfdeva	shanuktadeva	viramadeva
+ssanuktaprehalfdeva	ssanuktadeva	viramadeva
+sanuktaprehalfdeva	sanuktadeva	viramadeva
+hanuktaprehalfdeva	hanuktadeva	viramadeva
+kassaprehalfdeva	kassadeva	viramadeva
+janyaprehalfdeva	janyadeva	viramadeva
+jhaprehalfdevaNEP	jhadevaNEP	viramadeva
+jhanuktaprehalfdevaNEP	jhanuktadevaNEP	viramadeva
+
+lookup end
+
+
+lookup	 14 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+karaprehalfdeva	karadeva	viramadeva
+kharaprehalfdeva	kharadeva	viramadeva
+garaprehalfdeva	garadeva	viramadeva
+gharaprehalfdeva	gharadeva	viramadeva
+caraprehalfdeva	caradeva	viramadeva
+jaraprehalfdeva	jaradeva	viramadeva
+nyaraprehalfdeva	nyaradeva	viramadeva
+nnaraprehalfdeva	nnaradeva	viramadeva
+taraprehalfdeva	taradeva	viramadeva
+tharaprehalfdeva	tharadeva	viramadeva
+dharaprehalfdeva	dharadeva	viramadeva
+naraprehalfdeva	naradeva	viramadeva
+paraprehalfdeva	paradeva	viramadeva
+pharaprehalfdeva	pharadeva	viramadeva
+baraprehalfdeva	baradeva	viramadeva
+bharaprehalfdeva	bharadeva	viramadeva
+maraprehalfdeva	maradeva	viramadeva
+yaraprehalfdeva	yaradeva	viramadeva
+raraprehalfdeva	raradeva	viramadeva
+laraprehalfdeva	laradeva	viramadeva
+llaraprehalfdeva	llaradeva	viramadeva
+varaprehalfdeva	varadeva	viramadeva
+sharaprehalfdeva	sharadeva	viramadeva
+ssaraprehalfdeva	ssaradeva	viramadeva
+saraprehalfdeva	saradeva	viramadeva
+zharaprehalfdeva	zharadeva	viramadeva
+heavyyaraprehalfdeva	heavyyaradeva	viramadeva
+kassaraprehalfdeva	kassaradeva	viramadeva
+janyaraprehalfdeva	janyaradeva	viramadeva
+kanuktaraprehalfdeva	kanuktaradeva	viramadeva
+khanuktaraprehalfdeva	khanuktaradeva	viramadeva
+ganuktaraprehalfdeva	ganuktaradeva	viramadeva
+ghanuktaraprehalfdeva	ghanuktaradeva	viramadeva
+canuktaraprehalfdeva	canuktaradeva	viramadeva
+januktaraprehalfdeva	januktaradeva	viramadeva
+nyanuktaraprehalfdeva	nyanuktaradeva	viramadeva
+nnanuktaraprehalfdeva	nnanuktaradeva	viramadeva
+tanuktaraprehalfdeva	tanuktaradeva	viramadeva
+thanuktaraprehalfdeva	thanuktaradeva	viramadeva
+dhanuktaraprehalfdeva	dhanuktaradeva	viramadeva
+nanuktaraprehalfdeva	nanuktaradeva	viramadeva
+panuktaraprehalfdeva	panuktaradeva	viramadeva
+phanuktaraprehalfdeva	phanuktaradeva	viramadeva
+banuktaraprehalfdeva	banuktaradeva	viramadeva
+bhanuktaraprehalfdeva	bhanuktaradeva	viramadeva
+manuktaraprehalfdeva	manuktaradeva	viramadeva
+yanuktaraprehalfdeva	yanuktaradeva	viramadeva
+raraprehalfdeva	ranuktaradeva	viramadeva
+lanuktaraprehalfdeva	lanuktaradeva	viramadeva
+llanuktaraprehalfdeva	llanuktaradeva	viramadeva
+vanuktaraprehalfdeva	vanuktaradeva	viramadeva
+shanuktaraprehalfdeva	shanuktaradeva	viramadeva
+ssanuktaraprehalfdeva	ssanuktaradeva	viramadeva
+sanuktaraprehalfdeva	sanuktaradeva	viramadeva
+jharaprehalfdevaNEP	jharadevaNEP	viramadeva
+jhanuktaraprehalfdevaNEP	jhanuktaradevaNEP	viramadeva
+
+lookup end
+
+
+lookup	 15 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+karadeva	kadeva	vattudeva
+kharadeva	khadeva	vattudeva
+garadeva	gadeva	vattudeva
+gharadeva	ghadeva	vattudeva
+ngaradeva	ngadeva	vattudeva
+caradeva	cadeva	vattudeva
+charadeva	chadeva	vattudeva
+jaradeva	jadeva	vattudeva
+jharadeva	jhadeva	vattudeva
+nyaradeva	nyadeva	vattudeva
+ttaradeva	ttadeva	vattudeva
+ttharadeva	tthadeva	vattudeva
+ddaradeva	ddadeva	vattudeva
+ddharadeva	ddhadeva	vattudeva
+nnaradeva	nnadeva	vattudeva
+taradeva	tadeva	vattudeva
+tharadeva	thadeva	vattudeva
+daradeva	dadeva	vattudeva
+dharadeva	dhadeva	vattudeva
+naradeva	nadeva	vattudeva
+nanuktaradeva	nnnadeva	vattudeva
+paradeva	padeva	vattudeva
+pharadeva	phadeva	vattudeva
+baradeva	badeva	vattudeva
+bharadeva	bhadeva	vattudeva
+maradeva	madeva	vattudeva
+yaradeva	yadeva	vattudeva
+raradeva	radeva	vattudeva
+ranuktaradeva	rradeva	vattudeva
+laradeva	ladeva	vattudeva
+llaradeva	lladeva	vattudeva
+llanuktaradeva	llladeva	vattudeva
+varadeva	vadeva	vattudeva
+sharadeva	shadeva	vattudeva
+ssaradeva	ssadeva	vattudeva
+saradeva	sadeva	vattudeva
+haradeva	hadeva	vattudeva
+kanuktaradeva	qadeva	vattudeva
+khanuktaradeva	khhadeva	vattudeva
+ganuktaradeva	ghhadeva	vattudeva
+januktaradeva	zadeva	vattudeva
+ddanuktaradeva	dddhadeva	vattudeva
+ddhanuktaradeva	rhadeva	vattudeva
+phanuktaradeva	fadeva	vattudeva
+yanuktaradeva	yyadeva	vattudeva
+marwariddaradeva	marwariddadeva	vattudeva
+zharadeva	zhadeva	vattudeva
+heavyyaradeva	heavyyadeva	vattudeva
+ghanuktaradeva	ghanuktadeva	vattudeva
+nganuktaradeva	nganuktadeva	vattudeva
+canuktaradeva	canuktadeva	vattudeva
+chanuktaradeva	chanuktadeva	vattudeva
+jhanuktaradeva	jhanuktadeva	vattudeva
+nyanuktaradeva	nyanuktadeva	vattudeva
+ttanuktaradeva	ttanuktadeva	vattudeva
+tthanuktaradeva	tthanuktadeva	vattudeva
+nnanuktaradeva	nnanuktadeva	vattudeva
+tanuktaradeva	tanuktadeva	vattudeva
+thanuktaradeva	thanuktadeva	vattudeva
+danuktaradeva	danuktadeva	vattudeva
+dhanuktaradeva	dhanuktadeva	vattudeva
+panuktaradeva	panuktadeva	vattudeva
+banuktaradeva	banuktadeva	vattudeva
+bhanuktaradeva	bhanuktadeva	vattudeva
+manuktaradeva	manuktadeva	vattudeva
+lanuktaradeva	lanuktadeva	vattudeva
+vanuktaradeva	vanuktadeva	vattudeva
+shanuktaradeva	shanuktadeva	vattudeva
+ssanuktaradeva	ssanuktadeva	vattudeva
+sanuktaradeva	sanuktadeva	vattudeva
+hanuktaradeva	hanuktadeva	vattudeva
+kassaradeva	kassadeva	vattudeva
+janyaradeva	janyadeva	vattudeva
+laradevaMAR	ladevaMAR	vattudeva
+lanuktaradevaMAR	lanuktadevaMAR	vattudeva
+sharadeva	shadevaMAR	vattudeva
+shanuktaradeva	shanuktadevaMAR	vattudeva
+jharadevaNEP	jhadevaNEP	vattudeva
+jhanuktaradevaNEP	jhanuktadevaNEP	vattudeva
+
+lookup end
+
+
+lookup	 16 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+karaprehalfdeva	kaprehalfdeva	vattudeva
+kharaprehalfdeva	khaprehalfdeva	vattudeva
+garaprehalfdeva	gaprehalfdeva	vattudeva
+gharaprehalfdeva	ghaprehalfdeva	vattudeva
+ngaraprehalfdeva	ngaprehalfdeva	vattudeva
+caraprehalfdeva	caprehalfdeva	vattudeva
+charaprehalfdeva	chaprehalfdeva	vattudeva
+jaraprehalfdeva	japrehalfdeva	vattudeva
+jharaprehalfdeva	jhaprehalfdeva	vattudeva
+nyaraprehalfdeva	nyaprehalfdeva	vattudeva
+ttaraprehalfdeva	ttaprehalfdeva	vattudeva
+ttharaprehalfdeva	tthaprehalfdeva	vattudeva
+ddaraprehalfdeva	ddaprehalfdeva	vattudeva
+ddharaprehalfdeva	ddhaprehalfdeva	vattudeva
+nnaraprehalfdeva	nnaprehalfdeva	vattudeva
+taraprehalfdeva	taprehalfdeva	vattudeva
+tharaprehalfdeva	thaprehalfdeva	vattudeva
+daraprehalfdeva	daprehalfdeva	vattudeva
+dharaprehalfdeva	dhaprehalfdeva	vattudeva
+naraprehalfdeva	naprehalfdeva	vattudeva
+paraprehalfdeva	paprehalfdeva	vattudeva
+pharaprehalfdeva	phaprehalfdeva	vattudeva
+baraprehalfdeva	baprehalfdeva	vattudeva
+bharaprehalfdeva	bhaprehalfdeva	vattudeva
+maraprehalfdeva	maprehalfdeva	vattudeva
+yaraprehalfdeva	yaprehalfdeva	vattudeva
+raraprehalfdeva	raprehalfdeva	vattudeva
+laraprehalfdeva	laprehalfdeva	vattudeva
+llaraprehalfdeva	llaprehalfdeva	vattudeva
+varaprehalfdeva	vaprehalfdeva	vattudeva
+sharaprehalfdeva	shaprehalfdeva	vattudeva
+ssaraprehalfdeva	ssaprehalfdeva	vattudeva
+saraprehalfdeva	saprehalfdeva	vattudeva
+haraprehalfdeva	haprehalfdeva	vattudeva
+zharaprehalfdeva	zhaprehalfdeva	vattudeva
+heavyyaraprehalfdeva	heavyyaprehalfdeva	vattudeva
+kassaraprehalfdeva	kassaprehalfdeva	vattudeva
+janyaraprehalfdeva	janyaprehalfdeva	vattudeva
+kanuktaraprehalfdeva	kanuktaprehalfdeva	vattudeva
+khanuktaraprehalfdeva	khanuktaprehalfdeva	vattudeva
+ganuktaraprehalfdeva	ganuktaprehalfdeva	vattudeva
+ghanuktaraprehalfdeva	ghanuktaprehalfdeva	vattudeva
+nganuktaraprehalfdeva	nganuktaprehalfdeva	vattudeva
+canuktaraprehalfdeva	canuktaprehalfdeva	vattudeva
+chanuktaraprehalfdeva	chanuktaprehalfdeva	vattudeva
+januktaraprehalfdeva	januktaprehalfdeva	vattudeva
+jhanuktaraprehalfdeva	jhanuktaprehalfdeva	vattudeva
+nyanuktaraprehalfdeva	nyanuktaprehalfdeva	vattudeva
+ttanuktaraprehalfdeva	ttanuktaprehalfdeva	vattudeva
+tthanuktaraprehalfdeva	tthanuktaprehalfdeva	vattudeva
+ddanuktaraprehalfdeva	ddanuktaprehalfdeva	vattudeva
+ddhanuktaraprehalfdeva	ddhanuktaprehalfdeva	vattudeva
+nnanuktaraprehalfdeva	nnanuktaprehalfdeva	vattudeva
+tanuktaraprehalfdeva	tanuktaprehalfdeva	vattudeva
+thanuktaraprehalfdeva	thanuktaprehalfdeva	vattudeva
+danuktaraprehalfdeva	danuktaprehalfdeva	vattudeva
+dhanuktaraprehalfdeva	dhanuktaprehalfdeva	vattudeva
+nanuktaraprehalfdeva	nanuktaprehalfdeva	vattudeva
+panuktaraprehalfdeva	panuktaprehalfdeva	vattudeva
+phanuktaraprehalfdeva	phanuktaprehalfdeva	vattudeva
+banuktaraprehalfdeva	banuktaprehalfdeva	vattudeva
+bhanuktaraprehalfdeva	bhanuktaprehalfdeva	vattudeva
+manuktaraprehalfdeva	manuktaprehalfdeva	vattudeva
+yanuktaraprehalfdeva	yanuktaprehalfdeva	vattudeva
+lanuktaraprehalfdeva	lanuktaprehalfdeva	vattudeva
+llanuktaraprehalfdeva	llanuktaprehalfdeva	vattudeva
+vanuktaraprehalfdeva	vanuktaprehalfdeva	vattudeva
+shanuktaraprehalfdeva	shanuktaprehalfdeva	vattudeva
+ssanuktaraprehalfdeva	ssanuktaprehalfdeva	vattudeva
+sanuktaraprehalfdeva	sanuktaprehalfdeva	vattudeva
+hanuktaraprehalfdeva	hanuktaprehalfdeva	vattudeva
+sharaprehalfdeva	shaprehalfdevaMAR	vattudeva
+shanuktaraprehalfdeva	shanuktaprehalfdevaMAR	vattudeva
+charaprehalfdevaNEP	chaprehalfdevaNEP	vattudeva
+chanuktaraprehalfdevaNEP	chanuktaprehalfdevaNEP	vattudeva
+jharaprehalfdevaNEP	jhaprehalfdevaNEP	vattudeva
+jhanuktaraprehalfdevaNEP	jhanuktaprehalfdevaNEP	vattudeva
+
+lookup end
+
+
+lookup	 17 	chained
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+backtrackclass definition begin
+# 1	1
+class definition end
+
+class definition begin
+raradeva	1
+class definition end
+
+lookaheadclass definition begin
+rvocalicvowelsigndeva	1
+rrvocalicvowelsigndeva	1
+viramadeva	1
+lvocalicvowelsigndeva	1
+llvocalicvowelsigndeva	1
+class definition end
+
+class-chain		 1	 1	 1, 18
+
+lookup end
+
+
+lookup	 18 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+raradeva	raprehalfdeva	radeva
+
+lookup end
+
+
+lookup	 19 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ngagadeva	ngadeva	viramadeva	gadeva
+ngamadeva	ngadeva	viramadeva	madeva
+ngayadeva	ngadeva	viramadeva	yadeva
+ttattauudeva	ttadeva	viramadeva	ttadeva	uuvowelsigndeva
+ttattadeva	ttadeva	viramadeva	ttadeva
+ttatthauudeva	ttadeva	viramadeva	tthadeva	uuvowelsigndeva
+ttatthadeva	ttadeva	viramadeva	tthadeva
+ttayadeva	ttadeva	viramadeva	yadeva
+tthatthadeva	tthadeva	viramadeva	tthadeva
+tthayadeva	tthadeva	viramadeva	yadeva
+ddaddauudeva	ddadeva	viramadeva	ddadeva	uuvowelsigndeva
+ddaddadeva	ddadeva	viramadeva	ddadeva
+ddaddhadeva	ddadeva	viramadeva	ddhadeva
+ddayadeva	ddadeva	viramadeva	yadeva
+ddhaddhadeva	ddhadeva	viramadeva	ddhadeva
+ddhayadeva	ddhadeva	viramadeva	yadeva
+dagadeva	dadeva	viramadeva	gadeva
+daghadeva	dadeva	viramadeva	ghadeva
+dadadeva	dadeva	viramadeva	dadeva
+dadhadeva	dadeva	viramadeva	dhadeva
+dabadeva	dadeva	viramadeva	badeva
+dabhadeva	dadeva	viramadeva	bhadeva
+damadeva	dadeva	viramadeva	madeva
+dayadeva	dadeva	viramadeva	yadeva
+davadeva	dadeva	viramadeva	vadeva
+dadhayadeva	dadeva	viramadeva	dhaprehalfdeva	yadeva
+
+lookup end
+
+
+lookup	 20 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+dayadeva	dadeva	viramadeva	yadeva
+davadeva	dadeva	viramadeva	vadeva
+
+lookup end
+
+
+lookup	 21 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+katadeva	kaprehalfdeva	tadeva
+kashadeva	kaprehalfdeva	shadeva
+khashadeva	khaprehalfdeva	shadeva
+ngagadeva	ngaprehalfdeva	gadeva
+ngamadeva	ngaprehalfdeva	madeva
+ngayadeva	ngaprehalfdeva	yadeva
+cacadeva	caprehalfdeva	cadeva
+cachadeva	caprehalfdeva	chadeva
+cacharadeva	caprehalfdeva	charadeva
+chayadeva	chaprehalfdeva	yadeva
+jajadeva	japrehalfdeva	jadeva
+jaddadeva	japrehalfdeva	ddadeva
+nyajadeva	nyaprehalfdeva	jadeva
+ttattauudeva	ttaprehalfdeva	ttadeva	uuvowelsigndeva
+ttattadeva	ttaprehalfdeva	ttadeva
+ttatthauudeva	ttaprehalfdeva	tthadeva	uuvowelsigndeva
+ttatthadeva	ttaprehalfdeva	tthadeva
+ttayadeva	ttaprehalfdeva	yadeva
+tthatthadeva	tthaprehalfdeva	tthadeva
+tthayadeva	tthaprehalfdeva	yadeva
+ddaddauudeva	ddaprehalfdeva	ddadeva	uuvowelsigndeva
+ddaddadeva	ddaprehalfdeva	ddadeva
+ddaddhadeva	ddaprehalfdeva	ddhadeva
+ddayadeva	ddaprehalfdeva	yadeva
+ddhaddhadeva	ddhaprehalfdeva	ddhadeva
+ddhayadeva	ddhaprehalfdeva	yadeva
+tatadeva	taprehalfdeva	tadeva
+tathadeva	taprehalfdeva	thadeva
+tashadeva	taprehalfdeva	shadeva
+dagadeva	daprehalfdeva	gadeva
+daghadeva	daprehalfdeva	ghadeva
+dadadeva	daprehalfdeva	dadeva
+dadhadeva	daprehalfdeva	dhadeva
+dabadeva	daprehalfdeva	badeva
+dabhadeva	daprehalfdeva	bhadeva
+damadeva	daprehalfdeva	madeva
+dayadeva	daprehalfdeva	yadeva
+davadeva	daprehalfdeva	vadeva
+dadhayadeva	daprehalfdeva	dhaprehalfdeva	yadeva
+naddadeva	naprehalfdeva	ddadeva
+nathadeva	naprehalfdeva	thadeva
+nadhadeva	naprehalfdeva	dhadeva
+nanadeva	naprehalfdeva	nadeva
+nashadeva	naprehalfdeva	shadeva
+naddaradeva	naprehalfdeva	ddaradeva
+natharadeva	naprehalfdeva	tharadeva
+nadharadeva	naprehalfdeva	dharadeva
+panadeva	paprehalfdeva	nadeva
+badhadeva	baprehalfdeva	dhadeva
+mapadeva	maprehalfdeva	padeva
+maphadeva	maprehalfdeva	phadeva
+mabhadeva	maprehalfdeva	bhadeva
+maparadeva	maprehalfdeva	paradeva
+laddadeva	laprehalfdeva	ddadeva
+lathadeva	laprehalfdeva	thadeva
+laddaradeva	laprehalfdeva	ddaradeva
+vayadeva	vaprehalfdeva	yadeva
+shacadeva	shaprehalfdeva	cadeva
+shanadeva	shaprehalfdeva	nadeva
+shaladeva	shaprehalfdeva	ladeva
+shavadeva	shaprehalfdeva	vadeva
+ssattadeva	ssaprehalfdeva	ttadeva
+ssatthadeva	ssaprehalfdeva	tthadeva
+ssattayadeva	ssaprehalfdeva	ttaprehalfdeva	yadeva
+ssatthayadeva	ssaprehalfdeva	tthaprehalfdeva	yadeva
+ssattaradeva	ssaprehalfdeva	ttaradeva
+ssattharadeva	ssaprehalfdeva	ttharadeva
+ssattayadeva	ssaprehalfdeva	ttayadeva
+ssatthayadeva	ssaprehalfdeva	tthayadeva
+sathadeva	saprehalfdeva	thadeva
+sapadeva	saprehalfdeva	padeva
+saphadeva	saprehalfdeva	phadeva
+saparadeva	saprehalfdeva	paradeva
+hannadeva	haprehalfdeva	nnadeva
+hanadeva	haprehalfdeva	nadeva
+hamadeva	haprehalfdeva	madeva
+hayadeva	haprehalfdeva	yadeva
+haladeva	haprehalfdeva	ladeva
+havadeva	haprehalfdeva	vadeva
+haladeva	haprehalfdeva	ladevaMAR
+shacadeva	shaprehalfdevaMAR	cadeva
+shanadeva	shaprehalfdevaMAR	nadeva
+shaladeva	shaprehalfdevaMAR	ladeva
+shavadeva	shaprehalfdevaMAR	vadeva
+shaladevaMAR	shaprehalfdevaMAR	ladevaMAR
+
+lookup end
+
+
+lookup	 22 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+katadeva	kaprehalfdeva	tadeva
+kashadeva	kaprehalfdeva	shadeva
+khashadeva	khaprehalfdeva	shadeva
+cacadeva	caprehalfdeva	cadeva
+cachadeva	caprehalfdeva	chadeva
+cacharadeva	caprehalfdeva	charadeva
+jajadeva	japrehalfdeva	jadeva
+jaddadeva	japrehalfdeva	ddadeva
+nyajadeva	nyaprehalfdeva	jadeva
+tatadeva	taprehalfdeva	tadeva
+tathadeva	taprehalfdeva	thadeva
+tashadeva	taprehalfdeva	shadeva
+dayadeva	daprehalfdeva	yadeva
+davadeva	daprehalfdeva	vadeva
+naddadeva	naprehalfdeva	ddadeva
+nathadeva	naprehalfdeva	thadeva
+nadhadeva	naprehalfdeva	dhadeva
+nashadeva	naprehalfdeva	shadeva
+naddaradeva	naprehalfdeva	ddaradeva
+natharadeva	naprehalfdeva	tharadeva
+nadharadeva	naprehalfdeva	dharadeva
+badhadeva	baprehalfdeva	dhadeva
+mapadeva	maprehalfdeva	padeva
+maphadeva	maprehalfdeva	phadeva
+mabhadeva	maprehalfdeva	bhadeva
+maparadeva	maprehalfdeva	paradeva
+laddadeva	laprehalfdeva	ddadeva
+lathadeva	laprehalfdeva	thadeva
+laddaradeva	laprehalfdeva	ddaradeva
+vayadeva	vaprehalfdeva	yadeva
+sathadeva	saprehalfdeva	thadeva
+sapadeva	saprehalfdeva	padeva
+saphadeva	saprehalfdeva	phadeva
+saparadeva	saprehalfdeva	paradeva
+
+lookup end
+
+
+lookup	 23 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+dayaprehalfdeva	dadeva	viramadeva	yaprehalfdeva
+tataprehalfdeva	taprehalfdeva	taprehalfdeva
+dayaprehalfdeva	daprehalfdeva	yaprehalfdeva
+nadhaprehalfdeva	naprehalfdeva	dhaprehalfdeva
+mapaprehalfdeva	maprehalfdeva	paprehalfdeva
+sathaprehalfdeva	saprehalfdeva	thaprehalfdeva
+sapaprehalfdeva	saprehalfdeva	paprehalfdeva
+
+lookup end
+
+
+lookup	 24 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+dayaprehalfdeva	dadeva	viramadeva	yaprehalfdeva
+tataprehalfdeva	taprehalfdeva	taprehalfdeva
+dayaprehalfdeva	daprehalfdeva	yaprehalfdeva
+nadhaprehalfdeva	naprehalfdeva	dhaprehalfdeva
+mapaprehalfdeva	maprehalfdeva	paprehalfdeva
+sathaprehalfdeva	saprehalfdeva	thaprehalfdeva
+sapaprehalfdeva	saprehalfdeva	paprehalfdeva
+
+lookup end
+
+
+lookup	 25 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ashortdeva	1
+ecandradeva	1
+eshortdeva	1
+ocandradeva	1
+oshortdeva	1
+acandradeva	1
+oedeva	1
+ooedeva	1
+awdeva	1
+ashortnuktadeva	1
+ecandranuktadeva	1
+eshortnuktadeva	1
+ocandranuktadeva	1
+oshortnuktadeva	1
+acandranuktadeva	1
+aideva	2
+odeva	2
+audeva	2
+ainuktadeva	2
+onuktadeva	2
+aunuktadeva	2
+iideva	3
+iinuktadeva	3
+ovowelsigndeva	4
+auvowelsigndeva	4
+candrabindudeva	5
+rephdeva	5
+anusvaradeva	6
+udattadeva	7
+class definition end
+
+class	 1, 5	 1, 26
+class	 2, 5	 1, 26
+class	 2, 6, 7	 1, 26
+class	 3, 5	 1, 26
+class	 3, 6, 7	 1, 26
+class	 3, 7	 1, 26
+class	 4, 5, 7	 1, 26
+class	 4, 5, 5, 7	 1, 26
+class	 4, 5, 6, 7	 1, 26
+class	 4, 6, 7	 1, 26
+
+lookup end
+
+
+lookup	 26 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ashortdeva	adeva	eshortvowelsigndeva
+iideva	ideva	rephdeva
+ecandradeva	edeva	ecandravowelsigndeva
+eshortdeva	edeva	eshortvowelsigndeva
+aideva	edeva	evowelsigndeva
+ocandradeva	aadeva	ecandravowelsigndeva
+oshortdeva	aadeva	eshortvowelsigndeva
+odeva	aadeva	evowelsigndeva
+audeva	aadeva	aivowelsigndeva
+ovowelsigndeva	aavowelsigndeva	evowelsigndeva
+auvowelsigndeva	aavowelsigndeva	aivowelsigndeva
+acandradeva	adeva	ecandravowelsigndeva
+oedeva	adeva	oevowelsigndeva
+ooedeva	aadeva	oevowelsigndeva
+awdeva	adeva	awvowelsigndeva
+ashortnuktadeva	anuktadeva	eshortvowelsigndeva
+iinuktadeva	inuktadeva	rephdeva
+ecandranuktadeva	enuktadeva	ecandravowelsigndeva
+eshortnuktadeva	enuktadeva	eshortvowelsigndeva
+ainuktadeva	enuktadeva	evowelsigndeva
+ocandranuktadeva	aanuktadeva	ecandravowelsigndeva
+oshortnuktadeva	aanuktadeva	eshortvowelsigndeva
+onuktadeva	aanuktadeva	evowelsigndeva
+aunuktadeva	aanuktadeva	aivowelsigndeva
+acandranuktadeva	anuktadeva	ecandravowelsigndeva
+
+lookup end
+
+
+lookup	 27 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+MarkAttachmentType	 1
+
+rephcandrabindudeva	rephdeva	candrabindudeva
+rephanusvaradeva	rephdeva	anusvaradeva
+one_onedeva	uniA8E1	uniA8E1
+one_radeva	uniA8E1	uniA8EF
+two_udeva	uniA8E2	uniA8EB
+two_radeva	uniA8E2	uniA8EF
+two_avagrahadeva	uniA8E2	uniA8F1
+two_uni1CD0	uniA8E2	uni1CD0
+three_kadeva	uniA8E3	uniA8EC
+three_radeva	uniA8E3	uniA8EF
+four_radeva	uniA8E4	uniA8EF
+five_radeva	uniA8E5	uniA8EF
+vi_radeva	uniA8F0	uniA8EF
+
+lookup end
+
+
+lookup	 28 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ashortanusvaradeva	ashortdeva	anusvaradeva
+iianusvaradeva	iideva	anusvaradeva
+ecandraanusvaradeva	ecandradeva	anusvaradeva
+eshortanusvaradeva	eshortdeva	anusvaradeva
+aianusvaradeva	aideva	anusvaradeva
+ocandraanusvaradeva	ocandradeva	anusvaradeva
+oshortanusvaradeva	oshortdeva	anusvaradeva
+oanusvaradeva	odeva	anusvaradeva
+auanusvaradeva	audeva	anusvaradeva
+oevowelsigncandrabindudeva	oevowelsigndeva	candrabindudeva
+oevowelsignanusvaradeva	oevowelsigndeva	anusvaradeva
+oevowelsignrephdeva	oevowelsigndeva	rephdeva
+oevowelsignrephanusvaradeva	oevowelsigndeva	rephanusvaradeva
+oevowelsignrephcandrabindudeva	oevowelsigndeva	rephcandrabindudeva
+ooevowelsigncandrabindudeva	ooevowelsigndeva	candrabindudeva
+ooevowelsignanusvaradeva	ooevowelsigndeva	anusvaradeva
+ooevowelsignrephdeva	ooevowelsigndeva	rephdeva
+ooevowelsignrephanusvaradeva	ooevowelsigndeva	rephanusvaradeva
+ooevowelsignrephcandrabindudeva	ooevowelsigndeva	rephcandrabindudeva
+iivowelcandrabindudeva	iivowelsigndeva	candrabindudeva
+iivowelsignanusvaradeva	iivowelsigndeva	anusvaradeva
+iivowelsignrephdeva	iivowelsigndeva	rephdeva
+iivowelsignrephanusvaradeva	iivowelsigndeva	rephanusvaradeva
+iivowelsignrephcandrabindudeva	iivowelsigndeva	rephcandrabindudeva
+ecandravowelsigncandrabindudeva	ecandravowelsigndeva	candrabindudeva
+ecandravowelsignanusvaradeva	ecandravowelsigndeva	anusvaradeva
+ecandravowelsignrephdeva	ecandravowelsigndeva	rephdeva
+ecandravowelrephanusvaradeva	ecandravowelsigndeva	rephanusvaradeva
+ecandravowelrephcandrabindudeva	ecandravowelsigndeva	rephcandrabindudeva
+eshortvowelsigncandrabindudeva	eshortvowelsigndeva	candrabindudeva
+eshortvowelsignanusvaradeva	eshortvowelsigndeva	anusvaradeva
+eshortvowelsignrephdeva	eshortvowelsigndeva	rephdeva
+eshortvowelsignrephanusvarade	eshortvowelsigndeva	rephanusvaradeva
+eshortvowelrephcandrabindudeva	eshortvowelsigndeva	rephcandrabindudeva
+evowelsigncandrabindudeva	evowelsigndeva	candrabindudeva
+evowelsignanusvaradeva	evowelsigndeva	anusvaradeva
+evowelsignrephdeva	evowelsigndeva	rephdeva
+evowelsignrephanusvaradeva	evowelsigndeva	rephanusvaradeva
+evowelsignrephcandrabindudeva	evowelsigndeva	rephcandrabindudeva
+aivowelsigncandrabindudeva	aivowelsigndeva	candrabindudeva
+aivowelsignanusvaradeva	aivowelsigndeva	anusvaradeva
+aivowelsignrephdeva	aivowelsigndeva	rephdeva
+aivowelsignrephanusvaradeva	aivowelsigndeva	rephanusvaradeva
+aivowelsignrephcandrabindudeva	aivowelsigndeva	rephcandrabindudeva
+ocandravowelsigncandrabindudeva	ocandravowelsigndeva	candrabindudeva
+ocandravowelsignanusvaradeva	ocandravowelsigndeva	anusvaradeva
+ocandravowelsignrephdeva	ocandravowelsigndeva	rephdeva
+ocandravowelrephanusvaradeva	ocandravowelsigndeva	rephanusvaradeva
+ocandravowelrephcandrabindudeva	ocandravowelsigndeva	rephcandrabindudeva
+oshortvowelsigncandrabindudeva	oshortvowelsigndeva	candrabindudeva
+oshortvowelsignanusvaradeva	oshortvowelsigndeva	anusvaradeva
+oshortvowelsignrephdeva	oshortvowelsigndeva	rephdeva
+oshortvowelsignrephanusvaradeva	oshortvowelsigndeva	rephanusvaradeva
+oshortvowelrephcandrabindudeva	oshortvowelsigndeva	rephcandrabindudeva
+ovowelsigncandrabindudeva	ovowelsigndeva	candrabindudeva
+ovowelsignanusvaradeva	ovowelsigndeva	anusvaradeva
+ovowelsignrephdeva	ovowelsigndeva	rephdeva
+ovowelsignrephanusvaradeva	ovowelsigndeva	rephanusvaradeva
+ovowelsignrephcandrabindudeva	ovowelsigndeva	rephcandrabindudeva
+auvowelsigncandrabindudeva	auvowelsigndeva	candrabindudeva
+auvowelsignanusvaradeva	auvowelsigndeva	anusvaradeva
+auvowelsignrephdeva	auvowelsigndeva	rephdeva
+auvowelsignrephanusvaradeva	auvowelsigndeva	rephanusvaradeva
+auvowelsignrephcandrabindudeva	auvowelsigndeva	rephcandrabindudeva
+awvowelsigncandrabindudeva	awvowelsigndeva	candrabindudeva
+awvowelsignanusvaradeva	awvowelsigndeva	anusvaradeva
+awvowelsignrephdeva	awvowelsigndeva	rephdeva
+awvowelsignrephanusvaradeva	awvowelsigndeva	rephanusvaradeva
+awvowelsignrephcandrabindudeva	awvowelsigndeva	rephcandrabindudeva
+acandraanusvaradeva	acandradeva	anusvaradeva
+oeanusvaradeva	oedeva	anusvaradeva
+ooeanusvaradeva	ooedeva	anusvaradeva
+awanusvaradeva	awdeva	anusvaradeva
+ashortnuktaanusvaradeva	ashortnuktadeva	anusvaradeva
+iinuktaanusvaradeva	iinuktadeva	anusvaradeva
+ecandranuktaanusvaradeva	ecandranuktadeva	anusvaradeva
+eshortnuktaanusvaradeva	eshortnuktadeva	anusvaradeva
+ainuktaanusvaradeva	ainuktadeva	anusvaradeva
+ocandranuktaanusvaradeva	ocandranuktadeva	anusvaradeva
+oshortnuktaanusvaradeva	oshortnuktadeva	anusvaradeva
+onuktaanusvaradeva	onuktadeva	anusvaradeva
+aunuktaanusvaradeva	aunuktadeva	anusvaradeva
+acandranuktaanusvaradeva	acandranuktadeva	anusvaradeva
+
+lookup end
+
+
+lookup	 29 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsigndeva	1
+uni25CC	2
+class definition end
+
+class	 1, 0	 1, 30
+
+lookup end
+
+
+lookup	 30 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsigndeva	ivowelsign00deva
+
+lookup end
+
+
+lookup	 31 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+khadeva	2
+jadeva	2
+jhadeva	2
+nyadeva	2
+nnadeva	2
+khhadeva	2
+zadeva	2
+zhadeva	2
+jabardeva	2
+jhanuktadeva	2
+nyanuktadeva	2
+nnanuktadeva	2
+kassadeva	2
+kharadeva	2
+jaradeva	2
+jharadeva	2
+nyaradeva	2
+nnaradeva	2
+saradeva	2
+zharadeva	2
+kassaradeva	2
+janyaradeva	2
+khanuktaradeva	2
+januktaradeva	2
+jhanuktaradeva	2
+nyanuktaradeva	2
+nnanuktaradeva	2
+sanuktaradeva	2
+tathadeva	2
+tashadeva	2
+dabhadeva	2
+dadhadeva	2
+damadeva	2
+naddadeva	2
+naddaradeva	2
+nathadeva	2
+natharadeva	2
+nadhadeva	2
+nadharadeva	2
+badhadeva	2
+mapadeva	2
+maparadeva	2
+maphadeva	2
+mabhadeva	2
+laddadeva	2
+laddaradeva	2
+vayadeva	2
+sapadeva	2
+saparadeva	2
+saphadeva	2
+hamadeva	2
+hayadeva	2
+kadeva	3
+gadeva	3
+ghadeva	3
+ngadeva	3
+cadeva	3
+chadeva	3
+ttadeva	3
+tthadeva	3
+ddadeva	3
+ddhadeva	3
+tadeva	3
+thadeva	3
+dadeva	3
+dhadeva	3
+nadeva	3
+nnnadeva	3
+padeva	3
+phadeva	3
+badeva	3
+bhadeva	3
+madeva	3
+yadeva	3
+radeva	3
+rradeva	3
+ladeva	3
+lladeva	3
+llladeva	3
+vadeva	3
+shadeva	3
+ssadeva	3
+sadeva	3
+hadeva	3
+qadeva	3
+ghhadeva	3
+dddhadeva	3
+rhadeva	3
+fadeva	3
+yyadeva	3
+marwariddadeva	3
+heavyyadeva	3
+gabardeva	3
+ddabardeva	3
+babardeva	3
+ghanuktadeva	3
+nganuktadeva	3
+canuktadeva	3
+chanuktadeva	3
+ttanuktadeva	3
+tthanuktadeva	3
+tanuktadeva	3
+thanuktadeva	3
+danuktadeva	3
+dhanuktadeva	3
+panuktadeva	3
+banuktadeva	3
+bhanuktadeva	3
+manuktadeva	3
+lanuktadeva	3
+vanuktadeva	3
+shanuktadeva	3
+ssanuktadeva	3
+sanuktadeva	3
+hanuktadeva	3
+janyadeva	3
+karadeva	3
+garadeva	3
+gharadeva	3
+ngaradeva	3
+caradeva	3
+charadeva	3
+ttaradeva	3
+ttharadeva	3
+ddaradeva	3
+ddharadeva	3
+taradeva	3
+tharadeva	3
+daradeva	3
+dharadeva	3
+naradeva	3
+paradeva	3
+pharadeva	3
+baradeva	3
+bharadeva	3
+maradeva	3
+yaradeva	3
+raradeva	3
+laradeva	3
+llaradeva	3
+varadeva	3
+sharadeva	3
+ssaradeva	3
+haradeva	3
+marwariddaradeva	3
+heavyyaradeva	3
+kanuktaradeva	3
+ganuktaradeva	3
+ghanuktaradeva	3
+nganuktaradeva	3
+canuktaradeva	3
+chanuktaradeva	3
+ttanuktaradeva	3
+tthanuktaradeva	3
+ddanuktaradeva	3
+ddhanuktaradeva	3
+tanuktaradeva	3
+thanuktaradeva	3
+danuktaradeva	3
+dhanuktaradeva	3
+nanuktaradeva	3
+panuktaradeva	3
+phanuktaradeva	3
+banuktaradeva	3
+bhanuktaradeva	3
+manuktaradeva	3
+yanuktaradeva	3
+ranuktaradeva	3
+lanuktaradeva	3
+llanuktaradeva	3
+vanuktaradeva	3
+shanuktaradeva	3
+ssanuktaradeva	3
+hanuktaradeva	3
+katadeva	3
+ngagadeva	3
+ngamadeva	3
+ttattadeva	3
+ttatthadeva	3
+tthatthadeva	3
+ddaddhadeva	3
+ddaddadeva	3
+ddhaddhadeva	3
+tatadeva	3
+daghadeva	3
+dagadeva	3
+dabadeva	3
+davadeva	3
+dadadeva	3
+dayadeva	3
+nanadeva	3
+panadeva	3
+shacadeva	3
+shavadeva	3
+shanadeva	3
+ssattadeva	3
+ssattaradeva	3
+ssatthadeva	3
+ssattharadeva	3
+hannadeva	3
+hanadeva	3
+haladeva	3
+havadeva	3
+ladevaMAR	3
+lanuktadevaMAR	3
+laradevaMAR	3
+lanuktaradevaMAR	3
+shadevaMAR	3
+shanuktadevaMAR	3
+jhadevaNEP	3
+jhanuktadevaNEP	3
+jharadevaNEP	3
+jhanuktaradevaNEP	3
+gaprehalfdeva	4
+ganuktaprehalfdeva	4
+paprehalfdeva	5
+panuktaprehalfdeva	5
+paraprehalfdeva	5
+panuktaraprehalfdeva	5
+heavyyaprehalfdeva	6
+heavyyaraprehalfdeva	6
+yaprehalfdeva	7
+yanuktaprehalfdeva	7
+yaraprehalfdeva	7
+yanuktaraprehalfdeva	7
+garaprehalfdeva	8
+ganuktaraprehalfdeva	8
+taprehalfdeva	9
+tanuktaprehalfdeva	9
+maprehalfdeva	10
+manuktaprehalfdeva	10
+ghaprehalfdeva	11
+ghanuktaprehalfdeva	11
+gharaprehalfdeva	11
+ghanuktaraprehalfdeva	11
+naprehalfdeva	12
+nanuktaprehalfdeva	12
+dhaprehalfdeva	13
+dhanuktaprehalfdeva	13
+dharaprehalfdeva	13
+dhanuktaraprehalfdeva	13
+ssaprehalfdeva	14
+ssanuktaprehalfdeva	14
+ssaraprehalfdeva	14
+ssanuktaraprehalfdeva	14
+taraprehalfdeva	15
+tanuktaraprehalfdeva	15
+naraprehalfdeva	16
+nanuktaraprehalfdeva	16
+saprehalfdeva	17
+sanuktaprehalfdeva	17
+thaprehalfdeva	18
+thanuktaprehalfdeva	18
+tharaprehalfdeva	18
+thanuktaraprehalfdeva	18
+vaprehalfdeva	19
+vanuktaprehalfdeva	19
+varaprehalfdeva	19
+vanuktaraprehalfdeva	19
+caprehalfdeva	20
+canuktaprehalfdeva	20
+caraprehalfdeva	20
+canuktaraprehalfdeva	20
+raprehalfdeva	21
+raraprehalfdeva	21
+baprehalfdeva	22
+banuktaprehalfdeva	22
+baraprehalfdeva	22
+banuktaraprehalfdeva	22
+shaprehalfdeva	23
+shanuktaprehalfdeva	23
+shaprehalfdevaMAR	24
+shanuktaprehalfdevaMAR	24
+janyaprehalfdeva	25
+maraprehalfdeva	26
+manuktaraprehalfdeva	26
+haprehalfdeva	27
+hanuktaprehalfdeva	27
+bhaprehalfdeva	28
+bhanuktaprehalfdeva	28
+kassaprehalfdeva	29
+nnaprehalfdeva	30
+nnanuktaprehalfdeva	30
+tataprehalfdeva	31
+dayaprehalfdeva	32
+jhaprehalfdeva	33
+jhanuktaprehalfdeva	33
+nnaraprehalfdeva	33
+nnanuktaraprehalfdeva	33
+laprehalfdeva	34
+lanuktaprehalfdeva	34
+laraprehalfdeva	34
+lanuktaraprehalfdeva	34
+ttaprehalfdeva	35
+ttanuktaprehalfdeva	35
+ttaraprehalfdeva	35
+ttaraprehalfUIdeva	35
+ttanuktaraprehalfdeva	35
+daprehalfdeva	36
+danuktaprehalfdeva	36
+daraprehalfdeva	36
+danuktaraprehalfdeva	36
+nyaprehalfdeva	37
+ddaprehalfdeva	37
+ddhaprehalfdeva	37
+zhaprehalfdeva	37
+nyanuktaprehalfdeva	37
+ddanuktaprehalfdeva	37
+ddhanuktaprehalfdeva	37
+ddaraprehalfdeva	37
+ddaraprehalfUIdeva	37
+ddharaprehalfdeva	37
+ddharaprehalfUIdeva	37
+bharaprehalfdeva	37
+sharaprehalfdeva	37
+saraprehalfdeva	37
+haraprehalfdeva	37
+janyaraprehalfdeva	37
+ddanuktaraprehalfdeva	37
+ddhanuktaraprehalfdeva	37
+bhanuktaraprehalfdeva	37
+shanuktaraprehalfdeva	37
+sanuktaraprehalfdeva	37
+hanuktaraprehalfdeva	37
+japrehalfdeva	38
+januktaprehalfdeva	38
+uni200D	39
+class definition end
+
+class	 1, 2	 1, 67
+class	 1, 3	 1, 67
+class	 1, 4, 3	 1, 32
+class	 1, 5, 3	 1, 33
+class	 1, 6, 3	 1, 34
+class	 1, 7, 3	 1, 35
+class	 1, 8, 3	 1, 36
+class	 1, 9, 3	 1, 37
+class	 1, 10, 3	 1, 38
+class	 1, 11, 3	 1, 39
+class	 1, 12, 3	 1, 40
+class	 1, 13, 3	 1, 41
+class	 1, 14, 3	 1, 42
+class	 1, 15, 3	 1, 43
+class	 1, 16, 3	 1, 44
+class	 1, 17, 3	 1, 45
+class	 1, 18, 3	 1, 46
+class	 1, 19, 3	 1, 47
+class	 1, 20, 3	 1, 48
+class	 1, 21, 3	 1, 49
+class	 1, 22, 3	 1, 50
+class	 1, 23, 3	 1, 51
+class	 1, 24, 3	 1, 52
+class	 1, 25, 3	 1, 53
+class	 1, 26, 3	 1, 54
+class	 1, 27, 3	 1, 55
+class	 1, 28, 3	 1, 56
+class	 1, 29, 3	 1, 57
+class	 1, 30, 3	 1, 58
+class	 1, 31, 3	 1, 59
+class	 1, 32, 3	 1, 60
+class	 1, 33, 3	 1, 61
+class	 1, 34, 3	 1, 62
+class	 1, 35, 3	 1, 63
+class	 1, 36, 3	 1, 64
+class	 1, 37, 3	 1, 65
+class	 1, 38, 3	 1, 66
+class	 1, 4, 39, 3	 1, 32
+class	 1, 5, 39, 3	 1, 33
+class	 1, 6, 39, 3	 1, 34
+class	 1, 7, 39, 3	 1, 35
+class	 1, 8, 39, 3	 1, 36
+class	 1, 9, 39, 3	 1, 37
+class	 1, 10, 39, 3	 1, 38
+class	 1, 11, 39, 3	 1, 39
+class	 1, 12, 39, 3	 1, 40
+class	 1, 13, 39, 3	 1, 41
+class	 1, 14, 39, 3	 1, 42
+class	 1, 15, 39, 3	 1, 43
+class	 1, 16, 39, 3	 1, 44
+class	 1, 17, 39, 3	 1, 45
+class	 1, 18, 39, 3	 1, 46
+class	 1, 19, 39, 3	 1, 47
+class	 1, 20, 39, 3	 1, 48
+class	 1, 21, 39, 3	 1, 49
+class	 1, 22, 39, 3	 1, 50
+class	 1, 23, 39, 3	 1, 51
+class	 1, 24, 39, 3	 1, 52
+class	 1, 25, 39, 3	 1, 53
+class	 1, 26, 39, 3	 1, 54
+class	 1, 27, 39, 3	 1, 55
+class	 1, 28, 39, 3	 1, 56
+class	 1, 29, 39, 3	 1, 57
+class	 1, 30, 39, 3	 1, 58
+class	 1, 31, 39, 3	 1, 59
+class	 1, 32, 39, 3	 1, 60
+class	 1, 33, 39, 3	 1, 61
+class	 1, 34, 39, 3	 1, 62
+class	 1, 35, 39, 3	 1, 63
+class	 1, 36, 39, 3	 1, 64
+class	 1, 37, 39, 3	 1, 65
+class	 1, 38, 39, 3	 1, 66
+
+lookup end
+
+
+lookup	 32 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+gaprehalfdeva	2
+ganuktaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+ddadeva	5
+nadeva	5
+nnnadeva	5
+phadeva	5
+vadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+marwariddadeva	5
+vanuktadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+naradeva	5
+pharadeva	5
+varadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+vanuktaradeva	5
+hanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+tadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+ssaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+ssanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+cadeva	7
+chadeva	7
+thadeva	7
+dhadeva	7
+canuktadeva	7
+chanuktadeva	7
+thanuktadeva	7
+dhanuktadeva	7
+janyadeva	7
+caradeva	7
+charadeva	7
+tharadeva	7
+dharadeva	7
+canuktaradeva	7
+chanuktaradeva	7
+thanuktaradeva	7
+dhanuktaradeva	7
+katadeva	7
+daghadeva	7
+nanadeva	7
+havadeva	7
+ladevaMAR	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+bhadeva	8
+ladeva	8
+lladeva	8
+llladeva	8
+shadeva	8
+sadeva	8
+bhanuktadeva	8
+lanuktadeva	8
+shanuktadeva	8
+sanuktadeva	8
+bharadeva	8
+laradeva	8
+llaradeva	8
+sharadeva	8
+bhanuktaradeva	8
+lanuktaradeva	8
+llanuktaradeva	8
+shanuktaradeva	8
+tatadeva	8
+dayadeva	8
+shacadeva	8
+shavadeva	8
+shanadeva	8
+hannadeva	8
+haladeva	8
+shadevaMAR	8
+shanuktadevaMAR	8
+jhadevaNEP	8
+jhanuktadevaNEP	8
+jharadevaNEP	8
+jhanuktaradevaNEP	8
+uni200D	9
+class definition end
+
+class	 1, 2, 3	 1, 73
+class	 1, 2, 4	 1, 74
+class	 1, 2, 5	 1, 75
+class	 1, 2, 6	 1, 76
+class	 1, 2, 7	 1, 77
+class	 1, 2, 8	 1, 78
+class	 1, 2, 9, 3	 1, 73
+class	 1, 2, 9, 4	 1, 74
+class	 1, 2, 9, 5	 1, 75
+class	 1, 2, 9, 6	 1, 76
+class	 1, 2, 9, 7	 1, 77
+class	 1, 2, 9, 8	 1, 78
+
+lookup end
+
+
+lookup	 33 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+paprehalfdeva	2
+panuktaprehalfdeva	2
+paraprehalfdeva	2
+panuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+dadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+dagadeva	4
+ddhadeva	5
+rhadeva	5
+ddharadeva	5
+ddhanuktaradeva	5
+ddhaddhadeva	5
+dadadeva	5
+kadeva	6
+gadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+hadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+hanuktadeva	6
+karadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ghadeva	7
+chadeva	7
+dhadeva	7
+madeva	7
+ghanuktadeva	7
+chanuktadeva	7
+dhanuktadeva	7
+manuktadeva	7
+gharadeva	7
+charadeva	7
+dharadeva	7
+maradeva	7
+ghanuktaradeva	7
+nganuktaradeva	7
+chanuktaradeva	7
+dhanuktaradeva	7
+manuktaradeva	7
+nanadeva	7
+ssattadeva	7
+ssattaradeva	7
+ssatthadeva	7
+ssattharadeva	7
+hanadeva	7
+cadeva	8
+thadeva	8
+ladeva	8
+lladeva	8
+llladeva	8
+shadeva	8
+sadeva	8
+canuktadeva	8
+thanuktadeva	8
+lanuktadeva	8
+shanuktadeva	8
+sanuktadeva	8
+janyadeva	8
+caradeva	8
+tharadeva	8
+llaradeva	8
+canuktaradeva	8
+thanuktaradeva	8
+llanuktaradeva	8
+katadeva	8
+tatadeva	8
+daghadeva	8
+dayadeva	8
+havadeva	8
+ladevaMAR	8
+lanuktadevaMAR	8
+laradevaMAR	8
+lanuktaradevaMAR	8
+shadevaMAR	8
+shanuktadevaMAR	8
+uni200D	9
+class definition end
+
+class	 1, 2, 3	 1, 73
+class	 1, 2, 4	 1, 74
+class	 1, 2, 5	 1, 75
+class	 1, 2, 6	 1, 76
+class	 1, 2, 7	 1, 77
+class	 1, 2, 8	 1, 78
+class	 1, 2, 9, 3	 1, 73
+class	 1, 2, 9, 4	 1, 74
+class	 1, 2, 9, 5	 1, 75
+class	 1, 2, 9, 6	 1, 76
+class	 1, 2, 9, 7	 1, 77
+class	 1, 2, 9, 8	 1, 78
+
+lookup end
+
+
+lookup	 34 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+heavyyaprehalfdeva	2
+heavyyaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+nadeva	5
+nnnadeva	5
+phadeva	5
+vadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+marwariddadeva	5
+vanuktadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+naradeva	5
+pharadeva	5
+varadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+vanuktaradeva	5
+hanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+ssaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+ssanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+cadeva	7
+chadeva	7
+thadeva	7
+dhadeva	7
+canuktadeva	7
+chanuktadeva	7
+thanuktadeva	7
+dhanuktadeva	7
+janyadeva	7
+caradeva	7
+charadeva	7
+tharadeva	7
+dharadeva	7
+canuktaradeva	7
+chanuktaradeva	7
+thanuktaradeva	7
+dhanuktaradeva	7
+katadeva	7
+daghadeva	7
+nanadeva	7
+havadeva	7
+ladevaMAR	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 35 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+yaprehalfdeva	2
+yanuktaprehalfdeva	2
+yaraprehalfdeva	2
+yanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+nadeva	5
+nnnadeva	5
+phadeva	5
+vadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+marwariddadeva	5
+vanuktadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+naradeva	5
+pharadeva	5
+varadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+vanuktaradeva	5
+hanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+ssaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+ssanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+cadeva	7
+chadeva	7
+thadeva	7
+dhadeva	7
+canuktadeva	7
+chanuktadeva	7
+thanuktadeva	7
+dhanuktadeva	7
+janyadeva	7
+caradeva	7
+charadeva	7
+tharadeva	7
+dharadeva	7
+canuktaradeva	7
+chanuktaradeva	7
+thanuktaradeva	7
+dhanuktaradeva	7
+katadeva	7
+daghadeva	7
+nanadeva	7
+havadeva	7
+ladevaMAR	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 36 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+garaprehalfdeva	2
+ganuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+phadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+pharadeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+phanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+naradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+cadeva	7
+chadeva	7
+thadeva	7
+dhadeva	7
+canuktadeva	7
+chanuktadeva	7
+thanuktadeva	7
+dhanuktadeva	7
+janyadeva	7
+caradeva	7
+charadeva	7
+tharadeva	7
+dharadeva	7
+canuktaradeva	7
+chanuktaradeva	7
+thanuktaradeva	7
+dhanuktaradeva	7
+katadeva	7
+nanadeva	7
+havadeva	7
+ladevaMAR	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 37 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+taprehalfdeva	2
+tanuktaprehalfdeva	2
+dadeva	3
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+kadeva	4
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+karadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+padeva	5
+phadeva	5
+badeva	5
+yadeva	5
+vadeva	5
+hadeva	5
+hanuktadeva	5
+paradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+madeva	6
+ssadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+ladevaMAR	6
+cadeva	7
+chadeva	7
+thadeva	7
+dhadeva	7
+ladeva	7
+canuktadeva	7
+chanuktadeva	7
+thanuktadeva	7
+dhanuktadeva	7
+manuktadeva	7
+janyadeva	7
+caradeva	7
+charadeva	7
+tharadeva	7
+dharadeva	7
+maradeva	7
+canuktaradeva	7
+chanuktaradeva	7
+thanuktaradeva	7
+dhanuktaradeva	7
+manuktaradeva	7
+katadeva	7
+nanadeva	7
+hanadeva	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 38 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+maprehalfdeva	2
+manuktaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+ddadeva	5
+vadeva	5
+hadeva	5
+hanuktadeva	5
+kadeva	6
+gadeva	6
+ghadeva	6
+ngadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+madeva	6
+yadeva	6
+ssadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+karadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+cadeva	7
+chadeva	7
+thadeva	7
+dhadeva	7
+canuktadeva	7
+chanuktadeva	7
+thanuktadeva	7
+dhanuktadeva	7
+manuktadeva	7
+janyadeva	7
+caradeva	7
+charadeva	7
+tharadeva	7
+dharadeva	7
+maradeva	7
+canuktaradeva	7
+chanuktaradeva	7
+thanuktaradeva	7
+dhanuktaradeva	7
+manuktaradeva	7
+katadeva	7
+nanadeva	7
+hanadeva	7
+ladevaMAR	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 39 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+ghaprehalfdeva	2
+ghanuktaprehalfdeva	2
+gharaprehalfdeva	2
+ghanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+hadeva	5
+hanuktadeva	5
+kadeva	6
+gadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+karadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+ghadeva	7
+cadeva	7
+chadeva	7
+dhadeva	7
+madeva	7
+ghanuktadeva	7
+canuktadeva	7
+chanuktadeva	7
+dhanuktadeva	7
+manuktadeva	7
+janyadeva	7
+gharadeva	7
+caradeva	7
+charadeva	7
+dharadeva	7
+maradeva	7
+ghanuktaradeva	7
+nganuktaradeva	7
+canuktaradeva	7
+chanuktaradeva	7
+dhanuktaradeva	7
+manuktaradeva	7
+katadeva	7
+nanadeva	7
+hanadeva	7
+ladevaMAR	7
+lanuktadevaMAR	7
+laradevaMAR	7
+lanuktaradevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 40 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+naprehalfdeva	2
+nanuktaprehalfdeva	2
+ttadeva	3
+dadeva	3
+radeva	3
+rradeva	3
+ttaradeva	3
+daradeva	3
+raradeva	3
+ranuktaradeva	3
+tthadeva	4
+ddhadeva	4
+hadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttharadeva	4
+ddharadeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+davadeva	4
+kadeva	5
+ghadeva	5
+tadeva	5
+padeva	5
+phadeva	5
+badeva	5
+yadeva	5
+vadeva	5
+ssadeva	5
+fadeva	5
+karadeva	5
+taradeva	5
+pharadeva	5
+dadadeva	5
+gadeva	6
+ngadeva	6
+chadeva	6
+ddadeva	6
+nadeva	6
+nnnadeva	6
+madeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+hanuktadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+naradeva	6
+paradeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+panadeva	6
+cadeva	7
+dhadeva	7
+bhadeva	7
+ladeva	7
+sadeva	7
+ghanuktadeva	7
+chanuktadeva	7
+dhanuktadeva	7
+manuktadeva	7
+gharadeva	7
+charadeva	7
+dharadeva	7
+maradeva	7
+ghanuktaradeva	7
+nganuktaradeva	7
+chanuktaradeva	7
+dhanuktaradeva	7
+manuktaradeva	7
+nanadeva	7
+ssattadeva	7
+ssattaradeva	7
+ssatthadeva	7
+ssattharadeva	7
+hanadeva	7
+ladevaMAR	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 41 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+dhaprehalfdeva	2
+dhanuktaprehalfdeva	2
+dharaprehalfdeva	2
+dhanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	5
+kadeva	6
+gadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+vadeva	6
+ssadeva	6
+hadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+marwariddadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+hanuktadeva	6
+karadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ghadeva	7
+chadeva	7
+dhadeva	7
+madeva	7
+yadeva	7
+yyadeva	7
+heavyyadeva	7
+ghanuktadeva	7
+chanuktadeva	7
+dhanuktadeva	7
+manuktadeva	7
+gharadeva	7
+charadeva	7
+dharadeva	7
+maradeva	7
+yaradeva	7
+heavyyaradeva	7
+ghanuktaradeva	7
+nganuktaradeva	7
+chanuktaradeva	7
+dhanuktaradeva	7
+manuktaradeva	7
+yanuktaradeva	7
+nanadeva	7
+ssattadeva	7
+ssattaradeva	7
+ssatthadeva	7
+ssattharadeva	7
+hanadeva	7
+uni200D	8
+class definition end
+
+class	 1, 2, 3	 1, 74
+class	 1, 2, 4	 1, 75
+class	 1, 2, 5	 1, 76
+class	 1, 2, 6	 1, 77
+class	 1, 2, 7	 1, 78
+class	 1, 2, 8, 3	 1, 74
+class	 1, 2, 8, 4	 1, 75
+class	 1, 2, 8, 5	 1, 76
+class	 1, 2, 8, 6	 1, 77
+class	 1, 2, 8, 7	 1, 78
+
+lookup end
+
+
+lookup	 42 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+ssaprehalfdeva	2
+ssanuktaprehalfdeva	2
+ssaraprehalfdeva	2
+ssanuktaraprehalfdeva	2
+ttadeva	3
+tthadeva	3
+radeva	3
+rradeva	3
+ttanuktadeva	3
+tthanuktadeva	3
+ttaradeva	3
+ttharadeva	3
+raradeva	3
+ttanuktaradeva	3
+tthanuktaradeva	3
+ranuktaradeva	3
+ttattadeva	3
+ttatthadeva	3
+tthatthadeva	3
+ddhadeva	4
+dadeva	4
+phadeva	4
+rhadeva	4
+danuktadeva	4
+ddharadeva	4
+daradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+gadeva	5
+tadeva	5
+nadeva	5
+nnnadeva	5
+padeva	5
+yadeva	5
+vadeva	5
+ssadeva	5
+hadeva	5
+qadeva	5
+ghhadeva	5
+fadeva	5
+marwariddadeva	5
+gabardeva	5
+vanuktadeva	5
+hanuktadeva	5
+karadeva	5
+garadeva	5
+taradeva	5
+naradeva	5
+paradeva	5
+pharadeva	5
+varadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+ganuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+vanuktaradeva	5
+hanuktaradeva	5
+davadeva	5
+ghadeva	6
+ngadeva	6
+ddadeva	6
+dhadeva	6
+badeva	6
+madeva	6
+dddhadeva	6
+yyadeva	6
+heavyyadeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+dhanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+ssanuktadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+dharadeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+ssaradeva	6
+heavyyaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+dhanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+ssanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+nanadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 43 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+taraprehalfdeva	2
+tanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+nadeva	5
+nnnadeva	5
+phadeva	5
+yadeva	5
+vadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+marwariddadeva	5
+vanuktadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+naradeva	5
+pharadeva	5
+varadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+vanuktaradeva	5
+hanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+padeva	6
+badeva	6
+madeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+ssaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+ssanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 44 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+naraprehalfdeva	2
+nanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+nadeva	5
+nnnadeva	5
+phadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+marwariddadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+naradeva	5
+pharadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+hanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+hanadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 45 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+saprehalfdeva	2
+sanuktaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+nadeva	5
+phadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+pharadeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+phanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nnnadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+naradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 46 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+thaprehalfdeva	2
+thanuktaprehalfdeva	2
+tharaprehalfdeva	2
+thanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+phadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+pharadeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+phanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+badeva	6
+madeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+naradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 47 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+vaprehalfdeva	2
+vanuktaprehalfdeva	2
+varaprehalfdeva	2
+vanuktaraprehalfdeva	2
+ddadeva	3
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+kadeva	4
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+hadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+nadeva	5
+phadeva	5
+madeva	5
+vadeva	5
+qadeva	5
+fadeva	5
+hanuktadeva	5
+karadeva	5
+pharadeva	5
+kanuktaradeva	5
+phanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+tadeva	6
+nnnadeva	6
+padeva	6
+badeva	6
+yadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+manuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+baradeva	6
+maradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+banuktaradeva	6
+manuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+ladevaMAR	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 48 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+caprehalfdeva	2
+canuktaprehalfdeva	2
+caraprehalfdeva	2
+canuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+ddadeva	5
+hadeva	5
+qadeva	5
+hanuktadeva	5
+karadeva	5
+kanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 49 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+raprehalfdeva	2
+raraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+hadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+qadeva	5
+hanuktadeva	5
+karadeva	5
+kanuktaradeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 50 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+baprehalfdeva	2
+banuktaprehalfdeva	2
+baraprehalfdeva	2
+banuktaraprehalfdeva	2
+dadeva	3
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddadeva	4
+ddhadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+tadeva	5
+nadeva	5
+badeva	5
+yadeva	5
+vadeva	5
+hadeva	5
+hanuktadeva	5
+gadeva	6
+ghadeva	6
+ngadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+madeva	6
+ssadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+ghanuktadeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+karadeva	6
+garadeva	6
+gharadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ghanuktaradeva	6
+nganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+ladevaMAR	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 51 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+shaprehalfdeva	2
+shanuktaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+hadeva	5
+hanuktadeva	5
+dadadeva	5
+kadeva	6
+gadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+karadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+ssattadeva	6
+ssattaradeva	6
+ssatthadeva	6
+ssattharadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 52 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+shaprehalfdevaMAR	2
+shanuktaprehalfdevaMAR	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	5
+kadeva	6
+gadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+ssadeva	6
+hadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+yyadeva	6
+marwariddadeva	6
+heavyyadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+ssanuktadeva	6
+hanuktadeva	6
+karadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+yaradeva	6
+varadeva	6
+ssaradeva	6
+haradeva	6
+marwariddaradeva	6
+heavyyaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+yanuktaradeva	6
+vanuktaradeva	6
+ssanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+dabadeva	6
+davadeva	6
+panadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 53 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+janyaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+dadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+dagadeva	4
+ddhadeva	5
+rhadeva	5
+ddharadeva	5
+ddhanuktaradeva	5
+ddhaddhadeva	5
+dadadeva	5
+kadeva	6
+gadeva	6
+ngadeva	6
+ddadeva	6
+tadeva	6
+nadeva	6
+nnnadeva	6
+padeva	6
+phadeva	6
+badeva	6
+yadeva	6
+vadeva	6
+hadeva	6
+qadeva	6
+ghhadeva	6
+dddhadeva	6
+fadeva	6
+marwariddadeva	6
+gabardeva	6
+ddabardeva	6
+babardeva	6
+nganuktadeva	6
+tanuktadeva	6
+panuktadeva	6
+banuktadeva	6
+vanuktadeva	6
+hanuktadeva	6
+karadeva	6
+garadeva	6
+ngaradeva	6
+ddaradeva	6
+taradeva	6
+naradeva	6
+paradeva	6
+pharadeva	6
+baradeva	6
+varadeva	6
+haradeva	6
+marwariddaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+ddanuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+panuktaradeva	6
+phanuktaradeva	6
+banuktaradeva	6
+vanuktaradeva	6
+hanuktaradeva	6
+ngagadeva	6
+ngamadeva	6
+ddaddhadeva	6
+ddaddadeva	6
+davadeva	6
+panadeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 54 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+maraprehalfdeva	2
+manuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhadeva	5
+dadeva	5
+rhadeva	5
+danuktadeva	5
+ddharadeva	5
+daradeva	5
+ddhanuktaradeva	5
+danuktaradeva	5
+ddhaddhadeva	5
+dagadeva	5
+dadadeva	5
+kadeva	6
+gadeva	6
+nadeva	6
+nnnadeva	6
+phadeva	6
+vadeva	6
+hadeva	6
+qadeva	6
+ghhadeva	6
+fadeva	6
+marwariddadeva	6
+gabardeva	6
+vanuktadeva	6
+hanuktadeva	6
+karadeva	6
+garadeva	6
+taradeva	6
+naradeva	6
+pharadeva	6
+varadeva	6
+haradeva	6
+marwariddaradeva	6
+kanuktaradeva	6
+ganuktaradeva	6
+tanuktaradeva	6
+nanuktaradeva	6
+phanuktaradeva	6
+vanuktaradeva	6
+hanuktaradeva	6
+uni200D	7
+class definition end
+
+class	 1, 2, 3	 1, 75
+class	 1, 2, 4	 1, 76
+class	 1, 2, 5	 1, 77
+class	 1, 2, 6	 1, 78
+class	 1, 2, 7, 3	 1, 75
+class	 1, 2, 7, 4	 1, 76
+class	 1, 2, 7, 5	 1, 77
+class	 1, 2, 7, 6	 1, 78
+
+lookup end
+
+
+lookup	 55 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+haprehalfdeva	2
+hanuktaprehalfdeva	2
+dadeva	3
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+kadeva	4
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+nadeva	4
+hadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+tadeva	5
+nnnadeva	5
+phadeva	5
+badeva	5
+vadeva	5
+qadeva	5
+fadeva	5
+marwariddadeva	5
+vanuktadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+naradeva	5
+pharadeva	5
+varadeva	5
+haradeva	5
+marwariddaradeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+nanuktaradeva	5
+phanuktaradeva	5
+vanuktaradeva	5
+hanuktaradeva	5
+uni200D	6
+class definition end
+
+class	 1, 2, 3	 1, 76
+class	 1, 2, 4	 1, 77
+class	 1, 2, 5	 1, 78
+class	 1, 2, 6, 3	 1, 76
+class	 1, 2, 6, 4	 1, 77
+class	 1, 2, 6, 5	 1, 78
+
+lookup end
+
+
+lookup	 56 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+bhaprehalfdeva	2
+bhanuktaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+kadeva	5
+phadeva	5
+vadeva	5
+hadeva	5
+qadeva	5
+fadeva	5
+hanuktadeva	5
+karadeva	5
+taradeva	5
+pharadeva	5
+kanuktaradeva	5
+tanuktaradeva	5
+phanuktaradeva	5
+uni200D	6
+class definition end
+
+class	 1, 2, 3	 1, 76
+class	 1, 2, 4	 1, 77
+class	 1, 2, 5	 1, 78
+class	 1, 2, 6, 3	 1, 76
+class	 1, 2, 6, 4	 1, 77
+class	 1, 2, 6, 5	 1, 78
+
+lookup end
+
+
+lookup	 57 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+kassaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+hadeva	5
+hanuktadeva	5
+dadadeva	5
+uni200D	6
+class definition end
+
+class	 1, 2, 3	 1, 76
+class	 1, 2, 4	 1, 77
+class	 1, 2, 5	 1, 78
+class	 1, 2, 6, 3	 1, 76
+class	 1, 2, 6, 4	 1, 77
+class	 1, 2, 6, 5	 1, 78
+
+lookup end
+
+
+lookup	 58 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+nnaprehalfdeva	2
+nnanuktaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+dagadeva	4
+rhadeva	5
+ddharadeva	5
+ddhanuktaradeva	5
+ddhaddhadeva	5
+dadadeva	5
+uni200D	6
+class definition end
+
+class	 1, 2, 3	 1, 76
+class	 1, 2, 4	 1, 77
+class	 1, 2, 5	 1, 78
+class	 1, 2, 6, 3	 1, 76
+class	 1, 2, 6, 4	 1, 77
+class	 1, 2, 6, 5	 1, 78
+
+lookup end
+
+
+lookup	 59 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+tataprehalfdeva	2
+ttadeva	3
+tthadeva	3
+radeva	3
+rradeva	3
+ttanuktadeva	3
+tthanuktadeva	3
+ttaradeva	3
+ttharadeva	3
+raradeva	3
+ttanuktaradeva	3
+tthanuktaradeva	3
+ranuktaradeva	3
+ttattadeva	3
+ttatthadeva	3
+tthatthadeva	3
+ddhadeva	4
+dadeva	4
+padeva	4
+vadeva	4
+rhadeva	4
+danuktadeva	4
+ddharadeva	4
+daradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+uni200D	5
+class definition end
+
+class	 1, 2, 3	 1, 77
+class	 1, 2, 4	 1, 78
+class	 1, 2, 5, 3	 1, 77
+class	 1, 2, 5, 4	 1, 78
+
+lookup end
+
+
+lookup	 60 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+dayaprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+yadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+uni200D	5
+class definition end
+
+class	 1, 2, 3	 1, 77
+class	 1, 2, 4	 1, 78
+class	 1, 2, 5, 3	 1, 77
+class	 1, 2, 5, 4	 1, 78
+
+lookup end
+
+
+lookup	 61 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+jhaprehalfdeva	2
+jhanuktaprehalfdeva	2
+nnaraprehalfdeva	2
+nnanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+uni200D	5
+class definition end
+
+class	 1, 2, 3	 1, 77
+class	 1, 2, 4	 1, 78
+class	 1, 2, 5, 3	 1, 77
+class	 1, 2, 5, 4	 1, 78
+
+lookup end
+
+
+lookup	 62 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+laprehalfdeva	2
+lanuktaprehalfdeva	2
+laraprehalfdeva	2
+lanuktaraprehalfdeva	2
+ttadeva	3
+tthadeva	3
+ddhadeva	3
+dadeva	3
+radeva	3
+rradeva	3
+ttaradeva	3
+raradeva	3
+ranuktaradeva	3
+davadeva	3
+kadeva	4
+phadeva	4
+hadeva	4
+rhadeva	4
+fadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+karadeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+pharadeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+uni200D	5
+class definition end
+
+class	 1, 2, 3	 1, 77
+class	 1, 2, 4	 1, 78
+class	 1, 2, 5, 3	 1, 77
+class	 1, 2, 5, 4	 1, 78
+
+lookup end
+
+
+lookup	 63 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+ttaprehalfdeva	2
+ttanuktaprehalfdeva	2
+ttaraprehalfdeva	2
+ttaraprehalfUIdeva	2
+ttanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+ddhadeva	4
+dadeva	4
+rhadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+ddharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+ddhanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+ddhaddhadeva	4
+dagadeva	4
+dadadeva	4
+uni200D	5
+class definition end
+
+class	 1, 2, 3	 1, 77
+class	 1, 2, 4	 1, 78
+class	 1, 2, 5, 3	 1, 77
+class	 1, 2, 5, 4	 1, 78
+
+lookup end
+
+
+lookup	 64 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+daprehalfdeva	2
+danuktaprehalfdeva	2
+daraprehalfdeva	2
+danuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+ttadeva	4
+tthadeva	4
+dadeva	4
+ttanuktadeva	4
+tthanuktadeva	4
+danuktadeva	4
+ttaradeva	4
+ttharadeva	4
+daradeva	4
+ttanuktaradeva	4
+tthanuktaradeva	4
+danuktaradeva	4
+ttattadeva	4
+ttatthadeva	4
+tthatthadeva	4
+dagadeva	4
+uni200D	5
+class definition end
+
+class	 1, 2, 3	 1, 77
+class	 1, 2, 4	 1, 78
+class	 1, 2, 5, 3	 1, 77
+class	 1, 2, 5, 4	 1, 78
+
+lookup end
+
+
+lookup	 65 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+nyaprehalfdeva	2
+ddaprehalfdeva	2
+ddhaprehalfdeva	2
+zhaprehalfdeva	2
+nyanuktaprehalfdeva	2
+ddanuktaprehalfdeva	2
+ddhanuktaprehalfdeva	2
+ddaraprehalfdeva	2
+ddaraprehalfUIdeva	2
+ddharaprehalfdeva	2
+ddharaprehalfUIdeva	2
+bharaprehalfdeva	2
+sharaprehalfdeva	2
+saraprehalfdeva	2
+haraprehalfdeva	2
+janyaraprehalfdeva	2
+ddanuktaraprehalfdeva	2
+ddhanuktaraprehalfdeva	2
+bhanuktaraprehalfdeva	2
+shanuktaraprehalfdeva	2
+sanuktaraprehalfdeva	2
+hanuktaraprehalfdeva	2
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+uni200D	4
+class definition end
+
+class	 1, 2, 3	 1, 78
+class	 1, 2, 4, 3	 1, 78
+
+lookup end
+
+
+lookup	 66 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+japrehalfdeva	2
+januktaprehalfdeva	2
+ttadeva	3
+dadeva	3
+radeva	3
+rradeva	3
+raradeva	3
+ranuktaradeva	3
+uni200D	4
+class definition end
+
+class	 1, 2, 3	 1, 78
+class	 1, 2, 4, 3	 1, 78
+
+lookup end
+
+
+lookup	 67 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+radeva	2
+rradeva	2
+raradeva	2
+ranuktaradeva	2
+ttadeva	3
+tthadeva	3
+ddhadeva	3
+dadeva	3
+rhadeva	3
+ttanuktadeva	3
+tthanuktadeva	3
+danuktadeva	3
+ttaradeva	3
+ttharadeva	3
+ddharadeva	3
+daradeva	3
+ttanuktaradeva	3
+tthanuktaradeva	3
+ddhanuktaradeva	3
+danuktaradeva	3
+ttattadeva	3
+ttatthadeva	3
+tthatthadeva	3
+ddhaddhadeva	3
+dagadeva	3
+dadadeva	3
+kadeva	4
+gadeva	4
+ngadeva	4
+ddadeva	4
+tadeva	4
+nadeva	4
+nnnadeva	4
+padeva	4
+phadeva	4
+badeva	4
+vadeva	4
+ssadeva	4
+hadeva	4
+qadeva	4
+ghhadeva	4
+dddhadeva	4
+fadeva	4
+marwariddadeva	4
+gabardeva	4
+ddabardeva	4
+babardeva	4
+nganuktadeva	4
+tanuktadeva	4
+panuktadeva	4
+banuktadeva	4
+vanuktadeva	4
+ssanuktadeva	4
+hanuktadeva	4
+karadeva	4
+garadeva	4
+ngaradeva	4
+ddaradeva	4
+taradeva	4
+naradeva	4
+paradeva	4
+pharadeva	4
+baradeva	4
+varadeva	4
+ssaradeva	4
+haradeva	4
+marwariddaradeva	4
+kanuktaradeva	4
+ganuktaradeva	4
+ddanuktaradeva	4
+tanuktaradeva	4
+nanuktaradeva	4
+panuktaradeva	4
+phanuktaradeva	4
+banuktaradeva	4
+vanuktaradeva	4
+ssanuktaradeva	4
+hanuktaradeva	4
+ngagadeva	4
+ngamadeva	4
+ddaddhadeva	4
+ddaddadeva	4
+dabadeva	4
+davadeva	4
+panadeva	4
+ghadeva	5
+dhadeva	5
+madeva	5
+yadeva	5
+yyadeva	5
+heavyyadeva	5
+ghanuktadeva	5
+dhanuktadeva	5
+manuktadeva	5
+gharadeva	5
+dharadeva	5
+maradeva	5
+yaradeva	5
+heavyyaradeva	5
+ghanuktaradeva	5
+nganuktaradeva	5
+dhanuktaradeva	5
+manuktaradeva	5
+yanuktaradeva	5
+nanadeva	5
+ssattadeva	5
+ssattaradeva	5
+ssatthadeva	5
+ssattharadeva	5
+hanadeva	5
+cadeva	6
+chadeva	6
+thadeva	6
+ladeva	6
+shadeva	6
+sadeva	6
+canuktadeva	6
+chanuktadeva	6
+thanuktadeva	6
+lanuktadeva	6
+shanuktadeva	6
+sanuktadeva	6
+janyadeva	6
+caradeva	6
+charadeva	6
+tharadeva	6
+canuktaradeva	6
+chanuktaradeva	6
+thanuktaradeva	6
+katadeva	6
+daghadeva	6
+havadeva	6
+ladevaMAR	6
+lanuktadevaMAR	6
+laradevaMAR	6
+lanuktaradevaMAR	6
+shadevaMAR	6
+shanuktadevaMAR	6
+nnadeva	7
+bhadeva	7
+lladeva	7
+llladeva	7
+jabardeva	7
+nnanuktadeva	7
+bhanuktadeva	7
+kassadeva	7
+nnaradeva	7
+bharadeva	7
+laradeva	7
+llaradeva	7
+sharadeva	7
+saradeva	7
+janyaradeva	7
+nnanuktaradeva	7
+bhanuktaradeva	7
+lanuktaradeva	7
+llanuktaradeva	7
+shanuktaradeva	7
+sanuktaradeva	7
+tatadeva	7
+damadeva	7
+dayadeva	7
+shacadeva	7
+shavadeva	7
+shanadeva	7
+hannadeva	7
+haladeva	7
+jhadevaNEP	7
+jhanuktadevaNEP	7
+jharadevaNEP	7
+jhanuktaradevaNEP	7
+jadeva	8
+jhadeva	8
+nyadeva	8
+zadeva	8
+zhadeva	8
+jhanuktadeva	8
+nyanuktadeva	8
+jaradeva	8
+nyaradeva	8
+zharadeva	8
+kassaradeva	8
+januktaradeva	8
+nyanuktaradeva	8
+dabhadeva	8
+dadhadeva	8
+khadeva	9
+khhadeva	9
+kharadeva	9
+jharadeva	9
+khanuktaradeva	9
+jhanuktaradeva	9
+naddadeva	9
+naddaradeva	9
+hamadeva	9
+hayadeva	9
+nathadeva	10
+natharadeva	10
+nadhadeva	10
+nadharadeva	10
+mapadeva	10
+maparadeva	10
+maphadeva	10
+vayadeva	10
+tathadeva	11
+tashadeva	11
+badhadeva	11
+mabhadeva	11
+laddadeva	11
+laddaradeva	11
+sapadeva	11
+saparadeva	11
+saphadeva	11
+class definition end
+
+class	 1, 2	 1, 68
+class	 1, 3	 1, 69
+class	 1, 4	 1, 70
+class	 1, 5	 1, 71
+class	 1, 6	 1, 72
+class	 1, 7	 1, 73
+class	 1, 8	 1, 74
+class	 1, 9	 1, 75
+class	 1, 10	 1, 77
+class	 1, 11	 1, 78
+
+lookup end
+
+
+lookup	 68 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign01deva
+
+lookup end
+
+
+lookup	 69 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign02deva
+
+lookup end
+
+
+lookup	 70 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign03deva
+
+lookup end
+
+
+lookup	 71 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign04deva
+
+lookup end
+
+
+lookup	 72 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign05deva
+
+lookup end
+
+
+lookup	 73 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign06deva
+
+lookup end
+
+
+lookup	 74 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign07deva
+
+lookup end
+
+
+lookup	 75 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign08deva
+
+lookup end
+
+
+lookup	 76 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign09deva
+
+lookup end
+
+
+lookup	 77 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign10deva
+
+lookup end
+
+
+lookup	 78 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign11deva
+
+lookup end
+
+
+lookup	 79 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+ivowelsign00deva	1
+ivowelsign01deva	2
+ivowelsign02deva	2
+ivowelsign03deva	2
+ivowelsign04deva	2
+ivowelsign05deva	2
+ivowelsign06deva	2
+ivowelsign07deva	2
+ivowelsign08deva	2
+ivowelsign09deva	2
+ivowelsign10deva	2
+ivowelsign11deva	2
+kadeva	3
+khadeva	3
+gadeva	3
+ghadeva	3
+ngadeva	3
+cadeva	3
+chadeva	3
+jadeva	3
+jhadeva	3
+nyadeva	3
+ttadeva	3
+tthadeva	3
+ddadeva	3
+ddhadeva	3
+nnadeva	3
+tadeva	3
+thadeva	3
+dadeva	3
+dhadeva	3
+nadeva	3
+nnnadeva	3
+padeva	3
+phadeva	3
+badeva	3
+bhadeva	3
+madeva	3
+yadeva	3
+radeva	3
+rradeva	3
+ladeva	3
+lladeva	3
+llladeva	3
+vadeva	3
+shadeva	3
+ssadeva	3
+sadeva	3
+hadeva	3
+qadeva	3
+khhadeva	3
+ghhadeva	3
+zadeva	3
+dddhadeva	3
+rhadeva	3
+fadeva	3
+yyadeva	3
+marwariddadeva	3
+zhadeva	3
+heavyyadeva	3
+gabardeva	3
+jabardeva	3
+ddabardeva	3
+babardeva	3
+ghanuktadeva	3
+nganuktadeva	3
+canuktadeva	3
+chanuktadeva	3
+jhanuktadeva	3
+nyanuktadeva	3
+ttanuktadeva	3
+tthanuktadeva	3
+nnanuktadeva	3
+tanuktadeva	3
+thanuktadeva	3
+danuktadeva	3
+dhanuktadeva	3
+panuktadeva	3
+banuktadeva	3
+bhanuktadeva	3
+manuktadeva	3
+lanuktadeva	3
+vanuktadeva	3
+shanuktadeva	3
+ssanuktadeva	3
+sanuktadeva	3
+hanuktadeva	3
+kassadeva	3
+janyadeva	3
+karadeva	3
+kharadeva	3
+garadeva	3
+gharadeva	3
+ngaradeva	3
+caradeva	3
+charadeva	3
+jaradeva	3
+jharadeva	3
+nyaradeva	3
+ttaradeva	3
+ttharadeva	3
+ddaradeva	3
+ddharadeva	3
+nnaradeva	3
+taradeva	3
+tharadeva	3
+daradeva	3
+dharadeva	3
+naradeva	3
+paradeva	3
+pharadeva	3
+baradeva	3
+bharadeva	3
+maradeva	3
+yaradeva	3
+raradeva	3
+laradeva	3
+llaradeva	3
+varadeva	3
+sharadeva	3
+ssaradeva	3
+saradeva	3
+haradeva	3
+marwariddaradeva	3
+zharadeva	3
+heavyyaradeva	3
+kassaradeva	3
+janyaradeva	3
+kanuktaradeva	3
+khanuktaradeva	3
+ganuktaradeva	3
+ghanuktaradeva	3
+nganuktaradeva	3
+canuktaradeva	3
+chanuktaradeva	3
+januktaradeva	3
+jhanuktaradeva	3
+nyanuktaradeva	3
+ttanuktaradeva	3
+tthanuktaradeva	3
+ddanuktaradeva	3
+ddhanuktaradeva	3
+nnanuktaradeva	3
+tanuktaradeva	3
+thanuktaradeva	3
+danuktaradeva	3
+dhanuktaradeva	3
+nanuktaradeva	3
+panuktaradeva	3
+phanuktaradeva	3
+banuktaradeva	3
+bhanuktaradeva	3
+manuktaradeva	3
+yanuktaradeva	3
+ranuktaradeva	3
+lanuktaradeva	3
+llanuktaradeva	3
+vanuktaradeva	3
+shanuktaradeva	3
+ssanuktaradeva	3
+sanuktaradeva	3
+hanuktaradeva	3
+katadeva	3
+ngagadeva	3
+ngamadeva	3
+cacadeva	3
+cachadeva	3
+cacharadeva	3
+jaddadeva	3
+ttattadeva	3
+ttatthadeva	3
+ttayadeva	3
+tthatthadeva	3
+ddaddhadeva	3
+ddaddadeva	3
+ddhaddhadeva	3
+tatadeva	3
+tathadeva	3
+tashadeva	3
+daghadeva	3
+dagadeva	3
+dabadeva	3
+dabhadeva	3
+davadeva	3
+dadhadeva	3
+dadadeva	3
+damadeva	3
+dayadeva	3
+naddadeva	3
+naddaradeva	3
+nathadeva	3
+natharadeva	3
+nadhadeva	3
+nadharadeva	3
+nanadeva	3
+nashadeva	3
+panadeva	3
+badhadeva	3
+mapadeva	3
+maparadeva	3
+maphadeva	3
+mabhadeva	3
+laddadeva	3
+laddaradeva	3
+vayadeva	3
+shacadeva	3
+shavadeva	3
+shaladeva	3
+shanadeva	3
+ssattadeva	3
+ssattaradeva	3
+ssatthadeva	3
+ssattharadeva	3
+sathadeva	3
+sapadeva	3
+saparadeva	3
+saphadeva	3
+hannadeva	3
+hanadeva	3
+hamadeva	3
+hayadeva	3
+haladeva	3
+havadeva	3
+ladevaMAR	3
+lanuktadevaMAR	3
+laradevaMAR	3
+lanuktaradevaMAR	3
+shaladevaMAR	3
+shadevaMAR	3
+shanuktadevaMAR	3
+jhadevaNEP	3
+jhanuktadevaNEP	3
+jharadevaNEP	3
+jhanuktaradevaNEP	3
+gaprehalfdeva	4
+ghaprehalfdeva	4
+caprehalfdeva	4
+japrehalfdeva	4
+jhaprehalfdeva	4
+nyaprehalfdeva	4
+ttaprehalfdeva	4
+ddaprehalfdeva	4
+ddhaprehalfdeva	4
+nnaprehalfdeva	4
+taprehalfdeva	4
+thaprehalfdeva	4
+daprehalfdeva	4
+dhaprehalfdeva	4
+naprehalfdeva	4
+paprehalfdeva	4
+baprehalfdeva	4
+bhaprehalfdeva	4
+maprehalfdeva	4
+yaprehalfdeva	4
+raprehalfdeva	4
+laprehalfdeva	4
+vaprehalfdeva	4
+shaprehalfdeva	4
+ssaprehalfdeva	4
+saprehalfdeva	4
+haprehalfdeva	4
+zhaprehalfdeva	4
+heavyyaprehalfdeva	4
+kassaprehalfdeva	4
+janyaprehalfdeva	4
+ganuktaprehalfdeva	4
+ghanuktaprehalfdeva	4
+canuktaprehalfdeva	4
+januktaprehalfdeva	4
+jhanuktaprehalfdeva	4
+nyanuktaprehalfdeva	4
+ttanuktaprehalfdeva	4
+ddanuktaprehalfdeva	4
+ddhanuktaprehalfdeva	4
+nnanuktaprehalfdeva	4
+tanuktaprehalfdeva	4
+thanuktaprehalfdeva	4
+danuktaprehalfdeva	4
+dhanuktaprehalfdeva	4
+nanuktaprehalfdeva	4
+panuktaprehalfdeva	4
+banuktaprehalfdeva	4
+bhanuktaprehalfdeva	4
+manuktaprehalfdeva	4
+yanuktaprehalfdeva	4
+lanuktaprehalfdeva	4
+vanuktaprehalfdeva	4
+shanuktaprehalfdeva	4
+ssanuktaprehalfdeva	4
+sanuktaprehalfdeva	4
+hanuktaprehalfdeva	4
+garaprehalfdeva	4
+gharaprehalfdeva	4
+caraprehalfdeva	4
+ttaraprehalfdeva	4
+ttaraprehalfUIdeva	4
+ddaraprehalfdeva	4
+ddaraprehalfUIdeva	4
+ddharaprehalfdeva	4
+ddharaprehalfUIdeva	4
+nnaraprehalfdeva	4
+taraprehalfdeva	4
+tharaprehalfdeva	4
+daraprehalfdeva	4
+dharaprehalfdeva	4
+naraprehalfdeva	4
+paraprehalfdeva	4
+baraprehalfdeva	4
+bharaprehalfdeva	4
+maraprehalfdeva	4
+yaraprehalfdeva	4
+raraprehalfdeva	4
+laraprehalfdeva	4
+varaprehalfdeva	4
+sharaprehalfdeva	4
+ssaraprehalfdeva	4
+saraprehalfdeva	4
+haraprehalfdeva	4
+heavyyaraprehalfdeva	4
+janyaraprehalfdeva	4
+ganuktaraprehalfdeva	4
+ghanuktaraprehalfdeva	4
+canuktaraprehalfdeva	4
+ttanuktaraprehalfdeva	4
+ddanuktaraprehalfdeva	4
+ddhanuktaraprehalfdeva	4
+nnanuktaraprehalfdeva	4
+tanuktaraprehalfdeva	4
+thanuktaraprehalfdeva	4
+danuktaraprehalfdeva	4
+dhanuktaraprehalfdeva	4
+nanuktaraprehalfdeva	4
+panuktaraprehalfdeva	4
+banuktaraprehalfdeva	4
+bhanuktaraprehalfdeva	4
+manuktaraprehalfdeva	4
+yanuktaraprehalfdeva	4
+lanuktaraprehalfdeva	4
+vanuktaraprehalfdeva	4
+shanuktaraprehalfdeva	4
+ssanuktaraprehalfdeva	4
+sanuktaraprehalfdeva	4
+hanuktaraprehalfdeva	4
+tataprehalfdeva	4
+dayaprehalfdeva	4
+shaprehalfdevaMAR	4
+shanuktaprehalfdevaMAR	4
+anusvaradeva	5
+rephdeva	6
+rephanusvaradeva	7
+rephcandrabindudeva	8
+candrabindudeva	9
+udattadeva	10
+uni1CDA	10
+uni1CF8	10
+uni1CF9	10
+class definition end
+
+class	 1, 3, 5	 1, 81	 3, 86
+class	 1, 3, 6	 1, 82	 3, 86
+class	 1, 3, 7	 1, 83	 3, 86
+class	 1, 3, 8	 1, 84	 3, 86
+class	 1, 3, 9	 1, 85	 3, 86
+class	 1, 3, 10	 1, 80
+class	 2, 3, 5	 1, 81	 3, 86
+class	 2, 3, 6	 1, 82	 3, 86
+class	 2, 3, 7	 1, 83	 3, 86
+class	 2, 3, 8	 1, 84	 3, 86
+class	 2, 3, 9	 1, 85	 3, 86
+class	 2, 3, 10	 1, 80
+class	 2, 4, 3, 5	 1, 81	 4, 86
+class	 2, 4, 3, 6	 1, 82	 4, 86
+class	 2, 4, 3, 7	 1, 83	 4, 86
+class	 2, 4, 3, 8	 1, 84	 4, 86
+class	 2, 4, 3, 9	 1, 85	 4, 86
+class	 2, 4, 3, 10	 1, 80
+
+lookup end
+
+
+lookup	 80 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsign00deva	dummymarkdeva
+ivowelsign01deva	ivowelsign01deva	dummymarkdeva
+ivowelsign02deva	ivowelsign02deva	dummymarkdeva
+ivowelsign03deva	ivowelsign03deva	dummymarkdeva
+ivowelsign04deva	ivowelsign04deva	dummymarkdeva
+ivowelsign05deva	ivowelsign05deva	dummymarkdeva
+ivowelsign06deva	ivowelsign06deva	dummymarkdeva
+ivowelsign07deva	ivowelsign07deva	dummymarkdeva
+ivowelsign08deva	ivowelsign08deva	dummymarkdeva
+ivowelsign09deva	ivowelsign09deva	dummymarkdeva
+ivowelsign10deva	ivowelsign10deva	dummymarkdeva
+ivowelsign11deva	ivowelsign11deva	dummymarkdeva
+
+lookup end
+
+
+lookup	 81 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsignanusvaradeva
+ivowelsign01deva	ivowelsignanusvara01deva
+ivowelsign02deva	ivowelsignanusvara02deva
+ivowelsign03deva	ivowelsignanusvara03deva
+ivowelsign04deva	ivowelsignanusvara04deva
+ivowelsign05deva	ivowelsignanusvara05deva
+ivowelsign06deva	ivowelsignanusvara06deva
+ivowelsign07deva	ivowelsignanusvara07deva
+ivowelsign08deva	ivowelsignanusvara08deva
+ivowelsign09deva	ivowelsignanusvara09deva
+ivowelsign10deva	ivowelsignanusvara10deva
+ivowelsign11deva	ivowelsignanusvara11deva
+
+lookup end
+
+
+lookup	 82 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsignrephdeva
+ivowelsign01deva	ivowelsignreph01deva
+ivowelsign02deva	ivowelsignreph02deva
+ivowelsign03deva	ivowelsignreph03deva
+ivowelsign04deva	ivowelsignreph04deva
+ivowelsign05deva	ivowelsignreph05deva
+ivowelsign06deva	ivowelsignreph06deva
+ivowelsign07deva	ivowelsignreph07deva
+ivowelsign08deva	ivowelsignreph08deva
+ivowelsign09deva	ivowelsignreph09deva
+ivowelsign10deva	ivowelsignreph10deva
+ivowelsign11deva	ivowelsignreph11deva
+
+lookup end
+
+
+lookup	 83 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsignrephanusvaradeva
+ivowelsign01deva	ivowelsignrephanusvara01deva
+ivowelsign02deva	ivowelsignrephanusvara02deva
+ivowelsign03deva	ivowelsignrephanusvara03deva
+ivowelsign04deva	ivowelsignrephanusvara04deva
+ivowelsign05deva	ivowelsignrephanusvara05deva
+ivowelsign06deva	ivowelsignrephanusvara06deva
+ivowelsign07deva	ivowelsignrephanusvara07deva
+ivowelsign08deva	ivowelsignrephanusvara08deva
+ivowelsign09deva	ivowelsignrephanusvara09deva
+ivowelsign10deva	ivowelsignrephanusvara10deva
+ivowelsign11deva	ivowelsignrephanusvara11deva
+
+lookup end
+
+
+lookup	 84 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsignrephcandrabindudeva
+ivowelsign01deva	ivowelsignrephcandrabindu01deva
+ivowelsign02deva	ivowelsignrephcandrabindu02deva
+ivowelsign03deva	ivowelsignrephcandrabindu03deva
+ivowelsign04deva	ivowelsignrephcandrabindu04deva
+ivowelsign05deva	ivowelsignrephcandrabindu05deva
+ivowelsign06deva	ivowelsignrephcandrabindu06deva
+ivowelsign07deva	ivowelsignrephcandrabindu07deva
+ivowelsign08deva	ivowelsignrephcandrabindu08deva
+ivowelsign09deva	ivowelsignrephcandrabindu09deva
+ivowelsign10deva	ivowelsignrephcandrabindu10deva
+ivowelsign11deva	ivowelsignrephcandrabindu11deva
+
+lookup end
+
+
+lookup	 85 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ivowelsign00deva	ivowelsigncandrabindudeva
+ivowelsign01deva	ivowelsigncandrabindu01deva
+ivowelsign02deva	ivowelsigncandrabindu02deva
+ivowelsign03deva	ivowelsigncandrabindu03deva
+ivowelsign04deva	ivowelsigncandrabindu04deva
+ivowelsign05deva	ivowelsigncandrabindu05deva
+ivowelsign06deva	ivowelsigncandrabindu06deva
+ivowelsign07deva	ivowelsigncandrabindu07deva
+ivowelsign08deva	ivowelsigncandrabindu08deva
+ivowelsign09deva	ivowelsigncandrabindu09deva
+ivowelsign10deva	ivowelsigncandrabindu10deva
+ivowelsign11deva	ivowelsigncandrabindu11deva
+
+lookup end
+
+
+lookup	 86 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+candrabindudeva	dummymarkdeva
+anusvaradeva	dummymarkdeva
+rephdeva	dummymarkdeva
+rephanusvaradeva	dummymarkdeva
+rephcandrabindudeva	dummymarkdeva
+
+lookup end
+
+
+lookup	 87 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+MarkAttachmentType	 2
+
+class definition begin
+dabhadeva	1
+dadadeva	1
+uvowelsigndeva	2
+uuvowelsigndeva	2
+rvocalicvowelsigndeva	2
+viramadeva	2
+anudattadeva	3
+uni1CD5	3
+uni1CD6	3
+uni1CD7	3
+uni1CD8	3
+uni1CD9	3
+uni1CDC	3
+uni1CDD	3
+uni1CDE	3
+uni1CDF	3
+uni1CED	3
+class definition end
+
+class	 1, 2, 3	 1, 88
+
+lookup end
+
+
+lookup	 88 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+dabhadeva	dabhaaltdeva
+dadadeva	dadaaltdeva
+
+lookup end
+
+
+lookup	 89 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+MarkAttachmentType	 2
+
+class definition begin
+ttattadeva	1
+ttatthadeva	1
+tthatthadeva	1
+ddaddhadeva	1
+ddaddadeva	1
+ddhaddhadeva	1
+ngagadeva	2
+ngamadeva	2
+daghadeva	2
+dagadeva	2
+dabadeva	2
+dabhadeva	2
+davadeva	2
+dadhadeva	2
+dadhayadeva	2
+dadadeva	2
+shacadeva	2
+shavadeva	2
+hannadeva	2
+hanadeva	2
+hamadeva	2
+hayadeva	2
+haladeva	2
+havadeva	2
+ngaradeva	3
+charadeva	3
+ttaradeva	3
+ttharadeva	3
+ddaradeva	3
+ddharadeva	3
+llaradeva	3
+marwariddaradeva	3
+nganuktaradeva	3
+chanuktaradeva	3
+ttanuktaradeva	3
+tthanuktaradeva	3
+ddanuktaradeva	3
+ddhanuktaradeva	3
+llanuktaradeva	3
+cacharadeva	3
+naddaradeva	3
+laddaradeva	3
+ssattaradeva	3
+ssattharadeva	3
+laradevaMAR	3
+lanuktaradevaMAR	3
+gabardeva	4
+jabardeva	4
+ddabardeva	4
+babardeva	4
+uvowelsigndeva	5
+uuvowelsigndeva	5
+rvocalicvowelsigndeva	5
+uevowelsigndeva	5
+uuevowelsigndeva	5
+rrvocalicvowelsigndeva	6
+lvocalicvowelsigndeva	6
+llvocalicvowelsigndeva	6
+vattudeva	7
+viramadeva	8
+anudattadeva	9
+uni1CD5	9
+uni1CD6	9
+uni1CD7	9
+uni1CD8	9
+uni1CD9	9
+uni1CDC	9
+uni1CDD	9
+uni1CDE	9
+uni1CDF	9
+uni1CED	9
+class definition end
+
+class	 1, 5	 1, 94
+class	 1, 6	 1, 94
+class	 1, 8	 1, 94
+class	 2, 5, 9	 1, 94
+class	 2, 6	 1, 94
+class	 3, 5	 1, 92
+class	 3, 6	 1, 94
+class	 3, 8	 1, 92
+class	 4, 7, 5	 2, 91
+class	 4, 7, 8	 2, 91
+
+lookup end
+
+
+lookup	 90 	chained
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+backtrackclass definition begin
+ngagadeva	1
+ngamadeva	1
+daghadeva	1
+dagadeva	1
+dabadeva	1
+dabhadeva	1
+davadeva	1
+dadhadeva	1
+dadhayadeva	1
+dadadeva	1
+shacadeva	1
+shavadeva	1
+hannadeva	1
+hanadeva	1
+hamadeva	1
+hayadeva	1
+haladeva	1
+havadeva	1
+hadeva	2
+haradeva	2
+class definition end
+
+class definition begin
+uvowelsigndeva	1
+uuvowelsigndeva	1
+rvocalicvowelsigndeva	1
+viramadeva	1
+uevowelsigndeva	2
+uuevowelsigndeva	2
+class definition end
+
+lookaheadclass definition begin
+# 1	1
+class definition end
+
+class-chain	 1	 1		 1, 93
+class-chain	 1	 2		 1, 93
+class-chain	 2	 2		 1, 93
+
+lookup end
+
+
+lookup	 91 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+vattudeva	dummymarkdeva
+
+lookup end
+
+
+lookup	 92 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ngaradeva	ngadeva	dummymarkdeva
+charadeva	chadeva	dummymarkdeva
+ttaradeva	ttadeva	dummymarkdeva
+ttharadeva	tthadeva	dummymarkdeva
+ddaradeva	ddadeva	dummymarkdeva
+ddharadeva	ddhadeva	dummymarkdeva
+llaradeva	lladeva	dummymarkdeva
+marwariddaradeva	marwariddadeva	dummymarkdeva
+nganuktaradeva	ngadeva	nuktadeva	dummymarkdeva
+chanuktaradeva	chadeva	nuktadeva	dummymarkdeva
+ttanuktaradeva	ttadeva	nuktadeva	dummymarkdeva
+tthanuktaradeva	tthadeva	nuktadeva	dummymarkdeva
+ddanuktaradeva	ddadeva	nuktadeva	dummymarkdeva
+ddhanuktaradeva	ddhadeva	nuktadeva	dummymarkdeva
+llanuktaradeva	lladeva	nuktadeva	dummymarkdeva
+cacharadeva	cachadeva	dummymarkdeva
+naddaradeva	naddadeva	dummymarkdeva
+laddaradeva	laddadeva	dummymarkdeva
+ssattaradeva	ssattadeva	dummymarkdeva
+ssattharadeva	ssatthadeva	dummymarkdeva
+laradevaMAR	ladevaMAR	dummymarkdeva
+lanuktaradevaMAR	ladevaMAR	nuktadeva	dummymarkdeva
+
+lookup end
+
+
+lookup	 93 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+uvowelsigndeva	uvowelsignlowdeva
+uuvowelsigndeva	uuvowelsignlowdeva
+rvocalicvowelsigndeva	rvocalicvowelsignlowdeva
+viramadeva	viramalowdeva
+uevowelsigndeva	uevowelsignlowdeva
+uuevowelsigndeva	uuevowelsignlowdeva
+
+lookup end
+
+
+lookup	 94 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ngaradeva	ngaaltdeva	vattudeva
+charadeva	chaaltdeva	vattudeva
+ttaradeva	ttaaltdeva	vattudeva
+ttharadeva	tthaaltdeva	vattudeva
+ddaradeva	ddaaltdeva	vattudeva
+ddharadeva	ddhaaltdeva	vattudeva
+llaradeva	llaaltdeva	vattudeva
+marwariddaradeva	marwariddadeva	vattudeva
+nganuktaradeva	nganuktaaltdeva	vattudeva
+chanuktaradeva	chanuktaaltdeva	vattudeva
+ttanuktaradeva	ttanuktaaltdeva	vattudeva
+tthanuktaradeva	tthanuktaaltdeva	vattudeva
+ddanuktaradeva	dddhaaltdeva	vattudeva
+ddhanuktaradeva	rhaaltdeva	vattudeva
+llanuktaradeva	lllaaltdeva	vattudeva
+ngagadeva	ngaprehalfdeva	gadeva
+ngamadeva	ngaprehalfdeva	madeva
+cacharadeva	caprehalfdeva	chaaltdeva	vattudeva
+ttattadeva	ttaprehalfdeva	ttadeva
+ttatthadeva	ttaprehalfdeva	tthadeva
+tthatthadeva	tthaprehalfdeva	tthadeva
+ddaddhadeva	ddaprehalfdeva	ddhadeva
+ddaddadeva	ddaprehalfdeva	ddadeva
+ddhaddhadeva	ddhaprehalfdeva	ddhadeva
+daghadeva	daprehalfdeva	ghadeva
+dagadeva	daprehalfdeva	gadeva
+dabadeva	daprehalfdeva	badeva
+dabhadeva	daprehalfdeva	bhadeva
+davadeva	daprehalfdeva	vadeva
+dadhadeva	daprehalfdeva	dhadeva
+dadhayadeva	daprehalfdeva	dhaprehalfdeva	yadeva
+dadadeva	daprehalfdeva	dadeva
+naddaradeva	naprehalfdeva	ddaaltdeva	vattudeva
+laddaradeva	laprehalfdeva	ddaaltdeva	vattudeva
+shacadeva	shaprehalfaltdeva	cadeva
+shavadeva	shaprehalfaltdeva	vadeva
+ssattaradeva	ssaprehalfdeva	ttaaltdeva	vattudeva
+ssattharadeva	ssaprehalfdeva	tthaaltdeva	vattudeva
+hannadeva	haprehalfdeva	nnadeva
+hanadeva	haprehalfdeva	nadeva
+hamadeva	haprehalfdeva	madeva
+hayadeva	haprehalfdeva	yadeva
+haladeva	haprehalfdeva	ladeva
+havadeva	haprehalfdeva	vadeva
+laradevaMAR	laaltdevaMAR	vattudeva
+lanuktaradevaMAR	lanuktaaltdevaMAR	vattudeva
+
+lookup end
+
+
+lookup	 95 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+llladeva	1
+zadeva	1
+yyadeva	1
+ghanuktadeva	1
+canuktadeva	1
+jhanuktadeva	1
+nyanuktadeva	1
+nnanuktadeva	1
+tanuktadeva	1
+thanuktadeva	1
+dhanuktadeva	1
+panuktadeva	1
+banuktadeva	1
+bhanuktadeva	1
+manuktadeva	1
+lanuktadeva	1
+vanuktadeva	1
+shanuktadeva	1
+ssanuktadeva	1
+ghanuktaradeva	1
+canuktaradeva	1
+januktaradeva	1
+nyanuktaradeva	1
+nnanuktaradeva	1
+tanuktaradeva	1
+thanuktaradeva	1
+dhanuktaradeva	1
+panuktaradeva	1
+banuktaradeva	1
+bhanuktaradeva	1
+manuktaradeva	1
+yanuktaradeva	1
+lanuktaradeva	1
+vanuktaradeva	1
+shanuktaradeva	1
+ssanuktaradeva	1
+lanuktadevaMAR	1
+shanuktadevaMAR	1
+nnnadeva	2
+qadeva	2
+ghhadeva	2
+dddhadeva	2
+rhadeva	2
+fadeva	2
+nganuktadeva	2
+chanuktadeva	2
+ttanuktadeva	2
+tthanuktadeva	2
+danuktadeva	2
+kanuktaradeva	2
+ganuktaradeva	2
+danuktaradeva	2
+nanuktaradeva	2
+phanuktaradeva	2
+jhanuktadevaNEP	2
+jhanuktaradevaNEP	2
+kadeva	3
+ngadeva	3
+chadeva	3
+ttadeva	3
+tthadeva	3
+ddadeva	3
+ddhadeva	3
+phadeva	3
+radeva	3
+rradeva	3
+karadeva	3
+daradeva	3
+pharadeva	3
+katadeva	3
+ssattadeva	3
+ssatthadeva	3
+jhadevaNEP	3
+jharadevaNEP	3
+lvocalicvowelsigndeva	4
+llvocalicvowelsigndeva	4
+class definition end
+
+class	 1, 4	 1, 98
+class	 2, 4	 1, 98	 2, 99
+class	 3, 4	 2, 100
+
+lookup end
+
+
+lookup	 96 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+class definition begin
+qadeva	1
+ghhadeva	1
+fadeva	1
+yyadeva	1
+zhadeva	1
+ghanuktadeva	1
+canuktadeva	1
+nyanuktadeva	1
+nnanuktadeva	1
+thanuktadeva	1
+panuktadeva	1
+banuktadeva	1
+vanuktadeva	1
+ssanuktadeva	1
+kharadeva	1
+khanuktaradeva	1
+hanuktaradeva	1
+shanuktadevaMAR	1
+dddhadeva	2
+rhadeva	2
+nganuktadeva	2
+chanuktadeva	2
+ttanuktadeva	2
+tthanuktadeva	2
+llladeva	3
+zadeva	3
+shanuktadeva	3
+januktaradeva	3
+nyanuktaradeva	3
+nnanuktaradeva	3
+shanuktaradeva	3
+tanuktadeva	4
+dhanuktadeva	4
+lanuktadeva	4
+kanuktaradeva	4
+ganuktaradeva	4
+ghanuktaradeva	4
+canuktaradeva	4
+tanuktaradeva	4
+thanuktaradeva	4
+danuktaradeva	4
+dhanuktaradeva	4
+nanuktaradeva	4
+panuktaradeva	4
+phanuktaradeva	4
+banuktaradeva	4
+bhanuktaradeva	4
+manuktaradeva	4
+yanuktaradeva	4
+lanuktaradeva	4
+vanuktaradeva	4
+ssanuktaradeva	4
+lanuktadevaMAR	4
+jhanuktaradevaNEP	4
+danuktadeva	5
+uvowelsigndeva	6
+uevowelsigndeva	6
+uuevowelsigndeva	6
+uuvowelsigndeva	7
+rvocalicvowelsigndeva	8
+rrvocalicvowelsigndeva	8
+class definition end
+
+class	 1, 6	 2, 97
+class	 2, 6	 1, 98	 2, 99
+class	 2, 7	 1, 98	 2, 99
+class	 2, 8	 1, 98	 2, 99
+class	 3, 6	 1, 98
+class	 4, 6	 1, 98
+class	 4, 7	 1, 98
+class	 4, 8	 1, 98
+class	 5, 8	 1, 98
+
+lookup end
+
+
+lookup	 97 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+uvowelsigndeva	uvowelsignnarrowdeva
+
+lookup end
+
+
+lookup	 98 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+nnnadeva	nadeva	nuktadeva
+llladeva	lladeva	nuktadeva
+qadeva	kadeva	nuktadeva
+ghhadeva	gadeva	nuktadeva
+zadeva	jadeva	nuktadeva
+dddhadeva	ddadeva	nuktadeva
+rhadeva	ddhadeva	nuktadeva
+fadeva	phadeva	nuktadeva
+yyadeva	yadeva	nuktadeva
+ghanuktadeva	ghadeva	nuktadeva
+nganuktadeva	ngadeva	nuktadeva
+canuktadeva	cadeva	nuktadeva
+chanuktadeva	chadeva	nuktadeva
+jhanuktadeva	jhadeva	nuktadeva
+nyanuktadeva	nyadeva	nuktadeva
+ttanuktadeva	ttadeva	nuktadeva
+tthanuktadeva	tthadeva	nuktadeva
+nnanuktadeva	nnadeva	nuktadeva
+tanuktadeva	tadeva	nuktadeva
+thanuktadeva	thadeva	nuktadeva
+danuktadeva	dadeva	nuktadeva
+dhanuktadeva	dhadeva	nuktadeva
+panuktadeva	padeva	nuktadeva
+banuktadeva	badeva	nuktadeva
+bhanuktadeva	bhadeva	nuktadeva
+manuktadeva	madeva	nuktadeva
+lanuktadeva	ladeva	nuktadeva
+vanuktadeva	vadeva	nuktadeva
+shanuktadeva	shadeva	nuktadeva
+ssanuktadeva	ssadeva	nuktadeva
+kanuktaradeva	karadeva	nuktadeva
+ganuktaradeva	garadeva	nuktadeva
+ghanuktaradeva	gharadeva	nuktadeva
+canuktaradeva	caradeva	nuktadeva
+januktaradeva	jaradeva	nuktadeva
+jhanuktaradeva	jharadeva	nuktadeva
+nyanuktaradeva	nyaradeva	nuktadeva
+nnanuktaradeva	nnaradeva	nuktadeva
+tanuktaradeva	taradeva	nuktadeva
+thanuktaradeva	tharadeva	nuktadeva
+danuktaradeva	daradeva	nuktadeva
+dhanuktaradeva	dharadeva	nuktadeva
+nanuktaradeva	naradeva	nuktadeva
+panuktaradeva	paradeva	nuktadeva
+phanuktaradeva	pharadeva	nuktadeva
+banuktaradeva	baradeva	nuktadeva
+bhanuktaradeva	bharadeva	nuktadeva
+manuktaradeva	maradeva	nuktadeva
+yanuktaradeva	yaradeva	nuktadeva
+lanuktaradeva	laradeva	nuktadeva
+llanuktaradeva	llaradeva	nuktadeva
+vanuktaradeva	varadeva	nuktadeva
+shanuktaradeva	sharadeva	nuktadeva
+ssanuktaradeva	ssaradeva	nuktadeva
+sanuktaradeva	saradeva	nuktadeva
+hanuktaradeva	haradeva	nuktadeva
+lanuktadevaMAR	ladevaMAR	nuktadeva
+lanuktaradevaMAR	laradevaMAR	nuktadeva
+shanuktadevaMAR	shadevaMAR	nuktadeva
+jhanuktadevaNEP	jhadevaNEP	nuktadeva
+jhanuktaradevaNEP	jharadevaNEP	nuktadeva
+
+lookup end
+
+
+lookup	 99 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+uvowelsignnuktaleftdeva	nuktadeva	uvowelsigndeva
+uuvowelsignnuktaleftdeva	nuktadeva	uuvowelsigndeva
+rvocalicvowelsignnuktaleftdeva	nuktadeva	rvocalicvowelsigndeva
+rrvocalicvowelsignnuktaleftdeva	nuktadeva	rrvocalicvowelsigndeva
+uevowelsignnuktaleftdeva	nuktadeva	uevowelsigndeva
+uuevowelsignnuktaleftdeva	nuktadeva	uuevowelsigndeva
+lvocalicvowelsignnuktaleftdeva	nuktadeva	lvocalicvowelsigndeva
+llvocalicvowelsignnuktaleftdeva	nuktadeva	llvocalicvowelsigndeva
+
+lookup end
+
+
+lookup	 100 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+lvocalicvowelsigndeva	lvocalicvowelsignleftdeva
+llvocalicvowelsigndeva	llvocalicvowelsignleftdeva
+
+lookup end
+
+
+lookup	 101 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+dddhaudeva	ddadeva	uvowelsignnuktaleftdeva
+dddhauudeva	ddadeva	uuvowelsignnuktaleftdeva
+rhaudeva	ddhadeva	uvowelsignnuktaleftdeva
+rhauudeva	ddhadeva	uuvowelsignnuktaleftdeva
+danuktaudeva	dadeva	nuktadeva	uvowelsigndeva
+danuktauudeva	dadeva	nuktadeva	uuvowelsigndeva
+danuktarvocalicdeva	dadeva	nuktadeva	rvocalicvowelsigndeva
+daudeva	dadeva	uvowelsigndeva
+dauudeva	dadeva	uuvowelsigndeva
+darvocalicdeva	dadeva	rvocalicvowelsigndeva
+raudeva	radeva	uvowelsigndeva
+rauudeva	radeva	uuvowelsigndeva
+ranuktaudeva	rradeva	uvowelsigndeva
+ranuktauudeva	rradeva	uuvowelsigndeva
+haudeva	hadeva	uvowelsigndeva
+hauudeva	hadeva	uuvowelsigndeva
+harvocalicdeva	hadeva	rvocalicvowelsigndeva
+harrvocalicdeva	hadeva	rrvocalicvowelsigndeva
+uvowelsignnuktadeva	nuktadeva	uvowelsigndeva
+uuvowelsignnuktadeva	nuktadeva	uuvowelsigndeva
+rvocalicvowelsignnuktadeva	nuktadeva	rvocalicvowelsigndeva
+rrvocalicvowelsignnuktadeva	nuktadeva	rrvocalicvowelsigndeva
+viramanuktadeva	nuktadeva	viramadeva
+uevowelsignnuktadeva	nuktadeva	uevowelsigndeva
+uuevowelsignnuktadeva	nuktadeva	uuevowelsigndeva
+lvocalicvowelsignnuktadeva	nuktadeva	lvocalicvowelsigndeva
+llvocalicvowelsignnuktadeva	nuktadeva	llvocalicvowelsigndeva
+vattuulownuktadeva	nuktadeva	dummymarkdeva	uvowelsigndeva
+vattuuulownuktadeva	nuktadeva	dummymarkdeva	uuvowelsigndeva
+vatturvocaliclownuktadeva	nuktadeva	dummymarkdeva	rvocalicvowelsigndeva
+vattuviramalownuktadeva	nuktadeva	dummymarkdeva	viramadeva
+vattuuevowellownuktadeva	nuktadeva	dummymarkdeva	uevowelsigndeva
+vattuuuevowellownuktadeva	nuktadeva	dummymarkdeva	uuevowelsigndeva
+dddhaudeva	dddhadeva	uvowelsigndeva
+dddhauudeva	dddhadeva	uuvowelsigndeva
+rhaudeva	rhadeva	uvowelsigndeva
+rhauudeva	rhadeva	uuvowelsigndeva
+danuktaudeva	danuktadeva	uvowelsigndeva
+danuktauudeva	danuktadeva	uuvowelsigndeva
+danuktarvocalicdeva	danuktadeva	rvocalicvowelsigndeva
+hanuktaudeva	hanuktadeva	uvowelsigndeva
+hanuktauudeva	hanuktadeva	uuvowelsigndeva
+hanuktarvocalicdeva	hanuktadeva	rvocalicvowelsigndeva
+hanuktarrvocalicdeva	hanuktadeva	rrvocalicvowelsigndeva
+vattuudeva	vattudeva	uvowelsigndeva
+vattuuudeva	vattudeva	uuvowelsigndeva
+vatturvocalicdeva	vattudeva	rvocalicvowelsigndeva
+vatturrvocalicdeva	vattudeva	rrvocalicvowelsigndeva
+vattuviramadeva	vattudeva	viramadeva
+vattulvocalicdeva	vattudeva	lvocalicvowelsigndeva
+vattullvocalicdeva	vattudeva	llvocalicvowelsigndeva
+daraudeva	daradeva	uvowelsigndeva
+darauudeva	daradeva	uuvowelsigndeva
+dararvocalicdeva	daradeva	rvocalicvowelsigndeva
+haraudeva	haradeva	uvowelsigndeva
+harauudeva	haradeva	uuvowelsigndeva
+vattuulowdeva	dummymarkdeva	uvowelsigndeva
+vattuuulowdeva	dummymarkdeva	uuvowelsigndeva
+vatturvocaliclowdeva	dummymarkdeva	rvocalicvowelsigndeva
+vattuviramalowdeva	dummymarkdeva	viramadeva
+vattuuevowellowdeva	dummymarkdeva	uevowelsigndeva
+vattuuuevowellowdeva	dummymarkdeva	uuevowelsigndeva
+
+lookup end
+
+
+lookup	 102 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+MarkAttachmentType	 2
+
+class definition begin
+ngadeva	1
+chadeva	1
+ttadeva	1
+tthadeva	1
+ddadeva	1
+ddhadeva	1
+lladeva	1
+ssattadeva	2
+ssatthadeva	2
+rrvocalicvowelsigndeva	3
+lvocalicvowelsigndeva	3
+llvocalicvowelsigndeva	3
+haudeva	3
+hauudeva	3
+haraudeva	3
+harauudeva	3
+lvocalicvowelsignleftdeva	3
+llvocalicvowelsignleftdeva	3
+vatturrvocalicdeva	3
+vattulvocalicdeva	3
+vattullvocalicdeva	3
+ttattauudeva	4
+ttatthauudeva	4
+ddaddauudeva	4
+vattuulowdeva	5
+vattuuulowdeva	5
+vatturvocaliclowdeva	5
+vattuviramalowdeva	5
+anudattadeva	6
+uni1CD5	6
+uni1CD6	6
+uni1CD7	6
+uni1CD8	6
+uni1CD9	6
+uni1CDC	6
+uni1CDD	6
+uni1CDE	6
+uni1CDF	6
+uni1CED	6
+class definition end
+
+class	 1, 5, 6	 1, 103	 2, 103	 1, 105
+class	 2, 5, 6	 2, 103	 1, 104	 2, 105
+class	 3, 6	 1, 103
+class	 4, 6	 1, 104
+
+lookup end
+
+
+lookup	 103 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ngadeva	ngaaltdeva
+chadeva	chaaltdeva
+ttadeva	ttaaltdeva
+tthadeva	tthaaltdeva
+ddadeva	ddaaltdeva
+ddhadeva	ddhaaltdeva
+lladeva	llaaltdeva
+rrvocalicvowelsigndeva	rrvocaliclowdeva
+lvocalicvowelsigndeva	lvocalicvowelsignlowdeva
+llvocalicvowelsigndeva	llvocalicvowelsignlowdeva
+haudeva	hauUIdeva
+hauudeva	hauuUIdeva
+haraudeva	harauUIdeva
+harauudeva	harauuUIdeva
+lvocalicvowelsignleftdeva	lvocalicvowelsignlowdeva
+llvocalicvowelsignleftdeva	llvocalicvowelsignlowdeva
+vattuulowdeva	vattuudeva
+vattuuulowdeva	vattuuudeva
+vatturvocaliclowdeva	vatturvocalicdeva
+vatturrvocalicdeva	vatturrvocalicUIdeva
+vattulvocalicdeva	vattulvocalicUIdeva
+vattullvocalicdeva	vattullvocalicUIdeva
+vattuviramalowdeva	vattuviramadeva
+
+lookup end
+
+
+lookup	 104 	multiple
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ttattauudeva	ttaprehalfdeva	ttadeva	uuvowelsigndeva
+ttatthauudeva	ttaprehalfdeva	tthadeva	uuvowelsigndeva
+ddaddauudeva	ddaprehalfdeva	ddadeva	uuvowelsigndeva
+ssattadeva	ssaprehalfdeva	ttaaltdeva
+ssatthadeva	ssaprehalfdeva	tthaaltdeva
+
+lookup end
+
+
+lookup	 105 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+ngaraprehalfUIdeva	ngaaltdeva	vattuviramadeva
+ttaraprehalfUIdeva	ttaaltdeva	vattuviramadeva
+ttharaprehalfUIdeva	tthaaltdeva	vattuviramadeva
+ddaraprehalfUIdeva	ddaaltdeva	vattuviramadeva
+ddharaprehalfUIdeva	ddhaaltdeva	vattuviramadeva
+
+lookup end
+
+
+lookup	 106 	context
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+glyph 	raradeva, uvowelsigndeva	 1, 107	 2, 109
+glyph 	raradeva, uuvowelsigndeva	 1, 108	 2, 109
+glyph 	ranuktaradeva, uvowelsigndeva	 1, 107	 2, 109
+glyph 	ranuktaradeva, uuvowelsigndeva	 1, 108	 2, 109
+
+lookup end
+
+
+lookup	 107 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+raradeva	raudeva
+ranuktaradeva	ranuktaudeva
+
+lookup end
+
+
+lookup	 108 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+raradeva	rauudeva
+ranuktaradeva	ranuktauudeva
+
+lookup end
+
+
+lookup	 109 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+uvowelsigndeva	vattudeva
+uuvowelsigndeva	vattudeva
+
+lookup end
+
+
+lookup	 110 	chained
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+backtrackclass definition begin
+ngadeva	1
+chadeva	1
+ttadeva	1
+ddhadeva	1
+dadeva	1
+lladeva	1
+llladeva	1
+rhadeva	1
+nganuktadeva	1
+chanuktadeva	1
+ttanuktadeva	1
+danuktadeva	1
+ngaradeva	1
+charadeva	1
+ttaradeva	1
+ddharadeva	1
+daradeva	1
+llaradeva	1
+nganuktaradeva	1
+chanuktaradeva	1
+ttanuktaradeva	1
+ddhanuktaradeva	1
+danuktaradeva	1
+llanuktaradeva	1
+ngagadeva	1
+ngamadeva	1
+cachadeva	1
+cacharadeva	1
+ttattadeva	1
+ttatthadeva	1
+ddhaddhadeva	1
+daghadeva	1
+dagadeva	1
+dabadeva	1
+dabhadeva	1
+davadeva	1
+dadhadeva	1
+dadadeva	1
+hannadeva	1
+hanadeva	1
+haladeva	1
+havadeva	1
+ladevaMAR	1
+lanuktadevaMAR	1
+laradevaMAR	1
+lanuktaradevaMAR	1
+shaladevaMAR	1
+tthadeva	2
+tthanuktadeva	2
+ttharadeva	2
+tthanuktaradeva	2
+tthatthadeva	2
+kadeva	3
+phadeva	3
+qadeva	3
+fadeva	3
+karadeva	3
+pharadeva	3
+kanuktaradeva	3
+phanuktaradeva	3
+katadeva	3
+maphadeva	3
+saphadeva	3
+jhadevaNEP	3
+jhanuktadevaNEP	3
+jharadevaNEP	3
+jhanuktaradevaNEP	3
+class definition end
+
+class definition begin
+iivowelsigndeva	1
+iivowelsignanusvaradeva	1
+iivowelsignrephdeva	1
+iivowelsignrephanusvaradeva	1
+iivowelcandrabindudeva	1
+iivowelsignrephcandrabindudeva	1
+class definition end
+
+lookaheadclass definition begin
+# 1	1
+class definition end
+
+class-chain	 1	 1		 1, 111
+class-chain	 2	 1		 1, 112
+class-chain	 3	 1		 1, 113
+
+lookup end
+
+
+lookup	 111 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+iivowelsigndeva	iivowelsign1deva
+iivowelsignanusvaradeva	iivowelsignanusvara1deva
+iivowelsignrephdeva	iivowelsignreph1deva
+iivowelsignrephanusvaradeva	iivowelsignrephanusvara1deva
+iivowelcandrabindudeva	iivowelcandrabindu1deva
+iivowelsignrephcandrabindudeva	iivowelsignrephcandrabindu1deva
+
+lookup end
+
+
+lookup	 112 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+iivowelsigndeva	iivowelsign2deva
+iivowelsignanusvaradeva	iivowelsignanusvara2deva
+iivowelsignrephdeva	iivowelsignreph2deva
+iivowelsignrephanusvaradeva	iivowelsignrephanusvara2deva
+iivowelcandrabindudeva	iivowelcandrabindu2deva
+iivowelsignrephcandrabindudeva	iivowelsignrephcandrabindu2deva
+
+lookup end
+
+
+lookup	 113 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+iivowelsigndeva	iivowelsign3deva
+iivowelsignanusvaradeva	iivowelsignanusvara3deva
+iivowelsignrephdeva	iivowelsignreph3deva
+iivowelsignrephanusvaradeva	iivowelsignrephanusvara3deva
+iivowelcandrabindudeva	iivowelcandrabindu3deva
+iivowelsignrephcandrabindudeva	iivowelsignrephcandrabindu3deva
+
+lookup end
+
+
+lookup	 114 	chained
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+MarkAttachmentType	 2
+
+backtrackclass definition begin
+uvowelsigndeva	1
+uuvowelsigndeva	1
+rvocalicvowelsigndeva	1
+rrvocalicvowelsigndeva	1
+viramadeva	1
+lvocalicvowelsigndeva	1
+llvocalicvowelsigndeva	1
+uvowelsignlowdeva	1
+uuvowelsignlowdeva	1
+rvocalicvowelsignlowdeva	1
+viramalowdeva	1
+rvocalicdeva	2
+lvocalicdeva	2
+rrvocalicdeva	2
+ttattadeva	2
+ttattauudeva	2
+ttatthadeva	2
+ttatthauudeva	2
+tthatthadeva	2
+ddaddhadeva	2
+ddaddadeva	2
+ddhaddhadeva	2
+daghadeva	3
+dagadeva	3
+dabadeva	3
+dabhadeva	3
+davadeva	3
+dadhadeva	3
+dadadeva	3
+khadeva	4
+gadeva	4
+ghadeva	4
+cadeva	4
+jadeva	4
+jhadeva	4
+nyadeva	4
+ttadeva	4
+tthadeva	4
+ddadeva	4
+ddhadeva	4
+nnadeva	4
+tadeva	4
+thadeva	4
+dadeva	4
+dhadeva	4
+nadeva	4
+nnnadeva	4
+padeva	4
+phadeva	4
+badeva	4
+bhadeva	4
+madeva	4
+yadeva	4
+radeva	4
+rradeva	4
+ladeva	4
+vadeva	4
+shadeva	4
+ssadeva	4
+sadeva	4
+hadeva	4
+kassadeva	4
+janyadeva	4
+kharadeva	4
+garadeva	4
+gharadeva	4
+caradeva	4
+jaradeva	4
+jharadeva	4
+nyaradeva	4
+nnaradeva	4
+taradeva	4
+tharadeva	4
+daradeva	4
+dharadeva	4
+naradeva	4
+paradeva	4
+pharadeva	4
+baradeva	4
+bharadeva	4
+maradeva	4
+yaradeva	4
+laradeva	4
+varadeva	4
+sharadeva	4
+ssaradeva	4
+saradeva	4
+haradeva	4
+kassaradeva	4
+janyaradeva	4
+nanuktaradeva	4
+kashadeva	4
+khashadeva	4
+ngayadeva	4
+cacadeva	4
+chayadeva	4
+jajadeva	4
+jaddadeva	4
+nyajadeva	4
+ttayadeva	4
+tthayadeva	4
+ddayadeva	4
+ddhayadeva	4
+tatadeva	4
+tathadeva	4
+tashadeva	4
+damadeva	4
+dayadeva	4
+naddadeva	4
+nathadeva	4
+natharadeva	4
+nadhadeva	4
+nadharadeva	4
+nanadeva	4
+nashadeva	4
+panadeva	4
+badhadeva	4
+mapadeva	4
+maparadeva	4
+maphadeva	4
+mabhadeva	4
+laddadeva	4
+lathadeva	4
+vayadeva	4
+shaladeva	4
+shanadeva	4
+ssattayadeva	4
+ssatthayadeva	4
+sathadeva	4
+sapadeva	4
+saparadeva	4
+saphadeva	4
+class definition end
+
+class definition begin
+uni1CE1	1
+class definition end
+
+lookaheadclass definition begin
+# 1	1
+class definition end
+
+class-chain	 1, 3	 1		 1, 115
+class-chain	 1, 4	 1		 1, 115
+class-chain	 2	 1		 1, 115
+class-chain	 3	 1		 1, 115
+
+lookup end
+
+
+lookup	 115 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+uni1CE1	uni1CE1.alt
+
+lookup end
+
+
+lookup	 116 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+visarga_uni1CE2	visargadeva	uni1CE2
+visarga_uni1CE4	visargadeva	uni1CE4
+visarga_uni1CE5	visargadeva	uni1CE5
+visarga_uni1CE8	visargadeva	uni1CE8
+
+lookup end
+
+
+lookup	 117 	ligature
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+nganuktaraprehalfdeva	ngadeva	vattuviramalownuktadeva
+ttanuktaraprehalfdeva	ttadeva	vattuviramalownuktadeva
+tthanuktaraprehalfdeva	tthadeva	vattuviramalownuktadeva
+ddanuktaraprehalfdeva	ddadeva	vattuviramalownuktadeva
+ddhanuktaraprehalfdeva	ddhadeva	vattuviramalownuktadeva
+danuktaprehalfdeva	dadeva	viramanuktadeva
+ddanuktaprehalfdeva	dddhadeva	viramadeva
+ddhanuktaprehalfdeva	rhadeva	viramadeva
+nganuktaprehalfdeva	nganuktadeva	viramadeva
+ttanuktaprehalfdeva	ttanuktadeva	viramadeva
+tthanuktaprehalfdeva	tthanuktadeva	viramadeva
+haraprehalfdeva	haradeva	viramadeva
+hanuktaraprehalfdeva	hanuktaradeva	viramadeva
+ngaraprehalfdeva	ngaaltdeva	vattuviramadeva
+ttaraprehalfdeva	ttaaltdeva	vattuviramadeva
+ttharaprehalfdeva	tthaaltdeva	vattuviramadeva
+ddaraprehalfdeva	ddaaltdeva	vattuviramadeva
+ddharaprehalfdeva	ddhaaltdeva	vattuviramadeva
+
+lookup end
+
+
+lookup	 118 	chained
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+backtrackclass definition begin
+space	1
+uni25CC	1
+class definition end
+
+class definition begin
+uniA8E0	1
+uniA8E1	1
+uniA8E2	1
+uniA8E3	1
+uniA8E4	1
+uniA8E5	1
+uniA8E6	1
+uniA8E7	1
+uniA8E8	1
+uniA8E9	1
+uniA8EA	1
+uniA8EB	1
+uniA8EC	1
+uniA8ED	1
+uniA8EE	1
+uniA8EF	1
+uniA8F0	1
+uniA8F1	1
+uni1CD0	1
+uni1CD1	1
+uni1CD2	1
+uni1CF4	1
+class definition end
+
+lookaheadclass definition begin
+# 1	1
+class definition end
+
+class-chain	 1	 1		 1, 119
+
+lookup end
+
+
+lookup	 119 	single
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+uniA8E0	uniA8E0.low
+uniA8E1	uniA8E1.low
+uniA8E2	uniA8E2.low
+uniA8E3	uniA8E3.low
+uniA8E4	uniA8E4.low
+uniA8E5	uniA8E5.low
+uniA8E6	uniA8E6.low
+uniA8E7	uniA8E7.low
+uniA8E8	uniA8E8.low
+uniA8E9	uniA8E9.low
+uniA8EA	uniA8EA.low
+uniA8EB	uniA8EB.low
+uniA8EC	uniA8EC.low
+uniA8ED	uniA8ED.low
+uniA8EE	uniA8EE.low
+uniA8EF	uniA8EF.low
+uniA8F0	uniA8F0.low
+uniA8F1	uniA8F1.low
+uni1CD0	uni1CD0.low
+uni1CD1	uni1CD1.low
+uni1CD2	uni1CD2.low
+uni1CF4	uni1CF4.low
+
+lookup end
+

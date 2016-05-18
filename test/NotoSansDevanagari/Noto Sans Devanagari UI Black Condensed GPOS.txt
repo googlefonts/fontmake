@@ -1,0 +1,781 @@
+FontDame GPOS table
+
+EM	 1000
+
+script table begin
+dev2	default		 0, 1, 2
+dev2	MAR 		 0, 1, 2
+dev2	NEP 		 0, 1, 2
+deva	default		 0, 1, 2
+deva	MAR 		 0, 1, 2
+deva	NEP 		 0, 1, 2
+script table end
+
+
+feature table begin
+ 0	abvm	 0
+ 1	blwm	 1, 2
+ 2	dist	 3
+feature table end
+
+
+lookup	 0 	mark to base
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+mark	binducandradeva	 0	-216, 622
+mark	candrabindudeva	 0	-216, 622
+mark	anusvaradeva	 0	-204, 622
+mark	oevowelsigndeva	 0	-204, 622
+mark	ecandravowelsigndeva	 0	-221, 622
+mark	eshortvowelsigndeva	 0	-204, 622
+mark	evowelsigndeva	 0	-204, 622
+mark	aivowelsigndeva	 0	-204, 622
+mark	udattadeva	 0	-204, 622
+mark	uni0953	 0	-204, 622
+mark	uni0954	 0	-204, 622
+mark	candralongevowelsigndeva	 0	-225, 622
+mark	rephdeva	 0	-204, 622
+mark	oevowelsignanusvaradeva	 0	-204, 622
+mark	oevowelsignrephdeva	 0	-204, 622
+mark	oevowelsignrephanusvaradeva	 0	-204, 622
+mark	ecandravowelsignanusvaradeva	 0	-216, 622
+mark	ecandravowelsignrephdeva	 0	-204, 622
+mark	ecandravowelrephanusvaradeva	 0	-204, 622
+mark	eshortvowelsignanusvaradeva	 0	-204, 622
+mark	eshortvowelsignrephdeva	 0	-204, 622
+mark	eshortvowelsignrephanusvarade	 0	-204, 622
+mark	evowelsignanusvaradeva	 0	-204, 622
+mark	evowelsignrephdeva	 0	-204, 622
+mark	evowelsignrephanusvaradeva	 0	-204, 622
+mark	aivowelsignanusvaradeva	 0	-204, 622
+mark	aivowelsignrephdeva	 0	-204, 622
+mark	aivowelsignrephanusvaradeva	 0	-204, 622
+mark	rephanusvaradeva	 0	-204, 622
+mark	rephcandrabindudeva	 0	-204, 622
+mark	oevowelsigncandrabindudeva	 0	-204, 622
+mark	ecandravowelsigncandrabindudeva	 0	-204, 622
+mark	eshortvowelsigncandrabindudeva	 0	-204, 622
+mark	evowelsigncandrabindudeva	 0	-204, 622
+mark	aivowelsigncandrabindudeva	 0	-204, 622
+mark	oevowelsignrephcandrabindudeva	 0	-204, 622
+mark	ecandravowelrephcandrabindudeva	 0	-204, 622
+mark	eshortvowelrephcandrabindudeva	 0	-204, 622
+mark	evowelsignrephcandrabindudeva	 0	-204, 622
+mark	aivowelsignrephcandrabindudeva	 0	-204, 622
+mark	uni1CDA	 0	-204, 622
+mark	uni1CDB	 0	-204, 622
+mark	uni1CF8	 0	-204, 622
+mark	uni1CF9	 0	-192, 622
+base	ideva	 0	 210, 622
+base	udeva	 0	 275, 622
+base	uudeva	 0	 275, 622
+base	rvocalicdeva	 0	 295, 622
+base	lvocalicdeva	 0	 357, 622
+base	edeva	 0	 304, 622
+base	kadeva	 0	 287, 622
+base	ngadeva	 0	 277, 622
+base	chadeva	 0	 354, 622
+base	ttadeva	 0	 198, 622
+base	tthadeva	 0	 197, 622
+base	ddadeva	 0	 298, 622
+base	ddhadeva	 0	 245, 622
+base	dadeva	 0	 183, 622
+base	phadeva	 0	 287, 622
+base	lladeva	 0	 371, 622
+base	llladeva	 0	 371, 622
+base	qadeva	 0	 287, 622
+base	dddhadeva	 0	 298, 622
+base	rhadeva	 0	 245, 622
+base	fadeva	 0	 287, 622
+base	rrvocalicdeva	 0	 295, 622
+base	llvocalicdeva	 0	 357, 622
+base	ddabardeva	 0	 302, 622
+base	inuktadeva	 0	 210, 622
+base	unuktadeva	 0	 275, 622
+base	uunuktadeva	 0	 275, 622
+base	rvocalicnuktadeva	 0	 295, 622
+base	lvocalicnuktadeva	 0	 357, 622
+base	enuktadeva	 0	 304, 622
+base	rrvocalicnuktadeva	 0	 295, 622
+base	llvocalicnuktadeva	 0	 357, 622
+base	nganuktadeva	 0	 278, 622
+base	chanuktadeva	 0	 354, 622
+base	ttanuktadeva	 0	 198, 622
+base	tthanuktadeva	 0	 197, 622
+base	danuktadeva	 0	 183, 622
+base	karadeva	 0	 306, 622
+base	ngaradeva	 0	 277, 622
+base	charadeva	 0	 354, 622
+base	ttaradeva	 0	 198, 622
+base	ttharadeva	 0	 197, 622
+base	ddaradeva	 0	 298, 622
+base	ddharadeva	 0	 245, 622
+base	daradeva	 0	 183, 622
+base	pharadeva	 0	 287, 622
+base	llaradeva	 0	 371, 622
+base	kanuktaradeva	 0	 306, 622
+base	nganuktaradeva	 0	 277, 622
+base	chanuktaradeva	 0	 354, 622
+base	ttanuktaradeva	 0	 198, 622
+base	tthanuktaradeva	 0	 197, 622
+base	ddanuktaradeva	 0	 298, 622
+base	ddhanuktaradeva	 0	 245, 622
+base	danuktaradeva	 0	 183, 622
+base	phanuktaradeva	 0	 287, 622
+base	llanuktaradeva	 0	 371, 622
+base	harvocalicdeva	 0	 274, 622
+base	harrvocalicdeva	 0	 274, 622
+base	hanuktarvocalicdeva	 0	 266, 622
+base	hanuktarrvocalicdeva	 0	 266, 622
+base	raudeva	 0	 157, 622
+base	rauudeva	 0	 157, 622
+base	daudeva	 0	 183, 622
+base	dauudeva	 0	 183, 622
+base	darvocalicdeva	 0	 183, 622
+base	daraudeva	 0	 183, 622
+base	darauudeva	 0	 183, 622
+base	dararvocalicdeva	 0	 183, 622
+base	ranuktaudeva	 0	 157, 622
+base	ranuktauudeva	 0	 157, 622
+base	danuktaudeva	 0	 183, 622
+base	danuktauudeva	 0	 183, 622
+base	danuktarvocalicdeva	 0	 183, 622
+base	katadeva	 0	 374, 622
+base	ngagadeva	 0	 277, 622
+base	ngamadeva	 0	 277, 622
+base	cachadeva	 0	 696, 622
+base	cacharadeva	 0	 696, 622
+base	jaddadeva	 0	 708, 622
+base	ttattadeva	 0	 200, 622
+base	ttatthadeva	 0	 200, 622
+base	tthatthadeva	 0	 199, 622
+base	ddaddhadeva	 0	 297, 622
+base	ddaddadeva	 0	 298, 622
+base	ddhaddhadeva	 0	 248, 622
+base	daghadeva	 0	 395, 622
+base	dagadeva	 0	 183, 622
+base	dabadeva	 0	 278, 622
+base	dabhadeva	 0	 442, 622
+base	davadeva	 0	 265, 622
+base	dadhadeva	 0	 449, 622
+base	dadadeva	 0	 247, 622
+base	naddadeva	 0	 484, 622
+base	naddaradeva	 0	 484, 622
+base	maphadeva	 0	 575, 622
+base	laddadeva	 0	 615, 622
+base	laddaradeva	 0	 615, 622
+base	ssatthadeva	 0	 323, 622
+base	ssattharadeva	 0	 323, 622
+base	saphadeva	 0	 638, 622
+base	hannadeva	 0	 453, 622
+base	hanadeva	 0	 365, 622
+base	haladeva	 0	 465, 622
+base	havadeva	 0	 395, 622
+base	ladevaMAR	 0	 357, 622
+base	lanuktadevaMAR	 0	 357, 622
+base	laradevaMAR	 0	 357, 622
+base	lanuktaradevaMAR	 0	 357, 622
+base	shaladevaMAR	 0	 716, 622
+base	jhadevaNEP	 0	 447, 622
+base	jhanuktadevaNEP	 0	 447, 622
+base	jharadevaNEP	 0	 453, 622
+base	jhanuktaradevaNEP	 0	 453, 622
+base	ngaaltdeva	 0	 277, 622
+base	chaaltdeva	 0	 354, 622
+base	ttaaltdeva	 0	 200, 622
+base	tthaaltdeva	 0	 199, 622
+base	ddaaltdeva	 0	 298, 622
+base	ddhaaltdeva	 0	 234, 622
+base	llaaltdeva	 0	 371, 622
+base	laaltdevaMAR	 0	 357, 622
+base	nganuktaaltdeva	 0	 277, 622
+base	chanuktaaltdeva	 0	 354, 622
+base	ttanuktaaltdeva	 0	 200, 622
+base	tthanuktaaltdeva	 0	 199, 622
+base	dddhaaltdeva	 0	 298, 622
+base	rhaaltdeva	 0	 234, 622
+base	lllaaltdeva	 0	 371, 622
+base	lanuktaaltdevaMAR	 0	 357, 622
+base	dadaaltdeva	 0	 250, 622
+base	dabhaaltdeva	 0	 488, 622
+base	uniA8F2	 0	 194, 622
+base	uniA8F3	 0	 153, 622
+base	uniA8F4	 0	 153, 622
+base	uniA8F5	 0	 153, 622
+base	uniA8F6	 0	 153, 622
+base	uniA8F7	 0	 153, 622
+base	uni1CE9	 0	 298, 622
+base	uni1CEA	 0	 269, 622
+base	uni1CEB	 0	 269, 622
+base	uni1CEC	 0	 269, 622
+base	uni1CEE	 0	 164, 622
+base	uni1CEF	 0	 132, 622
+base	uni1CF0	 0	 179, 622
+
+lookup end
+
+
+lookup	 1 	mark to base
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+mark	uvowelsigndeva	 0	-204, 0
+mark	uuvowelsigndeva	 0	-204, 0
+mark	rvocalicvowelsigndeva	 0	-204, 0
+mark	viramadeva	 0	-204, 0
+mark	uvowelsignnuktadeva	 0	-204, 0
+mark	uvowelsignnuktaleftdeva	 0	-273, 0
+mark	uvowelsignnarrowdeva	 0	-204, 0
+mark	uuvowelsignnuktadeva	 0	-204, 0
+mark	uuvowelsignnuktaleftdeva	 0	-273, 0
+mark	rvocalicvowelsignnuktadeva	 0	-204, 0
+mark	rvocalicvowelsignnuktaleftdeva	 0	-273, 0
+mark	viramanuktadeva	 0	-204, 0
+mark	vattuudeva	 0	-197, 0
+mark	vattuuudeva	 0	-197, 0
+mark	vatturvocalicdeva	 0	-197, 0
+mark	vattuviramadeva	 0	-197, 0
+mark	vattuuevoweldeva	 0	-197, 0
+mark	vattuuuevoweldeva	 0	-197, 0
+mark	rrvocaliclowdeva	 0	-204, 0
+mark	lvocalicvowelsignlowdeva	 0	-227, 0
+mark	llvocalicvowelsignlowdeva	 0	-227, 0
+mark	vatturrvocalicUIdeva	 0	-197, 0
+mark	vattulvocalicUIdeva	 0	-197, 0
+mark	vattullvocalicUIdeva	 0	-197, 0
+mark	rrvocalicvowelsignnuktaUIdeva	 0	-204, 0
+mark	lvocalicvowelsignnuktaUIdeva	 0	-259, 0
+mark	llvocalicvowelsignnuktaUIdeva	 0	-259, 0
+mark	uni1CED	 0	-204, 0
+base	kadeva	 0	 287, 0
+base	ngadeva	 0	 240, 0
+base	chadeva	 0	 268, 0
+base	ttadeva	 0	 211, 0
+base	tthadeva	 0	 225, 0
+base	ddadeva	 0	 240, 0
+base	ddhadeva	 0	 226, 0
+base	dadeva	 0	 285, 0
+base	phadeva	 0	 287, 0
+base	radeva	 0	 147, 0
+base	rradeva	 0	 195, 0
+base	lladeva	 0	 358, 0
+base	llladeva	 0	 358, 0
+base	qadeva	 0	 287, 0
+base	fadeva	 0	 287, 0
+base	marwariddadeva	 0	 202, 0
+base	ddabardeva	 0	 242, 0
+base	danuktadeva	 0	 296, 0
+base	karadeva	 0	 306, 0
+base	daradeva	 0	 283, 0
+base	pharadeva	 0	 287, 0
+base	kanuktaradeva	 0	 306, 0
+base	danuktaradeva	 0	 311, 0
+base	phanuktaradeva	 0	 287, 0
+base	katadeva	 0	 374, 0
+base	ngagadeva	 0	 298, 0
+base	ngamadeva	 0	 298, 0
+base	cachadeva	 0	 610, 0
+base	jaddadeva	 0	 651, 0
+base	daghadeva	 0	 513, 0
+base	dagadeva	 0	 295, 0
+base	dabadeva	 0	 397, 0
+base	dabhadeva	 0	 560, 0
+base	davadeva	 0	 382, 0
+base	dadhadeva	 0	 567, 0
+base	dadadeva	 0	 315, 0
+base	naddadeva	 0	 427, 0
+base	maphadeva	 0	 575, 0
+base	laddadeva	 0	 556, 0
+base	ssattadeva	 0	 237, 0
+base	ssatthadeva	 0	 244, 0
+base	saphadeva	 0	 638, 0
+base	hannadeva	 0	 490, 1
+base	hanadeva	 0	 402, 0
+base	haladeva	 0	 501, 0
+base	havadeva	 0	 432, 0
+base	ladevaMAR	 0	 357, 0
+base	shaladevaMAR	 0	 691, 0
+base	jhadevaNEP	 0	 447, 0
+base	jhanuktadevaNEP	 0	 447, 0
+base	jharadevaNEP	 0	 453, 0
+base	jhanuktaradevaNEP	 0	 453, 0
+base	ngaaltdeva	 0	 240, 0
+base	chaaltdeva	 0	 268, 0
+base	ttaaltdeva	 0	 211, 0
+base	tthaaltdeva	 0	 225, 0
+base	ddaaltdeva	 0	 240, 0
+base	ddhaaltdeva	 0	 225, 0
+base	llaaltdeva	 0	 346, 0
+base	laaltdevaMAR	 0	 333, 0
+base	dadaaltdeva	 0	 302, 0
+base	dabhaaltdeva	 0	 596, 0
+
+lookup end
+
+
+lookup	 2 	mark to base
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	no
+
+mark	anudattadeva	 0	-215, 0
+mark	uevowelsigndeva	 0	-245, 0
+mark	uuevowelsigndeva	 0	-235, 0
+mark	uevowelsignnuktadeva	 0	-256, 0
+mark	uevowelsignnuktaleftdeva	 0	-280, 0
+mark	uuevowelsignnuktadeva	 0	-256, 0
+mark	uuevowelsignnuktaleftdeva	 0	-232, 0
+mark	uni1CD5	 0	-210, 0
+mark	uni1CD6	 0	-214, 0
+mark	uni1CD7	 0	-213, 0
+mark	uni1CD8	 0	-146, 0
+mark	uni1CD9	 0	-137, 0
+mark	uni1CDC	 0	-132, 0
+mark	uni1CDD	 0	-131, 0
+mark	uni1CDE	 0	-208, 0
+mark	uni1CDF	 0	-280, 0
+base	aadeva	 0	 499, 0
+base	udeva	 0	 246, 0
+base	uudeva	 0	 246, 0
+base	rvocalicdeva	 0	 369, 0
+base	lvocalicdeva	 0	 309, 0
+base	edeva	 0	 246, 0
+base	aideva	 0	 246, 0
+base	odeva	 0	 499, 0
+base	audeva	 0	 499, 0
+base	kadeva	 0	 361, 0
+base	ngadeva	 0	 284, 0
+base	chadeva	 0	 314, 0
+base	ttadeva	 0	 216, 0
+base	tthadeva	 0	 240, 0
+base	ddadeva	 0	 284, 0
+base	ddhadeva	 0	 251, 0
+base	dadeva	 0	 219, 0
+base	phadeva	 0	 361, 0
+base	radeva	 0	 181, 0
+base	hadeva	 0	 225, 0
+base	qadeva	 0	 361, 0
+base	fadeva	 0	 361, 0
+base	rrvocalicdeva	 0	 369, 0
+base	onedeva	 0	 244, 0
+base	threedeva	 0	 245, 0
+base	karadeva	 0	 380, 0
+base	ngaradeva	 0	 274, 0
+base	charadeva	 0	 306, 0
+base	ttaradeva	 0	 220, 0
+base	ttharadeva	 0	 244, 0
+base	ddaradeva	 0	 273, 0
+base	ddharadeva	 0	 245, 0
+base	daradeva	 0	 273, 0
+base	pharadeva	 0	 361, 0
+base	raradeva	 0	 186, 0
+base	llaradeva	 0	 396, 0
+base	haradeva	 0	 238, 0
+base	hauUIdeva	 0	 235, 0
+base	hauuUIdeva	 0	 235, 0
+base	harvocalicdeva	 0	 259, 0
+base	harrvocalicdeva	 0	 259, 0
+base	harauUIdeva	 0	 251, 0
+base	harauuUIdeva	 0	 251, 0
+base	raudeva	 0	 240, 0
+base	rauudeva	 0	 312, 0
+base	aianusvaradeva	 0	 246, 0
+base	oanusvaradeva	 0	 499, 0
+base	auanusvaradeva	 0	 499, 0
+base	katadeva	 0	 449, 0
+base	ngagadeva	 0	 268, 0
+base	ngamadeva	 0	 268, 0
+base	cachadeva	 0	 655, 0
+base	cacharadeva	 0	 654, 0
+base	jaddadeva	 0	 694, 0
+base	ttattadeva	 0	 219, 0
+base	ttatthadeva	 0	 218, 0
+base	tthatthadeva	 0	 240, 0
+base	ddaddhadeva	 0	 259, 0
+base	ddaddadeva	 0	 284, 0
+base	ddhaddhadeva	 0	 254, 0
+base	daghadeva	 0	 457, 0
+base	dagadeva	 0	 249, 0
+base	dabadeva	 0	 354, 0
+base	dabhadeva	 0	 511, 0
+base	davadeva	 0	 335, 0
+base	dadhadeva	 0	 514, 0
+base	dadadeva	 0	 250, 0
+base	naddadeva	 0	 470, 0
+base	naddaradeva	 0	 468, 0
+base	maphadeva	 0	 649, 0
+base	laddadeva	 0	 599, 0
+base	laddaradeva	 0	 591, 0
+base	ssattadeva	 0	 258, 0
+base	ssattaradeva	 0	 262, 0
+base	ssatthadeva	 0	 265, 0
+base	ssattharadeva	 0	 259, 0
+base	saphadeva	 0	 712, 0
+base	hannadeva	 0	 410, 0
+base	hanadeva	 0	 372, 0
+base	hamadeva	 0	 430, 0
+base	hayadeva	 0	 427, 0
+base	haladeva	 0	 486, 0
+base	havadeva	 0	 401, 0
+base	ngaaltdeva	 0	 284, 0
+base	chaaltdeva	 0	 314, 0
+base	ttaaltdeva	 0	 216, 0
+base	tthaaltdeva	 0	 240, 0
+base	ddaaltdeva	 0	 284, 0
+base	ddhaaltdeva	 0	 251, 0
+base	dadaaltdeva	 0	 236, 0
+base	dabhaaltdeva	 0	 538, 0
+base	uniA8F2	 0	 224, 0
+base	uniA8F3	 0	 228, 0
+base	uniA8F4	 0	 228, 0
+base	uniA8F5	 0	 227, 0
+base	uniA8F6	 0	 228, 0
+base	uniA8F7	 0	 228, 0
+base	uni1CE9	 0	 370, 0
+base	uni1CEA	 0	 343, 0
+base	uni1CEB	 0	 349, 0
+base	uni1CEC	 0	 356, 0
+base	uni1CEE	 0	 236, 0
+base	uni1CEF	 0	 194, 0
+base	uni1CF0	 0	 257, 0
+
+lookup end
+
+
+lookup	 3 	pair
+
+RightToLeft	no
+IgnoreBaseGlyphs	no
+IgnoreLigatures	no
+IgnoreMarks	yes
+
+left x advance	kaprehalfdeva	kadeva	-50
+left x advance	kaprehalfdeva	khadeva	-50
+left x advance	kaprehalfdeva	cadeva	-33
+left x advance	kaprehalfdeva	jadeva	-57
+left x advance	kaprehalfdeva	jhadeva	-46
+left x advance	kaprehalfdeva	ttadeva	-50
+left x advance	kaprehalfdeva	ddadeva	-60
+left x advance	kaprehalfdeva	nnadeva	-41
+left x advance	kaprehalfdeva	tadeva	-57
+left x advance	kaprehalfdeva	dadeva	-50
+left x advance	kaprehalfdeva	nadeva	-46
+left x advance	kaprehalfdeva	padeva	-41
+left x advance	kaprehalfdeva	phadeva	-41
+left x advance	kaprehalfdeva	madeva	-33
+left x advance	kaprehalfdeva	yadeva	-52
+left x advance	kaprehalfdeva	ladeva	-52
+left x advance	kaprehalfdeva	vadeva	-50
+left x advance	kaprehalfdeva	sadeva	-50
+left x advance	kaprehalfdeva	zadeva	-57
+left x advance	kaprehalfdeva	taprehalfdeva	-57
+left x advance	kaprehalfdeva	saprehalfdeva	-50
+left x advance	kaprehalfdeva	ttaradeva	-50
+left x advance	kaprehalfdeva	paradeva	-41
+left x advance	kaprehalfdeva	sapadeva	-50
+left x advance	kaprehalfdeva	sapaprehalfdeva	-50
+left x advance	kaprehalfdeva	saparadeva	-50
+left x advance	kaprehalfdeva	ladevaMAR	-52
+left x advance	khaprehalfdeva	khadeva	-40
+left x advance	khaprehalfdeva	tadeva	-53
+left x advance	khaprehalfdeva	nadeva	-36
+left x advance	khaprehalfdeva	madeva	-40
+left x advance	khaprehalfdeva	yadeva	-36
+left x advance	khaprehalfdeva	vadeva	-40
+left x advance	khaprehalfdeva	sadeva	-33
+left x advance	gaprehalfdeva	jadeva	-8
+left x advance	gaprehalfdeva	ddadeva	-22
+left x advance	ghaprehalfdeva	nadeva	-26
+left x advance	ghaprehalfdeva	madeva	-23
+left x advance	ghaprehalfdeva	yadeva	-25
+left x advance	caprehalfdeva	kadeva	-23
+left x advance	caprehalfdeva	ddadeva	-71
+left x advance	caprehalfdeva	nadeva	-16
+left x advance	caprehalfdeva	madeva	-26
+left x advance	caprehalfdeva	yadeva	-16
+left x advance	caprehalfdeva	sadeva	-12
+left x advance	japrehalfdeva	kadeva	-29
+left x advance	japrehalfdeva	jhadeva	-48
+left x advance	japrehalfdeva	ttadeva	-32
+left x advance	japrehalfdeva	tadeva	-36
+left x advance	japrehalfdeva	dadeva	-29
+left x advance	japrehalfdeva	nadeva	-40
+left x advance	japrehalfdeva	badeva	-29
+left x advance	japrehalfdeva	madeva	-33
+left x advance	japrehalfdeva	yadeva	-45
+left x advance	japrehalfdeva	vadeva	-29
+left x advance	japrehalfdeva	sadeva	-36
+left x advance	japrehalfdeva	hadeva	-48
+left x advance	japrehalfdeva	zadeva	-72
+left x advance	japrehalfdeva	janyadeva	-52
+left x advance	japrehalfdeva	japrehalfdeva	-71
+left x advance	nyaprehalfdeva	cadeva	-33
+left x advance	nyaprehalfdeva	chadeva	-35
+left x advance	nyaprehalfdeva	nyadeva	-68
+left x advance	nnaprehalfdeva	ddadeva	-25
+left x advance	nnaprehalfdeva	ddaradeva	-25
+left x advance	taprehalfdeva	kadeva	-46
+left x advance	taprehalfdeva	khadeva	-57
+left x advance	taprehalfdeva	cadeva	-23
+left x advance	taprehalfdeva	jadeva	-78
+left x advance	taprehalfdeva	dadeva	-45
+left x advance	taprehalfdeva	nadeva	-35
+left x advance	taprehalfdeva	padeva	-48
+left x advance	taprehalfdeva	phadeva	-48
+left x advance	taprehalfdeva	badeva	-46
+left x advance	taprehalfdeva	madeva	-29
+left x advance	taprehalfdeva	yadeva	-46
+left x advance	taprehalfdeva	ladeva	-42
+left x advance	taprehalfdeva	vadeva	-46
+left x advance	taprehalfdeva	sadeva	-57
+left x advance	taprehalfdeva	maprehalfdeva	-29
+left x advance	taprehalfdeva	saprehalfdeva	-57
+left x advance	taprehalfdeva	karadeva	-37
+left x advance	taprehalfdeva	paradeva	-48
+left x advance	taprehalfdeva	ladevaMAR	-42
+left x advance	thaprehalfdeva	yadeva	-16
+left x advance	thaprehalfdeva	vadeva	-15
+left x advance	naprehalfdeva	kadeva	-34
+left x advance	naprehalfdeva	ghadeva	-61
+left x advance	naprehalfdeva	cadeva	-31
+left x advance	naprehalfdeva	chadeva	-53
+left x advance	naprehalfdeva	jadeva	-65
+left x advance	naprehalfdeva	ttadeva	-33
+left x advance	naprehalfdeva	tadeva	-39
+left x advance	naprehalfdeva	dadeva	-40
+left x advance	naprehalfdeva	padeva	-48
+left x advance	naprehalfdeva	phadeva	-48
+left x advance	naprehalfdeva	badeva	-34
+left x advance	naprehalfdeva	bhadeva	-93
+left x advance	naprehalfdeva	madeva	-18
+left x advance	naprehalfdeva	yadeva	-60
+left x advance	naprehalfdeva	ladeva	-42
+left x advance	naprehalfdeva	vadeva	-34
+left x advance	naprehalfdeva	ssadeva	-49
+left x advance	naprehalfdeva	sadeva	-42
+left x advance	naprehalfdeva	hadeva	-46
+left x advance	naprehalfdeva	zadeva	-65
+left x advance	naprehalfdeva	fadeva	-48
+left x advance	naprehalfdeva	kaprehalfdeva	-34
+left x advance	naprehalfdeva	taprehalfdeva	-39
+left x advance	naprehalfdeva	phaprehalfdeva	-48
+left x advance	naprehalfdeva	saprehalfdeva	-42
+left x advance	naprehalfdeva	phanuktaprehalfdeva	-48
+left x advance	naprehalfdeva	karadeva	-50
+left x advance	naprehalfdeva	ttaradeva	-33
+left x advance	naprehalfdeva	taradeva	-33
+left x advance	naprehalfdeva	daradeva	-40
+left x advance	naprehalfdeva	pharadeva	-48
+left x advance	naprehalfdeva	hauUIdeva	-46
+left x advance	naprehalfdeva	daudeva	-40
+left x advance	naprehalfdeva	dauudeva	-40
+left x advance	naprehalfdeva	davadeva	-114
+left x advance	naprehalfdeva	dadhadeva	-23
+left x advance	naprehalfdeva	ladevaMAR	-42
+left x advance	paprehalfdeva	tadeva	-6
+left x advance	paprehalfdeva	nadeva	-23
+left x advance	paprehalfdeva	padeva	-19
+left x advance	paprehalfdeva	phadeva	-19
+left x advance	paprehalfdeva	madeva	-26
+left x advance	paprehalfdeva	yadeva	-16
+left x advance	paprehalfdeva	ladeva	-8
+left x advance	paprehalfdeva	vadeva	-8
+left x advance	paprehalfdeva	sadeva	-9
+left x advance	phaprehalfdeva	jadeva	-57
+left x advance	phaprehalfdeva	ttadeva	-50
+left x advance	phaprehalfdeva	tadeva	-57
+left x advance	phaprehalfdeva	padeva	-41
+left x advance	phaprehalfdeva	phadeva	-41
+left x advance	phaprehalfdeva	yadeva	-52
+left x advance	phaprehalfdeva	ladeva	-52
+left x advance	phaprehalfdeva	fadeva	-41
+left x advance	phaprehalfdeva	ladevaMAR	-52
+left x advance	baprehalfdeva	kadeva	-34
+left x advance	baprehalfdeva	jadeva	-27
+left x advance	baprehalfdeva	jhadeva	-28
+left x advance	baprehalfdeva	ddadeva	-105
+left x advance	baprehalfdeva	tadeva	-42
+left x advance	baprehalfdeva	dadeva	-34
+left x advance	baprehalfdeva	nadeva	-22
+left x advance	baprehalfdeva	badeva	-34
+left x advance	baprehalfdeva	madeva	-46
+left x advance	baprehalfdeva	yadeva	-26
+left x advance	baprehalfdeva	ladeva	-34
+left x advance	baprehalfdeva	vadeva	-34
+left x advance	baprehalfdeva	sadeva	-21
+left x advance	baprehalfdeva	zadeva	-27
+left x advance	baprehalfdeva	laprehalfdeva	-34
+left x advance	baprehalfdeva	saprehalfdeva	-21
+left x advance	baprehalfdeva	daudeva	-34
+left x advance	baprehalfdeva	ladevaMAR	-34
+left x advance	bhaprehalfdeva	yadeva	-41
+left x advance	bhaprehalfdeva	ladeva	-40
+left x advance	bhaprehalfdeva	vadeva	-40
+left x advance	bhaprehalfdeva	ladevaMAR	-40
+left x advance	maprehalfdeva	jadeva	-54
+left x advance	maprehalfdeva	ddadeva	-84
+left x advance	maprehalfdeva	tadeva	-46
+left x advance	maprehalfdeva	dadeva	-42
+left x advance	maprehalfdeva	nadeva	-50
+left x advance	maprehalfdeva	badeva	-42
+left x advance	maprehalfdeva	madeva	-69
+left x advance	maprehalfdeva	yadeva	-49
+left x advance	maprehalfdeva	ladeva	-46
+left x advance	maprehalfdeva	vadeva	-42
+left x advance	maprehalfdeva	sadeva	-49
+left x advance	maprehalfdeva	hadeva	-55
+left x advance	maprehalfdeva	zadeva	-54
+left x advance	maprehalfdeva	baradeva	-56
+left x advance	maprehalfdeva	ladevaMAR	-46
+left x advance	yaprehalfdeva	ddadeva	-54
+left x advance	yaprehalfdeva	yadeva	-19
+left x advance	raprehalfdeva	yadeva	-35
+left x advance	raprehalfdeva	hadeva	-46
+left x advance	raprehalfdeva	ladevaMAR	-42
+left x advance	laprehalfdeva	kadeva	-57
+left x advance	laprehalfdeva	khadeva	-54
+left x advance	laprehalfdeva	jadeva	-93
+left x advance	laprehalfdeva	ttadeva	-46
+left x advance	laprehalfdeva	tthadeva	-46
+left x advance	laprehalfdeva	ddhadeva	-46
+left x advance	laprehalfdeva	tadeva	-43
+left x advance	laprehalfdeva	dadeva	-46
+left x advance	laprehalfdeva	padeva	-88
+left x advance	laprehalfdeva	phadeva	-88
+left x advance	laprehalfdeva	badeva	-57
+left x advance	laprehalfdeva	madeva	-16
+left x advance	laprehalfdeva	yadeva	-34
+left x advance	laprehalfdeva	ladeva	-53
+left x advance	laprehalfdeva	vadeva	-57
+left x advance	laprehalfdeva	sadeva	-54
+left x advance	laprehalfdeva	hadeva	-74
+left x advance	laprehalfdeva	zadeva	-93
+left x advance	laprehalfdeva	fadeva	-88
+left x advance	laprehalfdeva	kaprehalfdeva	-57
+left x advance	laprehalfdeva	paprehalfdeva	-88
+left x advance	laprehalfdeva	phaprehalfdeva	-88
+left x advance	laprehalfdeva	baprehalfdeva	-57
+left x advance	laprehalfdeva	maprehalfdeva	-16
+left x advance	laprehalfdeva	karadeva	-74
+left x advance	laprehalfdeva	ttaradeva	-46
+left x advance	laprehalfdeva	pharadeva	-88
+left x advance	laprehalfdeva	hauUIdeva	-74
+left x advance	laprehalfdeva	hauuUIdeva	-74
+left x advance	laprehalfdeva	dauudeva	-46
+left x advance	laprehalfdeva	davadeva	-115
+left x advance	laprehalfdeva	ladevaMAR	-53
+left x advance	llaprehalfdeva	yadeva	-60
+left x advance	vaprehalfdeva	kadeva	-34
+left x advance	vaprehalfdeva	jadeva	-26
+left x advance	vaprehalfdeva	ddadeva	-103
+left x advance	vaprehalfdeva	nadeva	-22
+left x advance	vaprehalfdeva	madeva	-46
+left x advance	vaprehalfdeva	ladeva	-34
+left x advance	vaprehalfdeva	vadeva	-35
+left x advance	vaprehalfdeva	sadeva	-21
+left x advance	vaprehalfdeva	hadeva	-22
+left x advance	vaprehalfdeva	zadeva	-26
+left x advance	vaprehalfdeva	saprehalfdeva	-21
+left x advance	vaprehalfdeva	ladevaMAR	-34
+left x advance	shaprehalfdeva	shadeva	-16
+left x advance	ssaprehalfdeva	kadeva	-40
+left x advance	ssaprehalfdeva	ttadeva	-46
+left x advance	ssaprehalfdeva	tthadeva	-46
+left x advance	ssaprehalfdeva	nnadeva	-50
+left x advance	ssaprehalfdeva	tadeva	-49
+left x advance	ssaprehalfdeva	padeva	-53
+left x advance	ssaprehalfdeva	phadeva	-53
+left x advance	ssaprehalfdeva	madeva	-43
+left x advance	ssaprehalfdeva	yadeva	-50
+left x advance	ssaprehalfdeva	vadeva	-38
+left x advance	ssaprehalfdeva	ssadeva	-53
+left x advance	ssaprehalfdeva	karadeva	-55
+left x advance	ssaprehalfdeva	ttaradeva	-46
+left x advance	ssaprehalfdeva	ttharadeva	-46
+left x advance	ssaprehalfdeva	paradeva	-39
+left x advance	saprehalfdeva	kadeva	-50
+left x advance	saprehalfdeva	khadeva	-64
+left x advance	saprehalfdeva	cadeva	-31
+left x advance	saprehalfdeva	jadeva	-53
+left x advance	saprehalfdeva	ttadeva	-49
+left x advance	saprehalfdeva	ddadeva	-70
+left x advance	saprehalfdeva	tadeva	-51
+left x advance	saprehalfdeva	dadeva	-49
+left x advance	saprehalfdeva	nadeva	-56
+left x advance	saprehalfdeva	padeva	-46
+left x advance	saprehalfdeva	badeva	-49
+left x advance	saprehalfdeva	madeva	-68
+left x advance	saprehalfdeva	yadeva	-57
+left x advance	saprehalfdeva	ladeva	-49
+left x advance	saprehalfdeva	vadeva	-50
+left x advance	saprehalfdeva	sadeva	-64
+left x advance	saprehalfdeva	fadeva	-46
+left x advance	saprehalfdeva	kaprehalfdeva	-50
+left x advance	saprehalfdeva	karadeva	-62
+left x advance	saprehalfdeva	ttaradeva	-49
+left x advance	saprehalfdeva	taradeva	-20
+left x advance	saprehalfdeva	ttayadeva	-49
+left x advance	haprehalfdeva	kadeva	-38
+left x advance	haprehalfdeva	jadeva	-32
+left x advance	haprehalfdeva	nnadeva	-20
+left x advance	haprehalfdeva	tadeva	-48
+left x advance	haprehalfdeva	dadeva	-39
+left x advance	haprehalfdeva	nadeva	-27
+left x advance	haprehalfdeva	madeva	-28
+left x advance	haprehalfdeva	yadeva	-30
+left x advance	haprehalfdeva	ladeva	-39
+left x advance	haprehalfdeva	vadeva	-39
+left x advance	haprehalfdeva	sadeva	-34
+left x advance	haprehalfdeva	hadeva	-38
+left x advance	haprehalfdeva	ladevaMAR	-39
+left x advance	kassaprehalfdeva	nnadeva	-12
+left x advance	kassaprehalfdeva	thadeva	-50
+left x advance	kassaprehalfdeva	dhadeva	-29
+left x advance	kassaprehalfdeva	bhadeva	-55
+left x advance	kassaprehalfdeva	madeva	-11
+left x advance	kassaprehalfdeva	yadeva	-11
+left x advance	kassaprehalfdeva	vadeva	-16
+left x advance	janyaprehalfdeva	yadeva	-29
+left x advance	januktaprehalfdeva	ddadeva	-74
+left x advance	januktaprehalfdeva	nadeva	-40
+left x advance	januktaprehalfdeva	badeva	-29
+left x advance	januktaprehalfdeva	madeva	-33
+left x advance	januktaprehalfdeva	yadeva	-45
+left x advance	januktaprehalfdeva	zadeva	-71
+left x advance	phanuktaprehalfdeva	ttadeva	-50
+left x advance	phanuktaprehalfdeva	tadeva	-57
+left x advance	phanuktaprehalfdeva	ladeva	-52
+left x advance	phanuktaprehalfdeva	fadeva	-41
+left x advance	taraprehalfdeva	yadeva	-76
+left x advance	baraprehalfdeva	yadeva	-26
+left x advance	sharaprehalfdeva	vadeva	-36
+left x advance	tataprehalfdeva	padeva	-64
+left x advance	tataprehalfdeva	vadeva	-54
+left x advance	dayaprehalfdeva	madeva	-17
+left x advance	dayaprehalfdeva	yadeva	-29
+left x advance	dayaprehalfdeva	ladeva	-24
+left x advance	mapaprehalfdeva	yadeva	-16
+left x advance	mapaprehalfdeva	sadeva	-9
+left x advance	sathaprehalfdeva	yadeva	-16
+left x advance	sapaprehalfdeva	ladeva	-8
+left x advance	jhaprehalfdevaNEP	jadeva	-57
+left x advance	jhaprehalfdevaNEP	ttadeva	-50
+left x advance	jhaprehalfdevaNEP	tadeva	-57
+left x advance	jhaprehalfdevaNEP	padeva	-41
+left x advance	jhaprehalfdevaNEP	phadeva	-41
+left x advance	jhaprehalfdevaNEP	yadeva	-52
+left x advance	jhaprehalfdevaNEP	ladeva	-52
+left x advance	jhaprehalfdevaNEP	vadeva	-50
+left x advance	jhaprehalfdevaNEP	sadeva	-50
+
+lookup end
+
