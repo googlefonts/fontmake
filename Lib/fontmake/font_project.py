@@ -23,11 +23,12 @@ import re
 import tempfile
 
 from booleanOperations import BooleanOperationManager
+from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
 from fontTools.misc.loggingTools import configLogger, Timer
-from fontTools.misc.transform import Identity
+from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from glyphsLib import build_masters, build_instances
@@ -102,7 +103,7 @@ class FontProject:
         for ufo in ufos:
             print('>> Decomposing glyphs for ' + self._font_name(ufo))
             for glyph in ufo:
-                self._deep_copy_contours(ufo, glyph, glyph, Identity)
+                self._deep_copy_contours(ufo, glyph, glyph, Transform())
                 glyph.clearComponents()
 
     def _deep_copy_contours(self, ufo, parent, component, transformation):
@@ -114,7 +115,15 @@ class FontProject:
                 transformation.transform(nested.transformation))
 
         if component != parent:
-            component.draw(TransformPen(parent.getPen(), transformation))
+            pen = TransformPen(parent.getPen(), transformation)
+
+            # if the transformation has a negative determinant, it will reverse
+            # the contour direction of the component
+            xx, xy, yx, yy = transformation[:4]
+            if xx * yy - xy * yx < 0:
+                pen = ReverseContourPen(pen)
+
+            component.draw(pen)
 
     @timer()
     def convert_curves(self, ufos, compatible=False):
