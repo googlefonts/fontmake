@@ -1,9 +1,18 @@
 #/usr/bin/env bash
 
+function check_failure() {
+    if [[ $? = 1 ]]; then
+        echo $1
+        exit 1
+    fi
+}
+
 fontmake -g 'NotoSansDevanagari/NotoSansDevanagari.glyphs'\
     --mti-source='NotoSansDevanagari/NotoSansDevanagari.plist'
+check_failure 'Devanagari failed to build'
 for script in 'Ethiopic' 'Hebrew'; do
     fontmake -i -g "NotoSans${script}-MM.glyphs"
+    check_failure "${script} failed to build"
 done
 
 for script in 'Ethiopic' 'Hebrew'; do
@@ -12,8 +21,5 @@ for script in 'Ethiopic' 'Hebrew'; do
         --after "instance_otf/${family}-Regular.otf"\
         --specimen "${family}.html"\
         --out "${family}.pdf"
-    if [[ $? = 1 ]]; then
-        echo "differences found in ${family} output"
-        exit 1
-    fi
+    check_failure "differences found in ${family} output"
 done
