@@ -7,9 +7,13 @@ os:
   - linux
 
 install:
+  # for fontmake
   - pip install --upgrade pip setuptools Cython
   - pip install -r requirements.txt
   - python setup.py install
+  # for fontdiff
+  - wget https://github.com/googlei18n/fontdiff/releases/download/v0.1/fontdiff-linux.zip
+  - unzip fontdiff-linux.zip -d test
 
 script:
   - cd test
