@@ -192,8 +192,11 @@ class FontProject:
         keep_glyphs = set(ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs', []))
 
         include = []
+        ufo_order = [glyph_name
+                     for glyph_name in ufo.lib[PUBLIC_PREFIX + 'glyphOrder']
+                     if glyph_name in ufo]
         for old_name, new_name in zip(
-                ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
+                ufo_order,
                 TTFont(otf_path).getGlyphOrder()):
             glyph = ufo[old_name]
             if ((keep_glyphs and old_name not in keep_glyphs) or
