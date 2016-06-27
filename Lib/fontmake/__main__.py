@@ -28,6 +28,8 @@ def main():
                         help='interpolate masters (Glyphs source only)')
     parser.add_argument('--mti-source')
     parser.add_argument('--use-afdko', action='store_true')
+    parser.add_argument('--keep-overlaps', dest="remove_overlaps",
+                        action='store_false')
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
