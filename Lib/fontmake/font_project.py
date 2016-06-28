@@ -134,21 +134,23 @@ class FontProject:
                 print('>> Converting curves for ' + self._font_name(ufo))
                 font_to_quadratic(ufo, reverse_direction=True, dump_stats=True)
 
-    def build_otfs(self, ufos, **kwargs):
+    def build_otfs(self, ufos, remove_overlaps=True, **kwargs):
         """Build OpenType binaries with CFF outlines."""
 
         print('\n>> Building OTFs')
 
         self.decompose_glyphs(ufos)
-        self.remove_overlaps(ufos)
+        if remove_overlaps:
+            self.remove_overlaps(ufos)
         self.save_otfs(ufos, **kwargs)
 
-    def build_ttfs(self, ufos, **kwargs):
+    def build_ttfs(self, ufos, remove_overlaps=True, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
 
         print('\n>> Building TTFs')
 
-        self.remove_overlaps(ufos)
+        if remove_overlaps:
+            self.remove_overlaps(ufos)
         self.convert_curves(ufos)
         self.save_otfs(ufos, ttf=True, **kwargs)
 
