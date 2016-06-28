@@ -12,7 +12,7 @@ cython==0.24
 # direct dependencies
 git+https://github.com/googlei18n/cu2qu.git@c82b78b1b80a17c035420fcb08aeb3a844550da4
 git+https://github.com/googlei18n/glyphsLib.git@2bc8b1a325dd0a9f4a1dc451c63562565fcee8d7
-git+https://github.com/googlei18n/ufo2ft.git@9e0b45ef44887e353ec0488dd9e532ad5c47f3e3
+git+https://github.com/googlei18n/ufo2ft.git@f33c9693b94bc56835d0678cc2d3335acea11f8d
 git+https://github.com/LettError/MutatorMath.git@8af13c589f4ca7f5c4707dee481ce0ec17c01bd9
 git+https://github.com/typemytype/booleanOperations.git@e19f4405d51b21a4c205939ffb670f440f053c7e
 git+https://github.com/typesupply/defcon.git@61340fd351c2240dd2f776c61fe4325c94d589f8
