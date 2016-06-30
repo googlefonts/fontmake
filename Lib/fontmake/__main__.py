@@ -27,6 +27,8 @@ def main():
     parser.add_argument('-i', '--interpolate', action='store_true',
                         help='interpolate masters (Glyphs source only)')
     parser.add_argument('--mti-source')
+    parser.add_argument('--family-name', help='Family name to use for masters,'
+                        'and to filter output instances by')
     parser.add_argument('--use-afdko', action='store_true')
     parser.add_argument('--keep-overlaps', dest="remove_overlaps",
                         action='store_false')
