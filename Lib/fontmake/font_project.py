@@ -282,8 +282,8 @@ class FontProject:
             mti_paths = plistlib.readPlist(mti_source)
             src_dir = os.path.dirname(mti_source)
             for paths in mti_paths.values():
-                for table in ('GDEF', 'GPOS', 'GSUB'):
-                    paths[table] = os.path.join(src_dir, paths[table])
+                for tag in paths.keys():
+                    paths[tag] = os.path.join(src_dir, paths[tag])
 
         need_reload = False
         if 'otf' in output:
