@@ -25,8 +25,11 @@ def main():
     parser.add_argument('-o', '--output', nargs='+', default=('otf', 'ttf'),
                         choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable'))
     parser.add_argument('-i', '--interpolate', action='store_true',
-                        help='interpolate masters (Glyphs source only)')
+                        help='interpolate masters (for Glyphs or MutatorMath '
+                             'sources only)')
     parser.add_argument('--mti-source')
+    parser.add_argument('--family-name', help='Family name to use for masters,'
+                        'and to filter output instances by')
     parser.add_argument('--use-afdko', action='store_true')
     parser.add_argument('--keep-overlaps', dest="remove_overlaps",
                         action='store_false')
@@ -39,7 +42,8 @@ def main():
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
     if not sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) == 1:
-        raise ValueError('Exactly one source type required (Glyphs or UFO).')
+        raise ValueError('Exactly one source type required (Glyphs, UFO, or '
+                         'MutatorMath).')
 
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
@@ -51,7 +55,7 @@ def main():
         excluded = 'interpolate'
         if args[excluded]:
             raise ValueError(
-                '"%s" argument only available for Glyphs or Designspace source'
+                '"%s" argument only available for Glyphs or MutatorMath source'
                 % excluded)
         del args[excluded]
 

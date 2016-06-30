@@ -73,16 +73,18 @@ class FontProject:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_ufos(self, glyphs_path, interpolate=False):
+    def build_ufos(self, glyphs_path, interpolate=False, family_name=None):
         """Build UFOs from Glyphs source."""
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
         if interpolate:
-            return build_instances(glyphs_path, master_dir, instance_dir)
+            return build_instances(
+                glyphs_path, master_dir, instance_dir, family_name=family_name)
         else:
-            return build_masters(glyphs_path, master_dir,
-                                 designspace_instance_dir=instance_dir)
+            return build_masters(
+                glyphs_path, master_dir, designspace_instance_dir=instance_dir,
+                family_name=family_name)
 
     @timer()
     def remove_overlaps(self, ufos):
@@ -226,7 +228,8 @@ class FontProject:
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, preprocess=True, interpolate=False, **kwargs):
+            self, glyphs_path, preprocess=True, interpolate=False,
+            family_name=None, **kwargs):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         if preprocess:
@@ -238,7 +241,7 @@ class FontProject:
             tmp_glyphs_file.seek(0)
 
         print('>> Building UFOs from Glyphs source')
-        ufos = self.build_ufos(glyphs_path, interpolate)
+        ufos = self.build_ufos(glyphs_path, interpolate, family_name)
         self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
 
     def run_from_designspace(
@@ -279,8 +282,8 @@ class FontProject:
             mti_paths = plistlib.readPlist(mti_source)
             src_dir = os.path.dirname(mti_source)
             for paths in mti_paths.values():
-                for table in ('GDEF', 'GPOS', 'GSUB'):
-                    paths[table] = os.path.join(src_dir, paths[table])
+                for tag in paths.keys():
+                    paths[tag] = os.path.join(src_dir, paths[tag])
 
         need_reload = False
         if 'otf' in output:
