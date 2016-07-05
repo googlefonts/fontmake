@@ -1,6 +1,6 @@
 # for MutatorMath
 git+https://github.com/typesupply/fontMath.git@e96af7a672aa8173139952cf78405b6c43fd5353
-git+https://github.com/unified-font-object/ufoLib.git@4d26482e9a487f5a62933a178690d73d0e9e80fb
+git+https://github.com/unified-font-object/ufoLib.git@d5514cc566080a2798614b9f9d413b755479dd88
 
 # for ufo2ft
 git+https://github.com/behdad/fonttools.git@384b050b080d4b2c534e838cd47a3dfc842665cb
