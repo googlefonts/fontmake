@@ -362,7 +362,7 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
                 if table in feasrc:
                     self.outline[table] = feasrc[table]
 
-        feasrc.close()
+            feasrc.close()
         os.remove(feasrc_path)
         if not success:
             raise ValueError("Feature syntax compilation failed.")
