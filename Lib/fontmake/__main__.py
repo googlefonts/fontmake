@@ -32,7 +32,17 @@ def main():
                         'and to filter output instances by')
     parser.add_argument('--use-afdko', action='store_true')
     parser.add_argument('--keep-overlaps', dest="remove_overlaps",
-                        action='store_false')
+                        action='store_false',
+                        help='Do not remove any overlap.')
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument('--production-names', dest='use_production_names',
+                       action='store_true', help='Rename glyphs with '
+                       'production names if available otherwise use uninames.')
+    group.add_argument('--no-production-names', dest='use_production_names',
+                       action='store_false',
+                       help='Do not rename glyphs with production names. '
+                       'Keeps original glyph names')
+    parser.set_defaults(use_production_names=None)
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
