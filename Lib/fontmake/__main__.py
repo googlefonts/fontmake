@@ -31,6 +31,9 @@ def main():
     parser.add_argument('--family-name', help='Family name to use for masters,'
                         ' and to filter output instances by')
     parser.add_argument('--use-afdko', action='store_true')
+    parser.add_argument('--keep-direction', dest="reverse_direction",
+                        action='store_false', help='Do not reverse contour '
+                        'direction when output is ttf or ttf-interpolatable')
     parser.add_argument('--keep-overlaps', dest="remove_overlaps",
                         action='store_false',
                         help='Do not remove any overlap.')
