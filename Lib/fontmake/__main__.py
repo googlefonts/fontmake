@@ -52,8 +52,8 @@ def main():
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
     if not sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) == 1:
-        raise ValueError('Exactly one source type required (Glyphs, UFO, or '
-                         'MutatorMath).')
+        parser.error('Exactly one source type required (Glyphs, UFO, or '
+                     'MutatorMath).')
 
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
@@ -64,7 +64,7 @@ def main():
     else:
         excluded = 'interpolate'
         if args[excluded]:
-            raise ValueError(
+            parser.error(
                 '"%s" argument only available for Glyphs or MutatorMath source'
                 % excluded)
         del args[excluded]
