@@ -29,10 +29,20 @@ def main():
                              'sources only)')
     parser.add_argument('--mti-source')
     parser.add_argument('--family-name', help='Family name to use for masters,'
-                        'and to filter output instances by')
+                        ' and to filter output instances by')
     parser.add_argument('--use-afdko', action='store_true')
     parser.add_argument('--keep-overlaps', dest="remove_overlaps",
-                        action='store_false')
+                        action='store_false',
+                        help='Do not remove any overlap.')
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument('--production-names', dest='use_production_names',
+                       action='store_true', help='Rename glyphs with '
+                       'production names if available otherwise use uninames.')
+    group.add_argument('--no-production-names', dest='use_production_names',
+                       action='store_false',
+                       help='Do not rename glyphs with production names. '
+                       'Keeps original glyph names')
+    parser.set_defaults(use_production_names=None)
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
@@ -42,22 +52,29 @@ def main():
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
     if not sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) == 1:
-        raise ValueError('Exactly one source type required (Glyphs, UFO, or '
-                         'MutatorMath).')
+        parser.error('Exactly one source type required (Glyphs, UFO, or '
+                     'MutatorMath).')
+
+    def exclude_args(parser, args, excluded_args):
+        exclusive_msg = '"{}" argument only available for {} source'
+        exclusive_src = {'interpolate': 'Glyphs or MutatorMath',
+                         'family_name': 'Glyphs'}
+        for excluded in excluded_args:
+            if args[excluded]:
+                parser.error(exclusive_msg.format(
+                    excluded,
+                    exclusive_src[excluded]))
+            del args[excluded]
 
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
 
     elif designspace_path:
+        exclude_args(parser, args, ['family_name'])
         project.run_from_designspace(designspace_path, **args)
 
     else:
-        excluded = 'interpolate'
-        if args[excluded]:
-            raise ValueError(
-                '"%s" argument only available for Glyphs or MutatorMath source'
-                % excluded)
-        del args[excluded]
+        exclude_args(parser, args, ['family_name', 'interpolate'])
 
     if ufo_paths:
         project.run_from_ufos(ufo_paths, **args)
