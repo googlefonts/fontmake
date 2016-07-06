@@ -55,19 +55,26 @@ def main():
         parser.error('Exactly one source type required (Glyphs, UFO, or '
                      'MutatorMath).')
 
+    def exclude_args(parser, args, excluded_args):
+        exclusive_msg = '"{}" argument only available for {} source'
+        exclusive_src = {'interpolate': 'Glyphs or MutatorMath',
+                         'family_name': 'Glyphs'}
+        for excluded in excluded_args:
+            if args[excluded]:
+                parser.error(exclusive_msg.format(
+                    excluded,
+                    exclusive_src[excluded]))
+            del args[excluded]
+
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
 
     elif designspace_path:
+        exclude_args(parser, args, ['family_name'])
         project.run_from_designspace(designspace_path, **args)
 
     else:
-        excluded = 'interpolate'
-        if args[excluded]:
-            parser.error(
-                '"%s" argument only available for Glyphs or MutatorMath source'
-                % excluded)
-        del args[excluded]
+        exclude_args(parser, args, ['family_name', 'interpolate'])
 
     if ufo_paths:
         project.run_from_ufos(ufo_paths, **args)
