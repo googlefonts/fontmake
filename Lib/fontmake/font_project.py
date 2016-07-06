@@ -128,13 +128,15 @@ class FontProject:
             component.draw(pen)
 
     @timer()
-    def convert_curves(self, ufos, compatible=False):
+    def convert_curves(self, ufos, compatible=False, reverse_direction=True):
         if compatible:
-            fonts_to_quadratic(ufos, reverse_direction=True, dump_stats=True)
+            fonts_to_quadratic(ufos, reverse_direction=reverse_direction,
+                               dump_stats=True)
         else:
             for ufo in ufos:
                 print('>> Converting curves for ' + self._font_name(ufo))
-                font_to_quadratic(ufo, reverse_direction=True, dump_stats=True)
+                font_to_quadratic(ufo, reverse_direction=reverse_direction,
+                                  dump_stats=True)
 
     def build_otfs(self, ufos, remove_overlaps=True, **kwargs):
         """Build OpenType binaries with CFF outlines."""
@@ -144,6 +146,7 @@ class FontProject:
         self.decompose_glyphs(ufos)
         if remove_overlaps:
             self.remove_overlaps(ufos)
+        del kwargs['reverse_direction']
         self.save_otfs(ufos, **kwargs)
 
     def build_ttfs(self, ufos, remove_overlaps=True, **kwargs):
@@ -153,7 +156,8 @@ class FontProject:
 
         if remove_overlaps:
             self.remove_overlaps(ufos)
-        self.convert_curves(ufos)
+        reverse_direction = kwargs.pop('reverse_direction')
+        self.convert_curves(ufos, reverse_direction=reverse_direction)
         self.save_otfs(ufos, ttf=True, **kwargs)
 
     def build_interpolatable_ttfs(self, ufos, **kwargs):
@@ -161,7 +165,9 @@ class FontProject:
 
         print('\n>> Building interpolation-compatible TTFs')
 
-        self.convert_curves(ufos, compatible=True)
+        reverse_direction = kwargs.pop('reverse_direction')
+        self.convert_curves(ufos, compatible=True,
+                            reverse_direction=reverse_direction)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
     @timer()
