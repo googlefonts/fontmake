@@ -37,6 +37,8 @@ from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
+from fontmake.ttfautohint import ttfautohint
+
 timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
 
 PUBLIC_PREFIX = 'public.'
@@ -173,7 +175,7 @@ class FontProject:
     @timer()
     def save_otfs(
             self, ufos, ttf=False, interpolatable=False, mti_paths=None,
-            is_instance=False, use_afdko=False, subset=True,
+            is_instance=False, use_afdko=False, autohint=None, subset=True,
             use_production_names=None):
         """Write OpenType binaries."""
 
@@ -198,6 +200,11 @@ class FontProject:
 
             if subset:
                 self.subset_otf_from_ufo(otf_path, ufo)
+
+            if ttf and autohint is not None:
+                hinted_otf_path = self._output_path(
+                    ufo, ext, is_instance, interpolatable, autohinted=True)
+                ttfautohint(otf_path, hinted_otf_path, args=autohint)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
@@ -314,17 +321,22 @@ class FontProject:
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
 
-    def _output_dir(self, ext, is_instance=False, interpolatable=False):
+    def _output_dir(self, ext, is_instance=False, interpolatable=False,
+                    autohinted=False):
         """Generate an output directory."""
 
         dir_prefix = 'instance_' if is_instance else 'master_'
         dir_suffix = '_interpolatable' if interpolatable else ''
-        return dir_prefix + ext + dir_suffix
+        output_dir = dir_prefix + ext + dir_suffix
+        if autohinted:
+            output_dir = os.path.join('autohinted', output_dir)
+        return output_dir
 
-    def _output_path(self, ufo, ext, is_instance=False, interpolatable=False):
+    def _output_path(self, ufo, ext, is_instance=False, interpolatable=False,
+                     autohinted=False):
         """Generate output path for a font file with given extension."""
 
-        out_dir = self._output_dir(ext, is_instance, interpolatable)
+        out_dir = self._output_dir(ext, is_instance, interpolatable, autohinted)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))
