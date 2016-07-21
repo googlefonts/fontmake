@@ -75,18 +75,22 @@ class FontProject:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_ufos(self, glyphs_path, interpolate=False, family_name=None):
+    def build_ufos(
+            self, glyphs_path, interpolate=False, masters_as_instances=False,
+            family_name=None):
         """Build UFOs from Glyphs source."""
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
-        if interpolate:
-            return build_instances(
-                glyphs_path, master_dir, instance_dir, family_name=family_name)
-        else:
-            return build_masters(
+        ufos = []
+        if not interpolate or masters_as_instances:
+            ufos.extend(build_masters(
                 glyphs_path, master_dir, designspace_instance_dir=instance_dir,
-                family_name=family_name)
+                family_name=family_name))
+        if interpolate:
+            ufos.extend(build_instances(
+                glyphs_path, master_dir, instance_dir, family_name=family_name))
+        return ufos
 
     @timer()
     def remove_overlaps(self, ufos):
@@ -245,7 +249,7 @@ class FontProject:
 
     def run_from_glyphs(
             self, glyphs_path, preprocess=True, interpolate=False,
-            family_name=None, **kwargs):
+            masters_as_instances=False, family_name=None, **kwargs):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         if preprocess:
@@ -257,26 +261,30 @@ class FontProject:
             tmp_glyphs_file.seek(0)
 
         print('>> Building UFOs from Glyphs source')
-        ufos = self.build_ufos(glyphs_path, interpolate, family_name)
-        self.run_from_ufos(ufos, is_instance=interpolate, **kwargs)
+        ufos = self.build_ufos(
+            glyphs_path, interpolate, masters_as_instances, family_name)
+        self.run_from_ufos(
+            ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
 
     def run_from_designspace(
-            self, designspace_path, interpolate=False, **kwargs):
+            self, designspace_path, interpolate=False,
+            masters_as_instances=False, **kwargs):
         """Run toolchain from a MutatorMath design space document to OpenType
         binaries.
         """
 
+        ufos = []
+        if not interpolate or masters_as_instances:
+            reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
+            ufos.extend(reader.getSourcePaths())
         if interpolate:
             print('>> Interpolating master UFOs from design space')
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
-            ufos = []
             for result in results:
                 ufos.extend(result.values())
-        else:
-            reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
-            ufos = reader.getSourcePaths()
-        self.run_from_ufos(ufos, is_instance=True, **kwargs)
+        self.run_from_ufos(
+            ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
 
     def run_from_ufos(self, ufos, output=(), mti_source=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""

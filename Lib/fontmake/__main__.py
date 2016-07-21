@@ -27,6 +27,8 @@ def main():
     parser.add_argument('-i', '--interpolate', action='store_true',
                         help='interpolate masters (for Glyphs or MutatorMath '
                              'sources only)')
+    parser.add_argument('-mi', '--masters-as-instances', action='store_true',
+                        help='treat masters as instances')
     parser.add_argument('-a', '--autohint', nargs='?',
                         help='can provide arguments to ttfautohint, quoted')
     parser.add_argument('--mti-source')
@@ -82,7 +84,8 @@ def main():
         exclude_args(parser, args, ['family_name', 'interpolate'])
 
     if ufo_paths:
-        project.run_from_ufos(ufo_paths, **args)
+        project.run_from_ufos(
+            ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
 
 
 if __name__ == '__main__':
