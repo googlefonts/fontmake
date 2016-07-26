@@ -41,15 +41,20 @@ def main():
     parser.add_argument('--keep-overlaps', dest="remove_overlaps",
                         action='store_false',
                         help='Do not remove any overlap.')
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('--production-names', dest='use_production_names',
-                       action='store_true', help='Rename glyphs with '
-                       'production names if available otherwise use uninames.')
-    group.add_argument('--no-production-names', dest='use_production_names',
-                       action='store_false',
-                       help='Do not rename glyphs with production names. '
-                       'Keeps original glyph names')
-    parser.set_defaults(use_production_names=None)
+    group1 = parser.add_mutually_exclusive_group(required=False)
+    group1.add_argument('--production-names', dest='use_production_names',
+                        action='store_true', help='Rename glyphs with '
+                        'production names if available otherwise use uninames.')
+    group1.add_argument('--no-production-names', dest='use_production_names',
+                        action='store_false',
+                        help='Do not rename glyphs with production names. '
+                        'Keeps original glyph names')
+    group2 = parser.add_mutually_exclusive_group(required=False)
+    group2.add_argument('--subset', dest='subset',
+                        action='store_true', help='Subset font using export '
+                        'flags set by glyphsLib')
+    group2.add_argument('--no-subset', dest='subset', action='store_false')
+    parser.set_defaults(use_production_names=None, subset=None)
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
