@@ -3,7 +3,7 @@ git+https://github.com/typesupply/fontMath.git@e96af7a672aa8173139952cf78405b6c4
 git+https://github.com/unified-font-object/ufoLib.git@d5514cc566080a2798614b9f9d413b755479dd88
 
 # for ufo2ft
-git+https://github.com/behdad/fonttools.git@384b050b080d4b2c534e838cd47a3dfc842665cb
+git+https://github.com/behdad/fonttools.git@efb8642366eef06ab482473793136ecba679f35a
 git+https://github.com/googlei18n/compreffor.git@628e625304bc901515ba24f0ffec9eb0033e9dd0
 
 # for booleanOperations
