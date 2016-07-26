@@ -46,9 +46,7 @@ def main():
                         action='store_true', help='Rename glyphs with '
                         'production names if available otherwise use uninames.')
     group1.add_argument('--no-production-names', dest='use_production_names',
-                        action='store_false',
-                        help='Do not rename glyphs with production names. '
-                        'Keeps original glyph names')
+                        action='store_false')
     group2 = parser.add_mutually_exclusive_group(required=False)
     group2.add_argument('--subset', dest='subset',
                         action='store_true', help='Subset font using export '
