@@ -199,7 +199,8 @@ class FontProject:
                 ufo, featureCompilerClass=fea_compiler,
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
                 glyphOrder=ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
-                useProductionNames=use_production_names)
+                useProductionNames=use_production_names,
+                convertCubics=False)
             otf.save(otf_path)
 
             if subset:
