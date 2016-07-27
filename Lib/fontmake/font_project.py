@@ -30,9 +30,6 @@ from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
-from glyphsLib import build_masters, build_instances
-from mutatorMath.ufo import build as build_designspace
-from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
@@ -78,6 +75,7 @@ class FontProject:
             self, glyphs_path, interpolate=False, masters_as_instances=False,
             family_name=None):
         """Build UFOs from Glyphs source."""
+        from glyphsLib import build_masters, build_instances
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
@@ -272,6 +270,8 @@ class FontProject:
         """Run toolchain from a MutatorMath design space document to OpenType
         binaries.
         """
+        from mutatorMath.ufo import build as build_designspace
+        from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
         ufos = []
         if not interpolate or masters_as_instances:
