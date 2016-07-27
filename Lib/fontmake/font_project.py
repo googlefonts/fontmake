@@ -22,7 +22,6 @@ import plistlib
 import re
 import tempfile
 
-from booleanOperations import BooleanOperationManager
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
@@ -95,6 +94,7 @@ class FontProject:
     @timer()
     def remove_overlaps(self, ufos):
         """Remove overlaps in UFOs' glyphs' contours."""
+        from booleanOperations import BooleanOperationManager
 
         manager = BooleanOperationManager()
         for ufo in ufos:
