@@ -22,7 +22,6 @@ import plistlib
 import re
 import tempfile
 
-from booleanOperations import BooleanOperationManager
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
@@ -31,9 +30,6 @@ from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
-from glyphsLib import build_masters, build_instances
-from mutatorMath.ufo import build as build_designspace
-from mutatorMath.ufo.document import DesignSpaceDocumentReader
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
@@ -79,6 +75,7 @@ class FontProject:
             self, glyphs_path, interpolate=False, masters_as_instances=False,
             family_name=None):
         """Build UFOs from Glyphs source."""
+        from glyphsLib import build_masters, build_instances
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
@@ -95,6 +92,7 @@ class FontProject:
     @timer()
     def remove_overlaps(self, ufos):
         """Remove overlaps in UFOs' glyphs' contours."""
+        from booleanOperations import BooleanOperationManager
 
         manager = BooleanOperationManager()
         for ufo in ufos:
@@ -273,6 +271,8 @@ class FontProject:
         """Run toolchain from a MutatorMath design space document to OpenType
         binaries.
         """
+        from mutatorMath.ufo import build as build_designspace
+        from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
         ufos = []
         if not interpolate or masters_as_instances:
