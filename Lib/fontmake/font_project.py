@@ -150,26 +150,24 @@ class FontProject:
         self.decompose_glyphs(ufos)
         if remove_overlaps:
             self.remove_overlaps(ufos)
-        del kwargs['reverse_direction']
         self.save_otfs(ufos, **kwargs)
 
-    def build_ttfs(self, ufos, remove_overlaps=True, **kwargs):
+    def build_ttfs(
+            self, ufos, remove_overlaps=True, reverse_direction=True, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
 
         print('\n>> Building TTFs')
 
         if remove_overlaps:
             self.remove_overlaps(ufos)
-        reverse_direction = kwargs.pop('reverse_direction')
         self.convert_curves(ufos, reverse_direction=reverse_direction)
         self.save_otfs(ufos, ttf=True, **kwargs)
 
-    def build_interpolatable_ttfs(self, ufos, **kwargs):
+    def build_interpolatable_ttfs(self, ufos, reverse_direction=True, **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines."""
 
         print('\n>> Building interpolation-compatible TTFs')
 
-        reverse_direction = kwargs.pop('reverse_direction')
         self.convert_curves(ufos, compatible=True,
                             reverse_direction=reverse_direction)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
@@ -287,7 +285,9 @@ class FontProject:
         self.run_from_ufos(
             ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
 
-    def run_from_ufos(self, ufos, output=(), mti_source=None, **kwargs):
+    def run_from_ufos(
+            self, ufos, output=(), mti_source=None, remove_overlaps=True,
+            reverse_direction=True, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if set(output) == set(['ufo']):
@@ -312,19 +312,23 @@ class FontProject:
 
         need_reload = False
         if 'otf' in output:
-            self.build_otfs(ufos, mti_paths=mti_paths, **kwargs)
+            self.build_otfs(
+                ufos, remove_overlaps, mti_paths=mti_paths, **kwargs)
             need_reload = True
 
         if 'ttf' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
-            self.build_ttfs(ufos, mti_paths=mti_paths, **kwargs)
+            self.build_ttfs(
+                ufos, remove_overlaps, reverse_direction, mti_paths=mti_paths,
+                **kwargs)
             need_reload = True
 
         if 'ttf-interpolatable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
-            self.build_interpolatable_ttfs(ufos, mti_paths=mti_paths, **kwargs)
+            self.build_interpolatable_ttfs(
+                ufos, reverse_direction, mti_paths=mti_paths, **kwargs)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
