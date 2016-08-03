@@ -200,7 +200,10 @@ class FontProject:
             otf.save(otf_path)
 
             if subset is None:
-                subset = (GLYPHS_PREFIX + 'Keep Glyphs') in ufo.lib
+                export_key = GLYPHS_PREFIX + 'Glyphs.Export'
+                subset = ((GLYPHS_PREFIX + 'Keep Glyphs') in ufo.lib or
+                          any(glyph.lib.get(export_key, True) is False
+                              for glyph in ufo))
             if subset:
                 self.subset_otf_from_ufo(otf_path, ufo)
 
