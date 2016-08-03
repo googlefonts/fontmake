@@ -14,6 +14,7 @@
 
 
 from __future__ import print_function, division, absolute_import
+from __future__ import unicode_literals
 
 import glob
 import logging
@@ -21,11 +22,13 @@ import os
 import plistlib
 import re
 import tempfile
+from io import open
 
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
+from fontTools.misc.py23 import tobytes
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
@@ -48,7 +51,7 @@ class FontProject:
     def preprocess(glyphs_path):
         """Return Glyphs source with illegal glyph/class names changed."""
 
-        with open(glyphs_path) as fp:
+        with open(glyphs_path, 'r', encoding='utf-8') as fp:
             text = fp.read()
         names = set(re.findall('\n(?:glyph)?name = "(.+-.+)";\n', text))
 
@@ -254,7 +257,7 @@ class FontProject:
             glyphs_source = self.preprocess(glyphs_path)
             tmp_glyphs_file = tempfile.NamedTemporaryFile()
             glyphs_path = tmp_glyphs_file.name
-            tmp_glyphs_file.write(glyphs_source)
+            tmp_glyphs_file.write(tobytes(glyphs_source, encoding='utf-8'))
             tmp_glyphs_file.seek(0)
 
         print('>> Building UFOs from Glyphs source')
@@ -376,7 +379,7 @@ class FDKFeatureCompiler(FeatureOTFCompiler):
         os.close(fd)
 
         fd, fea_path = tempfile.mkstemp()
-        os.write(fd, self.features)
+        os.write(fd, tobytes(self.features, encoding='utf-8'))
         os.close(fd)
 
         report = tostr(subprocess.check_output([
