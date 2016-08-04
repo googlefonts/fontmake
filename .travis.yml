@@ -1,10 +1,18 @@
+sudo: false
 language: python
 python:
   - "2.7"
+env:
+  global:
+    - CXX=g++-4.8
+    - CC=gcc-4.8
 
-sudo: false
-os:
-  - linux
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
 install:
   # for fontmake
