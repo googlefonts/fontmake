@@ -28,7 +28,7 @@ from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
-from fontTools.misc.py23 import tobytes
+from fontTools.misc.py23 import tobytes, UnicodeIO
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
@@ -253,21 +253,18 @@ class FontProject:
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, preprocess=True, interpolate=False,
+            self, glyphs_file, preprocess=True, interpolate=False,
             masters_as_instances=False, family_name=None, **kwargs):
         """Run toolchain from Glyphs source to OpenType binaries."""
 
         if preprocess:
             print('>> Checking Glyphs source for illegal glyph names')
-            glyphs_source = self.preprocess(glyphs_path)
-            tmp_glyphs_file = tempfile.NamedTemporaryFile()
-            glyphs_path = tmp_glyphs_file.name
-            tmp_glyphs_file.write(tobytes(glyphs_source, encoding='utf-8'))
-            tmp_glyphs_file.seek(0)
+            glyphs_source = self.preprocess(glyphs_file)
+            glyphs_file = UnicodeIO(glyphs_source)
 
         print('>> Building UFOs from Glyphs source')
         ufos = self.build_ufos(
-            glyphs_path, interpolate, masters_as_instances, family_name)
+            glyphs_file, interpolate, masters_as_instances, family_name)
         self.run_from_ufos(
             ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
 
