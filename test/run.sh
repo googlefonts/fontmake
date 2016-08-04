@@ -15,7 +15,7 @@ for script in 'Ethiopic' 'Hebrew'; do
     check_failure "${script} failed to build"
 done
 
-echo "running $(fontdiff --version)"
+echo "running $(./fontdiff --version)"
 for script in 'Ethiopic' 'Hebrew'; do
     family="NotoSans${script}"
     ./fontdiff --before "expected/${family}-Regular.otf"\
