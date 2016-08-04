@@ -15,9 +15,10 @@ for script in 'Ethiopic' 'Hebrew'; do
     check_failure "${script} failed to build"
 done
 
+echo "running $(./fontdiff --version)"
 for script in 'Ethiopic' 'Hebrew'; do
     family="NotoSans${script}"
-    ./fontdiff-linux --before "expected/${family}-Regular.otf"\
+    ./fontdiff --before "expected/${family}-Regular.otf"\
         --after "instance_otf/${family}-Regular.otf"\
         --specimen "${family}.html"\
         --out "${family}.pdf"
