@@ -179,7 +179,7 @@ class FontProject:
     def save_otfs(
             self, ufos, ttf=False, interpolatable=False, mti_paths=None,
             is_instance=False, use_afdko=False, autohint=None, subset=None,
-            use_production_names=None):
+            use_production_names=None, subroutinize=None):
         """Write OpenType binaries."""
 
         ext = 'ttf' if ttf else 'otf'
@@ -199,7 +199,7 @@ class FontProject:
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
                 glyphOrder=ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
                 useProductionNames=use_production_names,
-                convertCubics=False)
+                convertCubics=False, optimizeCff=subroutinize)
             otf.save(otf_path)
 
             if subset is None:
