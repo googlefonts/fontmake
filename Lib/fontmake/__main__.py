@@ -52,7 +52,13 @@ def main():
                         action='store_true', help='Subset font using export '
                         'flags set by glyphsLib')
     group2.add_argument('--no-subset', dest='subset', action='store_false')
-    parser.set_defaults(use_production_names=None, subset=None)
+    group3 = parser.add_mutually_exclusive_group(required=False)
+    group3.add_argument('-s', '--subroutinize', action='store_true',
+                        help='Optimize CFF table using compreffor')
+    group3.add_argument('-S', '--no-subroutinize', dest='subroutinize',
+                        action='store_false')
+    parser.set_defaults(use_production_names=None, subset=None,
+                        subroutinize=None)
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
