@@ -300,7 +300,7 @@ class FontProject:
 
     def run_from_ufos(
             self, ufos, output=(), mti_source=None, remove_overlaps=True,
-            reverse_direction=True, **kwargs):
+            reverse_direction=True, conversion_error=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if set(output) == set(['ufo']):
@@ -333,15 +333,16 @@ class FontProject:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_ttfs(
-                ufos, remove_overlaps, reverse_direction, mti_paths=mti_paths,
-                **kwargs)
+                ufos, remove_overlaps, reverse_direction, conversion_error,
+                mti_paths=mti_paths, **kwargs)
             need_reload = True
 
         if 'ttf-interpolatable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_interpolatable_ttfs(
-                ufos, reverse_direction, mti_paths=mti_paths, **kwargs)
+                ufos, reverse_direction, conversion_error, mti_paths=mti_paths,
+                **kwargs)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
