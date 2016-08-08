@@ -29,7 +29,7 @@ def main():
                              'sources only)')
     parser.add_argument('-mi', '--masters-as-instances', action='store_true',
                         help='treat masters as instances')
-    parser.add_argument('-a', '--autohint', nargs='?',
+    parser.add_argument('-a', '--autohint', nargs='?', const="",
                         help='can provide arguments to ttfautohint, quoted')
     parser.add_argument('--mti-source')
     parser.add_argument('--family-name', help='Family name to use for masters,'
