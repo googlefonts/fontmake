@@ -135,15 +135,18 @@ class FontProject:
             component.draw(pen)
 
     @timer()
-    def convert_curves(self, ufos, compatible=False, reverse_direction=True):
+    def convert_curves(self, ufos, compatible=False, reverse_direction=True,
+                       conversion_error=None):
         if compatible:
-            fonts_to_quadratic(ufos, reverse_direction=reverse_direction,
-                               dump_stats=True)
+            fonts_to_quadratic(
+                ufos, max_err_em=conversion_error,
+                reverse_direction=reverse_direction, dump_stats=True)
         else:
             for ufo in ufos:
                 print('>> Converting curves for ' + self._font_name(ufo))
-                font_to_quadratic(ufo, reverse_direction=reverse_direction,
-                                  dump_stats=True)
+                font_to_quadratic(
+                    ufo, max_err_em=conversion_error,
+                    reverse_direction=reverse_direction, dump_stats=True)
 
     def build_otfs(self, ufos, remove_overlaps=True, **kwargs):
         """Build OpenType binaries with CFF outlines."""
@@ -156,23 +159,28 @@ class FontProject:
         self.save_otfs(ufos, **kwargs)
 
     def build_ttfs(
-            self, ufos, remove_overlaps=True, reverse_direction=True, **kwargs):
+            self, ufos, remove_overlaps=True, reverse_direction=True,
+            conversion_error=None, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
 
         print('\n>> Building TTFs')
 
         if remove_overlaps:
             self.remove_overlaps(ufos)
-        self.convert_curves(ufos, reverse_direction=reverse_direction)
+        self.convert_curves(ufos, reverse_direction=reverse_direction,
+                            conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, **kwargs)
 
-    def build_interpolatable_ttfs(self, ufos, reverse_direction=True, **kwargs):
+    def build_interpolatable_ttfs(
+            self, ufos, reverse_direction=True, conversion_error=None,
+            **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines."""
 
         print('\n>> Building interpolation-compatible TTFs')
 
         self.convert_curves(ufos, compatible=True,
-                            reverse_direction=reverse_direction)
+                            reverse_direction=reverse_direction,
+                            conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
     @timer()
@@ -292,7 +300,7 @@ class FontProject:
 
     def run_from_ufos(
             self, ufos, output=(), mti_source=None, remove_overlaps=True,
-            reverse_direction=True, **kwargs):
+            reverse_direction=True, conversion_error=None, **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if set(output) == set(['ufo']):
@@ -325,15 +333,16 @@ class FontProject:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_ttfs(
-                ufos, remove_overlaps, reverse_direction, mti_paths=mti_paths,
-                **kwargs)
+                ufos, remove_overlaps, reverse_direction, conversion_error,
+                mti_paths=mti_paths, **kwargs)
             need_reload = True
 
         if 'ttf-interpolatable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_interpolatable_ttfs(
-                ufos, reverse_direction, mti_paths=mti_paths, **kwargs)
+                ufos, reverse_direction, conversion_error, mti_paths=mti_paths,
+                **kwargs)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
