@@ -57,6 +57,9 @@ def main():
                         help='Optimize CFF table using compreffor')
     group3.add_argument('-S', '--no-subroutinize', dest='subroutinize',
                         action='store_false')
+    parser.add_argument('-e', '--conversion-error', type=float, default=None,
+                        metavar='ERROR', help="Maximum approximation error for"
+                        " cubic to quadratic conversion measured in EM")
     parser.set_defaults(use_production_names=None, subset=None,
                         subroutinize=None)
     parser.add_argument('--timing', action='store_true')
