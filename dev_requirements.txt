@@ -1,5 +1,5 @@
 # for MutatorMath
--e git+https://github.com/typesupply/fontMath.git@ufo3#egg=fontMath
+-e git+https://github.com/typesupply/fontMath.git#egg=fontMath
 -e git+https://github.com/unified-font-object/ufoLib.git#egg=ufoLib
 
 # for ufo2ft
@@ -7,7 +7,7 @@
 -e git+https://github.com/googlei18n/compreffor.git#egg=compreffor
 
 # for booleanOperations
-cython==0.24
+cython>=0.24
 
 # direct dependencies
 -e git+https://github.com/googlei18n/cu2qu.git#egg=cu2qu
