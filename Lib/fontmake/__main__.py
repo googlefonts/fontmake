@@ -54,14 +54,14 @@ def main():
     group2.add_argument('--no-subset', dest='subset', action='store_false')
     group3 = parser.add_mutually_exclusive_group(required=False)
     group3.add_argument('-s', '--subroutinize', action='store_true',
-                        help='Optimize CFF table using compreffor')
+                        help='Optimize CFF table using compreffor (default)')
     group3.add_argument('-S', '--no-subroutinize', dest='subroutinize',
                         action='store_false')
     parser.add_argument('-e', '--conversion-error', type=float, default=None,
                         metavar='ERROR', help="Maximum approximation error for"
                         " cubic to quadratic conversion measured in EM")
     parser.set_defaults(use_production_names=None, subset=None,
-                        subroutinize=None)
+                        subroutinize=True)
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
