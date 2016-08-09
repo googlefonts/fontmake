@@ -60,6 +60,9 @@ def main():
     parser.add_argument('-e', '--conversion-error', type=float, default=None,
                         metavar='ERROR', help="Maximum approximation error for"
                         " cubic to quadratic conversion measured in EM")
+    parser.add_argument('--mac-legacy', action='store_true',
+                        help='Write legacy Macintosh platform name records and'
+                        'cmap table.')
     parser.set_defaults(use_production_names=None, subset=None,
                         subroutinize=True)
     parser.add_argument('--timing', action='store_true')
