@@ -1,18 +1,16 @@
 # for MutatorMath
-git+https://github.com/typesupply/fontMath.git@e96af7a672aa8173139952cf78405b6c43fd5353
-git+https://github.com/unified-font-object/ufoLib.git@d5514cc566080a2798614b9f9d413b755479dd88
+git+https://github.com/typesupply/fontMath.git@c7a898ab01045033f595f4f9b3b6422af74b9dce
+git+https://github.com/unified-font-object/ufoLib.git@5a80482507e801ad4dcb46395593fb33b1e74d20
 
 # for ufo2ft
-git+https://github.com/behdad/fonttools.git@efb8642366eef06ab482473793136ecba679f35a
-git+https://github.com/googlei18n/compreffor.git@628e625304bc901515ba24f0ffec9eb0033e9dd0
-
-# for booleanOperations
-cython==0.24
+git+https://github.com/behdad/fonttools.git@fae8e1b498e78d0d28612ea8ddb04103cd1f3662
+git+https://github.com/googlei18n/compreffor.git@038ef6ea8a9ffd4f62cb7cce4a1b851eb3f015a4
 
 # direct dependencies
-git+https://github.com/googlei18n/cu2qu.git@c82b78b1b80a17c035420fcb08aeb3a844550da4
+git+https://github.com/googlei18n/cu2qu.git@ab3c0f82e60de746bafd2e3a9fab3a176840c7f9
 git+https://github.com/googlei18n/glyphsLib.git@dd555cc236bd240c94ec4194370fc44e4d10051a
-git+https://github.com/googlei18n/ufo2ft.git@571b16406964805a904dc5b331b1ebfb9b38890a
-git+https://github.com/LettError/MutatorMath.git@8af13c589f4ca7f5c4707dee481ce0ec17c01bd9
-git+https://github.com/typemytype/booleanOperations.git@e19f4405d51b21a4c205939ffb670f440f053c7e
-git+https://github.com/typesupply/defcon.git@ad4d1d36f264e19c3a38a55a3489e33a4161873b
+git+https://github.com/googlei18n/ufo2ft.git@1a495e9f8adc491a0ef72e9832b744f8c75223f8
+git+https://github.com/LettError/MutatorMath.git@652b075cc1cbc0b96ad6025906970e13bc77264e
+--find-links https://github.com/typemytype/booleanOperations/releases
+booleanOperations==0.4
+git+https://github.com/typesupply/defcon.git@a70a27b7607a92e8b9d7181e6c58061547d19942
