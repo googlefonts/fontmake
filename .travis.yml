@@ -8,7 +8,7 @@ os:
 
 install:
   # for fontmake
-  - pip install --upgrade pip setuptools Cython
+  - pip install --upgrade pip setuptools
   - pip install -r requirements.txt
   - python setup.py install
   # for fontdiff
