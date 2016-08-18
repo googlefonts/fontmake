@@ -7,13 +7,13 @@ function check_failure() {
     fi
 }
 
+for src in 'GuidelineTest' 'NotoSansEthiopic-MM' 'NotoSansHebrew-MM'; do
+    fontmake -i -g "${src}.glyphs"
+    check_failure "${src} failed to build"
+done
 fontmake -g 'NotoSansDevanagari/NotoSansDevanagari.glyphs'\
     --mti-source='NotoSansDevanagari/NotoSansDevanagari.plist'
 check_failure 'Devanagari failed to build'
-for script in 'Ethiopic' 'Hebrew'; do
-    fontmake -i -g "NotoSans${script}-MM.glyphs"
-    check_failure "${script} failed to build"
-done
 
 echo "running $(./fontdiff --version)"
 for script in 'Ethiopic' 'Hebrew'; do
