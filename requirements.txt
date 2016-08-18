@@ -8,7 +8,7 @@ git+https://github.com/googlei18n/compreffor.git@19fb1918ff285d82e66515f7f513fac
 
 # direct dependencies
 git+https://github.com/googlei18n/cu2qu.git@ab3c0f82e60de746bafd2e3a9fab3a176840c7f9
-git+https://github.com/googlei18n/glyphsLib.git@c8734e8aac69825e617b9c5d809fc071777b00d0
+git+https://github.com/googlei18n/glyphsLib.git@5dc523f7472a9fcd4aade865a2c5f84bb272fcc6
 git+https://github.com/googlei18n/ufo2ft.git@c8826564103f0cf3c57cdd51e453e765528d12ed
 git+https://github.com/LettError/MutatorMath.git@652b075cc1cbc0b96ad6025906970e13bc77264e
 --find-links https://github.com/typemytype/booleanOperations/releases

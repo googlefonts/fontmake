@@ -1,0 +1,79 @@
+{
+.appVersion = "895";
+date = "2016-08-18 19:32:38 +0000";
+familyName = GuidelineTest;
+fontMaster = (
+{
+ascender = 800;
+capHeight = 700;
+descender = -200;
+id = "DE990F7B-AF5B-426E-B4C9-8534B0E19FAB";
+xHeight = 500;
+},
+{
+ascender = 800;
+capHeight = 700;
+descender = -200;
+id = "3437EDCC-B9F2-4034-BEBC-1F1548EA7CD5";
+weight = Bold;
+weightValue = 200;
+xHeight = 500;
+}
+);
+glyphs = (
+{
+glyphname = A;
+lastChange = "2016-08-18 20:42:26 +0000";
+layers = (
+{
+guideLines = (
+{
+position = "{100, 200}";
+}
+);
+layerId = "DE990F7B-AF5B-426E-B4C9-8534B0E19FAB";
+width = 600;
+},
+{
+guideLines = (
+{
+angle = 90;
+position = "{100, 200}";
+}
+);
+layerId = "3437EDCC-B9F2-4034-BEBC-1F1548EA7CD5";
+width = 600;
+}
+);
+unicode = 0041;
+},
+{
+glyphname = space;
+lastChange = "2016-08-18 20:54:22 +0000";
+layers = (
+{
+layerId = "DE990F7B-AF5B-426E-B4C9-8534B0E19FAB";
+width = 600;
+},
+{
+layerId = "3437EDCC-B9F2-4034-BEBC-1F1548EA7CD5";
+width = 600;
+}
+);
+unicode = 0020;
+}
+);
+instances = (
+{
+interpolationWeight = 200;
+instanceInterpolations = {
+"3437EDCC-B9F2-4034-BEBC-1F1548EA7CD5" = 1;
+};
+name = Bold;
+weightClass = Bold;
+}
+);
+unitsPerEm = 1000;
+versionMajor = 1;
+versionMinor = 0;
+}
