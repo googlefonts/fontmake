@@ -1,6 +1,5 @@
 [![Travis Build Status](https://travis-ci.org/googlei18n/fontmake.svg)](https://travis-ci.org/googlei18n/fontmake)
 
-
 # fontmake
 
 This library provides a wrapper for several other Python libraries which
@@ -32,12 +31,10 @@ After installation, fontmake can be run end-to-end as a module:
 
 ```bash
 # outputs master binaries
-python -m fontmake MyFont.glyphs
+fontmake -g MyFont.glyphs
 ```
 
-Use `-h` to see a list of runtime options. `-i` will output instance binaries,
-`-c` will ensure the output is interpolation compatible (for both masters and
-instances).
+Use `-h` to see options for specifying different types of input and output.
 
 You can also use fontmake to run intermediate steps in the build process, via
 methods of the `fontmake.font_project.FontProject` class.
