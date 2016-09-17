@@ -6,9 +6,6 @@
 -e git+https://github.com/behdad/fonttools.git#egg=fonttools
 -e git+https://github.com/googlei18n/compreffor.git#egg=compreffor
 
-# for booleanOperations
-cython>=0.24
-
 # direct dependencies
 -e git+https://github.com/googlei18n/cu2qu.git#egg=cu2qu
 -e git+https://github.com/googlei18n/glyphsLib.git#egg=glyphsLib
