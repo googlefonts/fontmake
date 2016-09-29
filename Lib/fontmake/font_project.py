@@ -74,23 +74,15 @@ class FontProject:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_ufos(
-            self, glyphs_path, interpolate=False, masters_as_instances=False,
-            family_name=None):
-        """Build UFOs from Glyphs source."""
-        from glyphsLib import build_masters, build_instances
+    def build_master_ufos(self, glyphs_path, family_name=None):
+        """Build UFOs and MutatorMath designspace from Glyphs source."""
+        import glyphsLib
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
-        ufos = []
-        if not interpolate or masters_as_instances:
-            ufos.extend(build_masters(
-                glyphs_path, master_dir, designspace_instance_dir=instance_dir,
-                family_name=family_name))
-        if interpolate:
-            ufos.extend(build_instances(
-                glyphs_path, master_dir, instance_dir, family_name=family_name))
-        return ufos
+        return glyphsLib.build_masters(
+            glyphs_path, master_dir, designspace_instance_dir=instance_dir,
+            family_name=family_name)
 
     @timer()
     def remove_overlaps(self, ufos):
@@ -270,18 +262,20 @@ class FontProject:
             glyphs_source = self.preprocess(glyphs_file)
             glyphs_file = UnicodeIO(glyphs_source)
 
-        print('>> Building UFOs from Glyphs source')
-        ufos = self.build_ufos(
-            glyphs_file, interpolate, masters_as_instances, family_name)
-        self.run_from_ufos(
-            ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
+        print('>> Building designspace from Glyphs source')
+        _, designspace_path, instance_data = self.build_master_ufos(
+            glyphs_file, family_name)
+        self.run_from_designspace(
+            designspace_path, interpolate, masters_as_instances, instance_data,
+            **kwargs)
 
     def run_from_designspace(
             self, designspace_path, interpolate=False,
-            masters_as_instances=False, **kwargs):
+            masters_as_instances=False, instance_data=None, **kwargs):
         """Run toolchain from a MutatorMath design space document to OpenType
         binaries.
         """
+        from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo import build as build_designspace
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
@@ -294,7 +288,8 @@ class FontProject:
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
             for result in results:
-                ufos.extend(result.values())
+                if instance_data is not None:
+                    ufos.extend(apply_instance_data(instance_data))
         self.run_from_ufos(
             ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
 
