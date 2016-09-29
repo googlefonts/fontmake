@@ -22,8 +22,10 @@ def main():
     parser.add_argument('-g', '--glyphs-path')
     parser.add_argument('-u', '--ufo-paths', nargs='+')
     parser.add_argument('-m', '--mm-designspace')
-    parser.add_argument('-o', '--output', nargs='+', default=('otf', 'ttf'),
-                        choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable'))
+    parser.add_argument(
+        '-o', '--output', nargs='+', default=('otf', 'ttf'),
+        choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
+
     parser.add_argument('-i', '--interpolate', action='store_true',
                         help='interpolate masters (for Glyphs or MutatorMath '
                              'sources only)')

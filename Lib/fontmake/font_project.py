@@ -33,6 +33,7 @@ from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
+from fontTools import varLib
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
@@ -74,23 +75,15 @@ class FontProject:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_ufos(
-            self, glyphs_path, interpolate=False, masters_as_instances=False,
-            family_name=None):
-        """Build UFOs from Glyphs source."""
-        from glyphsLib import build_masters, build_instances
+    def build_master_ufos(self, glyphs_path, family_name=None):
+        """Build UFOs and MutatorMath designspace from Glyphs source."""
+        import glyphsLib
 
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
-        ufos = []
-        if not interpolate or masters_as_instances:
-            ufos.extend(build_masters(
-                glyphs_path, master_dir, designspace_instance_dir=instance_dir,
-                family_name=family_name))
-        if interpolate:
-            ufos.extend(build_instances(
-                glyphs_path, master_dir, instance_dir, family_name=family_name))
-        return ufos
+        return glyphsLib.build_masters(
+            glyphs_path, master_dir, designspace_instance_dir=instance_dir,
+            family_name=family_name)
 
     @timer()
     def remove_overlaps(self, ufos):
@@ -270,18 +263,20 @@ class FontProject:
             glyphs_source = self.preprocess(glyphs_file)
             glyphs_file = UnicodeIO(glyphs_source)
 
-        print('>> Building UFOs from Glyphs source')
-        ufos = self.build_ufos(
-            glyphs_file, interpolate, masters_as_instances, family_name)
-        self.run_from_ufos(
-            ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
+        print('>> Building designspace from Glyphs source')
+        _, designspace_path, instance_data = self.build_master_ufos(
+            glyphs_file, family_name)
+        self.run_from_designspace(
+            designspace_path, interpolate, masters_as_instances, instance_data,
+            **kwargs)
 
     def run_from_designspace(
             self, designspace_path, interpolate=False,
-            masters_as_instances=False, **kwargs):
+            masters_as_instances=False, instance_data=None, **kwargs):
         """Run toolchain from a MutatorMath design space document to OpenType
         binaries.
         """
+        from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo import build as build_designspace
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
@@ -294,13 +289,16 @@ class FontProject:
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
             for result in results:
-                ufos.extend(result.values())
+                if instance_data is not None:
+                    ufos.extend(apply_instance_data(instance_data))
         self.run_from_ufos(
-            ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
+            ufos, designspace_path=designspace_path,
+            is_instance=(interpolate or masters_as_instances), **kwargs)
 
     def run_from_ufos(
-            self, ufos, output=(), mti_source=None, remove_overlaps=True,
-            reverse_direction=True, conversion_error=None, **kwargs):
+            self, ufos, output=(), designspace_path=None, mti_source=None,
+            remove_overlaps=True, reverse_direction=True, conversion_error=None,
+            **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if set(output) == set(['ufo']):
@@ -337,12 +335,17 @@ class FontProject:
                 mti_paths=mti_paths, **kwargs)
             need_reload = True
 
-        if 'ttf-interpolatable' in output:
+        if 'ttf-interpolatable' in output or 'variable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_interpolatable_ttfs(
                 ufos, reverse_direction, conversion_error, mti_paths=mti_paths,
                 **kwargs)
+
+        if 'variable' in output:
+            if designspace_path is None:
+                raise TypeError('Need designspace to build variable font.')
+            varLib.main((designspace_path,))
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
