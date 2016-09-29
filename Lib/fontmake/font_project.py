@@ -33,6 +33,7 @@ from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
+from fontTools import varLib
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
@@ -291,11 +292,13 @@ class FontProject:
                 if instance_data is not None:
                     ufos.extend(apply_instance_data(instance_data))
         self.run_from_ufos(
-            ufos, is_instance=(interpolate or masters_as_instances), **kwargs)
+            ufos, designspace_path=designspace_path,
+            is_instance=(interpolate or masters_as_instances), **kwargs)
 
     def run_from_ufos(
-            self, ufos, output=(), mti_source=None, remove_overlaps=True,
-            reverse_direction=True, conversion_error=None, **kwargs):
+            self, ufos, output=(), designspace_path=None, mti_source=None,
+            remove_overlaps=True, reverse_direction=True, conversion_error=None,
+            **kwargs):
         """Run toolchain from UFO sources to OpenType binaries."""
 
         if set(output) == set(['ufo']):
@@ -332,12 +335,17 @@ class FontProject:
                 mti_paths=mti_paths, **kwargs)
             need_reload = True
 
-        if 'ttf-interpolatable' in output:
+        if 'ttf-interpolatable' in output or 'variable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_interpolatable_ttfs(
                 ufos, reverse_direction, conversion_error, mti_paths=mti_paths,
                 **kwargs)
+
+        if 'variable' in output:
+            if designspace_path is None:
+                raise TypeError('Need designspace to build variable font.')
+            varLib.main((designspace_path,))
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
