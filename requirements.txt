@@ -4,7 +4,8 @@ git+https://github.com/unified-font-object/ufoLib.git@5a80482507e801ad4dcb463955
 
 # for ufo2ft
 git+https://github.com/fonttools/fonttools.git@a533a3be446f1ff759ebdb3a3f92397b1fa4de0a
-git+https://github.com/googlei18n/compreffor.git@19fb1918ff285d82e66515f7f513fac22f88caf4
+--find-links https://github.com/googlei18n/compreffor/releases
+compreffor==0.3.0
 
 # direct dependencies
 git+https://github.com/googlei18n/cu2qu.git@ab3c0f82e60de746bafd2e3a9fab3a176840c7f9
