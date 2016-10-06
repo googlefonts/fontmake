@@ -178,10 +178,28 @@ class FontProject:
 
     @timer()
     def save_otfs(
-            self, ufos, ttf=False, interpolatable=False, mti_paths=None,
-            is_instance=False, use_afdko=False, autohint=None, subset=None,
-            use_production_names=None, subroutinize=None):
-        """Write OpenType binaries."""
+            self, ufos, ttf=False, is_instance=False, interpolatable=False,
+            mti_paths=None, use_afdko=False, autohint=None, subset=None,
+            use_production_names=None, subroutinize=False):
+        """Build OpenType binaries from UFOs.
+
+        Args:
+            ufos: Font objects to compile.
+            ttf: If True, build fonts with TrueType outlines and .ttf extension.
+            is_instance: If output fonts are instances, for generating paths.
+            interpolatable: If output is interpolatable, for generating paths.
+            mti_source: Dictionary mapping postscript full names to dictionaries
+                mapping layout table tags to MTI source paths which should be
+                compiled into those tables.
+            use_afdko: If True, use AFDKO to compile feature source.
+            autohint: Parameters to provide to ttfautohint. If not provided, the
+                autohinting step is skipped.
+            subset: Whether to subset the output according to data in the UFOs.
+                If not provided, also determined by flags in the UFOs.
+            use_production_names: Whether to use production glyph names in the
+                output. If not provided, determined by flags in the UFOs.
+            subroutinize: If True, subroutinize CFF outlines in output.
+        """
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
@@ -254,28 +272,41 @@ class FontProject:
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_file, preprocess=True, interpolate=False,
-            masters_as_instances=False, family_name=None, **kwargs):
-        """Run toolchain from Glyphs source to OpenType binaries."""
+            self, glyphs_path, preprocess=True, family_name=None, **kwargs):
+        """Run toolchain from Glyphs source.
+
+        Args:
+            glyphs_path: Path to source file.
+            preprocess: If True, check source file for un-compilable content.
+            family_name: If provided, uses this family name in the output.
+            kwargs: Arguments passed along to run_from_designspace.
+        """
 
         if preprocess:
             print('>> Checking Glyphs source for illegal glyph names')
-            glyphs_source = self.preprocess(glyphs_file)
-            glyphs_file = UnicodeIO(glyphs_source)
+            glyphs_source = self.preprocess(glyphs_path)
+            glyphs_path = UnicodeIO(glyphs_source)
 
-        print('>> Building designspace from Glyphs source')
+        print('>> Building master UFOs and designspace from Glyphs source')
         _, designspace_path, instance_data = self.build_master_ufos(
-            glyphs_file, family_name)
+            glyphs_path, family_name)
         self.run_from_designspace(
-            designspace_path, interpolate, masters_as_instances, instance_data,
-            **kwargs)
+            designspace_path, instance_data=instance_data, **kwargs)
 
     def run_from_designspace(
             self, designspace_path, interpolate=False,
             masters_as_instances=False, instance_data=None, **kwargs):
-        """Run toolchain from a MutatorMath design space document to OpenType
-        binaries.
+        """Run toolchain from a MutatorMath design space document.
+
+        Args:
+            designspace_path: Path to designspace document.
+            interpolate: If True output instance fonts, otherwise just masters.
+            masters_as_instances: If True, output master fonts as instances.
+            instance_data: Data to be applied to instance UFOs, as returned from
+                glyphsLib's parsing function.
+            kwargs: Arguments passed along to run_from_ufos.
         """
+
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo import build as build_designspace
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
@@ -285,7 +316,7 @@ class FontProject:
             reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
             ufos.extend(reader.getSourcePaths())
         if interpolate:
-            print('>> Interpolating master UFOs from design space')
+            print('>> Interpolating master UFOs from designspace')
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
             for result in results:
@@ -299,7 +330,25 @@ class FontProject:
             self, ufos, output=(), designspace_path=None, mti_source=None,
             remove_overlaps=True, reverse_direction=True, conversion_error=None,
             **kwargs):
-        """Run toolchain from UFO sources to OpenType binaries."""
+        """Run toolchain from UFO sources.
+
+        Args:
+            ufos: List of UFO sources, as either paths or opened objects.
+            output: List of output formats to generate.
+            designspace_path: Path to a MutatorMath designspace, used to
+                generate variable font if requested.
+            mti_source: MTI layout source to be parsed and passed to save_otfs.
+            remove_overlaps: If True, remove overlaps in glyph shapes.
+            reverse_direction: If True, reverse contour directions when
+                compiling TrueType outlines.
+            conversion_error: Error to allow when converting cubic CFF contours
+                to quadratic TrueType contours.
+            kwargs: Arguments passed along to save_otfs.
+
+        Raises:
+            TypeError: 'variable' specified in output formats but designspace
+                path not provided.
+        """
 
         if set(output) == set(['ufo']):
             return
