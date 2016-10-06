@@ -287,7 +287,7 @@ class FontProject:
             glyphs_source = self.preprocess(glyphs_path)
             glyphs_path = UnicodeIO(glyphs_source)
 
-        print('>> Building designspace from Glyphs source')
+        print('>> Building master UFOs and designspace from Glyphs source')
         _, designspace_path, instance_data = self.build_master_ufos(
             glyphs_path, family_name)
         self.run_from_designspace(
@@ -316,7 +316,7 @@ class FontProject:
             reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
             ufos.extend(reader.getSourcePaths())
         if interpolate:
-            print('>> Interpolating master UFOs from design space')
+            print('>> Interpolating master UFOs from designspace')
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
             for result in results:
