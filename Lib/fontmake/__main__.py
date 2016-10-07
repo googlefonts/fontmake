@@ -26,44 +26,62 @@ def main():
         '-o', '--output', nargs='+', default=('otf', 'ttf'),
         choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
 
-    parser.add_argument('-i', '--interpolate', action='store_true',
-                        help='interpolate masters (for Glyphs or MutatorMath '
-                             'sources only)')
-    parser.add_argument('-M', '--masters-as-instances', action='store_true',
-                        help='treat masters as instances')
-    parser.add_argument('-a', '--autohint', nargs='?', const="",
-                        help='can provide arguments to ttfautohint, quoted')
-    parser.add_argument('--mti-source')
-    parser.add_argument('--family-name', help='Family name to use for masters,'
-                        ' and to filter output instances by')
-    parser.add_argument('--use-afdko', action='store_true')
-    parser.add_argument('--keep-direction', dest="reverse_direction",
-                        action='store_false', help='Do not reverse contour '
-                        'direction when output is ttf or ttf-interpolatable')
-    parser.add_argument('--keep-overlaps', dest="remove_overlaps",
-                        action='store_false',
-                        help='Do not remove any overlap.')
+    parser.add_argument(
+        '-i', '--interpolate', action='store_true',
+        help='Interpolate masters (for Glyphs or MutatorMath sources only)')
+    parser.add_argument(
+        '-M', '--masters-as-instances', action='store_true',
+        help='Output masters as instances')
+    parser.add_argument(
+        '--family-name',
+        help='Family name to use for masters, and to filter output instances')
+
+    parser.add_argument(
+        '--mti-source')
+    parser.add_argument(
+        '--use-afdko', action='store_true')
+
+    parser.add_argument(
+        '-a', '--autohint', nargs='?', const='',
+        help='Run ttfautohint. Can provide arguments, quoted')
+    parser.add_argument(
+        '--keep-direction', dest='reverse_direction', action='store_false',
+        help='Do not reverse contour direction when output is ttf or '
+             'ttf-interpolatable')
+    parser.add_argument(
+        '--keep-overlaps', dest='remove_overlaps', action='store_false',
+        help='Do not remove any overlap.')
+
     group1 = parser.add_mutually_exclusive_group(required=False)
-    group1.add_argument('--production-names', dest='use_production_names',
-                        action='store_true', help='Rename glyphs with '
-                        'production names if available otherwise use uninames.')
-    group1.add_argument('--no-production-names', dest='use_production_names',
-                        action='store_false')
+    group1.add_argument(
+        '--production-names', dest='use_production_names', action='store_true',
+        help='Rename glyphs with production names if available otherwise use '
+             'uninames.')
+    group1.add_argument(
+        '--no-production-names', dest='use_production_names',
+        action='store_false')
+
     group2 = parser.add_mutually_exclusive_group(required=False)
-    group2.add_argument('--subset', dest='subset',
-                        action='store_true', help='Subset font using export '
-                        'flags set by glyphsLib')
-    group2.add_argument('--no-subset', dest='subset', action='store_false')
+    group2.add_argument(
+        '--subset', dest='subset', action='store_true',
+        help='Subset font using export flags set by glyphsLib')
+    group2.add_argument(
+        '--no-subset', dest='subset', action='store_false')
+
     group3 = parser.add_mutually_exclusive_group(required=False)
-    group3.add_argument('-s', '--subroutinize', action='store_true',
-                        help='Optimize CFF table using compreffor (default)')
-    group3.add_argument('-S', '--no-subroutinize', dest='subroutinize',
-                        action='store_false')
-    parser.add_argument('-e', '--conversion-error', type=float, default=None,
-                        metavar='ERROR', help="Maximum approximation error for"
-                        " cubic to quadratic conversion measured in EM")
+    group3.add_argument(
+        '-s', '--subroutinize', action='store_true',
+        help='Optimize CFF table using compreffor (default)')
+    group3.add_argument(
+        '-S', '--no-subroutinize', dest='subroutinize', action='store_false')
+    parser.add_argument(
+        '-e', '--conversion-error', type=float, default=None, metavar='ERROR',
+        help='Maximum approximation error for cubic to quadratic conversion '
+             'measured in EM')
+
     parser.set_defaults(use_production_names=None, subset=None,
                         subroutinize=True)
+
     parser.add_argument('--timing', action='store_true')
     args = vars(parser.parse_args())
 
@@ -72,7 +90,7 @@ def main():
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
-    if not sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) == 1:
+    if sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) != 1:
         parser.error('Exactly one source type required (Glyphs, UFO, or '
                      'MutatorMath).')
 
