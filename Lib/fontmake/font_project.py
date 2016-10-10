@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 import glob
 import logging
+import math
 import os
 import plistlib
 import re
@@ -180,7 +181,8 @@ class FontProject:
     def save_otfs(
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
             mti_paths=None, use_afdko=False, autohint=None, subset=None,
-            use_production_names=None, subroutinize=False):
+            use_production_names=None, subroutinize=False,
+            interpolate_layout_from=None):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -199,11 +201,20 @@ class FontProject:
             use_production_names: Whether to use production glyph names in the
                 output. If not provided, determined by flags in the UFOs.
             subroutinize: If True, subroutinize CFF outlines in output.
+            interpolate_layout_from: A designspace path to give varLib for
+                interpolating layout tables to use in output.
         """
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
         otf_compiler = compileTTF if ttf else compileOTF
+
+        if interpolate_layout_from is not None:
+            master_locations, instance_locations = self._designspace_locations(
+                interpolate_layout_from)
+            ufod = self._output_dir('ufo', False, interpolatable)
+            otfd = self._output_dir(ext, False, interpolatable)
+            finder = lambda s: s.replace(ufod, otfd).replace('.ufo', '.' + ext)
 
         for ufo in ufos:
             name = self._font_name(ufo)
@@ -219,6 +230,17 @@ class FontProject:
                 glyphOrder=ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
                 useProductionNames=use_production_names,
                 convertCubics=False, optimizeCff=subroutinize)
+
+            if interpolate_layout_from is not None:
+                loc = instance_locations[ufo.path]
+                gpos_src = interpolate_layout(
+                    interpolate_layout_from, loc, finder)
+                otf['GPOS'] = gpos_src['GPOS']
+                gsub_src = TTFont(
+                    finder(self._closest_location(master_locations, loc)))
+                otf['GDEF'] = gsub_src['GDEF']
+                otf['GSUB'] = gsub_src['GSUB']
+
             otf.save(otf_path)
 
             if subset is None:
@@ -295,7 +317,8 @@ class FontProject:
 
     def run_from_designspace(
             self, designspace_path, interpolate=False,
-            masters_as_instances=False, instance_data=None, **kwargs):
+            masters_as_instances=False, instance_data=None,
+            interpolate_binary_layout=False, **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
         Args:
@@ -304,6 +327,8 @@ class FontProject:
             masters_as_instances: If True, output master fonts as instances.
             instance_data: Data to be applied to instance UFOs, as returned from
                 glyphsLib's parsing function.
+            interpolate_binary_layout: Interpolate layout tables from compiled
+                master binaries.
             kwargs: Arguments passed along to run_from_ufos.
         """
 
@@ -322,9 +347,14 @@ class FontProject:
             for result in results:
                 if instance_data is not None:
                     ufos.extend(apply_instance_data(instance_data))
+
+        interpolate_layout_from = (
+            designspace_path if interpolate_binary_layout else None)
+
         self.run_from_ufos(
             ufos, designspace_path=designspace_path,
-            is_instance=(interpolate or masters_as_instances), **kwargs)
+            is_instance=(interpolate or masters_as_instances),
+            interpolate_layout_from=interpolate_layout_from, **kwargs)
 
     def run_from_ufos(
             self, ufos, output=(), designspace_path=None, mti_source=None,
@@ -419,6 +449,33 @@ class FontProject:
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))
+
+    def _designspace_locations(self, designspace_path):
+        """Map font filenames to their locations in a designspace."""
+
+        maps = []
+        for location_list in varLib.designspace.load(designspace_path):
+            location_map = {}
+            for loc in location_list:
+                abspath = os.path.normpath(os.path.join(
+                    os.path.dirname(designspace_path), loc['filename']))
+                location_map[abspath] = loc['location']
+            maps.append(location_map)
+        return maps
+
+    def _closest_location(self, location_map, target):
+        """Return path of font whose location is closest to target."""
+
+        dist = lambda a, b: math.sqrt(sum((a[k] - b[k]) ** 2 for k in a.keys()))
+        paths = location_map.keys()
+        closest = paths[0]
+        closest_dist = dist(target, location_map[closest])
+        for path in paths[1:]:
+            cur_dist = dist(target, location_map[path])
+            if cur_dist < closest_dist:
+                closest = path
+                closest_dist = cur_dist
+        return closest
 
 
 class FDKFeatureCompiler(FeatureOTFCompiler):

@@ -39,6 +39,10 @@ def main():
     parser.add_argument(
         '--mti-source')
     parser.add_argument(
+        '--interpolate-binary-layout', action='store_true',
+        help='Interpolate layout tables from compiled master binaries. '
+             'Requires Glyphs or MutatorMath source.')
+    parser.add_argument(
         '--use-afdko', action='store_true')
 
     parser.add_argument(
