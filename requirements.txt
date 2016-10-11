@@ -3,11 +3,11 @@ git+https://github.com/typesupply/fontMath.git@c7a898ab01045033f595f4f9b3b6422af
 git+https://github.com/unified-font-object/ufoLib.git@5a80482507e801ad4dcb46395593fb33b1e74d20
 
 # for ufo2ft
-git+https://github.com/fonttools/fonttools.git@a533a3be446f1ff759ebdb3a3f92397b1fa4de0a
 --find-links https://github.com/googlei18n/compreffor/releases
 compreffor==0.3.0
 
 # direct dependencies
+git+https://github.com/fonttools/fonttools.git@5606f47c03d78e69fde341583a3625951e197d0b
 git+https://github.com/googlei18n/cu2qu.git@ab3c0f82e60de746bafd2e3a9fab3a176840c7f9
 git+https://github.com/googlei18n/glyphsLib.git@ee916ba6162396ef4a3ae68b5ea0b7be5450a0c9
 git+https://github.com/googlei18n/ufo2ft.git@c8826564103f0cf3c57cdd51e453e765528d12ed
