@@ -35,6 +35,7 @@ from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools import varLib
+from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
 
