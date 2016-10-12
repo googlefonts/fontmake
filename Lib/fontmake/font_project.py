@@ -41,7 +41,7 @@ from ufo2ft.makeotfParts import FeatureOTFCompiler
 
 from fontmake.ttfautohint import ttfautohint
 
-timer = Timer(logging.getLogger('fontmake'), level=logging.DEBUG)
+timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
 
 PUBLIC_PREFIX = 'public.'
 GLYPHS_PREFIX = 'com.schriftgestaltung.'
@@ -72,9 +72,14 @@ class FontProject:
             text = text.replace(old_name, new_name)
         return text
 
-    def __init__(self, timing=False):
+    def __init__(self, timing=False, verbosity='INFO'):
+        logging.basicConfig(level=getattr(logging, verbosity.upper()))
+        self.logger = logging.getLogger('fontmake')
         if timing:
             configLogger(logger=timer.logger, level=logging.DEBUG)
+
+    def info(self, msg):
+        self.logger.info(msg)
 
     @timer()
     def build_master_ufos(self, glyphs_path, family_name=None):
@@ -94,7 +99,7 @@ class FontProject:
 
         manager = BooleanOperationManager()
         for ufo in ufos:
-            print('>> Removing overlaps for ' + self._font_name(ufo))
+            self.info('Removing overlaps for ' + self._font_name(ufo))
             for glyph in ufo:
                 contours = list(glyph)
                 glyph.clearContours()
@@ -105,7 +110,7 @@ class FontProject:
         """Move components of UFOs' glyphs to their outlines."""
 
         for ufo in ufos:
-            print('>> Decomposing glyphs for ' + self._font_name(ufo))
+            self.info('Decomposing glyphs for ' + self._font_name(ufo))
             for glyph in ufo:
                 self._deep_copy_contours(ufo, glyph, glyph, Transform())
                 glyph.clearComponents()
@@ -138,7 +143,7 @@ class FontProject:
                 reverse_direction=reverse_direction, dump_stats=True)
         else:
             for ufo in ufos:
-                print('>> Converting curves for ' + self._font_name(ufo))
+                self.info('Converting curves for ' + self._font_name(ufo))
                 font_to_quadratic(
                     ufo, max_err_em=conversion_error,
                     reverse_direction=reverse_direction, dump_stats=True)
@@ -146,7 +151,7 @@ class FontProject:
     def build_otfs(self, ufos, remove_overlaps=True, **kwargs):
         """Build OpenType binaries with CFF outlines."""
 
-        print('\n>> Building OTFs')
+        self.info('Building OTFs')
 
         self.decompose_glyphs(ufos)
         if remove_overlaps:
@@ -158,7 +163,7 @@ class FontProject:
             conversion_error=None, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
 
-        print('\n>> Building TTFs')
+        self.info('Building TTFs')
 
         if remove_overlaps:
             self.remove_overlaps(ufos)
@@ -171,7 +176,7 @@ class FontProject:
             **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines."""
 
-        print('\n>> Building interpolation-compatible TTFs')
+        self.info('Building interpolation-compatible TTFs')
 
         self.convert_curves(ufos, compatible=True,
                             reverse_direction=reverse_direction,
@@ -219,7 +224,7 @@ class FontProject:
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            print('>> Saving %s for %s' % (ext.upper(), name))
+            self.info('Saving %s for %s' % (ext.upper(), name))
 
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
             if use_production_names is None:
@@ -306,11 +311,11 @@ class FontProject:
         """
 
         if preprocess:
-            print('>> Checking Glyphs source for illegal glyph names')
+            self.info('Checking Glyphs source for illegal glyph names')
             glyphs_source = self.preprocess(glyphs_path)
             glyphs_path = UnicodeIO(glyphs_source)
 
-        print('>> Building master UFOs and designspace from Glyphs source')
+        self.info('Building master UFOs and designspace from Glyphs source')
         _, designspace_path, instance_data = self.build_master_ufos(
             glyphs_path, family_name)
         self.run_from_designspace(
@@ -342,7 +347,7 @@ class FontProject:
             reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
             ufos.extend(reader.getSourcePaths())
         if interpolate:
-            print('>> Interpolating master UFOs from designspace')
+            self.info('Interpolating master UFOs from designspace')
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
             for result in results:

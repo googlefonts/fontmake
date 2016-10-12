@@ -87,9 +87,11 @@ def main():
                         subroutinize=True)
 
     parser.add_argument('--timing', action='store_true')
+    parser.add_argument('--verbosity', default='INFO')
     args = vars(parser.parse_args())
 
-    project = FontProject(timing=args.pop('timing'))
+    project = FontProject(timing=args.pop('timing'),
+                          verbosity=args.pop('verbosity'))
 
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
