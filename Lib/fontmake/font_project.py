@@ -72,8 +72,8 @@ class FontProject:
             text = text.replace(old_name, new_name)
         return text
 
-    def __init__(self, timing=False, verbosity='INFO'):
-        logging.basicConfig(level=getattr(logging, verbosity.upper()))
+    def __init__(self, timing=False, verbose='INFO'):
+        logging.basicConfig(level=getattr(logging, verbose.upper()))
         self.logger = logging.getLogger('fontmake')
         if timing:
             configLogger(logger=timer.logger, level=logging.DEBUG)
