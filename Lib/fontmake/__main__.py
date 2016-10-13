@@ -91,7 +91,7 @@ def main():
     args = vars(parser.parse_args())
 
     project = FontProject(timing=args.pop('timing'),
-                          verbosity=args.pop('verbosity'))
+                          verbosity=args.pop('verbose'))
 
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
