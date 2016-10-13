@@ -87,7 +87,7 @@ def main():
                         subroutinize=True)
 
     parser.add_argument('--timing', action='store_true')
-    parser.add_argument('--verbosity', default='INFO')
+    parser.add_argument('--verbose', default='INFO')
     args = vars(parser.parse_args())
 
     project = FontProject(timing=args.pop('timing'),
