@@ -95,15 +95,20 @@ class FontProject:
     @timer()
     def remove_overlaps(self, ufos):
         """Remove overlaps in UFOs' glyphs' contours."""
-        from booleanOperations import BooleanOperationManager
+        from booleanOperations import union, BooleanOperationsError
 
-        manager = BooleanOperationManager()
         for ufo in ufos:
-            self.info('Removing overlaps for ' + self._font_name(ufo))
+            font_name = self._font_name(ufo)
+            self.info('Removing overlaps for ' + font_name)
             for glyph in ufo:
                 contours = list(glyph)
                 glyph.clearContours()
-                manager.union(contours, glyph.getPointPen())
+                try:
+                    union(contours, glyph.getPointPen())
+                except BooleanOperationsError:
+                    self.logger.error("Failed to remove overlaps for %s: %r",
+                                      font_name, glyph.name)
+                    raise
 
     @timer()
     def decompose_glyphs(self, ufos):
