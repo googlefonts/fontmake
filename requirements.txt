@@ -13,4 +13,4 @@ git+https://github.com/googlei18n/glyphsLib.git@ee916ba6162396ef4a3ae68b5ea0b7be
 git+https://github.com/googlei18n/ufo2ft.git@c8826564103f0cf3c57cdd51e453e765528d12ed
 git+https://github.com/LettError/MutatorMath.git@652b075cc1cbc0b96ad6025906970e13bc77264e
 git+https://github.com/typesupply/defcon.git@a70a27b7607a92e8b9d7181e6c58061547d19942
-booleanOperations==0.5.1
+git+https://github.com/typemytype/booleanOperations.git@a7113f81408cf89887882a8b9b04596a01ad38c8
