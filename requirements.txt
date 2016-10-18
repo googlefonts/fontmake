@@ -1,10 +1,9 @@
 # for MutatorMath
-git+https://github.com/typesupply/fontMath.git@c7a898ab01045033f595f4f9b3b6422af74b9dce
-git+https://github.com/unified-font-object/ufoLib.git@5a80482507e801ad4dcb46395593fb33b1e74d20
+fontMath==0.3.0
+ufoLib==2.0.0
 
 # for ufo2ft
---find-links https://github.com/googlei18n/compreffor/releases
-compreffor==0.3.0
+compreffor==0.4.1
 
 # direct dependencies
 git+https://github.com/fonttools/fonttools.git@ea958e72e41a1f9a497df02beae59af79e24fa5b
@@ -13,4 +12,4 @@ git+https://github.com/googlei18n/glyphsLib.git@ee916ba6162396ef4a3ae68b5ea0b7be
 git+https://github.com/googlei18n/ufo2ft.git@c8826564103f0cf3c57cdd51e453e765528d12ed
 git+https://github.com/LettError/MutatorMath.git@652b075cc1cbc0b96ad6025906970e13bc77264e
 git+https://github.com/typesupply/defcon.git@a70a27b7607a92e8b9d7181e6c58061547d19942
-git+https://github.com/typemytype/booleanOperations.git@a7113f81408cf89887882a8b9b04596a01ad38c8
+booleanOperations==0.6.2
