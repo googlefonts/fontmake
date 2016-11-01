@@ -143,6 +143,7 @@ class FontProject:
     def convert_curves(self, ufos, compatible=False, reverse_direction=True,
                        conversion_error=None):
         if compatible:
+            self.info('Converting curves compatibly')
             fonts_to_quadratic(
                 ufos, max_err_em=conversion_error,
                 reverse_direction=reverse_direction, dump_stats=True)
@@ -238,7 +239,7 @@ class FontProject:
             otf = otf_compiler(
                 ufo, featureCompilerClass=fea_compiler,
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
-                glyphOrder=ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
+                glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names,
                 convertCubics=False, optimizeCff=subroutinize)
 
@@ -355,9 +356,11 @@ class FontProject:
             self.info('Interpolating master UFOs from designspace')
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
-            for result in results:
-                if instance_data is not None:
-                    ufos.extend(apply_instance_data(instance_data))
+            if instance_data is not None:
+                ufos.extend(apply_instance_data(instance_data))
+            else:
+                for result in results:
+                    ufos.extend(result.values())
 
         interpolate_layout_from = (
             designspace_path if interpolate_binary_layout else None)

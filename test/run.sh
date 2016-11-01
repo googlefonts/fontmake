@@ -7,10 +7,14 @@ function check_failure() {
     fi
 }
 
+fontmake -i -m DesignspaceTest.designspace
+check_failure 'Designspace test failed to build'
+
 for src in 'GuidelineTest' 'NotoSansEthiopic-MM' 'NotoSansHebrew-MM'; do
     fontmake -i -g "${src}.glyphs"
     check_failure "${src} failed to build"
 done
+
 fontmake -g 'NotoSansDevanagari/NotoSansDevanagari.glyphs'\
     --mti-source='NotoSansDevanagari/NotoSansDevanagari.plist'
 check_failure 'Devanagari failed to build'
