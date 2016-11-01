@@ -238,7 +238,7 @@ class FontProject:
             otf = otf_compiler(
                 ufo, featureCompilerClass=fea_compiler,
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
-                glyphOrder=ufo.lib[PUBLIC_PREFIX + 'glyphOrder'],
+                glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names,
                 convertCubics=False, optimizeCff=subroutinize)
 
