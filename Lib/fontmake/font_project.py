@@ -143,6 +143,7 @@ class FontProject:
     def convert_curves(self, ufos, compatible=False, reverse_direction=True,
                        conversion_error=None):
         if compatible:
+            self.info('Converting curves compatibly')
             fonts_to_quadratic(
                 ufos, max_err_em=conversion_error,
                 reverse_direction=reverse_direction, dump_stats=True)
