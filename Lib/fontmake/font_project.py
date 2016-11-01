@@ -355,9 +355,11 @@ class FontProject:
             self.info('Interpolating master UFOs from designspace')
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3)
-            for result in results:
-                if instance_data is not None:
-                    ufos.extend(apply_instance_data(instance_data))
+            if instance_data is not None:
+                ufos.extend(apply_instance_data(instance_data))
+            else:
+                for result in results:
+                    ufos.extend(result.values())
 
         interpolate_layout_from = (
             designspace_path if interpolate_binary_layout else None)
