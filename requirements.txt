@@ -6,7 +6,7 @@ ufoLib==2.0.0
 compreffor==0.4.1
 
 # direct dependencies
-git+https://github.com/fonttools/fonttools.git@ea958e72e41a1f9a497df02beae59af79e24fa5b
+git+https://github.com/fonttools/fonttools.git@904b1c5942c1d2a8f6175067851ae8273b7e80a6
 git+https://github.com/googlei18n/cu2qu.git@ab3c0f82e60de746bafd2e3a9fab3a176840c7f9
 git+https://github.com/googlei18n/glyphsLib.git@ee916ba6162396ef4a3ae68b5ea0b7be5450a0c9
 git+https://github.com/googlei18n/ufo2ft.git@c8826564103f0cf3c57cdd51e453e765528d12ed
