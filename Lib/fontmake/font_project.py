@@ -189,6 +189,25 @@ class FontProject:
                             conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
+    def build_variable_font(self, designspace_path):
+        """Build OpenType variable font from masters in a designspace."""
+
+        outfile = os.path.splitext(designspace_path)[0] + '-GX.ttf'
+        self.info('Building variable font ' + outfile)
+
+        master_locations, _ = self._designspace_locations(designspace_path)
+        ufo_paths = master_locations.keys()
+        ufodir = os.path.dirname(ufo_paths[0])
+        assert all(p.startswith(ufodir) for p in ufo_paths)
+        ttfdir = self._output_dir('ttf', interpolatable=True)
+
+        if ufodir:
+            finder = lambda s: s.replace(ufodir, ttfdir).replace('.ufo', '.ttf')
+        else:
+            finder = lambda s: os.path.join(ttfdir, s).replace('.ufo', '.ttf')
+        font, _, _ = varLib.build(designspace_path, finder)
+        font.save(outfile)
+
     @timer()
     def save_otfs(
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
@@ -438,7 +457,7 @@ class FontProject:
         if 'variable' in output:
             if designspace_path is None:
                 raise TypeError('Need designspace to build variable font.')
-            varLib.main((designspace_path,))
+            self.build_variable_font(designspace_path)
 
     def _font_name(self, ufo):
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
