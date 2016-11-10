@@ -75,6 +75,7 @@ class FontProject:
     def __init__(self, timing=False, verbose='INFO'):
         logging.basicConfig(level=getattr(logging, verbose.upper()))
         self.logger = logging.getLogger('fontmake')
+        logging.getLogger('fontTools.subset').setLevel(logging.WARNING)
         if timing:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
