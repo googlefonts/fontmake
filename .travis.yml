@@ -11,10 +11,6 @@ install:
   - pip install --upgrade pip setuptools
   - pip install -r requirements.txt
   - python setup.py install
-  # for fontdiff
-  - wget https://github.com/googlei18n/fontdiff/releases/download/v0.1.1/fontdiff-linux.zip
-  - unzip fontdiff-linux.zip
-  - mv fontdiff-linux/fontdiff test/
 
 script:
   - cd test && ./run.sh
