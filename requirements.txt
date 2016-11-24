@@ -10,6 +10,6 @@ git+https://github.com/fonttools/fonttools.git@904b1c5942c1d2a8f6175067851ae8273
 git+https://github.com/googlei18n/cu2qu.git@ab3c0f82e60de746bafd2e3a9fab3a176840c7f9
 git+https://github.com/googlei18n/glyphsLib.git@b3797cbdd1a528335e1661cd1abba21503906ead
 git+https://github.com/googlei18n/ufo2ft.git@dcfe137c380c2cc6b9505fada4aa0346ffde3534
-git+https://github.com/LettError/MutatorMath.git@652b075cc1cbc0b96ad6025906970e13bc77264e
+git+https://github.com/LettError/MutatorMath.git@9d194c020e6f5b2203dd3bbc92782ec09832304f
 git+https://github.com/typesupply/defcon.git@a70a27b7607a92e8b9d7181e6c58061547d19942
 booleanOperations==0.6.2
