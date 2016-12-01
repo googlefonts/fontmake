@@ -19,82 +19,90 @@ from fontmake.font_project import FontProject
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('-g', '--glyphs-path')
-    parser.add_argument('-u', '--ufo-paths', nargs='+')
-    parser.add_argument('-m', '--mm-designspace')
-    parser.add_argument(
+    inputGroup = parser.add_argument_group(title='Input arguments')
+    inputGroup.add_argument('-g', '--glyphs-path',
+        help='Path to .glyphs source file')
+    inputGroup.add_argument('-u', '--ufo-paths', nargs='+',
+        help='Paths to UFO files, should be in "master_ufo/" subfolder')
+    inputGroup.add_argument('-m', '--mm-designspace',
+        help='Path to .designspace file while the UFOs should be in "master_ufo/" subfolder')
+
+    outputGroup = parser.add_argument_group(title='Output arguments')
+    outputGroup.add_argument(
         '-o', '--output', nargs='+', default=('otf', 'ttf'),
         choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
-
-    parser.add_argument(
+    outputGroup.add_argument(
         '-i', '--interpolate', action='store_true',
         help='Interpolate masters (for Glyphs or MutatorMath sources only)')
-    parser.add_argument(
+    outputGroup.add_argument(
         '-M', '--masters-as-instances', action='store_true',
         help='Output masters as instances')
-    parser.add_argument(
+    outputGroup.add_argument(
         '--family-name',
         help='Family name to use for masters, and to filter output instances')
 
-    parser.add_argument(
-        '--mti-source')
-    parser.add_argument(
-        '--interpolate-binary-layout', action='store_true',
-        help='Interpolate layout tables from compiled master binaries. '
-             'Requires Glyphs or MutatorMath source.')
-    parser.add_argument(
-        '--use-afdko', action='store_true', 
-        help='Use makeOTF instead of feaLib to compile features.')
-
-    parser.add_argument(
-        '-a', '--autohint', nargs='?', const='',
-        help='Run ttfautohint. Can provide arguments, quoted')
-    parser.add_argument(
+    contourGroup = parser.add_argument_group(title='Handling of contours')
+    contourGroup.add_argument(
+        '--keep-overlaps', dest='remove_overlaps', action='store_false',
+        help='Do not remove any overlap.')
+    contourGroup.add_argument(
         '--keep-direction', dest='reverse_direction', action='store_false',
         help='Do not reverse contour direction when output is ttf or '
              'ttf-interpolatable')
-    parser.add_argument(
-        '--keep-overlaps', dest='remove_overlaps', action='store_false',
-        help='Do not remove any overlap.')
-
-    group1 = parser.add_mutually_exclusive_group(required=False)
-    group1.add_argument(
-        '--production-names', dest='use_production_names', action='store_true',
-        help='Rename glyphs with production names if available otherwise use '
-             'uninames.')
-    group1.add_argument(
-        '--no-production-names', dest='use_production_names',
-        action='store_false')
-
-    group2 = parser.add_mutually_exclusive_group(required=False)
-    group2.add_argument(
-        '--subset', dest='subset', action='store_true',
-        help='Subset font using export flags set by glyphsLib')
-    group2.add_argument(
-        '--no-subset', dest='subset', action='store_false')
-
-    group3 = parser.add_mutually_exclusive_group(required=False)
-    group3.add_argument(
-        '-s', '--subroutinize', action='store_true',
-        help='Optimize CFF table using compreffor (default)')
-    group3.add_argument(
-        '-S', '--no-subroutinize', dest='subroutinize', action='store_false')
-    parser.add_argument(
+    contourGroup.add_argument(
         '-e', '--conversion-error', type=float, default=None, metavar='ERROR',
         help='Maximum approximation error for cubic to quadratic conversion '
              'measured in EM')
-    parser.add_argument(
+    contourGroup.add_argument(
+        '-a', '--autohint', nargs='?', const='',
+        help='Run ttfautohint. Can provide arguments, quoted')
+
+    layoutGroup = parser.add_argument_group(title='Handling of OpenType Layout')
+    layoutGroup.add_argument(
+        '--interpolate-binary-layout', action='store_true',
+        help='Interpolate layout tables from compiled master binaries. '
+             'Requires Glyphs or MutatorMath source.')
+    layoutGroup.add_argument(
+        '--use-afdko', action='store_true', 
+        help='Use makeOTF instead of feaLib to compile FEA.')
+    layoutGroup.add_argument('--mti-source',
+        help='Path to mtiLib .txt feature definitions (use instead of FEA)')
+    layoutGroup.add_argument(
         '--use-kern-writer', dest='kern_writer', action='store', default=None,
         help='Use custom module with KernFeatureWriter Python class.')
-    parser.add_argument(
+    layoutGroup.add_argument(
         '--use-mark-writer', dest='mark_writer', action='store', default=None,
         help='Use custom module with MarkFeatureWriter Python class.')
+
+    glyphnamesGroup = parser.add_mutually_exclusive_group(required=False)
+    glyphnamesGroup.add_argument(
+        '--production-names', dest='use_production_names', action='store_true',
+        help='Rename glyphs with production names if available otherwise use '
+             'uninames.')
+    glyphnamesGroup.add_argument(
+        '--no-production-names', dest='use_production_names',
+        action='store_false')
+
+    subsetGroup = parser.add_mutually_exclusive_group(required=False)
+    subsetGroup.add_argument(
+        '--subset', dest='subset', action='store_true',
+        help='Subset font using export flags set by glyphsLib')
+    subsetGroup.add_argument(
+        '--no-subset', dest='subset', action='store_false')
+
+    subroutinizeGroup = parser.add_mutually_exclusive_group(required=False)
+    subroutinizeGroup.add_argument(
+        '-s', '--subroutinize', action='store_true',
+        help='Optimize CFF table using compreffor (default)')
+    subroutinizeGroup.add_argument(
+        '-S', '--no-subroutinize', dest='subroutinize', action='store_false')
 
     parser.set_defaults(use_production_names=None, subset=None,
                         subroutinize=True)
 
-    parser.add_argument('--timing', action='store_true')
-    parser.add_argument('--verbose', default='INFO')
+    devGroup = parser.add_argument_group(title='Developer arguments')
+    devGroup.add_argument('--timing', action='store_true')
+    devGroup.add_argument('--verbose', default='INFO')
     args = vars(parser.parse_args())
 
     project = FontProject(timing=args.pop('timing'),
