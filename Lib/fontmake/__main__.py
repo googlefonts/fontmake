@@ -43,7 +43,8 @@ def main():
         help='Interpolate layout tables from compiled master binaries. '
              'Requires Glyphs or MutatorMath source.')
     parser.add_argument(
-        '--use-afdko', action='store_true')
+        '--use-afdko', action='store_true', 
+        help='Use makeOTF instead of feaLib to compile features.')
 
     parser.add_argument(
         '-a', '--autohint', nargs='?', const='',
@@ -82,6 +83,12 @@ def main():
         '-e', '--conversion-error', type=float, default=None, metavar='ERROR',
         help='Maximum approximation error for cubic to quadratic conversion '
              'measured in EM')
+    parser.add_argument(
+        '--use-kern-writer', dest='kern_writer', action='store', default=None,
+        help='Use custom module with KernFeatureWriter Python class.')
+    parser.add_argument(
+        '--use-mark-writer', dest='mark_writer', action='store', default=None,
+        help='Use custom module with MarkFeatureWriter Python class.')
 
     parser.set_defaults(use_production_names=None, subset=None,
                         subroutinize=True)
