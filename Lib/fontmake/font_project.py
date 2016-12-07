@@ -216,7 +216,8 @@ class FontProject:
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
             mti_paths=None, use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
-            interpolate_layout_from=None, kern_writer=None, mark_writer=None):
+            interpolate_layout_from=None, kern_writer_class=None,
+            mark_writer_class=None):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -237,37 +238,23 @@ class FontProject:
             subroutinize: If True, subroutinize CFF outlines in output.
             interpolate_layout_from: A designspace path to give varLib for
                 interpolating layout tables to use in output.
-            kern_writer: name of a Python module containing a KernFeatureWriter
-                class, overrides the use of that built into ufo2ft
-            mark_writer: name of a Python module containing a MarkFeatureWriter
-                class, overrides the use of that built into ufo2ft 
+            kern_writer_class: Class overriding ufo2ft's KernFeatureWriter.
+            mark_writer_class: Class overriding ufo2ft's MarkFeatureWriter.
         """
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
         otf_compiler = compileTTF if ttf else compileOTF
 
-        if kern_writer: 
-            try: 
-                import importlib
-                kernWriterMod = importlib.import_module(kern_writer)
-                kernWriter = kernWriterMod.KernFeatureWriter
-            except ImportError: 
-                kernWriter = KernFeatureWriter
-                self.logger.warning("Cannot use custom kern_writer, using default")
-        else: 
-            kernWriter = KernFeatureWriter
+        if kern_writer_class is None:
+            kern_writer_class = KernFeatureWriter
+        else:
+            self.info("Using %r" % kern_writer_class.__module__)
 
-        if mark_writer: 
-            try: 
-                import importlib
-                markWriterMod = importlib.import_module(mark_writer)
-                markWriter = markWriterMod.MarkFeatureWriter
-            except ImportError: 
-                markWriter = MarkFeatureWriter
-                self.logger.warning("Cannot use custom mark_writer, using default")
-        else: 
-            markWriter = MarkFeatureWriter
+        if mark_writer_class is None:
+            mark_writer_class = MarkFeatureWriter
+        else:
+            self.info("Using %r" % mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
             master_locations, instance_locations = self._designspace_locations(
@@ -287,7 +274,7 @@ class FontProject:
             otf = otf_compiler(
                 ufo, featureCompilerClass=fea_compiler,
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
-                kernWriter=kernWriter, markWriter=markWriter,
+                kernWriter=kern_writer_class, markWriter=mark_writer_class,
                 glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names,
                 convertCubics=False, optimizeCff=subroutinize)
