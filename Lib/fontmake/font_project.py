@@ -465,6 +465,8 @@ class FontProject:
             self.build_variable_font(designspace_path)
 
     def _font_name(self, ufo):
+        """Generate a postscript-style font name."""
+
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
 
