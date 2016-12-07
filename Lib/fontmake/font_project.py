@@ -173,6 +173,9 @@ class FontProject:
 
         logger.info('Building TTFs')
 
+        # decompose glyphs with contours, since they're decomposed anyways when
+        # compiled into glyf tables
+        self.decompose_glyphs(ufos, glyph_filter=lambda g: g)
         if remove_overlaps:
             self.remove_overlaps(ufos)
         self.convert_curves(ufos, reverse_direction=reverse_direction,
