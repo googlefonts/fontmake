@@ -91,7 +91,7 @@ class FontProject:
             family_name=family_name)
 
     @timer()
-    def remove_overlaps(self, ufos):
+    def remove_overlaps(self, ufos, glyph_filter=lambda g: True):
         """Remove overlaps in UFOs' glyphs' contours."""
         from booleanOperations import union, BooleanOperationsError
 
@@ -99,6 +99,8 @@ class FontProject:
             font_name = self._font_name(ufo)
             logger.info('Removing overlaps for ' + font_name)
             for glyph in ufo:
+                if not glyph_filter(glyph):
+                    continue
                 contours = list(glyph)
                 glyph.clearContours()
                 try:
@@ -109,12 +111,14 @@ class FontProject:
                     raise
 
     @timer()
-    def decompose_glyphs(self, ufos):
+    def decompose_glyphs(self, ufos, glyph_filter=lambda g: True):
         """Move components of UFOs' glyphs to their outlines."""
 
         for ufo in ufos:
             logger.info('Decomposing glyphs for ' + self._font_name(ufo))
             for glyph in ufo:
+                if not glyph_filter(glyph):
+                    continue
                 self._deep_copy_contours(ufo, glyph, glyph, Transform())
                 glyph.clearComponents()
 
