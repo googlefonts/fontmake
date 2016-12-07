@@ -38,19 +38,35 @@ class PyClassType(object):
                 raise ArgumentTypeError(e)
 
 
+def exclude_args(parser, args, excluded_args, source_name):
+    msg = '"%s" argument only available for %s source'
+    for excluded in excluded_args:
+        if args[excluded]:
+            parser.error(msg % (excluded, source_name))
+        del args[excluded]
+
+
 def main():
     parser = ArgumentParser()
-    inputGroup = parser.add_argument_group(title='Input arguments')
-    inputGroup.add_argument('-g', '--glyphs-path',
+    inputGroup = parser.add_argument_group(
+        title='Input arguments',
+        description='The following arguments are mutually exclusive.')
+    xInputGroup = inputGroup.add_mutually_exclusive_group(required=True)
+    xInputGroup.add_argument(
+        '-g', '--glyphs-path', metavar='GLYPHS',
         help='Path to .glyphs source file')
-    inputGroup.add_argument('-u', '--ufo-paths', nargs='+',
-        help='Paths to UFO files, should be in "master_ufo/" subfolder')
-    inputGroup.add_argument('-m', '--mm-designspace',
-        help='Path to .designspace file while the UFOs should be in "master_ufo/" subfolder')
+    xInputGroup.add_argument(
+        '-u', '--ufo-paths', nargs='+', metavar='UFO',
+        help='One or more paths to UFO files')
+    xInputGroup.add_argument(
+        '-m', '--mm-designspace', metavar='DESIGNSPACE',
+        help='Path to .designspace file')
 
     outputGroup = parser.add_argument_group(title='Output arguments')
     outputGroup.add_argument(
-        '-o', '--output', nargs='+', default=('otf', 'ttf'),
+        '-o', '--output', nargs='+', default=('otf', 'ttf'), metavar="FORMAT",
+        help='Output font formats. Choose between: %(choices)s. '
+             'Default: otf, ttf',
         choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
     outputGroup.add_argument(
         '-i', '--interpolate', action='store_true',
@@ -86,7 +102,8 @@ def main():
     layoutGroup.add_argument(
         '--use-afdko', action='store_true',
         help='Use makeOTF instead of feaLib to compile FEA.')
-    layoutGroup.add_argument('--mti-source',
+    layoutGroup.add_argument(
+        '--mti-source',
         help='Path to mtiLib .txt feature definitions (use instead of FEA)')
     layoutGroup.add_argument(
         '--kern-writer-module', metavar="MODULE", dest='kern_writer_class',
@@ -123,9 +140,15 @@ def main():
     parser.set_defaults(use_production_names=None, subset=None,
                         subroutinize=True)
 
-    devGroup = parser.add_argument_group(title='Developer arguments')
-    devGroup.add_argument('--timing', action='store_true')
-    devGroup.add_argument('--verbose', default='INFO')
+    logGroup = parser.add_argument_group(title='Logging arguments')
+    logGroup.add_argument(
+        '--timing', action='store_true',
+        help="Print the elapsed time for each steps")
+    logGroup.add_argument(
+        '--verbose', default='INFO', metavar='LEVEL',
+        choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
+        help='Configure the logger verbosity level. Choose between: '
+             '%(choices)s. Default: INFO')
     args = vars(parser.parse_args())
 
     project = FontProject(timing=args.pop('timing'),
@@ -134,17 +157,6 @@ def main():
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
-    if sum(1 for p in [glyphs_path, ufo_paths, designspace_path] if p) != 1:
-        parser.error('Exactly one source type required (Glyphs, UFO, or '
-                     'MutatorMath).')
-
-    def exclude_args(parser, args, excluded_args, source_name):
-        msg = '"%s" argument only available for %s source'
-        for excluded in excluded_args:
-            if args[excluded]:
-                parser.error(msg % (excluded, source_name))
-            del args[excluded]
-
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
         return
