@@ -13,8 +13,29 @@
 # limitations under the License.
 
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
 from fontmake.font_project import FontProject
+
+
+class PyClassType(object):
+    """ Callable object which returns a Python class defined in named module.
+    It can be passed as type= argument to ArgumentParser.add_argument().
+    """
+
+    def __init__(self, class_name):
+        self.class_name = class_name
+
+    def __call__(self, module_name):
+        try:
+            import importlib
+            mod = importlib.import_module(module_name)
+        except ImportError:
+            raise ArgumentTypeError("No module named %r" % module_name)
+        else:
+            try:
+                return getattr(mod, self.class_name)
+            except AttributeError as e:
+                raise ArgumentTypeError(e)
 
 
 def main():
@@ -63,16 +84,18 @@ def main():
         help='Interpolate layout tables from compiled master binaries. '
              'Requires Glyphs or MutatorMath source.')
     layoutGroup.add_argument(
-        '--use-afdko', action='store_true', 
+        '--use-afdko', action='store_true',
         help='Use makeOTF instead of feaLib to compile FEA.')
     layoutGroup.add_argument('--mti-source',
         help='Path to mtiLib .txt feature definitions (use instead of FEA)')
     layoutGroup.add_argument(
-        '--use-kern-writer', dest='kern_writer', action='store', default=None,
-        help='Use custom module with KernFeatureWriter Python class.')
+        '--kern-writer-module', metavar="MODULE", dest='kern_writer_class',
+        type=PyClassType('KernFeatureWriter'),
+        help='Module containing a custom `KernFeatureWriter` class.')
     layoutGroup.add_argument(
-        '--use-mark-writer', dest='mark_writer', action='store', default=None,
-        help='Use custom module with MarkFeatureWriter Python class.')
+        '--mark-writer-module', metavar="MODULE", dest='mark_writer_class',
+        type=PyClassType('MarkFeatureWriter'),
+        help='Module containing a custom `MarkFeatureWriter` class.')
 
     glyphnamesGroup = parser.add_mutually_exclusive_group(required=False)
     glyphnamesGroup.add_argument(
