@@ -46,7 +46,7 @@ def exclude_args(parser, args, excluded_args, source_name):
         del args[excluded]
 
 
-def main():
+def main(args=None):
     parser = ArgumentParser()
     inputGroup = parser.add_argument_group(
         title='Input arguments',
@@ -149,7 +149,7 @@ def main():
         choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
         help='Configure the logger verbosity level. Choose between: '
              '%(choices)s. Default: INFO')
-    args = vars(parser.parse_args())
+    args = vars(parser.parse_args(args))
 
     project = FontProject(timing=args.pop('timing'),
                           verbose=args.pop('verbose'))
