@@ -117,7 +117,7 @@ class FontProject:
         for ufo in ufos:
             logger.info('Decomposing glyphs for ' + self._font_name(ufo))
             for glyph in ufo:
-                if not glyph_filter(glyph):
+                if not glyph.components or not glyph_filter(glyph):
                     continue
                 self._deep_copy_contours(ufo, glyph, glyph, Transform())
                 glyph.clearComponents()
