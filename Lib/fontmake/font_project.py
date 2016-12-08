@@ -119,7 +119,7 @@ class FontProject:
         for ufo in ufos:
             logger.info('Decomposing glyphs for ' + self._font_name(ufo))
             for glyph in ufo:
-                if not glyph_filter(glyph):
+                if not glyph.components or not glyph_filter(glyph):
                     continue
                 self._deep_copy_contours(ufo, glyph, glyph, Transform())
                 glyph.clearComponents()
@@ -175,8 +175,10 @@ class FontProject:
 
         logger.info('Building TTFs')
 
-        # decompose glyphs with contours, since they're decomposed anyways when
-        # compiled into glyf tables
+        # decompose glyphs with mixed contours and components, since they're
+        # decomposed anyways when compiled into glyf tables.
+        # NOTE: bool(glyph) is True when len(glyph) != 0, i.e. if the glyph
+        # instance has any contours.
         self.decompose_glyphs(ufos, glyph_filter=lambda g: g)
         if remove_overlaps:
             self.remove_overlaps(ufos)
