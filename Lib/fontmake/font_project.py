@@ -38,6 +38,8 @@ from fontTools import varLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.makeotfParts import FeatureOTFCompiler
+from ufo2ft.kernFeatureWriter import KernFeatureWriter
+from ufo2ft.markFeatureWriter import MarkFeatureWriter
 
 from fontmake.ttfautohint import ttfautohint
 
@@ -218,7 +220,8 @@ class FontProject:
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
             mti_paths=None, use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
-            interpolate_layout_from=None):
+            interpolate_layout_from=None, kern_writer_class=None,
+            mark_writer_class=None):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -239,11 +242,23 @@ class FontProject:
             subroutinize: If True, subroutinize CFF outlines in output.
             interpolate_layout_from: A designspace path to give varLib for
                 interpolating layout tables to use in output.
+            kern_writer_class: Class overriding ufo2ft's KernFeatureWriter.
+            mark_writer_class: Class overriding ufo2ft's MarkFeatureWriter.
         """
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
         otf_compiler = compileTTF if ttf else compileOTF
+
+        if kern_writer_class is None:
+            kern_writer_class = KernFeatureWriter
+        else:
+            self.info("Using %r" % kern_writer_class.__module__)
+
+        if mark_writer_class is None:
+            mark_writer_class = MarkFeatureWriter
+        else:
+            self.info("Using %r" % mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
             master_locations, instance_locations = self._designspace_locations(
@@ -263,6 +278,7 @@ class FontProject:
             otf = otf_compiler(
                 ufo, featureCompilerClass=fea_compiler,
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
+                kernWriter=kern_writer_class, markWriter=mark_writer_class,
                 glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names,
                 convertCubics=False, optimizeCff=subroutinize)
