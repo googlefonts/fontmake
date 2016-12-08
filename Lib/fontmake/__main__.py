@@ -26,16 +26,24 @@ class PyClassType(object):
         self.class_name = class_name
 
     def __call__(self, module_name):
+        import importlib
+        import inspect
+
         try:
-            import importlib
             mod = importlib.import_module(module_name)
         except ImportError:
             raise ArgumentTypeError("No module named %r" % module_name)
-        else:
-            try:
-                return getattr(mod, self.class_name)
-            except AttributeError as e:
-                raise ArgumentTypeError(e)
+
+        try:
+            klass = getattr(mod, self.class_name)
+        except AttributeError as e:
+            raise ArgumentTypeError("Module %r has no attribute %r"
+                                    % (module_name, self.class_name))
+
+        if not inspect.isclass(klass):
+            raise ArgumentTypeError("%r is not a class: %r"
+                                    % (self.class_name, type(klass)))
+        return klass
 
 
 def exclude_args(parser, args, excluded_args, source_name):
