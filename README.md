@@ -2,80 +2,54 @@
 
 # fontmake
 
-This library provides a wrapper for several other Python libraries which
-together compile fonts from various sources (.glyphs, .ufo) into binaries (.otf,
-.ttf).
+This library provides a wrapper for several other Python libraries which together compile fonts from various sources (.glyphs, .ufo) into binaries (.otf, .ttf)
 
 ### Initial Installation
 
 First, create new virtual environment. 
 This is optional, but **recommended**:
 
-```bash
-python -m pip install --user virtualenv  # install virtualenv if not available
-python -m virtualenv env  # create environment named 'env' in current folder
-source env/bin/activate  # activate the environment (run `deactivate` to exit)
-```
-
-Clone this repo, and enter it:
+To install from source:
 
 ```bash
-git clone git@github.com:googlei18n/fontmake.git;
+python -m pip install --user virtualenv;  # install virtualenv if not available
+python -m virtualenv env;  # create environment named 'env' in current folder
+source env/bin/activate;  # activate the environment (run `deactivate` to exit)
+git clone git@github.com:googlei18n/fontmake.git; # download the repo
 cd fontmake;
+pip install -r requirements.txt; # Install fontmake's dependencies:
+pip install -e . ; # Install fontmake in "editable" mode, useful for developers
 ```
 
-Install fontmake's dependencies:
+Alternativelu, to install from the latest release:
 
-```bash
-pip install -r requirements.txt
-```
+    pip install -U fontmake
 
-Install fontmake itself:
-
-```bash
-pip install -e .  # `-e` is for "editable" mode, only required for developers
-```
-
-### Run
+### Usage
 
 After installation, fontmake can be run end-to-end as a module:
 
 ```bash
 source env/bin/activate # activate the environment (run `deactivate` to exit)
-# outputs master binaries
-fontmake -g MyFont.glyphs
+fontmake -g MyFont.glyphs # outputs binary font files for masters only
+fontmake -h # see options for specifying different types of input and output
 ```
 
-Use `-h` to see options for specifying different types of input and output.
-
-You can also use fontmake to run intermediate steps in the build process, via
-methods of the `fontmake.font_project.FontProject` class.
+You can also use fontmake to run intermediate steps in the build process, via methods of the `fontmake.font_project.FontProject` class.
 
 ### Updating 
 
 To update the program the process is similar to initial installation, but there are a few minor differences. 
 
-Enter the virtual environment created for initial installation:
+To upgrade an installation from source:
 
 ```bash
 source env/bin/activate  # activate the environment (run `deactivate` to exit)
-```
-
-Enter this repo, and pull this repo:
-
-```bash
 cd fontmake;
-git clone git@github.com:googlei18n/fontmake.git;
+git pull;
+pip install --upgrade -r requirements.txt; # Upgrade fontmake dependencies
 ```
 
-Reinstall fontmake's dependencies to their latest versions:
+To upgrade an installation from release package:
 
-```bash
-pip install -r requirements.txt
-```
-
-Reinstall fontmake itself:
-
-```bash
-pip install -e .  # `-e` is for "editable" mode, only required for developers
-```
+    pip install --upgrade fontmake
