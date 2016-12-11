@@ -255,12 +255,12 @@ class FontProject:
         if kern_writer_class is None:
             kern_writer_class = KernFeatureWriter
         else:
-            self.info("Using %r" % kern_writer_class.__module__)
+            logger.info("Using %r", kern_writer_class.__module__)
 
         if mark_writer_class is None:
             mark_writer_class = MarkFeatureWriter
         else:
-            self.info("Using %r" % mark_writer_class.__module__)
+            logger.info("Using %r", mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
             master_locations, instance_locations = self._designspace_locations(
