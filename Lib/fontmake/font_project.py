@@ -50,7 +50,7 @@ PUBLIC_PREFIX = 'public.'
 GLYPHS_PREFIX = 'com.schriftgestaltung.'
 
 
-class FontProject:
+class FontProject(object):
     """Provides methods for building fonts."""
 
     @staticmethod
