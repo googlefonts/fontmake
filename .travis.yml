@@ -9,3 +9,27 @@ install:
 
 script:
   - cd test && ./run.sh
+
+deploy:
+  # deploy sdist and wheel packages to PyPI on tags
+  - provider: pypi
+    server: https://upload.pypi.org/legacy/
+    on:
+      repo: googlei18n/fontmake
+      tags: true
+      all_branches: true
+      python: 2.7
+    user: anthrotype
+    password:
+      secure: PPf1+LkeIOnuY0rQ4pEmNYphl5J93u26EHf8KrNciWAaUlXKopde43bfXI1nkKItYgedq5pVcdOeUrct+WNtbWFSmqDAedBKKgjWDwnvcUd/Hwe6uwFN/uwwk+LXooAGQs4az/kbdKb3H6TWszVArzsl+R7IWCDHwOkRkrBc293Lf3bl/bi8nBuAIijO8CJU8/LYTncs9k/sbo9wxu5usRlYr3D+IBse2vmT23vNYNMSEyd0ISWThdTjD79nDjuo/i05D20HyIUeOcz9HN5s/PhizZRqoN85LHtCV1QrHZ+JjAzy9TXFB1rPdnAwSaTROdipPLw7unkN4kDcLrL8ktaQAmg3ixUIlG7NDZKH9lM0RLF1NK1lB/mUpHT80gFgPgyLjHAEODynbW6VLbJCe84ux1gjiQWqks/PZb99IERyuGSJhdU7q9slB5DBiXdIgCh12Eb/wmJfPNgkDBXPb8tCd7A9AR0a+wTnJgp+RccotBn6CRwyt26bsAt3eE3LMM0quhFNARWkDySCq+ZAc4yIlc9lXhjWnqugZz/TBS5xth7+P1GY4N2Dm7m/gGjyCTGerWkNWoQHsPcWufhbmmsY6KN4LWMi4rzK40DTNgjgrSY+nBfYjLq2zKrr3yfuiFv07YK2NBv1kwXFa8U71y9qWLkhHQNBCj4J54dopuM=
+    distributions: sdist bdist_wheel
+    skip_upload_docs: true
+  # also create a Github Release with the current tag
+  - provider: releases
+    api_key:
+      secure: vfsMIz6Un0QZbS6uisUEUVO4db6b74COS5cu7ipmE13EGY0KtcIGQqgd+J71KxY7yQlnk/cm5Tp9Aei3L1UPEK6G4uC65kVFjq4hJRjOzm1QT6H/wyw6DpC5qUcr/MEZDQaPouVqvK2A30pNmMK+4Kohp61EgeMCgy+gcaTfbMao8o5Ao3FJvSrl31VWZEd/2pwFC9zi0kRmf2QtOVN+nnlCuU22GC4d78HmvjUF70p9XmgL+H73vjum4djd1O0kdw9gVYOolnRDlH8bR39jztKemOz6DnWDoTyB46RZ31Jyt5tsEdLOwWrO+fL2fDKgyg2716F+RaM9bqvM09BRbxHlO2ws+Mmn4g0kZs2DnBmdUac4V4tW5COQ0Ww3W4QaFRkR/caqjISlGujxifXJD/fisqwE+pnLUMQEcel39/UslgAWCtrPH7Bp0dDlopaEnugvQ8AX9hqe9AYaS9ySowcr6UfCWfjalXTbrCcTpH+Sj9r3JjEw1AZBecySwOUZCxZBejltAVdNsN8pnBbUR8oQN3ahLjIiUMDMxDCZnw8S2mQaUZoFqJiTz5SA9ED7yaciiehTLbW6M1cvTS/oqHFb+GGfn4D1CCF7HC9ML3oau82pHU6GcZqOj+zJr2v2YIJBf5cBDK54QBA8ERwNh+7Tq3IEhYQDX7HPtxsIvWI=
+    on:
+      repo: googlei18n/fontmake
+      tags: true
+      all_branches: true
+      python: 2.7
