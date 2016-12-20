@@ -14,6 +14,7 @@
 
 
 from argparse import ArgumentParser, ArgumentTypeError
+from fontmake import __version__
 from fontmake.font_project import FontProject
 
 
@@ -56,6 +57,7 @@ def exclude_args(parser, args, excluded_args, source_name):
 
 def main(args=None):
     parser = ArgumentParser()
+    parser.add_argument('--version', action='version', version=__version__)
     inputGroup = parser.add_argument_group(
         title='Input arguments',
         description='The following arguments are mutually exclusive.')
