@@ -1,0 +1,7 @@
+include README.rst
+include CONTRIBUTING.md
+include LICENSE
+
+include *requirements.txt
+
+recursive-include tests *.glyphs *.designspace *.plist
