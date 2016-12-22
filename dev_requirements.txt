@@ -13,3 +13,6 @@
 -e git+https://github.com/LettError/MutatorMath.git#egg=MutatorMath
 -e git+https://github.com/typemytype/booleanOperations.git#egg=booleanOperations
 -e git+https://github.com/typesupply/defcon.git#egg=defcon
+
+# install fontmake from source folder in "editable" mode
+-e .
