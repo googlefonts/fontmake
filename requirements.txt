@@ -3,5 +3,5 @@ cu2qu==1.1.1
 glyphsLib==1.2.0
 ufo2ft==0.3.1
 MutatorMath==2.0.0
-defcon==0.2.0
+defcon==0.2.1
 booleanOperations==0.6.4
