@@ -113,7 +113,7 @@ These can be used with the ``-r`` option to recreate a particular environment.
 
 There are two such requirements files in fontmake repository:
 
-- ``dev-requirements.txt``: contains the URLs of the git repositories for
+- ``dev_requirements.txt``: contains the URLs of the git repositories for
   all fontmake's dependencies.
 
 - ``requirements.txt``: contains the current released versions of the direct
