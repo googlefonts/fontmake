@@ -8,7 +8,7 @@ install:
   - pip install -r requirements.txt .
 
 script:
-  - cd test && ./run.sh
+  - (cd test && ./run.sh)
 
 deploy:
   # deploy sdist and wheel packages to PyPI on tags
