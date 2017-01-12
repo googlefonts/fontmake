@@ -22,7 +22,7 @@ function check_failure() {
     fi
 }
 
-for src in 'DesignspaceTest'; do
+for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd "${src}"
     fontmake -i -m "${src}.designspace"
     check_failure "${src} failed to build"
@@ -33,3 +33,6 @@ for src in 'GuidelineTest'; do
     fontmake -i -g "${src}.glyphs"
     check_failure "${src} failed to build"
 done
+
+python test_output.py
+check_failure 'fontmake output incorrect'
