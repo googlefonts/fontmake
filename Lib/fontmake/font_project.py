@@ -53,28 +53,6 @@ GLYPHS_PREFIX = 'com.schriftgestaltung.'
 class FontProject(object):
     """Provides methods for building fonts."""
 
-    @staticmethod
-    def preprocess(glyphs_path):
-        """Return Glyphs source with illegal glyph/class names changed."""
-
-        with open(glyphs_path, 'r', encoding='utf-8') as fp:
-            text = fp.read()
-        names = set(re.findall('\n(?:glyph)?name = "(.+-.+)";\n', text))
-
-        if names:
-            num_names = len(names)
-            printed_names = sorted(names)[:5]
-            if num_names > 5:
-                printed_names.append('...')
-            logger.warning('Found %s glyph names containing hyphens: %s' % (
-                num_names, ', '.join(printed_names)))
-            logger.warning('Replacing all hyphens with periods.')
-
-        for old_name in names:
-            new_name = old_name.replace('-', '.')
-            text = text.replace(old_name, new_name)
-        return text
-
     def __init__(self, timing=False, verbose='INFO'):
         logging.basicConfig(level=getattr(logging, verbose.upper()))
         logging.getLogger('fontTools.subset').setLevel(logging.WARNING)
@@ -348,7 +326,7 @@ class FontProject(object):
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, preprocess=True, family_name=None, **kwargs):
+            self, glyphs_path, family_name=None, **kwargs):
         """Run toolchain from Glyphs source.
 
         Args:
@@ -357,11 +335,6 @@ class FontProject(object):
             family_name: If provided, uses this family name in the output.
             kwargs: Arguments passed along to run_from_designspace.
         """
-
-        if preprocess:
-            logger.info('Checking Glyphs source for illegal glyph names')
-            glyphs_source = self.preprocess(glyphs_path)
-            glyphs_path = UnicodeIO(glyphs_source)
 
         logger.info('Building master UFOs and designspace from Glyphs source')
         _, designspace_path, instance_data = self.build_master_ufos(
