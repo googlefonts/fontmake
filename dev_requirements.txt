@@ -3,7 +3,7 @@
 -e git+https://github.com/unified-font-object/ufoLib.git#egg=ufoLib
 
 # for ufo2ft
--e git+https://github.com/behdad/fonttools.git#egg=fonttools
+-e git+https://github.com/fonttools/fonttools.git#egg=fonttools
 -e git+https://github.com/googlei18n/compreffor.git#egg=compreffor
 
 # direct dependencies
