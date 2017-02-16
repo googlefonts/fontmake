@@ -179,7 +179,7 @@ class FontProject(object):
     def build_variable_font(self, designspace_path):
         """Build OpenType variable font from masters in a designspace."""
 
-        outfile = os.path.splitext(designspace_path)[0] + '-GX.ttf'
+        outfile = os.path.splitext(designspace_path)[0] + '-VF.ttf'
         logger.info('Building variable font ' + outfile)
 
         master_locations, _ = self._designspace_locations(designspace_path)
