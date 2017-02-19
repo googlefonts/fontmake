@@ -22,7 +22,7 @@ with open('README.rst', 'r', encoding='utf-8') as f:
 
 setup(
     name="fontmake",
-    version="1.2.0",
+    version="1.2.1.dev0",
     description=("Compile fonts from sources (UFO, Glyphs) to binary "
                  "(OpenType, TrueType)."),
     long_description=long_description,
