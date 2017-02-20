@@ -1,4 +1,13 @@
+# Byte-compiled files
+*.pyc
+
+# Packaging
+*.egg
+*.egg-info/
+*.eggs
 build
 dist
-*.pyc
-*.egg-info/
+
+# Unit test
+.cache/
+.tox/
