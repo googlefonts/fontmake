@@ -183,7 +183,7 @@ class FontProject(object):
         logger.info('Building variable font ' + outfile)
 
         master_locations, _ = self._designspace_locations(designspace_path)
-        ufo_paths = master_locations.keys()
+        ufo_paths = list(master_locations.keys())
         ufodir = os.path.dirname(ufo_paths[0])
         assert all(p.startswith(ufodir) for p in ufo_paths)
         ttfdir = self._output_dir('ttf', interpolatable=True)
