@@ -485,7 +485,8 @@ class FontProject(object):
         """Map font filenames to their locations in a designspace."""
 
         maps = []
-        for location_list in varLib.designspace.load(designspace_path):
+        ds = varLib.designspace.load(designspace_path)
+        for location_list in (ds['sources'], ds['instances']):
             location_map = {}
             for loc in location_list:
                 abspath = os.path.normpath(os.path.join(
