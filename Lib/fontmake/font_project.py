@@ -29,7 +29,7 @@ from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
-from fontTools.misc.py23 import tobytes, UnicodeIO
+from fontTools.misc.py23 import tobytes, UnicodeIO, basestring
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
@@ -116,7 +116,7 @@ class FontProject(object):
             # if the transformation has a negative determinant, it will reverse
             # the contour direction of the component
             xx, xy, yx, yy = transformation[:4]
-            if xx * yy - xy * yx < 0:
+            if xx*yy - xy*yx < 0:
                 pen = ReverseContourPen(pen)
 
             component.draw(pen)
@@ -463,13 +463,7 @@ class FontProject(object):
             Returns ufo directly if ufo is a string. This case happens when
             generating variable font, where ufo stores the output font name.
         """
-        l = [str]
-        try:
-            # Python 3+ does not have unicode keyword.
-            l.append(unicode)
-        except NameError:
-            pass
-        if type(ufo) in l :
+        if isinstance(ufo, basestring) :
             return ufo
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
@@ -487,7 +481,7 @@ class FontProject(object):
             Return:
                 output directory string.
         """
-
+        # FIXME? Use user configurable destination folders.
         dir_prefix = 'instance_' if is_instance else 'master_'
         dir_suffix = '_interpolatable' if interpolatable else ''
         dir_suffix = dir_suffix + '_variable' if is_variable else dir_suffix
