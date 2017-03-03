@@ -463,8 +463,13 @@ class FontProject(object):
             Returns ufo directly if ufo is a string. This case happens when
             generating variable font, where ufo stores the output font name.
         """
-
-        if type(ufo) in [str, unicode] :
+        l = [str]
+        try:
+            # Python 3+ does not have unicode keyword.
+            l.append(unicode)
+        except NameError:
+            pass
+        if type(ufo) in l :
             return ufo
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
