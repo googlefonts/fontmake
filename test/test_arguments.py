@@ -14,6 +14,7 @@
 
 import os
 import unittest
+# unittest.mock is only available for python 3+
 from mock import patch
 import mock
 from fontTools.ttLib import TTFont
