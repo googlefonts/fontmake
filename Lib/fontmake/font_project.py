@@ -254,7 +254,6 @@ class FontProject(object):
             logger.info('Saving %s for %s' % (ext.upper(), name))
 
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
-
             if use_production_names is None:
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")

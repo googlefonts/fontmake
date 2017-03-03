@@ -43,6 +43,7 @@ setup(
         "MutatorMath>=2.0.2",
         "defcon>=0.2.1",
         "booleanOperations>=0.6.4",
+        "mock>=2.0.0",
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
