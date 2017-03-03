@@ -18,7 +18,6 @@ import unittest
 
 from fontTools.ttLib import TTFont
 
-
 class TestAvarOutput(unittest.TestCase):
     def _get_font(self):
         return TTFont(os.path.join(

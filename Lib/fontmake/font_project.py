@@ -176,11 +176,11 @@ class FontProject(object):
                             conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
-    def build_variable_font(self, designspace_path):
+    def build_variable_font(self, designspace_path, is_instance=False, interpolatable=False, **kwargs):
         """Build OpenType variable font from masters in a designspace."""
 
-        outfile = os.path.splitext(designspace_path)[0] + '-VF.ttf'
-        logger.info('Building variable font ' + outfile)
+        outfile = os.path.splitext(os.path.basename(designspace_path))[0] + '-VF'
+        logger.info('Building variable font ' + outfile + '.ttf')
 
         master_locations, _ = self._designspace_locations(designspace_path)
         ufo_paths = list(master_locations.keys())
@@ -193,6 +193,8 @@ class FontProject(object):
         else:
             finder = lambda s: os.path.join(ttfdir, s).replace('.ufo', '.ttf')
         font, _, _ = varLib.build(designspace_path, finder)
+
+        outfile = self._output_path(outfile, 'ttf', is_instance, interpolatable, is_variable=True)
         font.save(outfile)
 
     @timer()
@@ -252,6 +254,7 @@ class FontProject(object):
             logger.info('Saving %s for %s' % (ext.upper(), name))
 
             otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
+
             if use_production_names is None:
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
@@ -453,30 +456,47 @@ class FontProject(object):
         if 'variable' in output:
             if designspace_path is None:
                 raise TypeError('Need designspace to build variable font.')
-            self.build_variable_font(designspace_path)
+            self.build_variable_font(designspace_path, **kwargs)
 
     def _font_name(self, ufo):
-        """Generate a postscript-style font name."""
+        """Generate a postscript-style font name.
 
+            Returns ufo directly if ufo is a string. This case happens when
+            generating variable font, where ufo stores the output font name.
+        """
+
+        if type(ufo) in [str, unicode] :
+            return ufo
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
 
     def _output_dir(self, ext, is_instance=False, interpolatable=False,
-                    autohinted=False):
-        """Generate an output directory."""
+                    autohinted=False, is_variable=False):
+        """Generate an output directory.
+
+            Args:
+                ext: extension string.
+                is_instance: The output is instance font or not.
+                interpolatable: The output is interpolatable or not.
+                autohinted: The output is autohinted or not.
+                is_variable: The output is variable font or not.
+            Return:
+                output directory string.
+        """
 
         dir_prefix = 'instance_' if is_instance else 'master_'
         dir_suffix = '_interpolatable' if interpolatable else ''
+        dir_suffix = dir_suffix + '_variable' if is_variable else dir_suffix
         output_dir = dir_prefix + ext + dir_suffix
         if autohinted:
             output_dir = os.path.join('autohinted', output_dir)
         return output_dir
 
     def _output_path(self, ufo, ext, is_instance=False, interpolatable=False,
-                     autohinted=False):
+                     autohinted=False, is_variable=False):
         """Generate output path for a font file with given extension."""
 
-        out_dir = self._output_dir(ext, is_instance, interpolatable, autohinted)
+        out_dir = self._output_dir(ext, is_instance, interpolatable, autohinted, is_variable)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))

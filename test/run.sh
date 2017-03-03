@@ -35,4 +35,5 @@ for src in 'GuidelineTest'; do
 done
 
 python test_output.py
+python test_arguments.py
 check_failure 'fontmake output incorrect'
