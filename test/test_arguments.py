@@ -75,10 +75,10 @@ class TestOutputFileName(unittest.TestCase):
         project = FontProject()
         mock_designspace_locations.return_value = {'master1': 'location1'}, None
         mock_varLib_build.return_value = TTFont(), None, None
-        project.build_variable_font('path/to/designspace.designspace', True, False)
+        project.build_variable_font('path/to/designspace.designspace')
         self.assertTrue(mock_TTFont_save.called)
         self.assertTrue(mock_TTFont_save.call_count == 1)
-        self.assertEqual(mock_TTFont_save.call_args, mock.call('instance_ttf_variable/designspace-VF.ttf'))
+        self.assertEqual(mock_TTFont_save.call_args, mock.call('variable_ttf/designspace-VF.ttf'))
 
 
 if __name__ == '__main__':
