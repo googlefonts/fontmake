@@ -20,8 +20,12 @@ import glob
 import logging
 import math
 import os
-import plistlib
 import tempfile
+try:
+    from plistlib import load as readPlist  # PY3
+except ImportError:
+    from plistlib import readPlist  # PY2
+
 
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
@@ -430,7 +434,8 @@ class FontProject(object):
         mti_paths = None
         if mti_source:
             mti_paths = {}
-            mti_paths = plistlib.readPlist(mti_source)
+            with open(mti_source, 'rb') as mti_file:
+                mti_paths = readPlist(mti_file)
             src_dir = os.path.dirname(mti_source)
             for paths in mti_paths.values():
                 for tag in paths.keys():
