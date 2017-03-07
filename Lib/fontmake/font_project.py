@@ -21,15 +21,13 @@ import logging
 import math
 import os
 import plistlib
-import re
 import tempfile
-from io import open
 
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
-from fontTools.misc.py23 import tobytes, UnicodeIO, basestring
+from fontTools.misc.py23 import tobytes, basestring
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
