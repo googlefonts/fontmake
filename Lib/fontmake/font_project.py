@@ -356,19 +356,27 @@ class FontProject(object):
 
         Args:
             designspace_path: Path to designspace document.
-            interpolate: If True output instance fonts, otherwise just masters
-                (only valid for non-variable output).
+            interpolate: If True output instance fonts, otherwise just masters.
             masters_as_instances: If True, output master fonts as instances.
             instance_data: Data to be applied to instance UFOs, as returned from
                 glyphsLib's parsing function.
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
             kwargs: Arguments passed along to run_from_ufos.
+
+        Raises:
+            TypeError: "variable" output is incompatible with arguments
+                "interpolate", "masters_as_instances", "instance_data" and
+                "interpolate_binary_layout".
         """
 
-        if interpolate and "variable" in kwargs.get("output", ()):
-            raise TypeError(
-                '"interpolate" argument incompatible with "variable" output')
+        if "variable" in kwargs.get("output", ()):
+            for argname in ("interpolate", "masters_as_instances",
+                            "instance_data", "interpolate_binary_layout"):
+                if locals()[argname]:
+                    raise TypeError(
+                        '"%s" argument incompatible with "variable" output'
+                        % argname)
 
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo import build as build_designspace

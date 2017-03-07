@@ -169,9 +169,11 @@ def main(args=None):
         if not (glyphs_path or designspace_path):
             parser.error(
                 'Glyphs or designspace source required for variable font')
-        if args['interpolate']:
-            parser.error(
-                '"interpolate" argument invalid for variable font')
+        for argname in ('interpolate', 'masters_as_instances',
+                        'interpolate_binary_layout'):
+            if args[argname]:
+                parser.error('--%s option invalid for variable font'
+                             % argname.replace("_", "-"))
 
     project = FontProject(timing=args.pop('timing'),
                           verbose=args.pop('verbose'))
