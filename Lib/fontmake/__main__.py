@@ -161,12 +161,21 @@ def main(args=None):
              '%(choices)s. Default: INFO')
     args = vars(parser.parse_args(args))
 
-    project = FontProject(timing=args.pop('timing'),
-                          verbose=args.pop('verbose'))
-
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
+
+    if 'variable' in args['output']:
+        if not (glyphs_path or designspace_path):
+            parser.error(
+                'Glyphs or designspace source required for variable font')
+        if args['interpolate']:
+            parser.error(
+                '"interpolate" argument invalid for variable font')
+
+    project = FontProject(timing=args.pop('timing'),
+                          verbose=args.pop('verbose'))
+
     if glyphs_path:
         project.run_from_glyphs(glyphs_path, **args)
         return

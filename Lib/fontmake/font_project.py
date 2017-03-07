@@ -176,11 +176,14 @@ class FontProject(object):
                             conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
-    def build_variable_font(self, designspace_path, is_instance=False, interpolatable=False, **kwargs):
+    def build_variable_font(self, designspace_path):
         """Build OpenType variable font from masters in a designspace."""
 
+        # TODO: make output filename user configurable
         outfile = os.path.splitext(os.path.basename(designspace_path))[0] + '-VF'
-        logger.info('Building variable font ' + outfile + '.ttf')
+        outfile = self._output_path(outfile, 'ttf', is_variable=True)
+
+        logger.info('Building variable font ' + outfile)
 
         master_locations, _ = self._designspace_locations(designspace_path)
         ufo_paths = list(master_locations.keys())
@@ -194,7 +197,6 @@ class FontProject(object):
             finder = lambda s: os.path.join(ttfdir, s).replace('.ufo', '.ttf')
         font, _, _ = varLib.build(designspace_path, finder)
 
-        outfile = self._output_path(outfile, 'ttf', is_instance, interpolatable, is_variable=True)
         font.save(outfile)
 
     @timer()
@@ -352,7 +354,8 @@ class FontProject(object):
 
         Args:
             designspace_path: Path to designspace document.
-            interpolate: If True output instance fonts, otherwise just masters.
+            interpolate: If True output instance fonts, otherwise just masters
+                (only valid for non-variable output).
             masters_as_instances: If True, output master fonts as instances.
             instance_data: Data to be applied to instance UFOs, as returned from
                 glyphsLib's parsing function.
@@ -360,6 +363,10 @@ class FontProject(object):
                 master binaries.
             kwargs: Arguments passed along to run_from_ufos.
         """
+
+        if interpolate and "variable" in kwargs.get("output", ()):
+            raise TypeError(
+                '"interpolate" argument incompatible with "variable" output')
 
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo import build as build_designspace
@@ -455,16 +462,10 @@ class FontProject(object):
         if 'variable' in output:
             if designspace_path is None:
                 raise TypeError('Need designspace to build variable font.')
-            self.build_variable_font(designspace_path, **kwargs)
+            self.build_variable_font(designspace_path)
 
     def _font_name(self, ufo):
-        """Generate a postscript-style font name.
-
-            Returns ufo directly if ufo is a string. This case happens when
-            generating variable font, where ufo stores the output font name.
-        """
-        if isinstance(ufo, basestring) :
-            return ufo
+        """Generate a postscript-style font name."""
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
                           ufo.info.styleName.replace(' ', ''))
 
@@ -481,23 +482,37 @@ class FontProject(object):
             Return:
                 output directory string.
         """
+
+        assert not (is_variable and any([is_instance, interpolatable]))
         # FIXME? Use user configurable destination folders.
-        dir_prefix = 'instance_' if is_instance else 'master_'
+        if is_variable:
+            dir_prefix = 'variable_'
+        elif is_instance:
+            dir_prefix = 'instance_'
+        else:
+            dir_prefix = 'master_'
         dir_suffix = '_interpolatable' if interpolatable else ''
-        dir_suffix = dir_suffix + '_variable' if is_variable else dir_suffix
         output_dir = dir_prefix + ext + dir_suffix
         if autohinted:
             output_dir = os.path.join('autohinted', output_dir)
         return output_dir
 
-    def _output_path(self, ufo, ext, is_instance=False, interpolatable=False,
-                     autohinted=False, is_variable=False):
+    def _output_path(self, ufo_or_font_name, ext, is_instance=False,
+                     interpolatable=False, autohinted=False,
+                     is_variable=False):
         """Generate output path for a font file with given extension."""
 
-        out_dir = self._output_dir(ext, is_instance, interpolatable, autohinted, is_variable)
+        if isinstance(ufo_or_font_name, basestring):
+            font_name = ufo_or_font_name
+        else:
+            font_name = self._font_name(ufo_or_font_name)
+
+        out_dir = self._output_dir(
+            ext, is_instance, interpolatable, autohinted, is_variable)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
-        return os.path.join(out_dir, '%s.%s' % (self._font_name(ufo), ext))
+
+        return os.path.join(out_dir, '%s.%s' % (font_name, ext))
 
     def _designspace_locations(self, designspace_path):
         """Map font filenames to their locations in a designspace."""
