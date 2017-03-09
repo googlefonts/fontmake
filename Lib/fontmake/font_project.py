@@ -366,7 +366,7 @@ class FontProject(object):
 
         Raises:
             TypeError: "variable" output is incompatible with arguments
-                "interpolate", "masters_as_instances", "instance_data" and
+                "interpolate", "masters_as_instances", and
                 "interpolate_binary_layout".
         """
 
