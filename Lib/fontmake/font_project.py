@@ -359,7 +359,7 @@ class FontProject(object):
             interpolate: If True output instance fonts, otherwise just masters.
             masters_as_instances: If True, output master fonts as instances.
             instance_data: Data to be applied to instance UFOs, as returned from
-                glyphsLib's parsing function.
+                glyphsLib's parsing function (ignored unless interpolate is True).
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
             kwargs: Arguments passed along to run_from_ufos.
@@ -372,7 +372,7 @@ class FontProject(object):
 
         if "variable" in kwargs.get("output", ()):
             for argname in ("interpolate", "masters_as_instances",
-                            "instance_data", "interpolate_binary_layout"):
+                            "interpolate_binary_layout"):
                 if locals()[argname]:
                     raise TypeError(
                         '"%s" argument incompatible with "variable" output'
