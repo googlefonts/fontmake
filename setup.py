@@ -36,12 +36,12 @@ setup(
         ]
     },
     install_requires=[
-        "fonttools>=3.7.2",
+        "fonttools>=3.9.0",
         "cu2qu>=1.1.1",
-        "glyphsLib>=1.5.1",
-        "ufo2ft>=0.3.4",
+        "glyphsLib>=1.5.2",
+        "ufo2ft>=0.4.0",
         "MutatorMath>=2.0.2",
-        "defcon>=0.2.1",
+        "defcon>=0.2.4",
         "booleanOperations>=0.6.4",
     ],
     classifiers=[
