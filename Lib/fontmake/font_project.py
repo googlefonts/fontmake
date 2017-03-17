@@ -39,7 +39,7 @@ from fontTools.ttLib import TTFont
 from fontTools import varLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
-from ufo2ft.makeotfParts import FeatureOTFCompiler
+from ufo2ft.featureCompiler import FeatureCompiler
 from ufo2ft.kernFeatureWriter import KernFeatureWriter
 from ufo2ft.markFeatureWriter import MarkFeatureWriter
 
@@ -233,8 +233,7 @@ class FontProject(object):
         """
 
         ext = 'ttf' if ttf else 'otf'
-        fea_compiler = FDKFeatureCompiler if use_afdko else FeatureOTFCompiler
-        otf_compiler = compileTTF if ttf else compileOTF
+        fea_compiler = FDKFeatureCompiler if use_afdko else FeatureCompiler
 
         if kern_writer_class is None:
             kern_writer_class = KernFeatureWriter
@@ -261,25 +260,29 @@ class FontProject(object):
             if use_production_names is None:
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
-            otf = otf_compiler(
-                ufo, featureCompilerClass=fea_compiler,
+            compiler_options = dict(
+                featureCompilerClass=fea_compiler,
                 mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
-                kernWriter=kern_writer_class, markWriter=mark_writer_class,
+                kernWriterClass=kern_writer_class, markWriterClass=mark_writer_class,
                 glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
-                useProductionNames=use_production_names,
-                convertCubics=False, optimizeCff=subroutinize)
+                useProductionNames=use_production_names
+            )
+            if ttf:
+                font = compileTTF(ufo, convertCubics=False, **compiler_options)
+            else:
+                font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
 
             if interpolate_layout_from is not None:
                 loc = instance_locations[ufo.path]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder)
-                otf['GPOS'] = gpos_src['GPOS']
+                font['GPOS'] = gpos_src['GPOS']
                 gsub_src = TTFont(
                     finder(self._closest_location(master_locations, loc)))
-                otf['GDEF'] = gsub_src['GDEF']
-                otf['GSUB'] = gsub_src['GSUB']
+                font['GDEF'] = gsub_src['GDEF']
+                font['GSUB'] = gsub_src['GSUB']
 
-            otf.save(otf_path)
+            font.save(otf_path)
 
             if subset is None:
                 export_key = GLYPHS_PREFIX + 'Glyphs.Export'
@@ -554,7 +557,7 @@ class FontProject(object):
         return closest
 
 
-class FDKFeatureCompiler(FeatureOTFCompiler):
+class FDKFeatureCompiler(FeatureCompiler):
     """An OTF compiler which uses the AFDKO to compile feature syntax."""
 
     def setupFile_featureTables(self):
