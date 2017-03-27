@@ -4,4 +4,4 @@ glyphsLib==1.6.0
 ufo2ft==0.4.1
 MutatorMath==2.0.3
 defcon==0.3.1
-booleanOperations==0.6.4
+booleanOperations==0.7.0
