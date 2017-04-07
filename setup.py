@@ -36,13 +36,13 @@ setup(
         ]
     },
     install_requires=[
-        "fonttools>=3.9.0",
+        "fonttools>=3.9.1",
         "cu2qu>=1.1.1",
-        "glyphsLib>=1.5.2",
-        "ufo2ft>=0.4.0",
-        "MutatorMath>=2.0.2",
-        "defcon>=0.2.4",
-        "booleanOperations>=0.6.4",
+        "glyphsLib>=1.6.0",
+        "ufo2ft>=0.4.1",
+        "MutatorMath>=2.0.3",
+        "defcon>=0.3.1",
+        "booleanOperations>=0.7.0",
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
