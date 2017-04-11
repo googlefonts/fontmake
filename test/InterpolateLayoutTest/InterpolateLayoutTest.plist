@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>InterpolateLayoutTest-Light</key>
+	<dict>
+		<key>GDEF</key>
+		<string>InterpolateLayoutTest GDEF.txt</string>
+		<key>GPOS</key>
+		<string>InterpolateLayoutTest 0 GPOS.txt</string>
+		<key>GSUB</key>
+		<string>InterpolateLayoutTest GSUB.txt</string>
+	</dict>
+	<key>InterpolateLayoutTest-Bold</key>
+	<dict>
+		<key>GDEF</key>
+		<string>InterpolateLayoutTest GDEF.txt</string>
+		<key>GPOS</key>
+		<string>InterpolateLayoutTest 1000 GPOS.txt</string>
+		<key>GSUB</key>
+		<string>InterpolateLayoutTest GSUB.txt</string>
+	</dict>
+</dict>
+</plist>

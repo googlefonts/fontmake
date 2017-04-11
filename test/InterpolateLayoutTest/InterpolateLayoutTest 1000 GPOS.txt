@@ -1,0 +1,17 @@
+FontDame GPOS table
+% InterpolateLayoutTest - weight:1000
+
+EM	1000
+
+script table begin
+DFLT	default		0
+latn	default		0
+script table end
+
+feature table begin
+0	kern	kern-latn
+feature table end
+
+lookup	kern-latn	pair
+left x advance	V	a	-40
+lookup end

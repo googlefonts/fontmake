@@ -1,0 +1,6 @@
+FontDame GDEF table
+
+class definition begin
+V	1
+a	1
+class definition end

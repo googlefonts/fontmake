@@ -29,6 +29,14 @@ for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd ..
 done
 
+for src in 'InterpolateLayoutTest'; do
+    cd "${src}"
+    fontmake -g "${src}.glyphs" --mti-source "${src}.plist" --no-production-names
+    fontmake -g "${src}.glyphs" -i --interpolate-binary-layout --no-production-names
+    check_failure "${src} failed to build"
+    cd ..
+done
+
 for src in 'GuidelineTest'; do
     fontmake -i -g "${src}.glyphs"
     check_failure "${src} failed to build"
