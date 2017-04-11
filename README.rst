@@ -152,6 +152,6 @@ process, via methods of the ``fontmake.font_project.FontProject`` class.
 .. _PyPI: https://pypi.org/project/fontmake
 .. |Travis Build Status| image:: https://travis-ci.org/googlei18n/fontmake.svg
    :target: https://travis-ci.org/googlei18n/fontmake
-.. |Python Versions| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
+.. |Python Versions| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/fontmake.svg
    :target: https://pypi.org/project/fontmake/
