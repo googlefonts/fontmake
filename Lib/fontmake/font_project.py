@@ -546,10 +546,10 @@ class FontProject(object):
         """Return path of font whose location is closest to target."""
 
         dist = lambda a, b: math.sqrt(sum((a[k] - b[k]) ** 2 for k in a.keys()))
-        paths = location_map.keys()
-        closest = paths[0]
+        paths = iter(location_map.keys())
+        closest = next(paths)
         closest_dist = dist(target, location_map[closest])
-        for path in paths[1:]:
+        for path in paths:
             cur_dist = dist(target, location_map[path])
             if cur_dist < closest_dist:
                 closest = path
