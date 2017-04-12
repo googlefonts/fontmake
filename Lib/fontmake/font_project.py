@@ -20,11 +20,13 @@ import glob
 import logging
 import math
 import os
+import shutil
 import tempfile
 try:
     from plistlib import load as readPlist  # PY3
 except ImportError:
     from plistlib import readPlist  # PY2
+import xml.etree.ElementTree as etree
 
 
 from cu2qu.pens import ReverseContourPen
@@ -62,15 +64,44 @@ class FontProject(object):
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_master_ufos(self, glyphs_path, family_name=None):
+    def build_master_ufos(self, glyphs_path, family_name=None, mti_source=None):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
-
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
-        return glyphsLib.build_masters(
+        _, designspace_path, instances = glyphsLib.build_masters(
             glyphs_path, master_dir, designspace_instance_dir=instance_dir,
             family_name=family_name)
+        if mti_source:
+            self.add_mti_features_to_master_ufos(mti_source, designspace_path)
+        return designspace_path, instances
+
+    @timer()
+    def add_mti_features_to_master_ufos(self, mti_source, designspace_path):
+        with open(mti_source, 'rb') as mti_file:
+            mti_paths = readPlist(mti_file)
+        mti_dir = os.path.dirname(mti_source)
+        master_dir = os.path.dirname(designspace_path)
+        designspace = etree.parse(designspace_path)
+        for master in designspace.findall('sources/source'):
+            master_path = os.path.join(master_dir, master.attrib['filename'])
+            data_dir = os.path.join(master_path, 'data')
+            if not os.path.exists(data_dir):
+                os.mkdir(data_dir)
+            target_dir = os.path.join(
+                data_dir, 'com.github.googlei18n.ufo2ft.mtiFeatures')
+            os.mkdir(target_dir)
+            key = master.attrib['filename'].rstrip('.ufo')
+            for table, path in mti_paths[key].items():
+                src_path = os.path.join(mti_dir, path)
+                target_path = os.path.join(target_dir, '%s.mti' % table)
+                shutil.copyfile(src_path, target_path)
+        # If we have MTI sources, any Adobe feature files derived from
+        # the Glyphs file should be ignored. If features.fea was generated,
+        # we delete it here because it only contains junk information anyway.
+        adobe_features_path = os.path.join(master_path, 'features.fea')
+        if os.path.exists(adobe_features_path):
+            os.remove(adobe_features_path)
 
     @timer()
     def remove_overlaps(self, ufos, glyph_filter=lambda g: True):
@@ -346,8 +377,8 @@ class FontProject(object):
         """
 
         logger.info('Building master UFOs and designspace from Glyphs source')
-        _, designspace_path, instance_data = self.build_master_ufos(
-            glyphs_path, family_name)
+        designspace_path, instance_data = self.build_master_ufos(
+            glyphs_path, family_name, mti_source=kwargs.get("mti_source"))
         self.run_from_designspace(
             designspace_path, instance_data=instance_data, **kwargs)
 
@@ -442,6 +473,8 @@ class FontProject(object):
                 ufo_paths = ufos
             ufos = [Font(path) for path in ufo_paths]
 
+        # TODO: Remove this once ufo2ft recognizes MTI feature files in UFOs.
+        # https://github.com/googlei18n/fontmake/issues/289
         mti_paths = None
         if mti_source:
             mti_paths = {}
