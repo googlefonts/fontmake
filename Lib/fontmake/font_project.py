@@ -26,7 +26,10 @@ try:
     from plistlib import load as readPlist  # PY3
 except ImportError:
     from plistlib import readPlist  # PY2
-import xml.etree.ElementTree as etree
+try:
+    import xml.etree.cElementTree as etree
+except ImportError:
+    import xml.etree.ElementTree as etree
 
 
 from cu2qu.pens import ReverseContourPen
@@ -90,6 +93,8 @@ class FontProject(object):
                 os.mkdir(data_dir)
             target_dir = os.path.join(
                 data_dir, 'com.github.googlei18n.ufo2ft.mtiFeatures')
+            if os.path.exists(target_dir):
+                shutil.rmtree(target_dir)
             os.mkdir(target_dir)
             key = master.attrib['filename'].rstrip('.ufo')
             for table, path in mti_paths[key].items():
