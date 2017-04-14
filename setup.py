@@ -174,7 +174,7 @@ setup(
         "cu2qu>=1.1.1",
         "glyphsLib>=1.6.0",
         "ufo2ft>=0.4.2",
-        "MutatorMath>=2.0.3",
+        "MutatorMath>=2.0.4",
         "defcon>=0.3.1",
         "booleanOperations>=0.7.0",
     ],
