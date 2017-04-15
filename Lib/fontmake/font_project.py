@@ -72,41 +72,33 @@ class FontProject(object):
         import glyphsLib
         master_dir = self._output_dir('ufo')
         instance_dir = self._output_dir('ufo', is_instance=True)
-        _, designspace_path, instances = glyphsLib.build_masters(
+        masters, designspace_path, instances = glyphsLib.build_masters(
             glyphs_path, master_dir, designspace_instance_dir=instance_dir,
             family_name=family_name)
         if mti_source:
-            self.add_mti_features_to_master_ufos(mti_source, designspace_path)
+            self.add_mti_features_to_master_ufos(
+                mti_source, designspace_path, masters)
         return designspace_path, instances
 
     @timer()
-    def add_mti_features_to_master_ufos(self, mti_source, designspace_path):
+    def add_mti_features_to_master_ufos(self, mti_source, designspace_path,
+                                        masters):
+        mti_dir = os.path.dirname(mti_source)
         with open(mti_source, 'rb') as mti_file:
             mti_paths = readPlist(mti_file)
-        mti_dir = os.path.dirname(mti_source)
-        master_dir = os.path.dirname(designspace_path)
-        designspace = etree.parse(designspace_path)
-        for master in designspace.findall('sources/source'):
-            master_path = os.path.join(master_dir, master.attrib['filename'])
-            data_dir = os.path.join(master_path, 'data')
-            if not os.path.exists(data_dir):
-                os.mkdir(data_dir)
-            target_dir = os.path.join(
-                data_dir, 'com.github.googlei18n.ufo2ft.mtiFeatures')
-            if os.path.exists(target_dir):
-                shutil.rmtree(target_dir)
-            os.mkdir(target_dir)
-            key = master.attrib['filename'].rstrip('.ufo')
+        for master in masters:
+            key = os.path.basename(master.path).rstrip('.ufo')
             for table, path in mti_paths[key].items():
-                src_path = os.path.join(mti_dir, path)
-                target_path = os.path.join(target_dir, '%s.mti' % table)
-                shutil.copyfile(src_path, target_path)
-        # If we have MTI sources, any Adobe feature files derived from
-        # the Glyphs file should be ignored. If features.fea was generated,
-        # we delete it here because it only contains junk information anyway.
-        adobe_features_path = os.path.join(master_path, 'features.fea')
-        if os.path.exists(adobe_features_path):
-            os.remove(adobe_features_path)
+                with open(os.path.join(mti_dir, path), "rb") as mti_source:
+                    ufo_path = (
+                        'com.github.googlei18n.ufo2ft.mtiFeatures/%s.mti' %
+                        table.strip())
+                    master.data[ufo_path] = mti_source.read()
+                # If we have MTI sources, any Adobe feature files derived from
+                # the Glyphs file should be ignored. We clear it here because
+                # it only contains junk information anyway.
+                master.features.text = ""
+            master.save()
 
     @timer()
     def remove_overlaps(self, ufos, glyph_filter=lambda g: True):
@@ -240,7 +232,7 @@ class FontProject(object):
     @timer()
     def save_otfs(
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
-            mti_paths=None, use_afdko=False, autohint=None, subset=None,
+            use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
             interpolate_layout_from=None, kern_writer_class=None,
             mark_writer_class=None):
@@ -298,7 +290,6 @@ class FontProject(object):
                     GLYPHS_PREFIX + "Don't use Production Names")
             compiler_options = dict(
                 featureCompilerClass=fea_compiler,
-                mtiFeaFiles=mti_paths[name] if mti_paths is not None else None,
                 kernWriterClass=kern_writer_class, markWriterClass=mark_writer_class,
                 glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names
@@ -478,22 +469,10 @@ class FontProject(object):
                 ufo_paths = ufos
             ufos = [Font(path) for path in ufo_paths]
 
-        # TODO: Remove this once ufo2ft recognizes MTI feature files in UFOs.
-        # https://github.com/googlei18n/fontmake/issues/289
-        mti_paths = None
-        if mti_source:
-            mti_paths = {}
-            with open(mti_source, 'rb') as mti_file:
-                mti_paths = readPlist(mti_file)
-            src_dir = os.path.dirname(mti_source)
-            for paths in mti_paths.values():
-                for tag in paths.keys():
-                    paths[tag] = os.path.join(src_dir, paths[tag])
-
         need_reload = False
         if 'otf' in output:
             self.build_otfs(
-                ufos, remove_overlaps, mti_paths=mti_paths, **kwargs)
+                ufos, remove_overlaps, **kwargs)
             need_reload = True
 
         if 'ttf' in output:
@@ -501,15 +480,14 @@ class FontProject(object):
                 ufos = [Font(path) for path in ufo_paths]
             self.build_ttfs(
                 ufos, remove_overlaps, reverse_direction, conversion_error,
-                mti_paths=mti_paths, **kwargs)
+                **kwargs)
             need_reload = True
 
         if 'ttf-interpolatable' in output or 'variable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_interpolatable_ttfs(
-                ufos, reverse_direction, conversion_error, mti_paths=mti_paths,
-                **kwargs)
+                ufos, reverse_direction, conversion_error, **kwargs)
 
         if 'variable' in output:
             if designspace_path is None:
