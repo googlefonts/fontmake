@@ -110,12 +110,6 @@ def main(args=None):
         help='Interpolate layout tables from compiled master binaries. '
              'Requires Glyphs or MutatorMath source.')
     layoutGroup.add_argument(
-        '--use-afdko', action='store_true',
-        help='Use makeOTF instead of feaLib to compile FEA.')
-    layoutGroup.add_argument(
-        '--mti-source',
-        help='Path to mtiLib .txt feature definitions (use instead of FEA)')
-    layoutGroup.add_argument(
         '--kern-writer-module', metavar="MODULE", dest='kern_writer_class',
         type=PyClassType('KernFeatureWriter'),
         help='Module containing a custom `KernFeatureWriter` class.')
@@ -123,6 +117,13 @@ def main(args=None):
         '--mark-writer-module', metavar="MODULE", dest='mark_writer_class',
         type=PyClassType('MarkFeatureWriter'),
         help='Module containing a custom `MarkFeatureWriter` class.')
+    feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
+    feaCompilerGroup.add_argument(
+        '--use-afdko', action='store_true',
+        help='Use makeOTF instead of feaLib to compile FEA.')
+    feaCompilerGroup.add_argument(
+        '--mti-source',
+        help='Path to mtiLib .txt feature definitions (use instead of FEA)')
 
     glyphnamesGroup = parser.add_mutually_exclusive_group(required=False)
     glyphnamesGroup.add_argument(
@@ -182,7 +183,7 @@ def main(args=None):
         project.run_from_glyphs(glyphs_path, **args)
         return
 
-    exclude_args(parser, args, ['family_name'], 'Glyphs')
+    exclude_args(parser, args, ['family_name', 'mti_source'], 'Glyphs')
     if designspace_path:
         project.run_from_designspace(designspace_path, **args)
         return
