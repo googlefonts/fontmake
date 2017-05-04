@@ -183,7 +183,7 @@ def main(args=None):
         project.run_from_glyphs(glyphs_path, **args)
         return
 
-    exclude_args(parser, args, ['family_name'], 'Glyphs')
+    exclude_args(parser, args, ['family_name', 'mti_source'], 'Glyphs')
     if designspace_path:
         project.run_from_designspace(designspace_path, **args)
         return
