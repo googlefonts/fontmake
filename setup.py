@@ -155,7 +155,7 @@ with open('README.rst', 'r', encoding='utf-8') as f:
 
 setup(
     name="fontmake",
-    version="1.2.4",
+    version="1.2.5.dev0",
     description=("Compile fonts from sources (UFO, Glyphs) to binary "
                  "(OpenType, TrueType)."),
     long_description=long_description,
