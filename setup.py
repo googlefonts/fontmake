@@ -109,7 +109,7 @@ class release(bump_version):
             from distutils.errors import DistutilsSetupError
             raise DistutilsSetupError("release notes message is empty")
 
-        self.message = "v{new_version}\n\n%s" % message
+        self.message = u"v{new_version}\n\n%s" % message
 
     @staticmethod
     def edit_release_notes():
@@ -125,12 +125,12 @@ class release(bump_version):
         fd, tmp = mkstemp(prefix='bumpversion-')
         try:
             os.close(fd)
-            with open(tmp, 'w') as f:
-                f.write("\n\n# Write release notes.\n"
-                        "# Lines starting with '#' will be ignored.")
+            with open(tmp, 'w', encoding='utf-8') as f:
+                f.write(u"\n\n# Write release notes.\n"
+                         "# Lines starting with '#' will be ignored.")
             subprocess.check_call(text_editor + [tmp])
-            with open(tmp, 'r') as f:
-                changes = "".join(
+            with open(tmp, 'r', encoding='utf-8') as f:
+                changes = u"".join(
                     l for l in f.readlines() if not l.startswith('#'))
         finally:
             os.remove(tmp)
