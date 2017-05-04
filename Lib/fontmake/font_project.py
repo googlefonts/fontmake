@@ -576,11 +576,13 @@ class FontProject(object):
 class FDKFeatureCompiler(FeatureCompiler):
     """An OTF compiler which uses the AFDKO to compile feature syntax."""
 
-    def setupFile_featureTables(self):
-        if self.mtiFeaFiles is not None:
-            super(FDKFeatureCompiler, self).setupFile_featureTables()
+    def __init__(self, *args, **kwargs):
+        super(FDKFeatureCompiler, self).__init__(*args, **kwargs)
+        if hasattr(self, 'mtiFeatures') and self.mtiFeatures is not None:
+            raise TypeError("MTI features not supported by makeotf")
 
-        elif not self.features.strip():
+    def setupFile_featureTables(self):
+        if not self.features.strip():
             return
 
         import subprocess
