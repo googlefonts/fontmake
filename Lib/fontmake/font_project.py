@@ -241,9 +241,6 @@ class FontProject(object):
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
             interpolatable: If output is interpolatable, for generating paths.
-            mti_source: Dictionary mapping postscript full names to dictionaries
-                mapping layout table tags to MTI source paths which should be
-                compiled into those tables.
             use_afdko: If True, use AFDKO to compile feature source.
             autohint: Parameters to provide to ttfautohint. If not provided, the
                 autohinting step is skipped.
@@ -360,19 +357,23 @@ class FontProject(object):
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, family_name=None, **kwargs):
+            self, glyphs_path, family_name=None, mti_source=None, **kwargs):
         """Run toolchain from Glyphs source.
 
         Args:
             glyphs_path: Path to source file.
             preprocess: If True, check source file for un-compilable content.
             family_name: If provided, uses this family name in the output.
+            mti_source: Path to property list file containing a dictionary
+                mapping UFO masters to dictionaries mapping layout table
+                tags to MTI source paths which should be compiled into
+                those tables.
             kwargs: Arguments passed along to run_from_designspace.
         """
 
         logger.info('Building master UFOs and designspace from Glyphs source')
         designspace_path, instance_data = self.build_master_ufos(
-            glyphs_path, family_name, mti_source=kwargs.get("mti_source"))
+            glyphs_path, family_name, mti_source=mti_source)
         self.run_from_designspace(
             designspace_path, instance_data=instance_data, **kwargs)
 
@@ -433,7 +434,7 @@ class FontProject(object):
             interpolate_layout_from=interpolate_layout_from, **kwargs)
 
     def run_from_ufos(
-            self, ufos, output=(), designspace_path=None, mti_source=None,
+            self, ufos, output=(), designspace_path=None,
             remove_overlaps=True, reverse_direction=True, conversion_error=None,
             **kwargs):
         """Run toolchain from UFO sources.
@@ -443,7 +444,6 @@ class FontProject(object):
             output: List of output formats to generate.
             designspace_path: Path to a MutatorMath designspace, used to
                 generate variable font if requested.
-            mti_source: MTI layout source to be parsed and passed to save_otfs.
             remove_overlaps: If True, remove overlaps in glyph shapes.
             reverse_direction: If True, reverse contour directions when
                 compiling TrueType outlines.
