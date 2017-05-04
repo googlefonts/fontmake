@@ -76,13 +76,11 @@ class FontProject(object):
             glyphs_path, master_dir, designspace_instance_dir=instance_dir,
             family_name=family_name)
         if mti_source:
-            self.add_mti_features_to_master_ufos(
-                mti_source, designspace_path, masters)
+            self.add_mti_features_to_master_ufos(mti_source, masters)
         return designspace_path, instances
 
     @timer()
-    def add_mti_features_to_master_ufos(self, mti_source, designspace_path,
-                                        masters):
+    def add_mti_features_to_master_ufos(self, mti_source, masters):
         mti_dir = os.path.dirname(mti_source)
         with open(mti_source, 'rb') as mti_file:
             mti_paths = readPlist(mti_file)
