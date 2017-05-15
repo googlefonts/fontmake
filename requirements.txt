@@ -1,6 +1,6 @@
 fonttools==3.11.0
 cu2qu==1.1.1
-glyphsLib==1.7.3
+glyphsLib==1.7.5
 ufo2ft==0.5.0
 MutatorMath==2.0.4
 defcon==0.3.2
