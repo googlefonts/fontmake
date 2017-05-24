@@ -171,11 +171,11 @@ setup(
     setup_requires=wheel + bump2version,
     install_requires=[
         "fonttools>=3.13.0",
-        "cu2qu>=1.1.1",
-        "glyphsLib>=1.7.3",
-        "ufo2ft>=0.5.0",
+        "cu2qu>=1.2.0",
+        "glyphsLib>=1.7.5",
+        "ufo2ft>=0.5.3",
         "MutatorMath>=2.0.4",
-        "defcon>=0.3.1",
+        "defcon>=0.3.3",
         "booleanOperations>=0.7.0",
     ],
     cmdclass={
