@@ -297,7 +297,7 @@ class FontProject(object):
             if interpolate_layout_from is not None:
                 loc = instance_locations[ufo.path]
                 gpos_src = interpolate_layout(
-                    interpolate_layout_from, loc, finder)
+                    interpolate_layout_from, loc, finder, mapped=True)
                 font['GPOS'] = gpos_src['GPOS']
                 gsub_src = TTFont(
                     finder(self._closest_location(master_locations, loc)))
