@@ -170,7 +170,7 @@ setup(
     },
     setup_requires=wheel + bump2version,
     install_requires=[
-        "fonttools>=3.15.0",
+        "fonttools>=3.15.1",
         "cu2qu>=1.2.0",
         "glyphsLib>=1.8.0",
         "ufo2ft>=0.6.2",
