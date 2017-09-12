@@ -547,7 +547,7 @@ class FontProject(object):
 
         maps = []
         ds = varLib.designspace.load(designspace_path)
-        for location_list in (ds['sources'], ds['instances']):
+        for location_list in (ds['sources'], ds.get('instances', [])):
             location_map = {}
             for loc in location_list:
                 abspath = os.path.normpath(os.path.join(
