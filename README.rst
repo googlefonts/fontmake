@@ -125,7 +125,7 @@ branches, you can do:
 
 .. code:: bash
 
-    pip install -r dev-requirements.txt
+    pip install -r dev_requirements.txt
 
 For more information on requirements files, see `pip documentation`_.
 
