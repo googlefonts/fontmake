@@ -532,6 +532,9 @@ class FontProject(object):
 
         if isinstance(ufo_or_font_name, basestring):
             font_name = ufo_or_font_name
+        elif ufo_or_font_name.path:
+            font_name = os.path.splitext(os.path.basename(
+                ufo_or_font_name.path))[0]
         else:
             font_name = self._font_name(ufo_or_font_name)
 
