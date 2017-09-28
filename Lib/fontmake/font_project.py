@@ -380,7 +380,8 @@ class FontProject(object):
     def run_from_designspace(
             self, designspace_path, interpolate=False,
             masters_as_instances=False, instance_data=None,
-            interpolate_binary_layout=False, **kwargs):
+            interpolate_binary_layout=False, no_round=False,
+            **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
         Args:
@@ -391,6 +392,9 @@ class FontProject(object):
                 glyphsLib's parsing function (ignored unless interpolate is True).
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
+            no_round: If True, don't use round geometry in MutatorMath,
+                thus allowing to re-use instances as masters without adding
+                rounding differences to other instances.
             kwargs: Arguments passed along to run_from_ufos.
 
         Raises:
@@ -418,7 +422,8 @@ class FontProject(object):
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
             results = build_designspace(
-                designspace_path, outputUFOFormatVersion=3)
+                designspace_path, outputUFOFormatVersion=3,
+                roundGeometry=not no_round)
             if instance_data is not None:
                 ufos.extend(apply_instance_data(instance_data))
             else:
