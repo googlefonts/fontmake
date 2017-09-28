@@ -87,6 +87,9 @@ def main(args=None):
     outputGroup.add_argument(
         '--family-name',
         help='Family name to use for masters, and to filter output instances')
+    outputGroup.add_argument(
+        '--no-round', dest='no_round', action='store_true',
+        help='Do not round to integers in output when interpolating.')
 
     contourGroup = parser.add_argument_group(title='Handling of contours')
     contourGroup.add_argument(
@@ -189,7 +192,8 @@ def main(args=None):
         return
 
     exclude_args(
-        parser, args, ['interpolate', 'interpolate_binary_layout'],
+        parser, args, ['interpolate', 'interpolate_binary_layout',
+                       'no_round'],
         'Glyphs or MutatorMath')
     project.run_from_ufos(
         ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
