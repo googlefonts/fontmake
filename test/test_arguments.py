@@ -14,9 +14,13 @@
 
 import os
 import unittest
-# unittest.mock is only available for python 3+
-from mock import patch
-import mock
+try:
+    # unittest.mock is only available for python 3+
+    from unittest import mock
+    from unittest.mock import patch
+except ImportError:
+    import mock
+    from mock import patch
 from fontTools.ttLib import TTFont
 from fontmake.font_project import FontProject
 import fontmake.__main__ as entry

@@ -1,2 +1,2 @@
 -r requirements.txt
-mock==2.0.0
+mock==2.0.0; python_version < "3.3"
