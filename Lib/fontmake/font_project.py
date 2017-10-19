@@ -20,16 +20,11 @@ import glob
 import logging
 import math
 import os
-import shutil
 import tempfile
 try:
     from plistlib import load as readPlist  # PY3
 except ImportError:
     from plistlib import readPlist  # PY2
-try:
-    import xml.etree.cElementTree as etree
-except ImportError:
-    import xml.etree.ElementTree as etree
 
 
 from cu2qu.pens import ReverseContourPen
@@ -586,7 +581,6 @@ class FDKFeatureCompiler(FeatureCompiler):
         if not self.features.strip():
             return
 
-        import sys
         import subprocess
         from fontTools.misc.py23 import tostr
 
