@@ -586,6 +586,7 @@ class FDKFeatureCompiler(FeatureCompiler):
         if not self.features.strip():
             return
 
+        import sys
         import subprocess
         from fontTools.misc.py23 import tostr
 
@@ -602,7 +603,8 @@ class FDKFeatureCompiler(FeatureCompiler):
 
         report = tostr(subprocess.check_output([
             "makeotf", "-o", feasrc_path, "-f", outline_path,
-            "-ff", fea_path]))
+            "-ff", fea_path],
+            shell=True))
         os.remove(outline_path)
         os.remove(fea_path)
 
