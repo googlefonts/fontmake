@@ -40,8 +40,6 @@ from fontTools import varLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.featureCompiler import FeatureCompiler
-from ufo2ft.kernFeatureWriter import KernFeatureWriter
-from ufo2ft.markFeatureWriter import MarkFeatureWriter
 
 from fontmake.ttfautohint import ttfautohint
 
@@ -228,7 +226,7 @@ class FontProject(object):
             use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
             interpolate_layout_from=None, kern_writer_class=None,
-            mark_writer_class=None):
+            mark_writer_class=None, inplace=True):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -253,14 +251,9 @@ class FontProject(object):
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureCompiler
 
-        if kern_writer_class is None:
-            kern_writer_class = KernFeatureWriter
-        else:
+        if kern_writer_class is not None:
             logger.info("Using %r", kern_writer_class.__module__)
-
-        if mark_writer_class is None:
-            mark_writer_class = MarkFeatureWriter
-        else:
+        if mark_writer_class is not None:
             logger.info("Using %r", mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
@@ -280,9 +273,11 @@ class FontProject(object):
                     GLYPHS_PREFIX + "Don't use Production Names")
             compiler_options = dict(
                 featureCompilerClass=fea_compiler,
-                kernWriterClass=kern_writer_class, markWriterClass=mark_writer_class,
+                kernWriterClass=kern_writer_class,
+                markWriterClass=mark_writer_class,
                 glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
-                useProductionNames=use_production_names
+                useProductionNames=use_production_names,
+                inplace=True,  # avoid extra copy
             )
             if ttf:
                 font = compileTTF(ufo, convertCubics=False, **compiler_options)
