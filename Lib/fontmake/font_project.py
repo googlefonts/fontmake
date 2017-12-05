@@ -20,6 +20,7 @@ import glob
 import logging
 import math
 import os
+import shutil
 import tempfile
 try:
     from plistlib import load as readPlist  # PY3
@@ -411,6 +412,14 @@ class FontProject(object):
             ufos.extend(reader.getSourcePaths())
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
+            _, ilocs = self._designspace_locations(designspace_path)
+            for ipath in ilocs.keys():
+                # mutatorMath does not remove the existing instance UFOs
+                # so we do it ourselves, or else strange things happen...
+                # https://github.com/googlei18n/fontmake/issues/372
+                if ipath.endswith(".ufo") and os.path.isdir(ipath):
+                    logger.debug("Removing %s" % ipath)
+                    shutil.rmtree(ipath)
             results = build_designspace(
                 designspace_path, outputUFOFormatVersion=3,
                 roundGeometry=not no_round)
