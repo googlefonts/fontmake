@@ -1,7 +1,7 @@
 fonttools==3.21.0
 cu2qu==1.3.0
 glyphsLib==2.2.1
-ufo2ft==1.0.0
+ufo2ft==1.1.0
 MutatorMath==2.1.0
 defcon==0.3.5
 booleanOperations==0.7.1
