@@ -93,7 +93,7 @@ class FontProject(object):
             master.save()
 
     @timer()
-    def remove_overlaps(self, ufos, glyph_filter=lambda g: True):
+    def remove_overlaps(self, ufos, glyph_filter=lambda g: len(g)):
         """Remove overlaps in UFOs' glyphs' contours."""
         from booleanOperations import union, BooleanOperationsError
 
