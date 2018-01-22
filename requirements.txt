@@ -1,5 +1,5 @@
 fonttools==3.21.2
-cu2qu==1.3.0
+cu2qu==1.4.0
 glyphsLib==2.2.1
 ufo2ft==1.1.0
 MutatorMath==2.1.0
