@@ -1,4 +1,4 @@
-fonttools==3.22.0
+fonttools==3.24.1
 cu2qu==1.4.0
 glyphsLib==2.2.1
 ufo2ft==1.1.0
