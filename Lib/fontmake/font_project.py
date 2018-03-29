@@ -61,17 +61,49 @@ class FontProject(object):
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_master_ufos(self, glyphs_path, family_name=None, mti_source=None):
+    def build_master_ufos(self, glyphs_path, designspace_path=None,
+                          master_dir=None, instance_dir=None,
+                          family_name=None, mti_source=None):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
-        master_dir = self._output_dir('ufo')
-        instance_dir = self._output_dir('ufo', is_instance=True)
-        masters, designspace_path, instances = glyphsLib.build_masters(
-            glyphs_path, master_dir, designspace_instance_dir=instance_dir,
-            family_name=family_name)
+
+        if master_dir is None:
+            master_dir = self._output_dir('ufo')
+        if instance_dir is None:
+            instance_dir = self._output_dir('ufo', is_instance=True)
+
+        font = glyphsLib.GSFont(glyphs_path)
+
+        if designspace_path is not None:
+            designspace_dir = os.path.dirname(designspace_path)
+        else:
+            designspace_dir = master_dir
+        # glyphsLib.to_designspace expects instance_dir to be relative
+        instance_dir = os.path.relpath(instance_dir, designspace_dir)
+
+        designspace = glyphsLib.to_designspace(
+            font, family_name=family_name, instance_dir=instance_dir)
+
+        masters = []
+        for source in designspace.sources:
+            masters.append(source.font)
+            ufo_path = os.path.join(master_dir, source.filename)
+            # removing existing UFOs is no longer necessary with
+            # defcon>=0.4 but it may still be more efficient to do it
+            # regardless, to avoid the extra temporary directory
+            if os.path.exists(os.path.join(ufo_path, "metainfo.plist")):
+                shutil.rmtree(ufo_path)
+            # no need to also set the relative 'filename' attribute as that
+            # will be auto-updated on writing the designspace document
+            source.path = ufo_path
+            source.font.save(ufo_path)
+
+        if designspace_path is None:
+            designspace_path = os.path.join(master_dir, designspace.filename)
+        designspace.write(designspace_path)
         if mti_source:
             self.add_mti_features_to_master_ufos(mti_source, masters)
-        return designspace_path, instances
+        return designspace_path
 
     @timer()
     def add_mti_features_to_master_ufos(self, mti_source, masters):
@@ -348,7 +380,8 @@ class FontProject(object):
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, family_name=None, mti_source=None, **kwargs):
+            self, glyphs_path, designspace_path=None, master_dir=None,
+            instance_dir=None, family_name=None, mti_source=None, **kwargs):
         """Run toolchain from Glyphs source.
 
         Args:
@@ -363,24 +396,30 @@ class FontProject(object):
         """
 
         logger.info('Building master UFOs and designspace from Glyphs source')
-        designspace_path, instance_data = self.build_master_ufos(
-            glyphs_path, family_name, mti_source=mti_source)
-        self.run_from_designspace(
-            designspace_path, instance_data=instance_data, **kwargs)
+        designspace_path = self.build_master_ufos(
+            glyphs_path,
+            designspace_path=designspace_path,
+            master_dir=master_dir,
+            instance_dir=instance_dir,
+            family_name=family_name,
+            mti_source=mti_source)
+        self.run_from_designspace(designspace_path, **kwargs)
 
     def run_from_designspace(
             self, designspace_path, interpolate=False,
-            masters_as_instances=False, instance_data=None,
+            masters_as_instances=False,
             interpolate_binary_layout=False, round_instances=False,
+            instance_names=None,
             **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
         Args:
             designspace_path: Path to designspace document.
             interpolate: If True output instance fonts, otherwise just masters.
+            instance_names: Optional set of instance style names to include.
+                By default all the instances in the designspace are built when
+                `interpolate` argument is True.
             masters_as_instances: If True, output master fonts as instances.
-            instance_data: Data to be applied to instance UFOs, as returned from
-                glyphsLib's parsing function (ignored unless interpolate is True).
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
             round_instances: apply integer rounding when interpolating with
@@ -402,31 +441,33 @@ class FontProject(object):
                         % argname)
 
         from glyphsLib.interpolation import apply_instance_data
-        from mutatorMath.ufo import build as build_designspace
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
         ufos = []
+        reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3,
+                                           roundGeometry=round_instances,
+                                           verbose=True)
         if not interpolate or masters_as_instances:
-            reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
             ufos.extend(reader.getSourcePaths())
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
-            _, ilocs = self._designspace_locations(designspace_path)
-            for ipath in ilocs.keys():
-                # mutatorMath does not remove the existing instance UFOs
-                # so we do it ourselves, or else strange things happen...
-                # https://github.com/googlei18n/fontmake/issues/372
-                if ipath.endswith(".ufo") and os.path.isdir(ipath):
-                    logger.debug("Removing %s" % ipath)
-                    shutil.rmtree(ipath)
-            results = build_designspace(
-                designspace_path, outputUFOFormatVersion=3,
-                roundGeometry=round_instances)
-            if instance_data is not None:
-                ufos.extend(apply_instance_data(instance_data))
+            if instance_names is not None:
+                for name in instance_names:
+                    reader.readInstance(("stylename", name))
+                # make a set of normalized relative filenames from the paths
+                # returned by MutatorMath; it will be used to filter instances
+                # in apply_instance_data function below
+                designspace_dir = os.path.dirname(designspace_path)
+                filenames = set(
+                    os.path.normcase(os.path.normpath(
+                        os.path.relpath(path, designspace_dir)))
+                    for path in reader.results.values())
             else:
-                for result in results:
-                    ufos.extend(result.values())
+                reader.readInstances()
+                filenames = None  # will include all instances
+            logger.info('Applying instance data from designspace')
+            ufos.extend(apply_instance_data(designspace_path,
+                                            include_filenames=filenames))
 
         interpolate_layout_from = (
             designspace_path if interpolate_binary_layout else None)
