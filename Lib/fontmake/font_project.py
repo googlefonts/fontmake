@@ -38,6 +38,7 @@ from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools import varLib
+from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.featureCompiler import FeatureCompiler
@@ -318,7 +319,8 @@ class FontProject(object):
                 font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
 
             if interpolate_layout_from is not None:
-                loc = instance_locations[ufo.path]
+                ufo_path = os.path.normcase(os.path.normpath(ufo.path))
+                loc = instance_locations[ufo_path]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder, mapped=True)
                 font['GPOS'] = gpos_src['GPOS']
@@ -593,13 +595,14 @@ class FontProject(object):
         """Map font filenames to their locations in a designspace."""
 
         maps = []
-        ds = varLib.designspace.load(designspace_path)
-        for location_list in (ds['sources'], ds.get('instances', [])):
+        ds = designspaceLib.DesignSpaceDocument()
+        ds.read(designspace_path)
+        for elements in (ds.sources, ds.instances):
             location_map = {}
-            for loc in location_list:
-                abspath = os.path.normpath(os.path.join(
-                    os.path.dirname(designspace_path), loc['filename']))
-                location_map[abspath] = loc['location']
+            for element in elements:
+                normpath = os.path.normcase(os.path.normpath(os.path.join(
+                    os.path.dirname(designspace_path), element.filename)))
+                location_map[normpath] = element.location
             maps.append(location_map)
         return maps
 
