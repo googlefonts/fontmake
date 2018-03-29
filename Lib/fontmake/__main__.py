@@ -47,12 +47,18 @@ class PyClassType(object):
         return klass
 
 
-def exclude_args(parser, args, excluded_args, source_name):
-    msg = '"%s" argument only available for %s source'
+def exclude_args(parser, args, excluded_args, target):
+    msg = '"%s" option invalid for %s'
     for excluded in excluded_args:
-        if args[excluded]:
-            parser.error(msg % (excluded, source_name))
-        del args[excluded]
+        if isinstance(excluded, tuple):
+            argname, optname = excluded
+        else:
+            argname, optname = excluded, "--%s" % excluded.replace("_", "-")
+        if argname not in args:
+            continue
+        if args[argname]:
+            parser.error(msg % (optname, target))
+        del args[argname]
 
 
 def main(args=None):
@@ -88,8 +94,25 @@ def main(args=None):
         '--family-name',
         help='Family name to use for masters, and to filter output instances')
     outputGroup.add_argument(
+        '-I', '--instance-name', dest='instance_names', action='append',
+        default=None, metavar="INSTANCE_NAME",
+        help='Only interpolate a specific instance with a given "stylename" '
+        'attribute: e.g. -I "Condensed Bold". The option can be used '
+        'multiple times, and automatically implies -i.')
+    outputGroup.add_argument(
         '--round-instances', dest='round_instances', action='store_true',
         help='Apply integer rounding to all geometry when interpolating')
+    outputGroup.add_argument(
+        '--designspace-path', default=None,
+        help='Path to output designspace file (for Glyphs sources only).')
+    outputGroup.add_argument(
+        '--master-dir', default=None,
+        help='Directory where to write master UFO. Default: "./master_ufo". '
+             '(for Glyphs sources only).')
+    outputGroup.add_argument(
+        '--instance-dir', default=None,
+        help='Directory where to write instance UFOs. Default: '
+             '"./instance_ufo" (for Glyphs sources only)')
 
     contourGroup = parser.add_argument_group(title='Handling of contours')
     contourGroup.add_argument(
@@ -165,19 +188,25 @@ def main(args=None):
              '%(choices)s. Default: INFO')
     args = vars(parser.parse_args(args))
 
+    # --interpolate is implied when --instance-name is used
+    if args['instance_names']:
+        args['interpolate'] = True
+
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
+    input_format = ("Glyphs" if glyphs_path else
+                    "designspace" if designspace_path else
+                    "UFO") + " source"
 
     if 'variable' in args['output']:
         if not (glyphs_path or designspace_path):
             parser.error(
                 'Glyphs or designspace source required for variable font')
-        for argname in ('interpolate', 'masters_as_instances',
-                        'interpolate_binary_layout'):
-            if args[argname]:
-                parser.error('--%s option invalid for variable font'
-                             % argname.replace("_", "-"))
+        exclude_args(parser, args,
+                     [('instance_names', '--instance-name'), 'interpolate',
+                      'masters_as_instances', 'interpolate_binary_layout'],
+                     "variable output")
 
     project = FontProject(timing=args.pop('timing'),
                           verbose=args.pop('verbose'))
@@ -186,18 +215,22 @@ def main(args=None):
         project.run_from_glyphs(glyphs_path, **args)
         return
 
-    exclude_args(parser, args, ['family_name', 'mti_source'], 'Glyphs')
+    exclude_args(parser, args,
+                 ['family_name', 'mti_source', 'designspace_path',
+                  'master_dir', 'instance_dir'],
+                 input_format)
     if designspace_path:
         project.run_from_designspace(designspace_path, **args)
         return
 
-    exclude_args(
-        parser, args, ['interpolate', 'interpolate_binary_layout',
-                       'round_instances'],
-        'Glyphs or MutatorMath')
+    exclude_args(parser, args,
+                 [('instance_names', '--instance-name'), 'interpolate',
+                  'interpolate_binary_layout', 'round_instances'],
+                input_format)
     project.run_from_ufos(
         ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
 
 
 if __name__ == '__main__':
-    main()
+    import sys
+    sys.exit(main())
