@@ -27,6 +27,14 @@ try:
 except ImportError:
     from plistlib import readPlist  # PY2
 
+try:
+    from re import fullmatch
+except ImportError:
+    import re
+
+    def fullmatch(regex, string, flags=0):
+        """Backport of python3.4 re.fullmatch()."""
+        return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
@@ -44,6 +52,7 @@ from ufo2ft import compileOTF, compileTTF
 from ufo2ft.featureCompiler import FeatureCompiler
 
 from fontmake.ttfautohint import ttfautohint
+from fontmake.errors import FontmakeError
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
@@ -319,8 +328,7 @@ class FontProject(object):
                 font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
 
             if interpolate_layout_from is not None:
-                ufo_path = os.path.normcase(os.path.normpath(ufo.path))
-                loc = instance_locations[ufo_path]
+                loc = instance_locations[_normpath(ufo.path)]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder, mapped=True)
                 font['GPOS'] = gpos_src['GPOS']
@@ -411,16 +419,18 @@ class FontProject(object):
             self, designspace_path, interpolate=False,
             masters_as_instances=False,
             interpolate_binary_layout=False, round_instances=False,
-            instance_names=None,
+            instance_name=None,
             **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
         Args:
             designspace_path: Path to designspace document.
             interpolate: If True output instance fonts, otherwise just masters.
-            instance_names: Optional set of instance style names to include.
-                By default all the instances in the designspace are built when
-                `interpolate` argument is True.
+            instance_name: Only build instance(s) that match given name. The
+                value is a str, compiled into a regular expression and matched
+                against the "name" attribute of designspace instances using
+                `re.fullmatch`. By default all the instances in the designspace
+                are built when `interpolate` argument is True.
             masters_as_instances: If True, output master fonts as instances.
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
@@ -453,17 +463,12 @@ class FontProject(object):
             ufos.extend(reader.getSourcePaths())
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
-            if instance_names is not None:
-                for name in instance_names:
-                    reader.readInstance(("stylename", name))
-                # make a set of normalized relative filenames from the paths
-                # returned by MutatorMath; it will be used to filter instances
-                # in apply_instance_data function below
-                designspace_dir = os.path.dirname(designspace_path)
-                filenames = set(
-                    os.path.normcase(os.path.normpath(
-                        os.path.relpath(path, designspace_dir)))
-                    for path in reader.results.values())
+            if instance_name is not None:
+                instances = self._search_instances(designspace_path,
+                                                   instance_name)
+                for instance_name in sorted(instances):
+                    reader.readInstance(("name", instance_name))
+                filenames = set(instances.values())
             else:
                 reader.readInstances()
                 filenames = None  # will include all instances
@@ -538,6 +543,19 @@ class FontProject(object):
                 raise TypeError('Need designspace to build variable font.')
             self.build_variable_font(designspace_path)
 
+    @staticmethod
+    def _search_instances(designspace_path, pattern):
+        designspace = designspaceLib.DesignSpaceDocument()
+        designspace.read(designspace_path)
+        instances = {}
+        for instance in designspace.instances:
+            # is 'name' optional? 'filename' certainly must not be
+            if fullmatch(pattern, instance.name):
+                instances[instance.name] = _normpath(instance.filename)
+        if not instances:
+            raise FontmakeError("No instance found with %r" % pattern)
+        return instances
+
     def _font_name(self, ufo):
         """Generate a postscript-style font name."""
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
@@ -600,9 +618,9 @@ class FontProject(object):
         for elements in (ds.sources, ds.instances):
             location_map = {}
             for element in elements:
-                normpath = os.path.normcase(os.path.normpath(os.path.join(
-                    os.path.dirname(designspace_path), element.filename)))
-                location_map[normpath] = element.location
+                path = _normpath(os.path.join(
+                    os.path.dirname(designspace_path), element.filename))
+                location_map[path] = element.location
             maps.append(location_map)
         return maps
 
@@ -666,3 +684,7 @@ class FDKFeatureCompiler(FeatureCompiler):
         os.remove(feasrc_path)
         if not success:
             raise ValueError("Feature syntax compilation failed.")
+
+
+def _normpath(fname):
+    return os.path.normcase(os.path.normpath(fname))
