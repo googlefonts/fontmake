@@ -20,7 +20,6 @@ import glob
 import logging
 import math
 import os
-import shutil
 import tempfile
 try:
     from plistlib import load as readPlist  # PY3
@@ -98,11 +97,6 @@ class FontProject(object):
         for source in designspace.sources:
             masters.append(source.font)
             ufo_path = os.path.join(master_dir, source.filename)
-            # removing existing UFOs is no longer necessary with
-            # defcon>=0.4 but it may still be more efficient to do it
-            # regardless, to avoid the extra temporary directory
-            if os.path.exists(os.path.join(ufo_path, "metainfo.plist")):
-                shutil.rmtree(ufo_path)
             # no need to also set the relative 'filename' attribute as that
             # will be auto-updated on writing the designspace document
             source.path = ufo_path
