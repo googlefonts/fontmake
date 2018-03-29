@@ -179,7 +179,7 @@ setup(
         "glyphsLib>=2.2.1",
         "ufo2ft>=1.1.0",
         "MutatorMath>=2.1.0",
-        "defcon>=0.3.5",
+        "defcon>=0.4.0",
         "booleanOperations>=0.8.0",
     ],
     cmdclass={
