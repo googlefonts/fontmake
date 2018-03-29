@@ -16,6 +16,7 @@
 from argparse import ArgumentParser, ArgumentTypeError
 from fontmake import __version__
 from fontmake.font_project import FontProject
+from fontmake.errors import FontmakeError
 
 
 class PyClassType(object):
@@ -49,14 +50,11 @@ class PyClassType(object):
 
 def exclude_args(parser, args, excluded_args, target):
     msg = '"%s" option invalid for %s'
-    for excluded in excluded_args:
-        if isinstance(excluded, tuple):
-            argname, optname = excluded
-        else:
-            argname, optname = excluded, "--%s" % excluded.replace("_", "-")
+    for argname in excluded_args:
         if argname not in args:
             continue
         if args[argname]:
+            optname = "--%s" % argname.replace("_", "-")
             parser.error(msg % (optname, target))
         del args[argname]
 
@@ -94,11 +92,11 @@ def main(args=None):
         '--family-name',
         help='Family name to use for masters, and to filter output instances')
     outputGroup.add_argument(
-        '-I', '--instance-name', dest='instance_names', action='append',
-        default=None, metavar="INSTANCE_NAME",
-        help='Only interpolate a specific instance with a given "stylename" '
-        'attribute: e.g. -I "Condensed Bold". The option can be used '
-        'multiple times, and automatically implies -i.')
+        '-I', '--instance-name', default=None, metavar="INSTANCE_NAME",
+        help='Only interpolate specific instance (or instances) that match '
+        'the given "name" attribute (full string or regular expression). '
+        'E.g.: -I "Noto Sans Bold"; or -I ".* UI .*". The option '
+        'automatically implies -i.')
     outputGroup.add_argument(
         '--round-instances', dest='round_instances', action='store_true',
         help='Apply integer rounding to all geometry when interpolating')
@@ -189,7 +187,7 @@ def main(args=None):
     args = vars(parser.parse_args(args))
 
     # --interpolate is implied when --instance-name is used
-    if args['instance_names']:
+    if args['instance_name']:
         args['interpolate'] = True
 
     glyphs_path = args.pop('glyphs_path')
@@ -204,31 +202,34 @@ def main(args=None):
             parser.error(
                 'Glyphs or designspace source required for variable font')
         exclude_args(parser, args,
-                     [('instance_names', '--instance-name'), 'interpolate',
+                     ['instance_name', 'interpolate',
                       'masters_as_instances', 'interpolate_binary_layout'],
                      "variable output")
 
-    project = FontProject(timing=args.pop('timing'),
-                          verbose=args.pop('verbose'))
+    try:
+        project = FontProject(timing=args.pop('timing'),
+                              verbose=args.pop('verbose'))
 
-    if glyphs_path:
-        project.run_from_glyphs(glyphs_path, **args)
-        return
+        if glyphs_path:
+            project.run_from_glyphs(glyphs_path, **args)
+            return
 
-    exclude_args(parser, args,
-                 ['family_name', 'mti_source', 'designspace_path',
-                  'master_dir', 'instance_dir'],
-                 input_format)
-    if designspace_path:
-        project.run_from_designspace(designspace_path, **args)
-        return
+        exclude_args(parser, args,
+                     ['family_name', 'mti_source', 'designspace_path',
+                      'master_dir', 'instance_dir'],
+                     input_format)
+        if designspace_path:
+            project.run_from_designspace(designspace_path, **args)
+            return
 
-    exclude_args(parser, args,
-                 [('instance_names', '--instance-name'), 'interpolate',
-                  'interpolate_binary_layout', 'round_instances'],
-                input_format)
-    project.run_from_ufos(
-        ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
+        exclude_args(parser, args,
+                     ['instance_name', 'interpolate',
+                      'interpolate_binary_layout', 'round_instances'],
+                    input_format)
+        project.run_from_ufos(
+            ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
+    except FontmakeError as e:
+        parser.error(e)
 
 
 if __name__ == '__main__':
