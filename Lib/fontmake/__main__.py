@@ -89,7 +89,7 @@ def main(args=None):
              'To only interpolate a specific instance (or instances) that '
              'match a given "name" attribute, you can pass as argument '
              'the full instance name or a regular expression. '
-             'E.g.: -I "Noto Sans Bold"; or -I ".* UI Condensed". '
+             'E.g.: -i "Noto Sans Bold"; or -i ".* UI Condensed". '
              '(for Glyphs or MutatorMath sources only). ')
     outputGroup.add_argument(
         '-M', '--masters-as-instances', action='store_true',
