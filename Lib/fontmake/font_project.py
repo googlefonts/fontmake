@@ -21,6 +21,7 @@ import logging
 import math
 import os
 import tempfile
+from collections import OrderedDict
 try:
     from plistlib import load as readPlist  # PY3
 except ImportError:
@@ -413,18 +414,16 @@ class FontProject(object):
             self, designspace_path, interpolate=False,
             masters_as_instances=False,
             interpolate_binary_layout=False, round_instances=False,
-            instance_name=None,
             **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
         Args:
             designspace_path: Path to designspace document.
-            interpolate: If True output instance fonts, otherwise just masters.
-            instance_name: Only build instance(s) that match given name. The
-                value is a str, compiled into a regular expression and matched
-                against the "name" attribute of designspace instances using
-                `re.fullmatch`. By default all the instances in the designspace
-                are built when `interpolate` argument is True.
+            interpolate: If True output all instance fonts, otherwise just
+                masters. If the value is a string, only build instance(s) that
+                match given name. The string is compiled into a regular
+                expression and matched against the "name" attribute of
+                designspace instances using `re.fullmatch`.
             masters_as_instances: If True, output master fonts as instances.
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
@@ -457,10 +456,10 @@ class FontProject(object):
             ufos.extend(reader.getSourcePaths())
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
-            if instance_name is not None:
+            if isinstance(interpolate, basestring):
                 instances = self._search_instances(designspace_path,
-                                                   instance_name)
-                for instance_name in sorted(instances):
+                                                   pattern=interpolate)
+                for instance_name in instances:
                     reader.readInstance(("name", instance_name))
                 filenames = set(instances.values())
             else:
@@ -541,7 +540,7 @@ class FontProject(object):
     def _search_instances(designspace_path, pattern):
         designspace = designspaceLib.DesignSpaceDocument()
         designspace.read(designspace_path)
-        instances = {}
+        instances = OrderedDict()
         for instance in designspace.instances:
             # is 'name' optional? 'filename' certainly must not be
             if fullmatch(pattern, instance.name):

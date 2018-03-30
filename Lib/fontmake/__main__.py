@@ -83,20 +83,20 @@ def main(args=None):
              'Default: otf, ttf',
         choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
     outputGroup.add_argument(
-        '-i', '--interpolate', action='store_true',
-        help='Interpolate masters (for Glyphs or MutatorMath sources only)')
+        '-i', '--interpolate', nargs="?", default=False, const=True,
+        metavar="INSTANCE_NAME",
+        help='Interpolate masters and generate all the instances defined. '
+             'To only interpolate a specific instance (or instances) that '
+             'match a given "name" attribute, you can pass as argument '
+             'the full instance name or a regular expression. '
+             'E.g.: -I "Noto Sans Bold"; or -I ".* UI Condensed". '
+             '(for Glyphs or MutatorMath sources only). ')
     outputGroup.add_argument(
         '-M', '--masters-as-instances', action='store_true',
         help='Output masters as instances')
     outputGroup.add_argument(
         '--family-name',
         help='Family name to use for masters, and to filter output instances')
-    outputGroup.add_argument(
-        '-I', '--instance-name', default=None, metavar="INSTANCE_NAME",
-        help='Only interpolate specific instance (or instances) that match '
-        'the given "name" attribute (full string or regular expression). '
-        'E.g.: -I "Noto Sans Bold"; or -I ".* UI .*". The option '
-        'automatically implies -i.')
     outputGroup.add_argument(
         '--round-instances', dest='round_instances', action='store_true',
         help='Apply integer rounding to all geometry when interpolating')
@@ -186,10 +186,6 @@ def main(args=None):
              '%(choices)s. Default: INFO')
     args = vars(parser.parse_args(args))
 
-    # --interpolate is implied when --instance-name is used
-    if args['instance_name']:
-        args['interpolate'] = True
-
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
     designspace_path = args.pop('mm_designspace')
@@ -202,8 +198,8 @@ def main(args=None):
             parser.error(
                 'Glyphs or designspace source required for variable font')
         exclude_args(parser, args,
-                     ['instance_name', 'interpolate',
-                      'masters_as_instances', 'interpolate_binary_layout'],
+                     ['interpolate', 'masters_as_instances',
+                      'interpolate_binary_layout'],
                      "variable output")
 
     try:
@@ -223,8 +219,8 @@ def main(args=None):
             return
 
         exclude_args(parser, args,
-                     ['instance_name', 'interpolate',
-                      'interpolate_binary_layout', 'round_instances'],
+                     ['interpolate', 'interpolate_binary_layout',
+                      'round_instances'],
                     input_format)
         project.run_from_ufos(
             ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
