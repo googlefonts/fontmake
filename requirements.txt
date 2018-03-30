@@ -1,4 +1,4 @@
-fonttools==3.22.0
+fonttools==3.24.2
 cu2qu==1.4.0
 # I need to use glyphsLib master for
 # https://github.com/googlei18n/glyphsLib/pull/339
