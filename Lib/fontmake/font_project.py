@@ -128,9 +128,16 @@ class FontProject(object):
         """Copy contours from component to parent, including nested components."""
 
         for nested in component.components:
-            self._deep_copy_contours(
-                ufo, parent, ufo[nested.baseGlyph],
-                transformation.transform(nested.transformation))
+            try:
+                nested_glyph = ufo[nested.baseGlyph]
+            except KeyError:
+                logger.warning(
+                    'Dropping nonexistent component %s in glyph %s',
+                    nested.baseGlyph, parent.name)
+            else:
+                self._deep_copy_contours(
+                    ufo, parent, nested_glyph,
+                    transformation.transform(nested.transformation))
 
         if component != parent:
             pen = TransformPen(parent.getPen(), transformation)
