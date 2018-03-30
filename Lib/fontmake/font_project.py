@@ -545,7 +545,7 @@ class FontProject(object):
         for instance in designspace.instances:
             # is 'name' optional? 'filename' certainly must not be
             if fullmatch(pattern, instance.name):
-                instances[instance.name] = _normpath(instance.filename)
+                instances[instance.name] = instance.filename
         if not instances:
             raise FontmakeError("No instance found with %r" % pattern)
         return instances
