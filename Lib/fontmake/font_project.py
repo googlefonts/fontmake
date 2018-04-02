@@ -20,13 +20,21 @@ import glob
 import logging
 import math
 import os
-import shutil
 import tempfile
+from collections import OrderedDict
 try:
     from plistlib import load as readPlist  # PY3
 except ImportError:
     from plistlib import readPlist  # PY2
 
+try:
+    from re import fullmatch
+except ImportError:
+    import re
+
+    def fullmatch(regex, string, flags=0):
+        """Backport of python3.4 re.fullmatch()."""
+        return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
 from cu2qu.pens import ReverseContourPen
 from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
@@ -38,11 +46,13 @@ from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools import varLib
+from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.featureCompiler import FeatureCompiler
 
 from fontmake.ttfautohint import ttfautohint
+from fontmake.errors import FontmakeError
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
@@ -61,17 +71,44 @@ class FontProject(object):
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
     @timer()
-    def build_master_ufos(self, glyphs_path, family_name=None, mti_source=None):
+    def build_master_ufos(self, glyphs_path, designspace_path=None,
+                          master_dir=None, instance_dir=None,
+                          family_name=None, mti_source=None):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
-        master_dir = self._output_dir('ufo')
-        instance_dir = self._output_dir('ufo', is_instance=True)
-        masters, designspace_path, instances = glyphsLib.build_masters(
-            glyphs_path, master_dir, designspace_instance_dir=instance_dir,
-            family_name=family_name)
+
+        if master_dir is None:
+            master_dir = self._output_dir('ufo')
+        if instance_dir is None:
+            instance_dir = self._output_dir('ufo', is_instance=True)
+
+        font = glyphsLib.GSFont(glyphs_path)
+
+        if designspace_path is not None:
+            designspace_dir = os.path.dirname(designspace_path)
+        else:
+            designspace_dir = master_dir
+        # glyphsLib.to_designspace expects instance_dir to be relative
+        instance_dir = os.path.relpath(instance_dir, designspace_dir)
+
+        designspace = glyphsLib.to_designspace(
+            font, family_name=family_name, instance_dir=instance_dir)
+
+        masters = []
+        for source in designspace.sources:
+            masters.append(source.font)
+            ufo_path = os.path.join(master_dir, source.filename)
+            # no need to also set the relative 'filename' attribute as that
+            # will be auto-updated on writing the designspace document
+            source.path = ufo_path
+            source.font.save(ufo_path)
+
+        if designspace_path is None:
+            designspace_path = os.path.join(master_dir, designspace.filename)
+        designspace.write(designspace_path)
         if mti_source:
             self.add_mti_features_to_master_ufos(mti_source, masters)
-        return designspace_path, instances
+        return designspace_path
 
     @timer()
     def add_mti_features_to_master_ufos(self, mti_source, masters):
@@ -286,7 +323,7 @@ class FontProject(object):
                 font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
 
             if interpolate_layout_from is not None:
-                loc = instance_locations[ufo.path]
+                loc = instance_locations[_normpath(ufo.path)]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder, mapped=True)
                 font['GPOS'] = gpos_src['GPOS']
@@ -348,7 +385,8 @@ class FontProject(object):
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, family_name=None, mti_source=None, **kwargs):
+            self, glyphs_path, designspace_path=None, master_dir=None,
+            instance_dir=None, family_name=None, mti_source=None, **kwargs):
         """Run toolchain from Glyphs source.
 
         Args:
@@ -363,24 +401,30 @@ class FontProject(object):
         """
 
         logger.info('Building master UFOs and designspace from Glyphs source')
-        designspace_path, instance_data = self.build_master_ufos(
-            glyphs_path, family_name, mti_source=mti_source)
-        self.run_from_designspace(
-            designspace_path, instance_data=instance_data, **kwargs)
+        designspace_path = self.build_master_ufos(
+            glyphs_path,
+            designspace_path=designspace_path,
+            master_dir=master_dir,
+            instance_dir=instance_dir,
+            family_name=family_name,
+            mti_source=mti_source)
+        self.run_from_designspace(designspace_path, **kwargs)
 
     def run_from_designspace(
             self, designspace_path, interpolate=False,
-            masters_as_instances=False, instance_data=None,
+            masters_as_instances=False,
             interpolate_binary_layout=False, round_instances=False,
             **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
         Args:
             designspace_path: Path to designspace document.
-            interpolate: If True output instance fonts, otherwise just masters.
+            interpolate: If True output all instance fonts, otherwise just
+                masters. If the value is a string, only build instance(s) that
+                match given name. The string is compiled into a regular
+                expression and matched against the "name" attribute of
+                designspace instances using `re.fullmatch`.
             masters_as_instances: If True, output master fonts as instances.
-            instance_data: Data to be applied to instance UFOs, as returned from
-                glyphsLib's parsing function (ignored unless interpolate is True).
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
             round_instances: apply integer rounding when interpolating with
@@ -402,31 +446,28 @@ class FontProject(object):
                         % argname)
 
         from glyphsLib.interpolation import apply_instance_data
-        from mutatorMath.ufo import build as build_designspace
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
         ufos = []
+        reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3,
+                                           roundGeometry=round_instances,
+                                           verbose=True)
         if not interpolate or masters_as_instances:
-            reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3)
             ufos.extend(reader.getSourcePaths())
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
-            _, ilocs = self._designspace_locations(designspace_path)
-            for ipath in ilocs.keys():
-                # mutatorMath does not remove the existing instance UFOs
-                # so we do it ourselves, or else strange things happen...
-                # https://github.com/googlei18n/fontmake/issues/372
-                if ipath.endswith(".ufo") and os.path.isdir(ipath):
-                    logger.debug("Removing %s" % ipath)
-                    shutil.rmtree(ipath)
-            results = build_designspace(
-                designspace_path, outputUFOFormatVersion=3,
-                roundGeometry=round_instances)
-            if instance_data is not None:
-                ufos.extend(apply_instance_data(instance_data))
+            if isinstance(interpolate, basestring):
+                instances = self._search_instances(designspace_path,
+                                                   pattern=interpolate)
+                for instance_name in instances:
+                    reader.readInstance(("name", instance_name))
+                filenames = set(instances.values())
             else:
-                for result in results:
-                    ufos.extend(result.values())
+                reader.readInstances()
+                filenames = None  # will include all instances
+            logger.info('Applying instance data from designspace')
+            ufos.extend(apply_instance_data(designspace_path,
+                                            include_filenames=filenames))
 
         interpolate_layout_from = (
             designspace_path if interpolate_binary_layout else None)
@@ -495,6 +536,19 @@ class FontProject(object):
                 raise TypeError('Need designspace to build variable font.')
             self.build_variable_font(designspace_path)
 
+    @staticmethod
+    def _search_instances(designspace_path, pattern):
+        designspace = designspaceLib.DesignSpaceDocument()
+        designspace.read(designspace_path)
+        instances = OrderedDict()
+        for instance in designspace.instances:
+            # is 'name' optional? 'filename' certainly must not be
+            if fullmatch(pattern, instance.name):
+                instances[instance.name] = instance.filename
+        if not instances:
+            raise FontmakeError("No instance found with %r" % pattern)
+        return instances
+
     def _font_name(self, ufo):
         """Generate a postscript-style font name."""
         return '%s-%s' % (ufo.info.familyName.replace(' ', ''),
@@ -552,13 +606,14 @@ class FontProject(object):
         """Map font filenames to their locations in a designspace."""
 
         maps = []
-        ds = varLib.designspace.load(designspace_path)
-        for location_list in (ds['sources'], ds.get('instances', [])):
+        ds = designspaceLib.DesignSpaceDocument()
+        ds.read(designspace_path)
+        for elements in (ds.sources, ds.instances):
             location_map = {}
-            for loc in location_list:
-                abspath = os.path.normpath(os.path.join(
-                    os.path.dirname(designspace_path), loc['filename']))
-                location_map[abspath] = loc['location']
+            for element in elements:
+                path = _normpath(os.path.join(
+                    os.path.dirname(designspace_path), element.filename))
+                location_map[path] = element.location
             maps.append(location_map)
         return maps
 
@@ -622,3 +677,7 @@ class FDKFeatureCompiler(FeatureCompiler):
         os.remove(feasrc_path)
         if not success:
             raise ValueError("Feature syntax compilation failed.")
+
+
+def _normpath(fname):
+    return os.path.normcase(os.path.normpath(fname))
