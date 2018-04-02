@@ -4,7 +4,7 @@ cu2qu==1.4.0
 # https://github.com/googlei18n/glyphsLib/pull/339
 # TODO: Remove this when glyphsLib is released with the above patch
 # glyphsLib==2.2.1
--e git+https://github.com/googlei18n/glyphsLib.git#egg=glyphsLib
+-e git+https://github.com/googlei18n/glyphsLib.git@f4c1083#egg=glyphsLib
 ufo2ft==1.1.0
 MutatorMath==2.1.0
 defcon==0.4.0
