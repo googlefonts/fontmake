@@ -2,7 +2,7 @@
 <designspace format="3">
     <axes>
         <axis tag="wght"
-              name="Weight"
+              name="weight"
               minimum="1"
               maximum="1000"
               default="400">
@@ -15,13 +15,13 @@
     <sources>
         <source familyname="MyFont" filename="MyFont-Light.ufo" stylename="Light" name="MyFont Light">
             <location>
-                <dimension name="Weight" xvalue="50" />
+                <dimension name="weight" xvalue="300.0" />
             </location>
             <info copy="1" />
         </source>
         <source familyname="MyFont" filename="MyFont-Bold.ufo" stylename="Bold" name="MyFont Bold">
             <location>
-                <dimension name="Weight" xvalue="150" />
+                <dimension name="weight" xvalue="700.0" />
             </location>
         </source>
     </sources>
@@ -29,7 +29,7 @@
     <instances>
         <instance familyname="MyFont" filename="MyFont-Regular.ufo" stylename="Regular">
             <location>
-                <dimension name="Weight" xvalue="100" />
+                <dimension name="weight" xvalue="400.0" />
             </location>
             <info />
         </instance>
