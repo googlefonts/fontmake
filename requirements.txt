@@ -7,5 +7,5 @@ cu2qu==1.4.0
 -e git+https://github.com/googlei18n/glyphsLib.git@f4c1083#egg=glyphsLib
 ufo2ft==1.1.0
 MutatorMath==2.1.0
-defcon==0.4.0
+defcon==0.5.1
 booleanOperations==0.8.0
