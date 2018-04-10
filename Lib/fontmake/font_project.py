@@ -263,8 +263,8 @@ class FontProject(object):
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
             use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
-            interpolate_layout_from=None, kern_writer_class=None,
-            mark_writer_class=None, inplace=True):
+            interpolate_layout_from=None, interpolate_layout_dir=None,
+            kern_writer_class=None, mark_writer_class=None, inplace=True):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -282,6 +282,8 @@ class FontProject(object):
             subroutinize: If True, subroutinize CFF outlines in output.
             interpolate_layout_from: A designspace path to give varLib for
                 interpolating layout tables to use in output.
+            interpolate_layout_dir: Directory containing the compiled master
+                fonts to use for interpolating binary layout tables.
             kern_writer_class: Class overriding ufo2ft's KernFeatureWriter.
             mark_writer_class: Class overriding ufo2ft's MarkFeatureWriter.
         """
@@ -295,11 +297,12 @@ class FontProject(object):
             logger.info("Using %r", mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
-            master_locations, instance_locations = self._designspace_locations(
-                interpolate_layout_from)
-            ufod = self._output_dir('ufo', False, interpolatable)
-            otfd = self._output_dir(ext, False, interpolatable)
-            finder = lambda s: s.replace(ufod, otfd).replace('.ufo', '.' + ext)
+            if interpolate_layout_dir is None:
+                interpolate_layout_dir = self._output_dir(
+                    ext, is_instance=False, interpolatable=interpolatable)
+            def finder(s):
+                fname = os.path.splitext(os.path.basename(s))[0] + '.' + ext
+                return os.path.join(interpolate_layout_dir, fname)
 
         for ufo in ufos:
             name = self._font_name(ufo)
@@ -323,6 +326,8 @@ class FontProject(object):
                 font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
 
             if interpolate_layout_from is not None:
+                master_locations, instance_locations = self._designspace_locations(
+                    interpolate_layout_from)
                 loc = instance_locations[_normpath(ufo.path)]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder, mapped=True)
@@ -469,13 +474,21 @@ class FontProject(object):
             ufos.extend(apply_instance_data(designspace_path,
                                             include_filenames=filenames))
 
-        interpolate_layout_from = (
-            designspace_path if interpolate_binary_layout else None)
+        if interpolate_binary_layout is False:
+            interpolate_layout_from = interpolate_layout_dir = None
+        else:
+            interpolate_layout_from = designspace_path
+            if isinstance(interpolate_binary_layout, basestring):
+                interpolate_layout_dir = interpolate_binary_layout
+            else:
+                interpolate_layout_dir = None
 
         self.run_from_ufos(
             ufos, designspace_path=designspace_path,
             is_instance=(interpolate or masters_as_instances),
-            interpolate_layout_from=interpolate_layout_from, **kwargs)
+            interpolate_layout_from=interpolate_layout_from,
+            interpolate_layout_dir=interpolate_layout_dir,
+            **kwargs)
 
     def run_from_ufos(
             self, ufos, output=(), designspace_path=None,

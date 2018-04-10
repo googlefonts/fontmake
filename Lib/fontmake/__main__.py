@@ -130,7 +130,8 @@ def main(args=None):
 
     layoutGroup = parser.add_argument_group(title='Handling of OpenType Layout')
     layoutGroup.add_argument(
-        '--interpolate-binary-layout', action='store_true',
+        '--interpolate-binary-layout', nargs="?", default=False, const=True,
+        metavar="MASTER_DIR",
         help='Interpolate layout tables from compiled master binaries. '
              'Requires Glyphs or MutatorMath source.')
     layoutGroup.add_argument(
