@@ -226,7 +226,8 @@ def main(args=None):
         project.run_from_ufos(
             ufo_paths, is_instance=args.pop('masters_as_instances'), **args)
     except FontmakeError as e:
-        parser.error(e)
+        import sys
+        sys.exit("fontmake: error: %s" % e)
 
 
 if __name__ == '__main__':
