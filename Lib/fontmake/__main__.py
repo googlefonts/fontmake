@@ -82,6 +82,15 @@ def main(args=None):
         help='Output font formats. Choose between: %(choices)s. '
              'Default: otf, ttf',
         choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
+    outputSubGroup = outputGroup.add_mutually_exclusive_group()
+    outputSubGroup.add_argument(
+        '--output-path', default=None,
+        help="Output font file path. Only valid when the output is a single "
+        "file (e.g. input is a single UFO or output is variable font)")
+    outputSubGroup.add_argument(
+        '--output-dir', default=None,
+        help="Output folder. By default, output folders are created in the "
+        "current working directory, grouping output fonts by format.")
     outputGroup.add_argument(
         '-i', '--interpolate', nargs="?", default=False, const=True,
         metavar="INSTANCE_NAME",
