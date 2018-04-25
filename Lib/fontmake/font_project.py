@@ -584,6 +584,7 @@ class FontProject(object):
                 tempdirs.append(master_bin_dir)
             else:
                 output_dir = master_bin_dir = kwargs.pop("output_dir", None)
+            output_path = kwargs.pop("output_path", None)
             self.build_interpolatable_ttfs(
                 ufos, reverse_direction, conversion_error,
                 output_dir=master_bin_dir, **kwargs)
@@ -593,7 +594,7 @@ class FontProject(object):
                 raise TypeError('Need designspace to build variable font.')
             try:
                 self.build_variable_font(designspace_path,
-                                         output_path=kwargs.get("output_path"),
+                                         output_path=output_path,
                                          output_dir=output_dir,
                                          master_bin_dir=master_bin_dir)
             finally:
