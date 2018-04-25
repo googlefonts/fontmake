@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-import shutil
+from contextlib import contextmanager
 from argparse import ArgumentParser, ArgumentTypeError
 from fontmake import __version__
 from fontmake.font_project import FontProject
@@ -60,11 +60,12 @@ def exclude_args(parser, args, excluded_args, target):
         del args[argname]
 
 
+@contextmanager
 def _make_tempdirs(parser, args):
     output = args["output"]
     tempdirs = []
     for dirname in ("master_dir", "instance_dir"):
-        if dirname in args and args.get(dirname) == "{tmp}":
+        if args.get(dirname) == "{tmp}":
             if "ufo" in output:
                 parser.error(
                     "Can't use temporary %s directory with 'ufo' output"
@@ -72,7 +73,13 @@ def _make_tempdirs(parser, args):
             import tempfile
             td = args[dirname] = tempfile.mkdtemp(prefix=dirname+"_")
             tempdirs.append(td)
-    return tempdirs
+
+    yield tempdirs
+
+    if tempdirs:
+        import shutil
+        for td in tempdirs:
+            shutil.rmtree(td)
 
 
 def main(args=None):
@@ -235,12 +242,8 @@ def main(args=None):
                               verbose=args.pop('verbose'))
 
         if glyphs_path:
-            tempdirs = _make_tempdirs(parser, args)
-            try:
+            with _make_tempdirs(parser, args):
                 project.run_from_glyphs(glyphs_path, **args)
-            finally:
-                for tempdir in tempdirs:
-                    shutil.rmtree(tempdir)
             return
 
         exclude_args(parser, args,
