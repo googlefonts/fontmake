@@ -53,8 +53,8 @@ from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.featureCompiler import FeatureCompiler
 
+from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
-from fontmake.errors import FontmakeError
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
@@ -264,6 +264,7 @@ class FontProject(object):
             use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
             interpolate_layout_from=None, interpolate_layout_dir=None,
+            output_path=None, output_dir=None,
             kern_writer_class=None, mark_writer_class=None, inplace=True):
         """Build OpenType binaries from UFOs.
 
@@ -284,9 +285,17 @@ class FontProject(object):
                 interpolating layout tables to use in output.
             interpolate_layout_dir: Directory containing the compiled master
                 fonts to use for interpolating binary layout tables.
+            output_path: output font file path. Only works when the input
+                'ufos' list contains a single font.
+            output_dir: directory where to save output files. Mutually
+                exclusive with 'output_path' argument.
             kern_writer_class: Class overriding ufo2ft's KernFeatureWriter.
             mark_writer_class: Class overriding ufo2ft's MarkFeatureWriter.
         """
+        assert not (output_path and output_dir), "mutually exclusive args"
+
+        if output_path is not None and len(ufos) > 1:
+            raise ValueError("output_path requires a single input")
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureCompiler
@@ -300,15 +309,14 @@ class FontProject(object):
             if interpolate_layout_dir is None:
                 interpolate_layout_dir = self._output_dir(
                     ext, is_instance=False, interpolatable=interpolatable)
-            def finder(s):
-                fname = os.path.splitext(os.path.basename(s))[0] + '.' + ext
-                return os.path.join(interpolate_layout_dir, fname)
+            finder = partial(_varLib_finder, directory=interpolate_layout_dir,
+                             ext=ext)
 
+        do_autohint = ttf and autohint is not None
         for ufo in ufos:
             name = self._font_name(ufo)
             logger.info('Saving %s for %s' % (ext.upper(), name))
 
-            otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
             if use_production_names is None:
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
@@ -337,6 +345,17 @@ class FontProject(object):
                 font['GDEF'] = gsub_src['GDEF']
                 font['GSUB'] = gsub_src['GSUB']
 
+            if do_autohint:
+                # if we are autohinting, we save the unhinted font to a
+                # temporary path, and the hinted one to the final destination
+                fd, otf_path = tempfile.mkstemp("."+ext)
+                os.close(fd)
+            elif output_path is None:
+                otf_path = self._output_path(ufo, ext, is_instance,
+                                             interpolatable,
+                                             output_dir=output_dir)
+            else:
+                otf_path = output_path
             font.save(otf_path)
 
             if subset is None:
@@ -347,10 +366,24 @@ class FontProject(object):
             if subset:
                 self.subset_otf_from_ufo(otf_path, ufo)
 
-            if ttf and autohint is not None:
+            if not do_autohint:
+                continue
+
+            if output_path is not None:
+                hinted_otf_path = output_path
+            else:
                 hinted_otf_path = self._output_path(
-                    ufo, ext, is_instance, interpolatable, autohinted=True)
+                    ufo, ext, is_instance, interpolatable, autohinted=True,
+                    output_dir=output_dir)
+            try:
                 ttfautohint(otf_path, hinted_otf_path, args=autohint)
+            except TTFAError:
+                # copy unhinted font to destination before re-raising error
+                shutil.copyfile(otf_path, hinted_otf_path)
+                raise
+            finally:
+                # must clean up temp file
+                os.remove(otf_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
