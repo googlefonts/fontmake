@@ -15,6 +15,8 @@
 
 import subprocess
 
+from fontmake.errors import TTFAError
+
 
 def ttfautohint(in_file, out_file, args=None, **kwargs):
     """Thin wrapper around the ttfautohint command line tool.
@@ -29,7 +31,10 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
     if args is not None:
         if kwargs:
             raise TypeError('Should not provide both cmd args and kwargs.')
-        return subprocess.call(arg_list + args.split() + file_args)
+        rv = subprocess.call(arg_list + args.split() + file_args)
+        if rv != 0:
+            raise TTFAError(rv)
+        return
 
     boolean_options = (
         'debug', 'composites', 'dehint', 'help', 'ignore_restrictions',
@@ -53,4 +58,6 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
     if kwargs:
         raise TypeError('Unexpected argument(s): ' + ', '.join(kwargs.keys()))
 
-    return subprocess.call(arg_list + file_args)
+    rv = subprocess.call(arg_list + file_args)
+    if rv != 0:
+        raise TTFAError(rv)

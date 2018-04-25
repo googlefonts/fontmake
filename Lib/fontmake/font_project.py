@@ -20,7 +20,9 @@ import glob
 import logging
 import math
 import os
+from functools import partial
 import tempfile
+import shutil
 from collections import OrderedDict
 try:
     from plistlib import load as readPlist  # PY3
@@ -51,8 +53,8 @@ from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF
 from ufo2ft.featureCompiler import FeatureCompiler
 
+from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
-from fontmake.errors import FontmakeError
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
@@ -235,36 +237,35 @@ class FontProject(object):
                             conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
-    def build_variable_font(self, designspace_path):
+    def build_variable_font(self, designspace_path, output_path=None,
+                            output_dir=None, master_bin_dir=None):
         """Build OpenType variable font from masters in a designspace."""
+        assert not (output_path and output_dir), "mutually exclusive args"
 
-        # TODO: make output filename user configurable
-        outfile = os.path.splitext(os.path.basename(designspace_path))[0] + '-VF'
-        outfile = self._output_path(outfile, 'ttf', is_variable=True)
+        if output_path is None:
+            output_path = os.path.splitext(
+                os.path.basename(designspace_path))[0] + '-VF'
+            output_path = self._output_path(
+                output_path, 'ttf', is_variable=True, output_dir=output_dir)
 
-        logger.info('Building variable font ' + outfile)
+        logger.info('Building variable font ' + output_path)
 
-        master_locations, _ = self._designspace_locations(designspace_path)
-        ufo_paths = list(master_locations.keys())
-        ufodir = os.path.dirname(ufo_paths[0])
-        assert all(p.startswith(ufodir) for p in ufo_paths)
-        ttfdir = self._output_dir('ttf', interpolatable=True)
+        if master_bin_dir is None:
+            master_bin_dir = self._output_dir('ttf', interpolatable=True)
+        finder = partial(_varLib_finder, directory=master_bin_dir)
 
-        if ufodir:
-            finder = lambda s: s.replace(ufodir, ttfdir).replace('.ufo', '.ttf')
-        else:
-            finder = lambda s: os.path.join(ttfdir, s).replace('.ufo', '.ttf')
         font, _, _ = varLib.build(designspace_path, finder)
 
-        font.save(outfile)
+        font.save(output_path)
 
     @timer()
     def save_otfs(
             self, ufos, ttf=False, is_instance=False, interpolatable=False,
             use_afdko=False, autohint=None, subset=None,
             use_production_names=None, subroutinize=False,
-            interpolate_layout_from=None, kern_writer_class=None,
-            mark_writer_class=None, inplace=True):
+            interpolate_layout_from=None, interpolate_layout_dir=None,
+            output_path=None, output_dir=None,
+            kern_writer_class=None, mark_writer_class=None, inplace=True):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -282,9 +283,19 @@ class FontProject(object):
             subroutinize: If True, subroutinize CFF outlines in output.
             interpolate_layout_from: A designspace path to give varLib for
                 interpolating layout tables to use in output.
+            interpolate_layout_dir: Directory containing the compiled master
+                fonts to use for interpolating binary layout tables.
+            output_path: output font file path. Only works when the input
+                'ufos' list contains a single font.
+            output_dir: directory where to save output files. Mutually
+                exclusive with 'output_path' argument.
             kern_writer_class: Class overriding ufo2ft's KernFeatureWriter.
             mark_writer_class: Class overriding ufo2ft's MarkFeatureWriter.
         """
+        assert not (output_path and output_dir), "mutually exclusive args"
+
+        if output_path is not None and len(ufos) > 1:
+            raise ValueError("output_path requires a single input")
 
         ext = 'ttf' if ttf else 'otf'
         fea_compiler = FDKFeatureCompiler if use_afdko else FeatureCompiler
@@ -295,17 +306,17 @@ class FontProject(object):
             logger.info("Using %r", mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
-            master_locations, instance_locations = self._designspace_locations(
-                interpolate_layout_from)
-            ufod = self._output_dir('ufo', False, interpolatable)
-            otfd = self._output_dir(ext, False, interpolatable)
-            finder = lambda s: s.replace(ufod, otfd).replace('.ufo', '.' + ext)
+            if interpolate_layout_dir is None:
+                interpolate_layout_dir = self._output_dir(
+                    ext, is_instance=False, interpolatable=interpolatable)
+            finder = partial(_varLib_finder, directory=interpolate_layout_dir,
+                             ext=ext)
 
+        do_autohint = ttf and autohint is not None
         for ufo in ufos:
             name = self._font_name(ufo)
             logger.info('Saving %s for %s' % (ext.upper(), name))
 
-            otf_path = self._output_path(ufo, ext, is_instance, interpolatable)
             if use_production_names is None:
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
@@ -323,6 +334,8 @@ class FontProject(object):
                 font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
 
             if interpolate_layout_from is not None:
+                master_locations, instance_locations = self._designspace_locations(
+                    interpolate_layout_from)
                 loc = instance_locations[_normpath(ufo.path)]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder, mapped=True)
@@ -332,6 +345,17 @@ class FontProject(object):
                 font['GDEF'] = gsub_src['GDEF']
                 font['GSUB'] = gsub_src['GSUB']
 
+            if do_autohint:
+                # if we are autohinting, we save the unhinted font to a
+                # temporary path, and the hinted one to the final destination
+                fd, otf_path = tempfile.mkstemp("."+ext)
+                os.close(fd)
+            elif output_path is None:
+                otf_path = self._output_path(ufo, ext, is_instance,
+                                             interpolatable,
+                                             output_dir=output_dir)
+            else:
+                otf_path = output_path
             font.save(otf_path)
 
             if subset is None:
@@ -342,10 +366,24 @@ class FontProject(object):
             if subset:
                 self.subset_otf_from_ufo(otf_path, ufo)
 
-            if ttf and autohint is not None:
+            if not do_autohint:
+                continue
+
+            if output_path is not None:
+                hinted_otf_path = output_path
+            else:
                 hinted_otf_path = self._output_path(
-                    ufo, ext, is_instance, interpolatable, autohinted=True)
+                    ufo, ext, is_instance, interpolatable, autohinted=True,
+                    output_dir=output_dir)
+            try:
                 ttfautohint(otf_path, hinted_otf_path, args=autohint)
+            except TTFAError:
+                # copy unhinted font to destination before re-raising error
+                shutil.copyfile(otf_path, hinted_otf_path)
+                raise
+            finally:
+                # must clean up temp file
+                os.remove(otf_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
@@ -469,13 +507,21 @@ class FontProject(object):
             ufos.extend(apply_instance_data(designspace_path,
                                             include_filenames=filenames))
 
-        interpolate_layout_from = (
-            designspace_path if interpolate_binary_layout else None)
+        if interpolate_binary_layout is False:
+            interpolate_layout_from = interpolate_layout_dir = None
+        else:
+            interpolate_layout_from = designspace_path
+            if isinstance(interpolate_binary_layout, basestring):
+                interpolate_layout_dir = interpolate_binary_layout
+            else:
+                interpolate_layout_dir = None
 
         self.run_from_ufos(
             ufos, designspace_path=designspace_path,
             is_instance=(interpolate or masters_as_instances),
-            interpolate_layout_from=interpolate_layout_from, **kwargs)
+            interpolate_layout_from=interpolate_layout_from,
+            interpolate_layout_dir=interpolate_layout_dir,
+            **kwargs)
 
     def run_from_ufos(
             self, ufos, output=(), designspace_path=None,
@@ -525,16 +571,35 @@ class FontProject(object):
                 **kwargs)
             need_reload = True
 
+        tempdirs = []
         if 'ttf-interpolatable' in output or 'variable' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
+            if 'variable' in output and 'ttf-interpolatable' not in output:
+                # when output is only 'variable', we create the master ttfs in
+                # a temporary folder; 'output_dir' is the directory where the
+                # variable font is saved
+                output_dir = kwargs.pop("output_dir", None)
+                master_bin_dir = tempfile.mkdtemp(prefix="ttf-interp-")
+                tempdirs.append(master_bin_dir)
+            else:
+                output_dir = master_bin_dir = kwargs.pop("output_dir", None)
+            output_path = kwargs.pop("output_path", None)
             self.build_interpolatable_ttfs(
-                ufos, reverse_direction, conversion_error, **kwargs)
+                ufos, reverse_direction, conversion_error,
+                output_dir=master_bin_dir, **kwargs)
 
         if 'variable' in output:
             if designspace_path is None:
                 raise TypeError('Need designspace to build variable font.')
-            self.build_variable_font(designspace_path)
+            try:
+                self.build_variable_font(designspace_path,
+                                         output_path=output_path,
+                                         output_dir=output_dir,
+                                         master_bin_dir=master_bin_dir)
+            finally:
+                for tempdir in tempdirs:
+                    shutil.rmtree(tempdir)
 
     @staticmethod
     def _search_instances(designspace_path, pattern):
@@ -584,7 +649,7 @@ class FontProject(object):
 
     def _output_path(self, ufo_or_font_name, ext, is_instance=False,
                      interpolatable=False, autohinted=False,
-                     is_variable=False):
+                     is_variable=False, output_dir=None):
         """Generate output path for a font file with given extension."""
 
         if isinstance(ufo_or_font_name, basestring):
@@ -595,12 +660,13 @@ class FontProject(object):
         else:
             font_name = self._font_name(ufo_or_font_name)
 
-        out_dir = self._output_dir(
-            ext, is_instance, interpolatable, autohinted, is_variable)
-        if not os.path.exists(out_dir):
-            os.makedirs(out_dir)
+        if output_dir is None:
+            output_dir = self._output_dir(
+                ext, is_instance, interpolatable, autohinted, is_variable)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-        return os.path.join(out_dir, '%s.%s' % (font_name, ext))
+        return os.path.join(output_dir, '%s.%s' % (font_name, ext))
 
     def _designspace_locations(self, designspace_path):
         """Map font filenames to their locations in a designspace."""
@@ -677,6 +743,15 @@ class FDKFeatureCompiler(FeatureCompiler):
         os.remove(feasrc_path)
         if not success:
             raise ValueError("Feature syntax compilation failed.")
+
+def _varLib_finder(source, directory="", ext="ttf"):
+    """Finder function to be used with varLib.build to find master TTFs given
+    the filename of the source UFO master as specified in the designspace.
+    It replaces the UFO directory with the one specified in 'directory'
+    argument, and replaces the file extension with 'ext'.
+    """
+    fname = os.path.splitext(os.path.basename(source))[0] + '.' + ext
+    return os.path.join(directory, fname)
 
 
 def _normpath(fname):
