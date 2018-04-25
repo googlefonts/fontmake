@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import shutil
 from argparse import ArgumentParser, ArgumentTypeError
 from fontmake import __version__
 from fontmake.font_project import FontProject
@@ -57,6 +58,21 @@ def exclude_args(parser, args, excluded_args, target):
             optname = "--%s" % argname.replace("_", "-")
             parser.error(msg % (optname, target))
         del args[argname]
+
+
+def _make_tempdirs(parser, args):
+    output = args["output"]
+    tempdirs = []
+    for dirname in ("master_dir", "instance_dir"):
+        if dirname in args and args.get(dirname) == "{tmp}":
+            if "ufo" in output:
+                parser.error(
+                    "Can't use temporary %s directory with 'ufo' output"
+                    % dirname.replace("_dir", ""))
+            import tempfile
+            td = args[dirname] = tempfile.mkdtemp(prefix=dirname+"_")
+            tempdirs.append(td)
+    return tempdirs
 
 
 def main(args=None):
@@ -115,11 +131,13 @@ def main(args=None):
     outputGroup.add_argument(
         '--master-dir', default=None,
         help='Directory where to write master UFO. Default: "./master_ufo". '
-             '(for Glyphs sources only).')
+             'If value is "{tmp}", a temporary directory is created and '
+             'removed at the end (for Glyphs sources only).')
     outputGroup.add_argument(
         '--instance-dir', default=None,
         help='Directory where to write instance UFOs. Default: '
-             '"./instance_ufo" (for Glyphs sources only)')
+             '"./instance_ufo". If value is "{tmp}", a temporary directory '
+             'is created and removed at the end (for Glyphs sources only).')
 
     contourGroup = parser.add_argument_group(title='Handling of contours')
     contourGroup.add_argument(
@@ -217,7 +235,12 @@ def main(args=None):
                               verbose=args.pop('verbose'))
 
         if glyphs_path:
-            project.run_from_glyphs(glyphs_path, **args)
+            tempdirs = _make_tempdirs(parser, args)
+            try:
+                project.run_from_glyphs(glyphs_path, **args)
+            finally:
+                for tempdir in tempdirs:
+                    shutil.rmtree(tempdir)
             return
 
         exclude_args(parser, args,
