@@ -429,7 +429,12 @@ class FontProject(object):
 
         Args:
             glyphs_path: Path to source file.
-            preprocess: If True, check source file for un-compilable content.
+            designspace_path: Output path of generated designspace document.
+                By default it's "<family_name>[-<base_style>].designspace".
+            master_dir: Directory where to save UFO masters (default:
+                "master_ufo").
+            instance_dir: Directory where to save UFO instances (default:
+                "instance_ufo").
             family_name: If provided, uses this family name in the output.
             mti_source: Path to property list file containing a dictionary
                 mapping UFO masters to dictionaries mapping layout table
