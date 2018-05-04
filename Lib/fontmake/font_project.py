@@ -342,8 +342,10 @@ class FontProject(object):
                 font['GPOS'] = gpos_src['GPOS']
                 gsub_src = TTFont(
                     finder(self._closest_location(master_locations, loc)))
-                font['GDEF'] = gsub_src['GDEF']
-                font['GSUB'] = gsub_src['GSUB']
+                if 'GDEF' in gsub_src:
+                    font['GDEF'] = gsub_src['GDEF']
+                if 'GSUB' in gsub_src:
+                    font['GSUB'] = gsub_src['GSUB']
 
             if do_autohint:
                 # if we are autohinting, we save the unhinted font to a
