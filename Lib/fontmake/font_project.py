@@ -103,6 +103,8 @@ class FontProject(object):
             # no need to also set the relative 'filename' attribute as that
             # will be auto-updated on writing the designspace document
             source.path = ufo_path
+            if not os.path.isdir(master_dir):
+                os.makedirs(master_dir)
             source.font.save(ufo_path)
 
         if designspace_path is None:
