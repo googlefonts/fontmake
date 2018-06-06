@@ -315,7 +315,6 @@ class FontProject(object):
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
             compiler_options = dict(
-                glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names,
                 inplace=True,  # avoid extra copy
             )
