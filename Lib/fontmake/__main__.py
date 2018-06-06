@@ -168,14 +168,6 @@ def main(args=None):
         metavar="MASTER_DIR",
         help='Interpolate layout tables from compiled master binaries. '
              'Requires Glyphs or MutatorMath source.')
-    layoutGroup.add_argument(
-        '--kern-writer-module', metavar="MODULE", dest='kern_writer_class',
-        type=PyClassType('KernFeatureWriter'),
-        help='Module containing a custom `KernFeatureWriter` class.')
-    layoutGroup.add_argument(
-        '--mark-writer-module', metavar="MODULE", dest='mark_writer_class',
-        type=PyClassType('MarkFeatureWriter'),
-        help='Module containing a custom `MarkFeatureWriter` class.')
     feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
     feaCompilerGroup.add_argument(
         '--use-afdko', action='store_true',

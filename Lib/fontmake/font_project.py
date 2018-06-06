@@ -267,7 +267,7 @@ class FontProject(object):
             use_production_names=None, subroutinize=False,
             interpolate_layout_from=None, interpolate_layout_dir=None,
             output_path=None, output_dir=None,
-            kern_writer_class=None, mark_writer_class=None, inplace=True):
+            inplace=True):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -291,8 +291,6 @@ class FontProject(object):
                 'ufos' list contains a single font.
             output_dir: directory where to save output files. Mutually
                 exclusive with 'output_path' argument.
-            kern_writer_class: Class overriding ufo2ft's KernFeatureWriter.
-            mark_writer_class: Class overriding ufo2ft's MarkFeatureWriter.
         """
         assert not (output_path and output_dir), "mutually exclusive args"
 
@@ -300,12 +298,6 @@ class FontProject(object):
             raise ValueError("output_path requires a single input")
 
         ext = 'ttf' if ttf else 'otf'
-        fea_compiler = FDKFeatureCompiler if use_afdko else FeatureCompiler
-
-        if kern_writer_class is not None:
-            logger.info("Using %r", kern_writer_class.__module__)
-        if mark_writer_class is not None:
-            logger.info("Using %r", mark_writer_class.__module__)
 
         if interpolate_layout_from is not None:
             if interpolate_layout_dir is None:
@@ -323,13 +315,12 @@ class FontProject(object):
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
             compiler_options = dict(
-                featureCompilerClass=fea_compiler,
-                kernWriterClass=kern_writer_class,
-                markWriterClass=mark_writer_class,
                 glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
                 useProductionNames=use_production_names,
                 inplace=True,  # avoid extra copy
             )
+            if use_afdko:
+                compiler_options["featureCompilerClass"] = FDKFeatureCompiler
             if ttf:
                 font = compileTTF(ufo, convertCubics=False, **compiler_options)
             else:
@@ -752,6 +743,7 @@ class FDKFeatureCompiler(FeatureCompiler):
         os.remove(feasrc_path)
         if not success:
             raise ValueError("Feature syntax compilation failed.")
+
 
 def _varLib_finder(source, directory="", ext="ttf"):
     """Finder function to be used with varLib.build to find master TTFs given
