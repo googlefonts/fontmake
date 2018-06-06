@@ -306,6 +306,12 @@ class FontProject(object):
             finder = partial(_varLib_finder, directory=interpolate_layout_dir,
                              ext=ext)
 
+        compiler_options = dict(
+            useProductionNames=use_production_names,
+            inplace=True,  # avoid extra copy
+        )
+        if use_afdko:
+            compiler_options["featureCompilerClass"] = FDKFeatureCompiler
         do_autohint = ttf and autohint is not None
         for ufo in ufos:
             name = self._font_name(ufo)
@@ -314,12 +320,6 @@ class FontProject(object):
             if use_production_names is None:
                 use_production_names = not ufo.lib.get(
                     GLYPHS_PREFIX + "Don't use Production Names")
-            compiler_options = dict(
-                useProductionNames=use_production_names,
-                inplace=True,  # avoid extra copy
-            )
-            if use_afdko:
-                compiler_options["featureCompilerClass"] = FDKFeatureCompiler
             if ttf:
                 font = compileTTF(ufo, convertCubics=False, **compiler_options)
             else:
