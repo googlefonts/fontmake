@@ -161,6 +161,13 @@ def main(args=None):
     contourGroup.add_argument(
         '-a', '--autohint', nargs='?', const='',
         help='Run ttfautohint. Can provide arguments, quoted')
+    contourGroup.add_argument(
+        '--cff-round-tolerance', type=float, default=None, metavar='FLOAT',
+        help='Restrict rounding of point coordinates in CFF table to only '
+             'those floats whose absolute difference from their integral part '
+             'is less than or equal to the tolerance. By default, all floats '
+             'are rounded to integer (tolerance 0.5); 0 disables rounding.'
+    )
 
     layoutGroup = parser.add_argument_group(title='Handling of OpenType Layout')
     layoutGroup.add_argument(
