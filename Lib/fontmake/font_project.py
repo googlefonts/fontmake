@@ -20,7 +20,7 @@ import glob
 import logging
 import math
 import os
-from functools import partial
+from functools import partial, wraps
 import tempfile
 import shutil
 from collections import OrderedDict
@@ -38,14 +38,13 @@ except ImportError:
         """Backport of python3.4 re.fullmatch()."""
         return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
-from cu2qu.pens import ReverseContourPen
-from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
 from fontTools.misc.py23 import tobytes, basestring
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
+from fontTools.pens.reverseContourPen import ReverseContourPen
 from fontTools.ttLib import TTFont
 from fontTools import varLib
 from fontTools import designspaceLib
@@ -69,6 +68,22 @@ try:
     from itertools import izip as zip
 except ImportError:
     pass
+
+
+def _deprecated(func):
+    import warnings
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        warnings.warn(
+            "'%s' is deprecated and will be dropped in future versions"
+            % func.__name__,
+            category=UserWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class FontProject(object):
@@ -141,6 +156,7 @@ class FontProject(object):
                 master.features.text = ""
             master.save()
 
+    @_deprecated
     @timer()
     def remove_overlaps(self, ufos, glyph_filter=lambda g: len(g)):
         """Remove overlaps in UFOs' glyphs' contours."""
@@ -161,6 +177,7 @@ class FontProject(object):
                                  font_name, glyph.name)
                     raise
 
+    @_deprecated
     @timer()
     def decompose_glyphs(self, ufos, glyph_filter=lambda g: True):
         """Move components of UFOs' glyphs to their outlines."""
@@ -192,9 +209,12 @@ class FontProject(object):
 
             component.draw(pen)
 
+    @_deprecated
     @timer()
     def convert_curves(self, ufos, compatible=False, reverse_direction=True,
                        conversion_error=None):
+        from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
+
         if compatible:
             logger.info('Converting curves compatibly')
             fonts_to_quadratic(
