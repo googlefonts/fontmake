@@ -20,7 +20,7 @@ import glob
 import logging
 import math
 import os
-from functools import partial
+from functools import partial, wraps
 import tempfile
 import shutil
 from collections import OrderedDict
@@ -38,19 +38,18 @@ except ImportError:
         """Backport of python3.4 re.fullmatch()."""
         return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
-from cu2qu.pens import ReverseContourPen
-from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 from defcon import Font
 from fontTools import subset
 from fontTools.misc.py23 import tobytes, basestring
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
+from fontTools.pens.reverseContourPen import ReverseContourPen
 from fontTools.ttLib import TTFont
 from fontTools import varLib
 from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
-from ufo2ft import compileOTF, compileTTF
+from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
 from ufo2ft.featureCompiler import FeatureCompiler
 
 from fontmake.errors import FontmakeError, TTFAError
@@ -61,6 +60,30 @@ timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
 
 PUBLIC_PREFIX = 'public.'
 GLYPHS_PREFIX = 'com.schriftgestaltung.'
+
+
+# shadow the 'zip' builtin on python2 with iterator version
+# TODO remove once we require fonttools >= 3.27
+try:
+    from itertools import izip as zip
+except ImportError:
+    pass
+
+
+def _deprecated(func):
+    import warnings
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        warnings.warn(
+            "'%s' is deprecated and will be dropped in future versions"
+            % func.__name__,
+            category=UserWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class FontProject(object):
@@ -133,6 +156,7 @@ class FontProject(object):
                 master.features.text = ""
             master.save()
 
+    @_deprecated
     @timer()
     def remove_overlaps(self, ufos, glyph_filter=lambda g: len(g)):
         """Remove overlaps in UFOs' glyphs' contours."""
@@ -153,6 +177,7 @@ class FontProject(object):
                                  font_name, glyph.name)
                     raise
 
+    @_deprecated
     @timer()
     def decompose_glyphs(self, ufos, glyph_filter=lambda g: True):
         """Move components of UFOs' glyphs to their outlines."""
@@ -184,9 +209,12 @@ class FontProject(object):
 
             component.draw(pen)
 
+    @_deprecated
     @timer()
     def convert_curves(self, ufos, compatible=False, reverse_direction=True,
                        conversion_error=None):
+        from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
+
         if compatible:
             logger.info('Converting curves compatibly')
             fonts_to_quadratic(
@@ -199,44 +227,16 @@ class FontProject(object):
                     ufo, max_err_em=conversion_error,
                     reverse_direction=reverse_direction, dump_stats=True)
 
-    def build_otfs(self, ufos, remove_overlaps=True, **kwargs):
+    def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""
-
-        logger.info('Building OTFs')
-
-        self.decompose_glyphs(ufos)
-        if remove_overlaps:
-            self.remove_overlaps(ufos)
         self.save_otfs(ufos, **kwargs)
 
-    def build_ttfs(
-            self, ufos, remove_overlaps=True, reverse_direction=True,
-            conversion_error=None, **kwargs):
+    def build_ttfs(self, ufos, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
-
-        logger.info('Building TTFs')
-
-        # decompose glyphs with mixed contours and components, since they're
-        # decomposed anyways when compiled into glyf tables.
-        # NOTE: bool(glyph) is True when len(glyph) != 0, i.e. if the glyph
-        # instance has any contours.
-        self.decompose_glyphs(ufos, glyph_filter=lambda g: g)
-        if remove_overlaps:
-            self.remove_overlaps(ufos)
-        self.convert_curves(ufos, reverse_direction=reverse_direction,
-                            conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, **kwargs)
 
-    def build_interpolatable_ttfs(
-            self, ufos, reverse_direction=True, conversion_error=None,
-            **kwargs):
+    def build_interpolatable_ttfs(self, ufos, **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines."""
-
-        logger.info('Building interpolation-compatible TTFs')
-
-        self.convert_curves(ufos, compatible=True,
-                            reverse_direction=reverse_direction,
-                            conversion_error=conversion_error)
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
     def build_variable_font(self, designspace_path, output_path=None,
@@ -260,14 +260,45 @@ class FontProject(object):
 
         font.save(output_path)
 
+    def _iter_compile(self, ufos, ttf=False, **kwargs):
+        # generator function that calls ufo2ft compiler for each ufo and
+        # yields ttFont instances
+        options = dict(kwargs)
+        if ttf:
+            for key in ("optimizeCFF", "roundTolerance"):
+                options.pop(key, None)
+            compile_func, fmt = compileTTF, "TTF"
+        else:
+            for key in ("cubicConversionError", "reverseDirection"):
+                options.pop(key, None)
+            compile_func, fmt = compileOTF, "OTF"
+
+        for ufo in ufos:
+            name = self._font_name(ufo)
+            logger.info('Building %s for %s' % (fmt, name))
+
+            yield compile_func(ufo, **options)
+
     @timer()
-    def save_otfs(
-            self, ufos, ttf=False, is_instance=False, interpolatable=False,
-            use_afdko=False, autohint=None, subset=None,
-            use_production_names=None, subroutinize=False,
-            interpolate_layout_from=None, interpolate_layout_dir=None,
-            output_path=None, output_dir=None,
-            inplace=True):
+    def save_otfs(self,
+                  ufos,
+                  ttf=False,
+                  is_instance=False,
+                  interpolatable=False,
+                  use_afdko=False,
+                  autohint=None,
+                  subset=None,
+                  use_production_names=None,
+                  subroutinize=False,
+                  cff_round_tolerance=None,
+                  remove_overlaps=True,
+                  reverse_direction=True,
+                  conversion_error=None,
+                  interpolate_layout_from=None,
+                  interpolate_layout_dir=None,
+                  output_path=None,
+                  output_dir=None,
+                  inplace=True):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -283,6 +314,18 @@ class FontProject(object):
             use_production_names: Whether to use production glyph names in the
                 output. If not provided, determined by flags in the UFOs.
             subroutinize: If True, subroutinize CFF outlines in output.
+            cff_round_tolerance (float): controls the rounding of point
+                coordinates in CFF table. It is defined as the maximum absolute
+                difference between the original float and the rounded integer
+                value. By default, all floats are rounded to integer (tolerance
+                0.5); a value of 0 completely disables rounding; values in
+                between only round floats which are close to their integral
+                part within the tolerated range. Ignored if ttf=True.
+            remove_overlaps: If True, remove overlaps in glyph shapes.
+            reverse_direction: If True, reverse contour directions when
+                compiling TrueType outlines.
+            conversion_error: Error to allow when converting cubic CFF contours
+                to quadratic TrueType contours.
             interpolate_layout_from: A designspace path to give varLib for
                 interpolating layout tables to use in output.
             interpolate_layout_dir: Directory containing the compiled master
@@ -306,25 +349,35 @@ class FontProject(object):
             finder = partial(_varLib_finder, directory=interpolate_layout_dir,
                              ext=ext)
 
-        do_autohint = ttf and autohint is not None
-        for ufo in ufos:
-            name = self._font_name(ufo)
-            logger.info('Saving %s for %s' % (ext.upper(), name))
+        compiler_options = dict(
+            useProductionNames=use_production_names,
+            reverseDirection=reverse_direction,
+            cubicConversionError=conversion_error,
+            inplace=True,  # avoid extra copy
+        )
+        if use_afdko:
+            compiler_options["featureCompilerClass"] = FDKFeatureCompiler
 
-            if use_production_names is None:
-                use_production_names = not ufo.lib.get(
-                    GLYPHS_PREFIX + "Don't use Production Names")
-            compiler_options = dict(
-                glyphOrder=ufo.lib.get(PUBLIC_PREFIX + 'glyphOrder'),
-                useProductionNames=use_production_names,
-                inplace=True,  # avoid extra copy
-            )
-            if use_afdko:
-                compiler_options["featureCompilerClass"] = FDKFeatureCompiler
-            if ttf:
-                font = compileTTF(ufo, convertCubics=False, **compiler_options)
-            else:
-                font = compileOTF(ufo, optimizeCFF=subroutinize, **compiler_options)
+        if interpolatable:
+            if not ttf:
+                raise NotImplementedError(
+                    "interpolatable CFF not supported yet")
+
+            logger.info('Building interpolation-compatible TTFs')
+
+            fonts = compileInterpolatableTTFs(ufos, **compiler_options)
+        else:
+            fonts = self._iter_compile(
+                ufos,
+                ttf,
+                removeOverlaps=remove_overlaps,
+                optimizeCFF=subroutinize,
+                roundTolerance=cff_round_tolerance,
+                **compiler_options)
+
+        do_autohint = ttf and autohint is not None
+
+        for font, ufo in zip(fonts, ufos):
 
             if interpolate_layout_from is not None:
                 master_locations, instance_locations = self._designspace_locations(
@@ -534,11 +587,6 @@ class FontProject(object):
             output: List of output formats to generate.
             designspace_path: Path to a MutatorMath designspace, used to
                 generate variable font if requested.
-            remove_overlaps: If True, remove overlaps in glyph shapes.
-            reverse_direction: If True, reverse contour directions when
-                compiling TrueType outlines.
-            conversion_error: Error to allow when converting cubic CFF contours
-                to quadratic TrueType contours.
             kwargs: Arguments passed along to save_otfs.
 
         Raises:
@@ -559,16 +607,13 @@ class FontProject(object):
 
         need_reload = False
         if 'otf' in output:
-            self.build_otfs(
-                ufos, remove_overlaps, **kwargs)
+            self.build_otfs(ufos, **kwargs)
             need_reload = True
 
         if 'ttf' in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
-            self.build_ttfs(
-                ufos, remove_overlaps, reverse_direction, conversion_error,
-                **kwargs)
+            self.build_ttfs(ufos, **kwargs)
             need_reload = True
 
         tempdirs = []
@@ -586,8 +631,7 @@ class FontProject(object):
                 output_dir = master_bin_dir = kwargs.pop("output_dir", None)
             output_path = kwargs.pop("output_path", None)
             self.build_interpolatable_ttfs(
-                ufos, reverse_direction, conversion_error,
-                output_dir=master_bin_dir, **kwargs)
+                ufos, output_dir=master_bin_dir, **kwargs)
 
         if 'variable' in output:
             if designspace_path is None:
