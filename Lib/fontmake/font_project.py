@@ -294,6 +294,7 @@ class FontProject(object):
                   remove_overlaps=True,
                   reverse_direction=True,
                   conversion_error=None,
+                  feature_writers=None,
                   interpolate_layout_from=None,
                   interpolate_layout_dir=None,
                   output_path=None,
@@ -353,6 +354,7 @@ class FontProject(object):
             useProductionNames=use_production_names,
             reverseDirection=reverse_direction,
             cubicConversionError=conversion_error,
+            featureWriters=feature_writers,
             inplace=True,  # avoid extra copy
         )
         if use_afdko:
