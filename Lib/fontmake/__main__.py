@@ -12,41 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+from __future__ import print_function, absolute_import
 from contextlib import contextmanager
 from argparse import ArgumentParser, ArgumentTypeError
 from fontmake import __version__
 from fontmake.font_project import FontProject
 from fontmake.errors import FontmakeError
+from ufo2ft.featureWriters import loadFeatureWriterFromString
 
 
-class PyClassType(object):
-    """ Callable object which returns a Python class defined in named module.
-    It can be passed as type= argument to ArgumentParser.add_argument().
-    """
-
-    def __init__(self, class_name):
-        self.class_name = class_name
-
-    def __call__(self, module_name):
-        import importlib
-        import inspect
-
+def _loadFeatureWriters(parser, specs):
+    if specs is None:
+        # no --feauture-writer option passed; use ufo2ft defaults
+        return None
+    feature_writers = []
+    for s in specs:
+        if s == 'None':
+            # magic value that means "don't generate any features!"
+            return []
         try:
-            mod = importlib.import_module(module_name)
-        except ImportError:
-            raise ArgumentTypeError("No module named %r" % module_name)
-
-        try:
-            klass = getattr(mod, self.class_name)
-        except AttributeError as e:
-            raise ArgumentTypeError("Module %r has no attribute %r"
-                                    % (module_name, self.class_name))
-
-        if not inspect.isclass(klass):
-            raise ArgumentTypeError("%r is not a class: %r"
-                                    % (self.class_name, type(klass)))
-        return klass
+            feature_writers.append(loadFeatureWriterFromString(s))
+        except Exception as e:
+            parser.error(
+                "Failed to load --feature-writer:\n  %s: %s"
+                 % (type(e).__name__, e)
+            )
+    return feature_writers
 
 
 def exclude_args(parser, args, excluded_args, target):
@@ -175,6 +166,17 @@ def main(args=None):
         metavar="MASTER_DIR",
         help='Interpolate layout tables from compiled master binaries. '
              'Requires Glyphs or MutatorMath source.')
+    layoutGroup.add_argument(
+        "--feature-writer", metavar="CLASS", action="append",
+        dest="feature_writer_specs",
+        help="string specifying a feature writer class to load, either "
+             "built-in or from an external module, optionally initialized with "
+             "the given keyword arguments. The class and module names are "
+             "separated by '::'. The option can be repeated multiple times "
+             "for each writer class. A special value of 'None' will disable "
+             "all automatic feature generation. The option overrides both the "
+             "default ufo2ft writers and those specified in the UFO lib.")
+
     feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
     feaCompilerGroup.add_argument(
         '--use-afdko', action='store_true',
@@ -219,6 +221,10 @@ def main(args=None):
         help='Configure the logger verbosity level. Choose between: '
              '%(choices)s. Default: INFO')
     args = vars(parser.parse_args(args))
+
+    specs = args.pop("feature_writer_specs")
+    if specs is not None:
+        args["feature_writers"] = _loadFeatureWriters(parser, specs)
 
     glyphs_path = args.pop('glyphs_path')
     ufo_paths = args.pop('ufo_paths')
