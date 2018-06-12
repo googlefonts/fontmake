@@ -404,6 +404,8 @@ class FontProject(object):
                                              output_dir=output_dir)
             else:
                 otf_path = output_path
+
+            logger.info("Saving %s", otf_path)
             font.save(otf_path)
 
             if subset is None:
