@@ -22,9 +22,6 @@ from ufo2ft.featureWriters import loadFeatureWriterFromString
 
 
 def _loadFeatureWriters(parser, specs):
-    if specs is None:
-        # no --feauture-writer option passed; use ufo2ft defaults
-        return None
     feature_writers = []
     for s in specs:
         if s == 'None':
