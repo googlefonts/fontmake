@@ -40,7 +40,7 @@ except ImportError:
 
 from defcon import Font
 from fontTools import subset
-from fontTools.misc.py23 import tobytes, basestring
+from fontTools.misc.py23 import tobytes, basestring, zip
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
 from fontTools.pens.transformPen import TransformPen
@@ -60,14 +60,6 @@ timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
 
 PUBLIC_PREFIX = 'public.'
 GLYPHS_PREFIX = 'com.schriftgestaltung.'
-
-
-# shadow the 'zip' builtin on python2 with iterator version
-# TODO remove once we require fonttools >= 3.27
-try:
-    from itertools import izip as zip
-except ImportError:
-    pass
 
 
 def _deprecated(func):
