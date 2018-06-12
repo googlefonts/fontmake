@@ -177,7 +177,7 @@ setup(
         "fonttools>=3.27.1",
         "cu2qu>=1.5.0",
         "glyphsLib>=2.3.0",
-        "ufo2ft>=1.1.0",
+        "ufo2ft>=2.0.0",
         "MutatorMath>=2.1.1",
         "defcon>=0.5.1",
         "booleanOperations>=0.8.0",
