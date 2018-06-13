@@ -755,7 +755,7 @@ class FDKFeatureCompiler(FeatureCompiler):
 
         fd, outline_path = tempfile.mkstemp()
         os.close(fd)
-        self.outline.save(outline_path)
+        self.ttFont.save(outline_path)
 
         fd, feasrc_path = tempfile.mkstemp()
         os.close(fd)
@@ -766,23 +766,22 @@ class FDKFeatureCompiler(FeatureCompiler):
 
         report = tostr(subprocess.check_output([
             "makeotf", "-o", feasrc_path, "-f", outline_path,
-            "-ff", fea_path],
-            shell=True))
+            "-ff", fea_path]))
         os.remove(outline_path)
         os.remove(fea_path)
 
         logger.info(report)
-        success = "Done." in report
+        success = "makeotf [Error] Failed to build output font" not in report
         if success:
             feasrc = TTFont(feasrc_path)
             for table in ["GDEF", "GPOS", "GSUB"]:
                 if table in feasrc:
-                    self.outline[table] = feasrc[table]
+                    self.ttFont[table] = feasrc[table]
             feasrc.close()
 
         os.remove(feasrc_path)
         if not success:
-            raise ValueError("Feature syntax compilation failed.")
+            raise FontmakeError("Feature syntax compilation failed.")
 
 
 def _varLib_finder(source, directory="", ext="ttf"):
