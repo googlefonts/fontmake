@@ -450,10 +450,10 @@ class FontProject(object):
 
         for old_name, new_name in zip(ufo_order, ot_order):
             glyph = ufo[old_name]
-            if ((keep_glyphs and old_name not in keep_glyphs) or
-                not glyph.lib.get(GLYPHS_PREFIX + 'Glyphs.Export', True)):
-                continue
-            include.append(new_name)
+            in_keep_glyphs = keep_glyphs and old_name not in keep_glyphs
+            exported = glyph.lib.get(GLYPHS_PREFIX + "Glyphs.Export", True)
+            if in_keep_glyphs or exported:
+                include.append(new_name)
 
         # copied from nototools.subset
         opt = subset.Options()
