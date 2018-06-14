@@ -438,9 +438,19 @@ class FontProject(object):
         ufo_order = [glyph_name
                      for glyph_name in ufo.lib[PUBLIC_PREFIX + 'glyphOrder']
                      if glyph_name in ufo]
-        for old_name, new_name in zip(
-                ufo_order,
-                TTFont(otf_path).getGlyphOrder()):
+        ot_order = TTFont(otf_path).getGlyphOrder()
+
+        # An OpenType binary usually has the .notdef glyph as the first glyph,
+        # which might or might not be present in the UFO, and not necessarily as
+        # the first glyph. Manipulate the order to make glyph names match up in
+        # the loop below.
+        if ".notdef" in ufo:
+            ufo_order.pop(ufo_order.index(".notdef"))
+            ufo_order.insert(0, ".notdef")
+        else:
+            ot_order = ot_order[1:]  # Strip out ".notdef"
+
+        for old_name, new_name in zip(ufo_order, ot_order):
             glyph = ufo[old_name]
             if ((keep_glyphs and old_name not in keep_glyphs) or
                 not glyph.lib.get(GLYPHS_PREFIX + 'Glyphs.Export', True)):
