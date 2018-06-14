@@ -438,15 +438,8 @@ class FontProject(object):
         include = []
         ufo_order = makeOfficialGlyphOrder(ufo)
         ot_order = TTFont(otf_path).getGlyphOrder()
-        assert ot_order[0] == ".notdef", (
-            "{}, subsetting: .notdef must be the first glyph in "
-            "{}.".format(ufo.path, otf_path)
-        )
-        assert len(ufo_order) == len(
-            ot_order
-        ), "{}, subsetting: amount of glyphs does not match with {}".format(
-            ufo.path, otf_path
-        )
+        assert ot_order[0] == ".notdef"
+        assert len(ufo_order) == len(ot_order)
 
         for old_name, new_name in zip(ufo_order, ot_order):
             glyph = ufo[old_name]
