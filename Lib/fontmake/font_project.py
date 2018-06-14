@@ -432,21 +432,29 @@ class FontProject(object):
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib."""
-
-        keep_glyphs = set(ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs', []))
-
-        include = []
         ufo_order = makeOfficialGlyphOrder(ufo)
         ot_order = TTFont(otf_path).getGlyphOrder()
         assert ot_order[0] == ".notdef"
         assert len(ufo_order) == len(ot_order)
 
-        for old_name, new_name in zip(ufo_order, ot_order):
-            glyph = ufo[old_name]
-            in_keep_glyphs = keep_glyphs and old_name not in keep_glyphs
+        keep_glyphs_list = ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs')
+        if keep_glyphs_list is not None:
+            keep_glyphs = set(keep_glyphs_list)
+        else:
+            keep_glyphs = None
+
+        include = []
+        for source_name, binary_name in zip(ufo_order, ot_order):
+            glyph = ufo[source_name]
+
+            if keep_glyphs and source_name not in keep_glyphs:
+                continue
+
             exported = glyph.lib.get(GLYPHS_PREFIX + "Glyphs.Export", True)
-            if in_keep_glyphs or exported:
-                include.append(new_name)
+            if not exported:
+                continue
+
+            include.append(binary_name)
 
         # copied from nototools.subset
         opt = subset.Options()
