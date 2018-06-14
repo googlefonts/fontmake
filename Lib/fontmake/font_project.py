@@ -741,47 +741,64 @@ class FontProject(object):
 class FDKFeatureCompiler(FeatureCompiler):
     """An OTF compiler which uses the AFDKO to compile feature syntax."""
 
-    def __init__(self, *args, **kwargs):
-        super(FDKFeatureCompiler, self).__init__(*args, **kwargs)
-        if hasattr(self, 'mtiFeatures') and self.mtiFeatures is not None:
-            raise TypeError("MTI features not supported by makeotf")
-
-    def setupFile_featureTables(self):
+    def buildTables(self):
         if not self.features.strip():
             return
 
         import subprocess
         from fontTools.misc.py23 import tostr
 
-        fd, outline_path = tempfile.mkstemp()
-        os.close(fd)
-        self.ttFont.save(outline_path)
+        outline_path = feasrc_path = fea_path = None
+        try:
+            fd, outline_path = tempfile.mkstemp()
+            os.close(fd)
+            self.ttFont.save(outline_path)
 
-        fd, feasrc_path = tempfile.mkstemp()
-        os.close(fd)
+            fd, feasrc_path = tempfile.mkstemp()
+            os.close(fd)
 
-        fd, fea_path = tempfile.mkstemp()
-        os.write(fd, tobytes(self.features, encoding='utf-8'))
-        os.close(fd)
+            fd, fea_path = tempfile.mkstemp()
+            os.write(fd, tobytes(self.features, encoding='utf-8'))
+            os.close(fd)
 
-        report = tostr(subprocess.check_output([
-            "makeotf", "-o", feasrc_path, "-f", outline_path,
-            "-ff", fea_path]))
-        os.remove(outline_path)
-        os.remove(fea_path)
+            process = subprocess.Popen(
+                [
+                    "makeotf",
+                    "-o",
+                    feasrc_path,
+                    "-f",
+                    outline_path,
+                    "-ff",
+                    fea_path,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            stdout, stderr = process.communicate()
+            retcode = process.poll()
 
-        logger.info(report)
-        success = "makeotf [Error] Failed to build output font" not in report
-        if success:
-            feasrc = TTFont(feasrc_path)
-            for table in ["GDEF", "GPOS", "GSUB"]:
-                if table in feasrc:
-                    self.ttFont[table] = feasrc[table]
-            feasrc.close()
+            report = tostr(stdout + (b"\n" + stderr if stderr else b""))
+            logger.info(report)
 
-        os.remove(feasrc_path)
-        if not success:
-            raise FontmakeError("Feature syntax compilation failed.")
+            # before afdko >= 2.7.1rc1, makeotf did not exit with non-zero
+            # on failure, so we have to parse the error message
+            if retcode != 0:
+                success = False
+            else:
+                success = (
+                    "makeotf [Error] Failed to build output font" not in report
+                )
+                if success:
+                    with TTFont(feasrc_path) as feasrc:
+                        for table in ["GDEF", "GPOS", "GSUB"]:
+                            if table in feasrc:
+                                self.ttFont[table] = feasrc[table]
+            if not success:
+                raise FontmakeError("Feature syntax compilation failed.")
+        finally:
+            for path in (outline_path, fea_path, feasrc_path):
+                if path is not None:
+                    os.remove(path)
 
 
 def _varLib_finder(source, directory="", ext="ttf"):
