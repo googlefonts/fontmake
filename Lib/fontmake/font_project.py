@@ -51,6 +51,7 @@ from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
 from ufo2ft.featureCompiler import FeatureCompiler
+from ufo2ft.util import makeOfficialGlyphOrder
 
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
@@ -430,22 +431,36 @@ class FontProject(object):
                 os.remove(otf_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
-        """Subset a font using export flags set by glyphsLib."""
+        """Subset a font using export flags set by glyphsLib.
 
-        keep_glyphs = set(ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs', []))
+        There are two more settings that can change export behavior:
+        "Export Glyphs" and "Remove Glyphs", which are currently not supported
+        for complexity reasons. See
+        https://github.com/googlei18n/glyphsLib/issues/295.
+        """
+        ufo_order = makeOfficialGlyphOrder(ufo)
+        ot_order = TTFont(otf_path).getGlyphOrder()
+        assert ot_order[0] == ".notdef"
+        assert len(ufo_order) == len(ot_order)
+
+        keep_glyphs_list = ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs')
+        if keep_glyphs_list is not None:
+            keep_glyphs = set(keep_glyphs_list)
+        else:
+            keep_glyphs = None
 
         include = []
-        ufo_order = [glyph_name
-                     for glyph_name in ufo.lib[PUBLIC_PREFIX + 'glyphOrder']
-                     if glyph_name in ufo]
-        for old_name, new_name in zip(
-                ufo_order,
-                TTFont(otf_path).getGlyphOrder()):
-            glyph = ufo[old_name]
-            if ((keep_glyphs and old_name not in keep_glyphs) or
-                not glyph.lib.get(GLYPHS_PREFIX + 'Glyphs.Export', True)):
+        for source_name, binary_name in zip(ufo_order, ot_order):
+            glyph = ufo[source_name]
+
+            if keep_glyphs and source_name not in keep_glyphs:
                 continue
-            include.append(new_name)
+
+            exported = glyph.lib.get(GLYPHS_PREFIX + "Glyphs.Export", True)
+            if not exported:
+                continue
+
+            include.append(binary_name)
 
         # copied from nototools.subset
         opt = subset.Options()
