@@ -431,7 +431,13 @@ class FontProject(object):
                 os.remove(otf_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
-        """Subset a font using export flags set by glyphsLib."""
+        """Subset a font using export flags set by glyphsLib.
+
+        There are two more settings that can change export behavior:
+        "Export Glyphs" and "Remove Glyphs", which are currently not supported
+        for complexity reasons. See
+        https://github.com/googlei18n/glyphsLib/issues/295.
+        """
         ufo_order = makeOfficialGlyphOrder(ufo)
         ot_order = TTFont(otf_path).getGlyphOrder()
         assert ot_order[0] == ".notdef"
