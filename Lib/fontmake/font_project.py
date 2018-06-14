@@ -51,6 +51,7 @@ from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
 from ufo2ft.featureCompiler import FeatureCompiler
+from ufo2ft.util import makeOfficialGlyphOrder
 
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
@@ -435,20 +436,17 @@ class FontProject(object):
         keep_glyphs = set(ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs', []))
 
         include = []
-        ufo_order = [glyph_name
-                     for glyph_name in ufo.lib[PUBLIC_PREFIX + 'glyphOrder']
-                     if glyph_name in ufo]
+        ufo_order = makeOfficialGlyphOrder(ufo)
         ot_order = TTFont(otf_path).getGlyphOrder()
-
-        # An OpenType binary usually has the .notdef glyph as the first glyph,
-        # which might or might not be present in the UFO, and not necessarily as
-        # the first glyph. Manipulate the order to make glyph names match up in
-        # the loop below.
-        if ".notdef" in ufo:
-            ufo_order.pop(ufo_order.index(".notdef"))
-            ufo_order.insert(0, ".notdef")
-        else:
-            ot_order = ot_order[1:]  # Strip out ".notdef"
+        assert ot_order[0] == ".notdef", (
+            "{}, subsetting: .notdef must be the first glyph in "
+            "{}.".format(ufo.path, otf_path)
+        )
+        assert len(ufo_order) == len(
+            ot_order
+        ), "{}, subsetting: amount of glyphs does not match with {}".format(
+            ufo.path, otf_path
+        )
 
         for old_name, new_name in zip(ufo_order, ot_order):
             glyph = ufo[old_name]
