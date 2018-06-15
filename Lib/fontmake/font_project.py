@@ -39,7 +39,6 @@ except ImportError:
         return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
 from defcon import Font
-from fontTools import subset
 from fontTools.misc.py23 import tobytes, basestring, zip
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
@@ -61,6 +60,8 @@ timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
 
 PUBLIC_PREFIX = 'public.'
 GLYPHS_PREFIX = 'com.schriftgestaltung.'
+KEEP_GLYPHS_KEY = GLYPHS_PREFIX + "Keep Glyphs"
+GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 
 
 def _deprecated(func):
@@ -403,12 +404,18 @@ class FontProject(object):
             logger.info("Saving %s", otf_path)
             font.save(otf_path)
 
-            if subset is None:
-                export_key = GLYPHS_PREFIX + 'Glyphs.Export'
-                subset = ((GLYPHS_PREFIX + 'Keep Glyphs') in ufo.lib or
-                          any(glyph.lib.get(export_key, True) is False
-                              for glyph in ufo))
-            if subset:
+            # 'subset' is an Optional[bool], can be None, True or False.
+            # When False, we never subset; when True, we always do; when
+            # None (default), we check the presence of custom parameters
+            if subset is False:
+                pass
+            elif subset is True or (
+                KEEP_GLYPHS_KEY in ufo.lib
+                or any(
+                    glyph.lib.get(GLYPH_EXPORT_KEY, True) is False
+                    for glyph in ufo
+                )
+            ):
                 self.subset_otf_from_ufo(otf_path, ufo)
 
             if not do_autohint:
@@ -438,12 +445,14 @@ class FontProject(object):
         for complexity reasons. See
         https://github.com/googlei18n/glyphsLib/issues/295.
         """
+        from fontTools import subset
+
         ufo_order = makeOfficialGlyphOrder(ufo)
         ot_order = TTFont(otf_path).getGlyphOrder()
         assert ot_order[0] == ".notdef"
         assert len(ufo_order) == len(ot_order)
 
-        keep_glyphs_list = ufo.lib.get(GLYPHS_PREFIX + 'Keep Glyphs')
+        keep_glyphs_list = ufo.lib.get(KEEP_GLYPHS_KEY)
         if keep_glyphs_list is not None:
             keep_glyphs = set(keep_glyphs_list)
         else:
@@ -456,7 +465,7 @@ class FontProject(object):
             if keep_glyphs and source_name not in keep_glyphs:
                 continue
 
-            exported = glyph.lib.get(GLYPHS_PREFIX + "Glyphs.Export", True)
+            exported = glyph.lib.get(GLYPH_EXPORT_KEY, True)
             if not exported:
                 continue
 
