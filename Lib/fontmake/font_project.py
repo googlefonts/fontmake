@@ -321,6 +321,12 @@ class FontProject(object):
                 compiling TrueType outlines.
             conversion_error: Error to allow when converting cubic CFF contours
                 to quadratic TrueType contours.
+            feature_writers: list of ufo2ft-compatible feature writer classes
+                or pre-initialized objects that are passed on to ufo2ft
+                feature compiler to generate automatic feature code. The
+                default value (None) means that ufo2ft will use its built-in
+                default feature writers (for kern, mark, mkmk, etc.). An empty
+                list ([]) will skip any automatic feature generation.
             interpolate_layout_from: A designspace path to give varLib for
                 interpolating layout tables to use in output.
             interpolate_layout_dir: Directory containing the compiled master
