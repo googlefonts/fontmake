@@ -349,6 +349,13 @@ class FontProject(object):
                     ext, is_instance=False, interpolatable=interpolatable)
             finder = partial(_varLib_finder, directory=interpolate_layout_dir,
                              ext=ext)
+            # no need to generate automatic features in ufo2ft, since here we
+            # are interpolating precompiled GPOS table with fontTools.varLib.
+            # An empty 'featureWriters' list tells ufo2ft to not generate any
+            # automatic features.
+            # TODO: Add an argument to ufo2ft.compileOTF/compileTTF to
+            # completely skip compiling features into OTL tables
+            feature_writers = []
 
         compiler_options = dict(
             useProductionNames=use_production_names,
