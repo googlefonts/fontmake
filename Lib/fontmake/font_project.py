@@ -60,7 +60,13 @@ timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
 
 PUBLIC_PREFIX = 'public.'
 GLYPHS_PREFIX = 'com.schriftgestaltung.'
-KEEP_GLYPHS_KEY = GLYPHS_PREFIX + "Keep Glyphs"
+# for glyphsLib < 2.3.0
+KEEP_GLYPHS_OLD_KEY = GLYPHS_PREFIX + "Keep Glyphs"
+# for glyphsLib >= 2.3.0
+KEEP_GLYPHS_NEW_KEY = (
+    GLYPHS_PREFIX
+    + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
+)
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 
 
@@ -423,7 +429,10 @@ class FontProject(object):
             if subset is False:
                 pass
             elif subset is True or (
-                KEEP_GLYPHS_KEY in ufo.lib
+                (
+                    KEEP_GLYPHS_OLD_KEY in ufo.lib
+                    or KEEP_GLYPHS_NEW_KEY in ufo.lib
+                )
                 or any(
                     glyph.lib.get(GLYPH_EXPORT_KEY, True) is False
                     for glyph in ufo
@@ -465,9 +474,11 @@ class FontProject(object):
         assert ot_order[0] == ".notdef"
         assert len(ufo_order) == len(ot_order)
 
-        keep_glyphs_list = ufo.lib.get(KEEP_GLYPHS_KEY)
-        if keep_glyphs_list is not None:
-            keep_glyphs = set(keep_glyphs_list)
+        for key in (KEEP_GLYPHS_NEW_KEY, KEEP_GLYPHS_OLD_KEY):
+            keep_glyphs_list = ufo.lib.get(key)
+            if keep_glyphs_list is not None:
+                keep_glyphs = set(keep_glyphs_list)
+                break
         else:
             keep_glyphs = None
 
