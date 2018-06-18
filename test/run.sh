@@ -42,6 +42,9 @@ for src in 'GuidelineTest'; do
     check_failure "${src} failed to build"
 done
 
+fontmake -g TestSubset.glyphs -i "Test Subset Regular" -o ttf otf
+check_failure "TestSubset.glyphs failed to build"
+
 python test_output.py
 python test_arguments.py
 check_failure 'fontmake output incorrect'
