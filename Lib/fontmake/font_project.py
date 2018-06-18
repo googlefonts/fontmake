@@ -469,7 +469,10 @@ class FontProject(object):
         """
         from fontTools import subset
 
+        # ufo2ft always inserts a ".notdef" glyph as the first glyph
         ufo_order = makeOfficialGlyphOrder(ufo)
+        if ".notdef" not in ufo_order:
+            ufo_order.insert(0, ".notdef")
         ot_order = TTFont(otf_path).getGlyphOrder()
         assert ot_order[0] == ".notdef"
         assert len(ufo_order) == len(ot_order)
@@ -484,14 +487,13 @@ class FontProject(object):
 
         include = []
         for source_name, binary_name in zip(ufo_order, ot_order):
-            glyph = ufo[source_name]
-
             if keep_glyphs and source_name not in keep_glyphs:
                 continue
 
-            exported = glyph.lib.get(GLYPH_EXPORT_KEY, True)
-            if not exported:
-                continue
+            if source_name in ufo:
+                exported = ufo[source_name].lib.get(GLYPH_EXPORT_KEY, True)
+                if not exported:
+                    continue
 
             include.append(binary_name)
 
