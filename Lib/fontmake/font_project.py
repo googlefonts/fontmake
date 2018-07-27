@@ -623,9 +623,7 @@ class FontProject(object):
             **kwargs)
 
     def run_from_ufos(
-            self, ufos, output=(), designspace_path=None,
-            remove_overlaps=True, reverse_direction=True, conversion_error=None,
-            **kwargs):
+            self, ufos, output=(), designspace_path=None, **kwargs):
         """Run toolchain from UFO sources.
 
         Args:
