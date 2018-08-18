@@ -22,7 +22,7 @@ after_success:
       # we need to install pip from github until pypa/pip#5404 is released
       # https://github.com/linkedin/shiv/pull/7#issuecomment-412584748
       pip install --upgrade -e git+https://github.com/pypa/pip.git#egg=pip
-      pip install --upgrade twine setuptools wheel
+      pip install --upgrade twine setuptools wheel shiv
       python setup.py sdist
       pip wheel --no-deps --wheel-dir dist .
       ./build_pyz.sh
