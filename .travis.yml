@@ -1,5 +1,10 @@
 sudo: false
 language: python
+env:
+  global:
+    - TWINE_USERNAME="anthrotype"
+    - secure: VdRt0Fs7mAcDbscxeHp1IxZDFe5uZYD2cTnBav4yM6ykHglhmguJ7sLZdNHtisXBIvV3BOAxuIcplQdlHWIoKGxK7Si2UWJ29SRcy7nok84beeU27yvbJuKZooMYGGaPsqsl4NrezlEuFFYZX1jSH/yPSRdi4gd7L0JK/d8nJTlT2yVdkjRSXq/GZXv22D9IMn9mvgffChWcq9B4L0yg3Nrn0LaGwgoZ5NRq9oFXSWfKUEC41SY3lpMm/MqXEzwFsa3zNOOXSSfoJcBSPd7OP9WTWkL4Yvs24/w5qUW4q50odHoFXZ4xxjolNsazLNZKs3bFQW1wtM/+LgSs8Zi33wmfuZark7w1Ei856Tcei1a6MBxhaNX1EUHUVt9Kx2MBZ105XSinYX8U/JD7ng6c5vEh8NqqQL68zqRFpnaxYnuV15UAX1B7ntssnYYAOQS1XAoDgN+Pum7osJNSIHErM0qlxzaRKbTlekdv+mHz2wqEHaCl8efVBeKCItXzilngnZuvfGzAilfMJgveNiUMZqjAkCcEO/RME8Dzd6OKVL1Yx+gtbj1PhKtyT5iA7t95nZoRibO2e+8XrwxfcQbtfDQ7Bu+NC+8L9OCR9pppRvP/t1LqG4xWcFSaz7Difkb1+kgVbw3MTax2KqM6vSt51VxFaA0r9LUq1DQkSFCzXnc=
+
 python:
   - "2.7"
   - "3.6"
@@ -11,20 +16,16 @@ install:
 script:
   - (cd test && ./run.sh)
 
+after_success:
+  - |
+    if [ -n "$TRAVIS_TAG" ] && [ "$TRAVIS_REPO_SLUG" == "googlei18n/fontmake" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]; then
+      pip install --upgrade twine pip setuptools wheel
+      python setup.py sdist
+      pip wheel --no-deps --wheel-dir dist .
+      twine upload dist/*.whl dist/*.zip
+    fi
+
 deploy:
-  # deploy sdist and wheel packages to PyPI on tags
-  - provider: pypi
-    server: https://upload.pypi.org/legacy/
-    on:
-      repo: googlei18n/fontmake
-      tags: true
-      all_branches: true
-      python: 2.7
-    user: anthrotype
-    password:
-      secure: PPf1+LkeIOnuY0rQ4pEmNYphl5J93u26EHf8KrNciWAaUlXKopde43bfXI1nkKItYgedq5pVcdOeUrct+WNtbWFSmqDAedBKKgjWDwnvcUd/Hwe6uwFN/uwwk+LXooAGQs4az/kbdKb3H6TWszVArzsl+R7IWCDHwOkRkrBc293Lf3bl/bi8nBuAIijO8CJU8/LYTncs9k/sbo9wxu5usRlYr3D+IBse2vmT23vNYNMSEyd0ISWThdTjD79nDjuo/i05D20HyIUeOcz9HN5s/PhizZRqoN85LHtCV1QrHZ+JjAzy9TXFB1rPdnAwSaTROdipPLw7unkN4kDcLrL8ktaQAmg3ixUIlG7NDZKH9lM0RLF1NK1lB/mUpHT80gFgPgyLjHAEODynbW6VLbJCe84ux1gjiQWqks/PZb99IERyuGSJhdU7q9slB5DBiXdIgCh12Eb/wmJfPNgkDBXPb8tCd7A9AR0a+wTnJgp+RccotBn6CRwyt26bsAt3eE3LMM0quhFNARWkDySCq+ZAc4yIlc9lXhjWnqugZz/TBS5xth7+P1GY4N2Dm7m/gGjyCTGerWkNWoQHsPcWufhbmmsY6KN4LWMi4rzK40DTNgjgrSY+nBfYjLq2zKrr3yfuiFv07YK2NBv1kwXFa8U71y9qWLkhHQNBCj4J54dopuM=
-    distributions: sdist bdist_wheel
-    skip_upload_docs: true
   # also create a Github Release with the current tag
   - provider: releases
     api_key:
