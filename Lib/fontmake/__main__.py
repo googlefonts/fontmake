@@ -139,6 +139,11 @@ def main(args=None):
         '--keep-overlaps', dest='remove_overlaps', action='store_false',
         help='Do not remove any overlap.')
     contourGroup.add_argument(
+        '--overlaps-backend', dest='overlaps_backend', metavar="BACKEND",
+        choices=("booleanOperations", "pathops"), default="booleanOperations",
+        help='Select library to remove overlaps. Choose between: %(choices)s '
+             '(default: %(default)s)')
+    contourGroup.add_argument(
         '--keep-direction', dest='reverse_direction', action='store_false',
         help='Do not reverse contour direction when output is ttf or '
              'ttf-interpolatable')

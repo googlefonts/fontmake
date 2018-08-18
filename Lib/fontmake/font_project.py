@@ -292,6 +292,7 @@ class FontProject(object):
                   subroutinize=False,
                   cff_round_tolerance=None,
                   remove_overlaps=True,
+                  overlaps_backend=None,
                   reverse_direction=True,
                   conversion_error=None,
                   feature_writers=None,
@@ -323,6 +324,8 @@ class FontProject(object):
                 between only round floats which are close to their integral
                 part within the tolerated range. Ignored if ttf=True.
             remove_overlaps: If True, remove overlaps in glyph shapes.
+            overlaps_backend: name of the library to remove overlaps. Can be
+                either "booleanOperations" (default) or "pathops".
             reverse_direction: If True, reverse contour directions when
                 compiling TrueType outlines.
             conversion_error: Error to allow when converting cubic CFF contours
@@ -386,6 +389,7 @@ class FontProject(object):
                 ufos,
                 ttf,
                 removeOverlaps=remove_overlaps,
+                overlapsBackend=overlaps_backend,
                 optimizeCFF=subroutinize,
                 roundTolerance=cff_round_tolerance,
                 **compiler_options)
