@@ -181,13 +181,15 @@ setup(
         "MutatorMath>=2.1.1",
         "defcon>=0.5.2",
         "booleanOperations>=0.8.0",
+        "ufoLib[lxml]>=2.3.1",
     ],
     extras_require = {
         "pathops": [
             "skia-pathops>=0.2.0",
         ],
+        # this is now default; kept here for backward compatibility
         "lxml": [
-            "lxml>=4.2.4",
+            # "lxml>=4.2.4",
         ],
     },
     cmdclass={
