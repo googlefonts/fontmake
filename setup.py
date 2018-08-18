@@ -179,7 +179,7 @@ setup(
         "glyphsLib>=2.4.0",
         "ufo2ft>=2.2.0",
         "MutatorMath>=2.1.1",
-        "defcon>=0.5.1",
+        "defcon>=0.5.2",
         "booleanOperations>=0.8.0",
     ],
     extras_require = {

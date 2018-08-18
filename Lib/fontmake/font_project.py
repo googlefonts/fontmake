@@ -39,6 +39,7 @@ except ImportError:
         return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
 from defcon import Font
+from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
 from fontTools.misc.py23 import tobytes, basestring, zip
 from fontTools.misc.loggingTools import configLogger, Timer
 from fontTools.misc.transform import Transform
@@ -89,11 +90,16 @@ def _deprecated(func):
 class FontProject(object):
     """Provides methods for building fonts."""
 
-    def __init__(self, timing=False, verbose='INFO'):
+    def __init__(self, timing=False, verbose='INFO', validate_ufo=False):
         logging.basicConfig(level=getattr(logging, verbose.upper()))
         logging.getLogger('fontTools.subset').setLevel(logging.WARNING)
         if timing:
             configLogger(logger=timer.logger, level=logging.DEBUG)
+
+        logger.debug("ufoLib UFO validation is %s",
+                     "enabled" if validate_ufo else "disabled")
+        setUfoLibReadValidate(validate_ufo)
+        setUfoLibWriteValidate(validate_ufo)
 
     @timer()
     def build_master_ufos(self, glyphs_path, designspace_path=None,

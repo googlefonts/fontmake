@@ -133,6 +133,10 @@ def main(args=None):
         help='Directory where to write instance UFOs. Default: '
              '"./instance_ufo". If value is "{tmp}", a temporary directory '
              'is created and removed at the end (for Glyphs sources only).')
+    outputGroup.add_argument(
+        '--validate-ufo', action='store_true',
+        help='Enable ufoLib validation on reading/writing UFO files. It is '
+             'disabled by default')
 
     contourGroup = parser.add_argument_group(title='Handling of contours')
     contourGroup.add_argument(
@@ -246,7 +250,8 @@ def main(args=None):
 
     try:
         project = FontProject(timing=args.pop('timing'),
-                              verbose=args.pop('verbose'))
+                              verbose=args.pop('verbose'),
+                              validate_ufo=args.pop('validate_ufo'))
 
         if glyphs_path:
             with _make_tempdirs(parser, args):
