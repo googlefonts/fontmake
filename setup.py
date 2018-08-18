@@ -186,6 +186,9 @@ setup(
         "pathops": [
             "skia-pathops>=0.2.0",
         ],
+        "lxml": [
+            "lxml>=4.2.4",
+        ],
     },
     cmdclass={
         "release": release,
