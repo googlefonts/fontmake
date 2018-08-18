@@ -1,8 +1,9 @@
 fonttools==3.29.0
 cu2qu==1.5.0
 glyphsLib==3.0.2
-ufo2ft==2.1.0
+ufo2ft[pathops]==2.2.0
 MutatorMath==2.1.1
-defcon==0.5.1
+defcon==0.5.2
 ufoLib[lxml]==2.3.1
 booleanOperations==0.8.0
+skia-pathops==0.2.0.post2
