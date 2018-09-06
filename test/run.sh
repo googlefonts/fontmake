@@ -29,6 +29,14 @@ for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd ..
 done
 
+# also test the masters_as_instance parameter
+for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
+    cd "${src}"
+    fontmake -i -M -m "${src}.designspace"
+    check_failure "${src} failed to build"
+    cd ..
+done
+
 for src in 'InterpolateLayoutTest'; do
     cd "${src}"
     fontmake -g "${src}.glyphs" --mti-source "${src}.plist" --no-production-names
