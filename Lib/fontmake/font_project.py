@@ -659,7 +659,7 @@ class FontProject(object):
             ufos = [Font(x) for x in ufo_paths]
         elif isinstance(ufos, list):
             # ufos can be either paths or open Font objects, so normalize them
-            ufos = [Font(x) if type(x) is not Font else x for x in ufos]
+            ufos = [Font(x) if isinstance(x, basestring) else x for x in ufos]
             ufo_paths = [x.path for x in ufos]
         else:
             raise FontmakeError('UFOs parameter is neither a defcon.Font object, a path or a glob, nor a list of any of these.', ufos)
@@ -719,10 +719,16 @@ class FontProject(object):
 
     def _font_name(self, ufo):
         """Generate a postscript-style font name."""
-        family_name = ufo.info.familyName.replace(' ', '') if \
-            ufo.info.familyName is not None else 'None'
-        style_name = ufo.info.styleName.replace(' ', '') if \
-            ufo.info.styleName is not None else 'None'
+        family_name = (
+            ufo.info.familyName.replace(' ', '')
+            if ufo.info.familyName is not None
+            else 'None'
+        )
+        style_name = (
+            ufo.info.styleName.replace(' ', '')
+            if ufo.info.styleName is not None
+            else 'None'
+        )
         return '%s-%s' % (family_name, style_name)
 
     def _output_dir(self, ext, is_instance=False, interpolatable=False,
