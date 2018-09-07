@@ -12,5 +12,9 @@
 	<integer>1000</integer>
 	<key>xHeight</key>
 	<integer>0</integer>
+	<key>familyName</key>
+	<string>MyFont</string>
+	<key>styleName</key>
+	<string>Light</string>
 </dict>
 </plist>
