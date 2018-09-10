@@ -174,10 +174,10 @@ setup(
     },
     setup_requires=wheel + bump2version,
     install_requires=[
-        "fonttools>=3.28.0",
+        "fonttools>=3.29.1",
         "cu2qu>=1.5.0",
-        "glyphsLib>=3.0.3",
-        "ufo2ft>=2.2.0",
+        "glyphsLib>=3.1.0",
+        "ufo2ft>=2.2.1",
         "MutatorMath>=2.1.1",
         "defcon>=0.5.2",
         "booleanOperations>=0.8.0",
