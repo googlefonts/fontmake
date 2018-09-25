@@ -7,7 +7,11 @@
 *.eggs
 build
 dist
+shivs/
 
 # Unit test
 .cache/
 .tox/
+
+# auto-generated version file
+Lib/fontmake/_version.py
