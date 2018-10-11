@@ -24,6 +24,7 @@ function check_failure() {
 
 for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd "${src}"
+    mkdir -p instance_ufo
     fontmake -i -m "${src}.designspace"
     check_failure "${src} failed to build"
     cd ..
@@ -32,6 +33,7 @@ done
 # also test the masters_as_instance parameter
 for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd "${src}"
+    mkdir -p instance_ufo
     fontmake -i -M -m "${src}.designspace"
     check_failure "${src} failed to build"
     cd ..
