@@ -42,93 +42,13 @@ source checkout:
 
     pip install -e .
 
-However, even with an editable installation, it is recommended to always
-reinstall fontmake after pulling the latest changes from the upstream repo:
-
-.. code:: bash
-
-    git pull
-    pip install -e .
-
-This makes sure that the requirements are still met, i.e. updating old ones
-to new minimum required versions, or installing new ones as needed.
-
-It also ensures that the package metadata is updated, e.g. when displaying the
-installed version with ``pip list`` or ``pip show fontmake``.
-
-
-Virtual environments
---------------------
-
 It is recommended to install fontmake inside a "virtual environment" to prevent
 conflicts between its dependencies and other modules installed globally.
 
-You can either install `virtualenv`_ (``pip install --user virtualenv``), or
-use the Python 3 `venv`_ module.
-
-- To create a new virtual environment, e.g. inside the 'env' directory:
-
-  .. code:: bash
-
-      python -m virtualenv env
-
-  Similarly, if you are using the ``venv`` module:
-
-  .. code:: bash
-
-      python3 -m venv env
-
-- To "activate" a virtual environment, i.e. temporarily place the folder
-  containing the executable scripts on the shell's ``$PATH`` so they can be
-  run from anywhere, run this from the Bash shell (e.g., Linux, Mac):
-
-  .. code:: bash
-
-      source env/bin/activate
-
-  If you are using the Windows Command Prompt:
-
-  .. code:: bash
-
-      env/bin/activate.bat
-
-- To deactivate the virtual environment and restore the original environment,
-  just do:
-
-  .. code:: bash
-
-      deactivate
-
-
-Dependencies and requirements files
------------------------------------
-
-Fontmake is mostly the front-end interface for a number of Python libraries.
-
-These are automatically installed or updated to the minimum required version
-whenever you install a given fontmake version.
-
-Pip also allows to specify a set of packages that work together in text files.
-These can be used with the ``-r`` option to recreate a particular environment.
-
-There are two such requirements files in fontmake repository:
-
-- ``dev_requirements.txt``: contains the URLs of the git repositories for
-  all fontmake's dependencies.
-
-- ``requirements.txt``: contains the current released versions of the direct
-  dependencies which fontmake is tested against.
-
-To install from the latest development versions, or upgrade an existing
-environment to the current ``HEAD`` commit of the respective ``master``
-branches, you can do:
-
-.. code:: bash
-
-    pip install -r dev_requirements.txt
-
-For more information on requirements files, see `pip documentation`_.
-
+Alternatively, we also provide a self-contained, standalone version of fontmake
+that only requires a Python 3.6 or 3.7 installation to run. These are available
+to download from the fontmake `Github releases`_ page.
+You simply unzip them and run the included `fontmake` command from your console.
 
 Usage
 ~~~~~
@@ -150,6 +70,7 @@ process, via methods of the ``fontmake.font_project.FontProject`` class.
 .. _pip: https://pip.pypa.io
 .. _pip documentation: https://pip.readthedocs.io/en/stable/user_guide/#requirements-files
 .. _PyPI: https://pypi.org/project/fontmake
+.. _Github releases: https://github.com/googlei18n/fontmake/releases
 .. |Travis Build Status| image:: https://travis-ci.org/googlei18n/fontmake.svg
    :target: https://travis-ci.org/googlei18n/fontmake
 .. |Python Versions| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
