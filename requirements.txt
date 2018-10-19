@@ -1,7 +1,7 @@
 fonttools==3.30.0
-cu2qu==1.6.1
-glyphsLib==3.1.1
-ufo2ft[pathops]==2.3.2
+cu2qu==1.6.4
+glyphsLib==3.1.2
+ufo2ft[pathops]==2.4.0
 MutatorMath==2.1.1
 defcon==0.5.3
 ufoLib[lxml]==2.3.2
