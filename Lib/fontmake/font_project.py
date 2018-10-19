@@ -51,6 +51,7 @@ from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
 from ufo2ft.featureCompiler import FeatureCompiler
+from ufo2ft.featureWriters import loadFeatureWriters, FEATURE_WRITERS_KEY
 from ufo2ft.util import makeOfficialGlyphOrder
 
 from fontmake.errors import FontmakeError, TTFAError
@@ -563,6 +564,7 @@ class FontProject(object):
             self, designspace_path, interpolate=False,
             masters_as_instances=False,
             interpolate_binary_layout=False, round_instances=False,
+            feature_writers=None,
             **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
@@ -597,6 +599,14 @@ class FontProject(object):
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
+        designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+
+        # if no --feature-writers option was passed, check in the designspace's
+        # <lib> element if user supplied a custom featureWriters configuration;
+        # if so, use that for all the UFOs built from this designspace
+        if feature_writers is None and FEATURE_WRITERS_KEY in designspace.lib:
+            feature_writers = loadFeatureWriters(designspace)
+
         ufos = []
         reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3,
                                            roundGeometry=round_instances,
@@ -606,7 +616,7 @@ class FontProject(object):
         if interpolate:
             logger.info('Interpolating master UFOs from designspace')
             if isinstance(interpolate, basestring):
-                instances = self._search_instances(designspace_path,
+                instances = self._search_instances(designspace,
                                                    pattern=interpolate)
                 for instance_name in instances:
                     reader.readInstance(("name", instance_name))
@@ -632,6 +642,7 @@ class FontProject(object):
             is_instance=(interpolate or masters_as_instances),
             interpolate_layout_from=interpolate_layout_from,
             interpolate_layout_dir=interpolate_layout_dir,
+            feature_writers=feature_writers,
             **kwargs)
 
     def run_from_ufos(
@@ -707,9 +718,7 @@ class FontProject(object):
                     shutil.rmtree(tempdir)
 
     @staticmethod
-    def _search_instances(designspace_path, pattern):
-        designspace = designspaceLib.DesignSpaceDocument()
-        designspace.read(designspace_path)
+    def _search_instances(designspace, pattern):
         instances = OrderedDict()
         for instance in designspace.instances:
             # is 'name' optional? 'filename' certainly must not be
