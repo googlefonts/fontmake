@@ -56,5 +56,7 @@ fontmake -g TestSubset.glyphs -i "Test Subset Regular" -o ttf otf
 check_failure "TestSubset.glyphs failed to build"
 
 python test_output.py
+check_failure 'fontmake output incorrect'
+
 python test_arguments.py
 check_failure 'fontmake output incorrect'

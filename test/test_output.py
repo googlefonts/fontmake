@@ -34,7 +34,7 @@ class TestAvarOutput(unittest.TestCase):
     def test_interpolation(self):
         font = self._get_font()
         glyph_set = font.getGlyphSet()
-        glyph = glyph_set['uni006C']._glyph
+        glyph = glyph_set['l']._glyph
         self.assertEqual(glyph.xMin, 50)
         self.assertEqual(glyph.xMax, 170)
 
