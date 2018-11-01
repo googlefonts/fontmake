@@ -44,7 +44,7 @@ setup(
         "cu2qu>=1.6.5",
         "glyphsLib>=3.1.3",
         "ufo2ft>=2.5.0",
-        "MutatorMath>=2.1.1",
+        "MutatorMath>=2.1.2",
         "defcon[lxml]>=0.6.0",
         "booleanOperations>=0.8.1",
     ],
