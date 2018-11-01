@@ -53,6 +53,7 @@ from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
 from ufo2ft.featureCompiler import FeatureCompiler
 from ufo2ft.featureWriters import loadFeatureWriters, FEATURE_WRITERS_KEY
 from ufo2ft.util import makeOfficialGlyphOrder
+from ufo2ft import CFFOptimization
 
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
@@ -298,7 +299,8 @@ class FontProject(object):
                   autohint=None,
                   subset=None,
                   use_production_names=None,
-                  subroutinize=False,
+                  subroutinize=None,  # deprecated
+                  optimize_cff=CFFOptimization.NONE,
                   cff_round_tolerance=None,
                   remove_overlaps=True,
                   overlaps_backend=None,
@@ -359,6 +361,21 @@ class FontProject(object):
         if output_path is not None and len(ufos) > 1:
             raise ValueError("output_path requires a single input")
 
+        if subroutinize is not None:
+            import warnings
+
+            warnings.warn(
+                "the 'subroutinize' argument is deprecated, use 'optimize_cff'",
+                UserWarning
+            )
+            if subroutinize:
+                optimize_cff = CFFOptimization.SUBROUTINIZE
+            else:
+                # for b/w compatibility, we still run the charstring specializer
+                # even when --no-subroutinize is used. Use the new --optimize-cff
+                # option to disable both specilization and subroutinization
+                optimize_cff = CFFOptimization.SPECIALIZE
+
         ext = 'ttf' if ttf else 'otf'
 
         if interpolate_layout_from is not None:
@@ -399,7 +416,7 @@ class FontProject(object):
                 ttf,
                 removeOverlaps=remove_overlaps,
                 overlapsBackend=overlaps_backend,
-                optimizeCFF=subroutinize,
+                optimizeCFF=optimize_cff,
                 roundTolerance=cff_round_tolerance,
                 **compiler_options)
 

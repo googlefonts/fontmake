@@ -19,6 +19,7 @@ from fontmake import __version__
 from fontmake.font_project import FontProject
 from fontmake.errors import FontmakeError
 from ufo2ft.featureWriters import loadFeatureWriterFromString
+from ufo2ft import CFFOptimization
 
 
 def _loadFeatureWriters(parser, specs):
@@ -165,6 +166,13 @@ def main(args=None):
              'is less than or equal to the tolerance. By default, all floats '
              'are rounded to integer (tolerance 0.5); 0 disables rounding.'
     )
+    contourGroup.add_argument(
+        '--optimize-cff',
+        type=lambda s: CFFOptimization(int(s)),
+        default=CFFOptimization.SUBROUTINIZE,
+        help='0 disables all optimizations; 1 specializes the CFF charstring '
+             'operators; 2 (default) also enables subroutinization'
+    )
 
     layoutGroup = parser.add_argument_group(title='Handling of OpenType Layout')
     layoutGroup.add_argument(
@@ -210,12 +218,13 @@ def main(args=None):
     subroutinizeGroup = parser.add_mutually_exclusive_group(required=False)
     subroutinizeGroup.add_argument(
         '-s', '--subroutinize', action='store_true',
-        help='Optimize CFF table using compreffor (default)')
+        help='Optimize CFF table using compreffor (default) [DEPRECATED: use '
+             '--optimize-cff option instead]')
     subroutinizeGroup.add_argument(
         '-S', '--no-subroutinize', dest='subroutinize', action='store_false')
 
     parser.set_defaults(use_production_names=None, subset=None,
-                        subroutinize=True)
+                        subroutinize=None)
 
     logGroup = parser.add_argument_group(title='Logging arguments')
     logGroup.add_argument(
