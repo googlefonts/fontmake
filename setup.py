@@ -46,7 +46,7 @@ setup(
         "ufo2ft>=2.5.0",
         "MutatorMath>=2.1.1",
         "defcon[lxml]>=0.6.0",
-        "booleanOperations>=0.8.0",
+        "booleanOperations>=0.8.1",
     ],
     extras_require={
         "pathops": [
