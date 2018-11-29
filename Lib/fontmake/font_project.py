@@ -50,7 +50,7 @@ from fontTools import varLib
 from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
-from ufo2ft.featureCompiler import FeatureCompiler
+from ufo2ft.featureCompiler import FeatureCompiler, parseLayoutFeatures
 from ufo2ft.featureWriters import loadFeatureWriters, FEATURE_WRITERS_KEY
 from ufo2ft.util import makeOfficialGlyphOrder
 from ufo2ft import CFFOptimization
@@ -644,6 +644,18 @@ class FontProject(object):
             logger.info('Applying instance data from designspace')
             ufos.extend(apply_instance_data(designspace_path,
                                             include_filenames=filenames))
+            logger.info("Expanding features to instance UFOs")
+            master_source = next(
+                (s for s in designspace.sources if s.copyFeatures), None
+            )
+            if not master_source:
+                logger.info("... actually, no source is marked as the feature master")
+            else:
+                master_source_font = reader.sources[master_source.name][0]
+                master_source_features = parseLayoutFeatures(master_source_font).asFea()
+                for instance_ufo in ufos:
+                    instance_ufo.features.text = master_source_features
+                    instance_ufo.save()
 
         if interpolate_binary_layout is False:
             interpolate_layout_from = interpolate_layout_dir = None
