@@ -131,20 +131,25 @@ class FontProject(object):
         designspace = glyphsLib.to_designspace(
             font, family_name=family_name, instance_dir=instance_dir)
 
-        masters = []
+        masters = {}
+        # multiple sources can have the same font/filename (but different layer),
+        # we want to save a font only once
         for source in designspace.sources:
-            masters.append(source.font)
+            if source.filename in masters:
+                assert source.font is masters[source.filename]
+                continue
             ufo_path = os.path.join(master_dir, source.filename)
             # no need to also set the relative 'filename' attribute as that
             # will be auto-updated on writing the designspace document
             source.path = ufo_path
             source.font.save(ufo_path)
+            masters[source.filename] = source.font
 
         if designspace_path is None:
             designspace_path = os.path.join(master_dir, designspace.filename)
         designspace.write(designspace_path)
         if mti_source:
-            self.add_mti_features_to_master_ufos(mti_source, masters)
+            self.add_mti_features_to_master_ufos(mti_source, masters.values())
         return designspace_path
 
     @timer()
