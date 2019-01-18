@@ -3,9 +3,9 @@
     <axes>
         <axis tag="wght"
               name="weight"
-              minimum="1"
-              maximum="1000"
-              default="400">
+              minimum="300"
+              maximum="700"
+              default="300">
             <map input="300" output="50" />
             <map input="400" output="100" />
             <map input="700" output="150" />
@@ -15,13 +15,13 @@
     <sources>
         <source familyname="MyFont" filename="MyFont-Light.ufo" stylename="Light" name="MyFont Light">
             <location>
-                <dimension name="weight" xvalue="300.0" />
+                <dimension name="weight" xvalue="50.0" />
             </location>
             <info copy="1" />
         </source>
         <source familyname="MyFont" filename="MyFont-Bold.ufo" stylename="Bold" name="MyFont Bold">
             <location>
-                <dimension name="weight" xvalue="700.0" />
+                <dimension name="weight" xvalue="150.0" />
             </location>
         </source>
     </sources>
@@ -29,7 +29,7 @@
     <instances>
         <instance familyname="MyFont" filename="MyFont-Regular.ufo" stylename="Regular">
             <location>
-                <dimension name="weight" xvalue="400.0" />
+                <dimension name="weight" xvalue="100.0" />
             </location>
             <info />
         </instance>
