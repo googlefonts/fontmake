@@ -254,24 +254,39 @@ class FontProject(object):
         """Build OpenType binaries with interpolatable TrueType outlines."""
         self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
 
-    def build_variable_font(self, designspace_path, output_path=None,
-                            output_dir=None, master_bin_dir=None):
+    def build_variable_font(
+        self,
+        designspace,
+        output_path=None,
+        output_dir=None,
+        master_bin_dir=None,
+        ttf=True,
+    ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
 
+        ext = "ttf" if ttf else "otf"
+
+        if hasattr(designspace, "__fspath__"):
+            designspace = designspace.__fspath__()
+        if isinstance(designspace, basestring):
+            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace)
+            if master_bin_dir is None:
+                master_bin_dir = self._output_dir(ext, interpolatable=True)
+            finder = partial(_varLib_finder, directory=master_bin_dir)
+        else:
+            assert all(isinstance(s.font, TTFont) for s in designspace.sources)
+            finder = lambda s: s
+
         if output_path is None:
             output_path = os.path.splitext(
-                os.path.basename(designspace_path))[0] + '-VF'
+                os.path.basename(designspace.path))[0] + '-VF'
             output_path = self._output_path(
-                output_path, 'ttf', is_variable=True, output_dir=output_dir)
+                output_path, ext, is_variable=True, output_dir=output_dir)
 
         logger.info('Building variable font ' + output_path)
 
-        if master_bin_dir is None:
-            master_bin_dir = self._output_dir('ttf', interpolatable=True)
-        finder = partial(_varLib_finder, directory=master_bin_dir)
-
-        font, _, _ = varLib.build(designspace_path, finder)
+        font, _, _ = varLib.build(designspace, finder)
 
         font.save(output_path)
 
