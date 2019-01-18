@@ -582,6 +582,55 @@ class FontProject(object):
             mti_source=mti_source)
         self.run_from_designspace(designspace_path, **kwargs)
 
+    def interpolate_instance_ufos(
+        self, designspace, include=None, round_instances=False
+    ):
+        """Interpolate master UFOs with MutatorMath and return instance UFOs.
+
+        Args:
+            designspace: a DesignSpaceDocument object containing sources and
+                instances.
+            include (str): optional regular expression pattern to match the
+                DS instance 'name' attribute and only interpolate the matching
+                instances.
+            round_instances (bool): round instances' coordinates to integer.
+        Returns:
+            list of defcon.Font objects corresponding to the UFO instances.
+        Raises:
+            FontmakeError: if any of the sources defines a custom 'layer', for
+                this is not supported by MutatorMath.
+        """
+        from glyphsLib.interpolation import apply_instance_data
+        from mutatorMath.ufo.document import DesignSpaceDocumentReader
+
+        if any(source.layerName is not None for source in designspace.sources):
+            raise FontmakeError(
+                "MutatorMath doesn't support DesignSpace sources with 'layer' "
+                "attribute"
+            )
+
+        # TODO: replace mutatorMath with ufoProcessor?
+        builder = DesignSpaceDocumentReader(
+            designspace.path,
+            ufoVersion=3,
+            roundGeometry=round_instances,
+            verbose=True,
+        )
+        logger.info('Interpolating master UFOs from designspace')
+        if include is not None:
+            instances = self._search_instances(designspace, pattern=include)
+            for instance_name in instances:
+                builder.readInstance(("name", instance_name))
+            filenames = set(instances.values())
+        else:
+            builder.readInstances()
+            filenames = None  # will include all instances
+        logger.info('Applying instance data from designspace')
+        instance_ufos = apply_instance_data(
+            designspace, include_filenames=filenames
+        )
+        return instance_ufos
+
     def run_from_designspace(
             self, designspace_path, interpolate=False,
             masters_as_instances=False,
@@ -618,9 +667,6 @@ class FontProject(object):
                         '"%s" argument incompatible with "variable" output'
                         % argname)
 
-        from glyphsLib.interpolation import apply_instance_data
-        from mutatorMath.ufo.document import DesignSpaceDocumentReader
-
         designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
 
         # if no --feature-writers option was passed, check in the designspace's
@@ -630,25 +676,15 @@ class FontProject(object):
             feature_writers = loadFeatureWriters(designspace)
 
         ufos = []
-        reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3,
-                                           roundGeometry=round_instances,
-                                           verbose=True)
         if not interpolate or masters_as_instances:
-            ufos.extend(reader.getSourcePaths())
+            ufos.extend((s.path for s in designspace.sources if s.path))
         if interpolate:
-            logger.info('Interpolating master UFOs from designspace')
-            if isinstance(interpolate, basestring):
-                instances = self._search_instances(designspace,
-                                                   pattern=interpolate)
-                for instance_name in instances:
-                    reader.readInstance(("name", instance_name))
-                filenames = set(instances.values())
-            else:
-                reader.readInstances()
-                filenames = None  # will include all instances
-            logger.info('Applying instance data from designspace')
-            ufos.extend(apply_instance_data(designspace_path,
-                                            include_filenames=filenames))
+            pattern = interpolate if isinstance(interpolate, basestring) else None
+            ufos.extend(
+                self.interpolate_instance_ufos(
+                    designspace, include=pattern, round_instances=round_instances
+                )
+            )
 
         if interpolate_binary_layout is False:
             interpolate_layout_from = interpolate_layout_dir = None
