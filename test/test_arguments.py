@@ -61,16 +61,6 @@ class TestFunctionsAreCalledByArguments(unittest.TestCase):
         self.assertTrue(mock_build_ttfs.called)
         self.assertTrue(mock_build_otfs.called)
 
-    @patch('fontmake.font_project.FontProject.build_interpolatable_ttfs')
-    @patch('fontmake.font_project.FontProject.build_variable_font')
-    def test_run_from_ufos(self, mock_build_variable_font, mock_build_interpolatable_ttfs):
-        project = FontProject()
-        self.assertFalse(mock_build_interpolatable_ttfs.called)
-        self.assertFalse(mock_build_variable_font.called)
-        project.run_from_ufos("path to ufo", output=('variable'), designspace_path="design space")
-        self.assertTrue(mock_build_interpolatable_ttfs.called)
-        self.assertTrue(mock_build_variable_font.called)
-
 
 class TestOutputFileName(unittest.TestCase):
     @patch('fontTools.varLib.build')

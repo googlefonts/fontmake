@@ -40,13 +40,13 @@ setup(
     },
     setup_requires=wheel + ["setuptools_scm"],
     install_requires=[
-        "fonttools[ufo,lxml,unicode]>=3.32.0",
+        "fonttools[ufo,lxml,unicode]>=3.36.0",
         "cu2qu>=1.6.5",
         "glyphsLib>=3.1.3",
-        "ufo2ft>=2.5.0",
+        "ufo2ft>=2.6.0",
         "MutatorMath>=2.1.2",
         "defcon[lxml]>=0.6.0",
-        "booleanOperations>=0.8.1",
+        "booleanOperations>=0.8.2",
     ],
     extras_require={
         "pathops": [

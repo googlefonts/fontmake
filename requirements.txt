@@ -1,8 +1,8 @@
-fonttools[ufo,lxml,unicode]==3.32.0
+fonttools[ufo,lxml,unicode]==3.36.0
 cu2qu==1.6.5
 glyphsLib==3.1.3
-ufo2ft[pathops]==2.5.0
+ufo2ft[pathops]==2.6.0
 MutatorMath==2.1.2
 defcon[lxml]==0.6.0
-booleanOperations==0.8.1
+booleanOperations==0.8.2
 skia-pathops==0.2.0.post2
