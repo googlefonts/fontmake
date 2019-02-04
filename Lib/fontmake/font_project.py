@@ -13,17 +13,35 @@
 # limitations under the License.
 
 
-from __future__ import print_function, division, absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import glob
 import logging
 import math
 import os
-from functools import partial, wraps
-import tempfile
 import shutil
+import tempfile
 from collections import OrderedDict
+from functools import partial, wraps
+
+import ufo2ft
+from defcon import Font
+from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
+from fontmake.errors import FontmakeError, TTFAError
+from fontmake.ttfautohint import ttfautohint
+from fontTools import designspaceLib, varLib
+from fontTools.misc.loggingTools import Timer, configLogger
+from fontTools.misc.py23 import basestring, tobytes, zip
+from fontTools.misc.transform import Transform
+from fontTools.pens.reverseContourPen import ReverseContourPen
+from fontTools.pens.transformPen import TransformPen
+from fontTools.ttLib import TTFont
+from fontTools.varLib.interpolate_layout import interpolate_layout
+from ufo2ft import CFFOptimization
+from ufo2ft.featureCompiler import FeatureCompiler
+from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
+from ufo2ft.util import makeOfficialGlyphOrder
+
 try:
     from plistlib import load as readPlist  # PY3
 except ImportError:
@@ -38,48 +56,23 @@ except ImportError:
         """Backport of python3.4 re.fullmatch()."""
         return re.match("(?:" + regex + r")\Z", string, flags=flags)
 
-from defcon import Font
-from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
-from fontTools.misc.py23 import tobytes, basestring, zip
-from fontTools.misc.loggingTools import configLogger, Timer
-from fontTools.misc.transform import Transform
-from fontTools.pens.transformPen import TransformPen
-from fontTools.pens.reverseContourPen import ReverseContourPen
-from fontTools.ttLib import TTFont
-from fontTools import varLib
-from fontTools import designspaceLib
-from fontTools.varLib.interpolate_layout import interpolate_layout
-import ufo2ft
-from ufo2ft.featureCompiler import FeatureCompiler
-from ufo2ft.featureWriters import loadFeatureWriters, FEATURE_WRITERS_KEY
-from ufo2ft.util import makeOfficialGlyphOrder
-from ufo2ft import CFFOptimization
-
-from fontmake.errors import FontmakeError, TTFAError
-from fontmake.ttfautohint import ttfautohint
 
 logger = logging.getLogger(__name__)
-timer = Timer(logging.getLogger('fontmake.timer'), level=logging.DEBUG)
+timer = Timer(logging.getLogger("fontmake.timer"), level=logging.DEBUG)
 
-PUBLIC_PREFIX = 'public.'
-GLYPHS_PREFIX = 'com.schriftgestaltung.'
+PUBLIC_PREFIX = "public."
+GLYPHS_PREFIX = "com.schriftgestaltung."
 # for glyphsLib < 2.3.0
 KEEP_GLYPHS_OLD_KEY = GLYPHS_PREFIX + "Keep Glyphs"
 # for glyphsLib >= 2.3.0
 KEEP_GLYPHS_NEW_KEY = (
-    GLYPHS_PREFIX
-    + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
+    GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 
 STATIC_OUTPUTS = frozenset(["ttf", "otf"])
 INTERPOLATABLE_OUTPUTS = frozenset(
-    [
-        "ttf-interpolatable",
-        "otf-interpolatable",
-        "variable",
-        "variable-cff2",
-    ]
+    ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
 
 
@@ -89,8 +82,7 @@ def _deprecated(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         warnings.warn(
-            "'%s' is deprecated and will be dropped in future versions"
-            % func.__name__,
+            "'%s' is deprecated and will be dropped in future versions" % func.__name__,
             category=UserWarning,
             stacklevel=2,
         )
@@ -102,30 +94,37 @@ def _deprecated(func):
 class FontProject(object):
     """Provides methods for building fonts."""
 
-    def __init__(self, timing=False, verbose='INFO', validate_ufo=False):
+    def __init__(self, timing=False, verbose="INFO", validate_ufo=False):
         logging.basicConfig(level=getattr(logging, verbose.upper()))
-        logging.getLogger('fontTools.subset').setLevel(logging.WARNING)
+        logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
         if timing:
             configLogger(logger=timer.logger, level=logging.DEBUG)
 
-        logger.debug("ufoLib UFO validation is %s",
-                     "enabled" if validate_ufo else "disabled")
+        logger.debug(
+            "ufoLib UFO validation is %s", "enabled" if validate_ufo else "disabled"
+        )
         setUfoLibReadValidate(validate_ufo)
         setUfoLibWriteValidate(validate_ufo)
 
     @timer()
-    def build_master_ufos(self, glyphs_path, designspace_path=None,
-                          master_dir=None, instance_dir=None,
-                          family_name=None, mti_source=None):
+    def build_master_ufos(
+        self,
+        glyphs_path,
+        designspace_path=None,
+        master_dir=None,
+        instance_dir=None,
+        family_name=None,
+        mti_source=None,
+    ):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
 
         if master_dir is None:
-            master_dir = self._output_dir('ufo')
+            master_dir = self._output_dir("ufo")
         if not os.path.isdir(master_dir):
             os.mkdir(master_dir)
         if instance_dir is None:
-            instance_dir = self._output_dir('ufo', is_instance=True)
+            instance_dir = self._output_dir("ufo", is_instance=True)
         if not os.path.isdir(instance_dir):
             os.mkdir(instance_dir)
 
@@ -139,7 +138,8 @@ class FontProject(object):
         instance_dir = os.path.relpath(instance_dir, designspace_dir)
 
         designspace = glyphsLib.to_designspace(
-            font, family_name=family_name, instance_dir=instance_dir)
+            font, family_name=family_name, instance_dir=instance_dir
+        )
 
         masters = {}
         # multiple sources can have the same font/filename (but different layer),
@@ -165,15 +165,16 @@ class FontProject(object):
     @timer()
     def add_mti_features_to_master_ufos(self, mti_source, masters):
         mti_dir = os.path.dirname(mti_source)
-        with open(mti_source, 'rb') as mti_file:
+        with open(mti_source, "rb") as mti_file:
             mti_paths = readPlist(mti_file)
         for master in masters:
-            key = os.path.basename(master.path).rstrip('.ufo')
+            key = os.path.basename(master.path).rstrip(".ufo")
             for table, path in mti_paths[key].items():
                 with open(os.path.join(mti_dir, path), "rb") as mti_source:
                     ufo_path = (
-                        'com.github.googlei18n.ufo2ft.mtiFeatures/%s.mti' %
-                        table.strip())
+                        "com.github.googlei18n.ufo2ft.mtiFeatures/%s.mti"
+                        % table.strip()
+                    )
                     master.data[ufo_path] = mti_source.read()
                 # If we have MTI sources, any Adobe feature files derived from
                 # the Glyphs file should be ignored. We clear it here because
@@ -189,7 +190,7 @@ class FontProject(object):
 
         for ufo in ufos:
             font_name = self._font_name(ufo)
-            logger.info('Removing overlaps for ' + font_name)
+            logger.info("Removing overlaps for " + font_name)
             for glyph in ufo:
                 if not glyph_filter(glyph):
                     continue
@@ -198,8 +199,9 @@ class FontProject(object):
                 try:
                     union(contours, glyph.getPointPen())
                 except BooleanOperationsError:
-                    logger.error("Failed to remove overlaps for %s: %r",
-                                 font_name, glyph.name)
+                    logger.error(
+                        "Failed to remove overlaps for %s: %r", font_name, glyph.name
+                    )
                     raise
 
     @_deprecated
@@ -208,7 +210,7 @@ class FontProject(object):
         """Move components of UFOs' glyphs to their outlines."""
 
         for ufo in ufos:
-            logger.info('Decomposing glyphs for ' + self._font_name(ufo))
+            logger.info("Decomposing glyphs for " + self._font_name(ufo))
             for glyph in ufo:
                 if not glyph.components or not glyph_filter(glyph):
                     continue
@@ -220,8 +222,11 @@ class FontProject(object):
 
         for nested in component.components:
             self._deep_copy_contours(
-                ufo, parent, ufo[nested.baseGlyph],
-                transformation.transform(nested.transformation))
+                ufo,
+                parent,
+                ufo[nested.baseGlyph],
+                transformation.transform(nested.transformation),
+            )
 
         if component != parent:
             pen = TransformPen(parent.getPen(), transformation)
@@ -229,28 +234,35 @@ class FontProject(object):
             # if the transformation has a negative determinant, it will reverse
             # the contour direction of the component
             xx, xy, yx, yy = transformation[:4]
-            if xx*yy - xy*yx < 0:
+            if xx * yy - xy * yx < 0:
                 pen = ReverseContourPen(pen)
 
             component.draw(pen)
 
     @_deprecated
     @timer()
-    def convert_curves(self, ufos, compatible=False, reverse_direction=True,
-                       conversion_error=None):
+    def convert_curves(
+        self, ufos, compatible=False, reverse_direction=True, conversion_error=None
+    ):
         from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
 
         if compatible:
-            logger.info('Converting curves compatibly')
+            logger.info("Converting curves compatibly")
             fonts_to_quadratic(
-                ufos, max_err_em=conversion_error,
-                reverse_direction=reverse_direction, dump_stats=True)
+                ufos,
+                max_err_em=conversion_error,
+                reverse_direction=reverse_direction,
+                dump_stats=True,
+            )
         else:
             for ufo in ufos:
-                logger.info('Converting curves for ' + self._font_name(ufo))
+                logger.info("Converting curves for " + self._font_name(ufo))
                 font_to_quadratic(
-                    ufo, max_err_em=conversion_error,
-                    reverse_direction=reverse_direction, dump_stats=True)
+                    ufo,
+                    max_err_em=conversion_error,
+                    reverse_direction=reverse_direction,
+                    dump_stats=True,
+                )
 
     def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""
@@ -314,17 +326,13 @@ class FontProject(object):
                 inplace=True,
             )
 
-    def build_interpolatable_ttfs(
-        self, designspace, **kwargs
-    ):
+    def build_interpolatable_ttfs(self, designspace, **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines
         from DesignSpaceDocument object.
         """
         return self._build_interpolatable_masters(designspace, ttf=True, **kwargs)
 
-    def build_interpolatable_otfs(
-        self, designspace, **kwargs
-    ):
+    def build_interpolatable_otfs(self, designspace, **kwargs):
         """Build OpenType binaries with interpolatable TrueType outlines
         from DesignSpaceDocument object.
         """
@@ -352,15 +360,17 @@ class FontProject(object):
             finder = partial(_varLib_finder, directory=master_bin_dir)
         else:
             assert all(isinstance(s.font, TTFont) for s in designspace.sources)
-            finder = lambda s: s
+            finder = lambda s: s  # noqa: E731
 
         if output_path is None:
-            output_path = os.path.splitext(
-                os.path.basename(designspace.path))[0] + '-VF'
+            output_path = (
+                os.path.splitext(os.path.basename(designspace.path))[0] + "-VF"
+            )
             output_path = self._output_path(
-                output_path, ext, is_variable=True, output_dir=output_dir)
+                output_path, ext, is_variable=True, output_dir=output_dir
+            )
 
-        logger.info('Building variable font ' + output_path)
+        logger.info("Building variable font " + output_path)
 
         font, _, _ = varLib.build(designspace, finder)
 
@@ -381,33 +391,35 @@ class FontProject(object):
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            logger.info('Building %s for %s' % (fmt, name))
+            logger.info("Building {} for {}".format(fmt, name))
 
             yield compile_func(ufo, **options)
 
     @timer()
-    def save_otfs(self,
-                  ufos,
-                  ttf=False,
-                  is_instance=False,
-                  interpolatable=False,
-                  use_afdko=False,
-                  autohint=None,
-                  subset=None,
-                  use_production_names=None,
-                  subroutinize=None,  # deprecated
-                  optimize_cff=CFFOptimization.NONE,
-                  cff_round_tolerance=None,
-                  remove_overlaps=True,
-                  overlaps_backend=None,
-                  reverse_direction=True,
-                  conversion_error=None,
-                  feature_writers=None,
-                  interpolate_layout_from=None,
-                  interpolate_layout_dir=None,
-                  output_path=None,
-                  output_dir=None,
-                  inplace=True):
+    def save_otfs(
+        self,
+        ufos,
+        ttf=False,
+        is_instance=False,
+        interpolatable=False,
+        use_afdko=False,
+        autohint=None,
+        subset=None,
+        use_production_names=None,
+        subroutinize=None,  # deprecated
+        optimize_cff=CFFOptimization.NONE,
+        cff_round_tolerance=None,
+        remove_overlaps=True,
+        overlaps_backend=None,
+        reverse_direction=True,
+        conversion_error=None,
+        feature_writers=None,
+        interpolate_layout_from=None,
+        interpolate_layout_dir=None,
+        output_path=None,
+        output_dir=None,
+        inplace=True,
+    ):
         """Build OpenType binaries from UFOs.
 
         Args:
@@ -462,7 +474,7 @@ class FontProject(object):
 
             warnings.warn(
                 "the 'subroutinize' argument is deprecated, use 'optimize_cff'",
-                UserWarning
+                UserWarning,
             )
             if subroutinize:
                 optimize_cff = CFFOptimization.SUBROUTINIZE
@@ -472,14 +484,14 @@ class FontProject(object):
                 # option to disable both specilization and subroutinization
                 optimize_cff = CFFOptimization.SPECIALIZE
 
-        ext = 'ttf' if ttf else 'otf'
+        ext = "ttf" if ttf else "otf"
 
         if interpolate_layout_from is not None:
             if interpolate_layout_dir is None:
                 interpolate_layout_dir = self._output_dir(
-                    ext, is_instance=False, interpolatable=interpolatable)
-            finder = partial(_varLib_finder, directory=interpolate_layout_dir,
-                             ext=ext)
+                    ext, is_instance=False, interpolatable=interpolatable
+                )
+            finder = partial(_varLib_finder, directory=interpolate_layout_dir, ext=ext)
             # no need to generate automatic features in ufo2ft, since here we
             # are interpolating precompiled GPOS table with fontTools.varLib.
             # An empty 'featureWriters' list tells ufo2ft to not generate any
@@ -500,10 +512,9 @@ class FontProject(object):
 
         if interpolatable:
             if not ttf:
-                raise NotImplementedError(
-                    "interpolatable CFF not supported yet")
+                raise NotImplementedError("interpolatable CFF not supported yet")
 
-            logger.info('Building interpolation-compatible TTFs')
+            logger.info("Building interpolation-compatible TTFs")
 
             fonts = ufo2ft.compileInterpolatableTTFs(ufos, **compiler_options)
         else:
@@ -514,7 +525,8 @@ class FontProject(object):
                 overlapsBackend=overlaps_backend,
                 optimizeCFF=optimize_cff,
                 roundTolerance=cff_round_tolerance,
-                **compiler_options)
+                **compiler_options
+            )
 
         do_autohint = ttf and autohint is not None
 
@@ -522,27 +534,28 @@ class FontProject(object):
 
             if interpolate_layout_from is not None:
                 master_locations, instance_locations = self._designspace_locations(
-                    interpolate_layout_from)
+                    interpolate_layout_from
+                )
                 loc = instance_locations[_normpath(ufo.path)]
                 gpos_src = interpolate_layout(
-                    interpolate_layout_from, loc, finder, mapped=True)
-                font['GPOS'] = gpos_src['GPOS']
-                gsub_src = TTFont(
-                    finder(self._closest_location(master_locations, loc)))
-                if 'GDEF' in gsub_src:
-                    font['GDEF'] = gsub_src['GDEF']
-                if 'GSUB' in gsub_src:
-                    font['GSUB'] = gsub_src['GSUB']
+                    interpolate_layout_from, loc, finder, mapped=True
+                )
+                font["GPOS"] = gpos_src["GPOS"]
+                gsub_src = TTFont(finder(self._closest_location(master_locations, loc)))
+                if "GDEF" in gsub_src:
+                    font["GDEF"] = gsub_src["GDEF"]
+                if "GSUB" in gsub_src:
+                    font["GSUB"] = gsub_src["GSUB"]
 
             if do_autohint:
                 # if we are autohinting, we save the unhinted font to a
                 # temporary path, and the hinted one to the final destination
-                fd, otf_path = tempfile.mkstemp("."+ext)
+                fd, otf_path = tempfile.mkstemp("." + ext)
                 os.close(fd)
             elif output_path is None:
-                otf_path = self._output_path(ufo, ext, is_instance,
-                                             interpolatable,
-                                             output_dir=output_dir)
+                otf_path = self._output_path(
+                    ufo, ext, is_instance, interpolatable, output_dir=output_dir
+                )
             else:
                 otf_path = output_path
 
@@ -555,14 +568,8 @@ class FontProject(object):
             if subset is False:
                 pass
             elif subset is True or (
-                (
-                    KEEP_GLYPHS_OLD_KEY in ufo.lib
-                    or KEEP_GLYPHS_NEW_KEY in ufo.lib
-                )
-                or any(
-                    glyph.lib.get(GLYPH_EXPORT_KEY, True) is False
-                    for glyph in ufo
-                )
+                (KEEP_GLYPHS_OLD_KEY in ufo.lib or KEEP_GLYPHS_NEW_KEY in ufo.lib)
+                or any(glyph.lib.get(GLYPH_EXPORT_KEY, True) is False for glyph in ufo)
             ):
                 self.subset_otf_from_ufo(otf_path, ufo)
 
@@ -573,8 +580,13 @@ class FontProject(object):
                 hinted_otf_path = output_path
             else:
                 hinted_otf_path = self._output_path(
-                    ufo, ext, is_instance, interpolatable, autohinted=True,
-                    output_dir=output_dir)
+                    ufo,
+                    ext,
+                    is_instance,
+                    interpolatable,
+                    autohinted=True,
+                    output_dir=output_dir,
+                )
             try:
                 ttfautohint(otf_path, hinted_otf_path, args=autohint)
             except TTFAError:
@@ -606,9 +618,7 @@ class FontProject(object):
 
         if output_dir is None:
             output_dir = self._output_dir(ext, interpolatable=True)
-        designspace_path = os.path.join(
-            output_dir, os.path.basename(designspace.path)
-        )
+        designspace_path = os.path.join(output_dir, os.path.basename(designspace.path))
         logger.info("Saving %s", designspace_path)
         designspace.write(designspace_path)
 
@@ -652,10 +662,10 @@ class FontProject(object):
 
         # copied from nototools.subset
         opt = subset.Options()
-        opt.name_IDs = ['*']
+        opt.name_IDs = ["*"]
         opt.name_legacy = True
-        opt.name_languages = ['*']
-        opt.layout_features = ['*']
+        opt.name_languages = ["*"]
+        opt.layout_features = ["*"]
         opt.notdef_outline = True
         opt.recalc_bounds = True
         opt.recalc_timestamp = True
@@ -670,8 +680,15 @@ class FontProject(object):
         subset.save_font(font, otf_path, opt)
 
     def run_from_glyphs(
-            self, glyphs_path, designspace_path=None, master_dir=None,
-            instance_dir=None, family_name=None, mti_source=None, **kwargs):
+        self,
+        glyphs_path,
+        designspace_path=None,
+        master_dir=None,
+        instance_dir=None,
+        family_name=None,
+        mti_source=None,
+        **kwargs
+    ):
         """Run toolchain from Glyphs source.
 
         Args:
@@ -690,14 +707,15 @@ class FontProject(object):
             kwargs: Arguments passed along to run_from_designspace.
         """
 
-        logger.info('Building master UFOs and designspace from Glyphs source')
+        logger.info("Building master UFOs and designspace from Glyphs source")
         designspace_path = self.build_master_ufos(
             glyphs_path,
             designspace_path=designspace_path,
             master_dir=master_dir,
             instance_dir=instance_dir,
             family_name=family_name,
-            mti_source=mti_source)
+            mti_source=mti_source,
+        )
         self.run_from_designspace(designspace_path, **kwargs)
 
     def interpolate_instance_ufos(
@@ -729,12 +747,9 @@ class FontProject(object):
 
         # TODO: replace mutatorMath with ufoProcessor?
         builder = DesignSpaceDocumentReader(
-            designspace.path,
-            ufoVersion=3,
-            roundGeometry=round_instances,
-            verbose=True,
+            designspace.path, ufoVersion=3, roundGeometry=round_instances, verbose=True
         )
-        logger.info('Interpolating master UFOs from designspace')
+        logger.info("Interpolating master UFOs from designspace")
         if include is not None:
             instances = self._search_instances(designspace, pattern=include)
             for instance_name in instances:
@@ -743,10 +758,8 @@ class FontProject(object):
         else:
             builder.readInstances()
             filenames = None  # will include all instances
-        logger.info('Applying instance data from designspace')
-        instance_ufos = apply_instance_data(
-            designspace, include_filenames=filenames
-        )
+        logger.info("Applying instance data from designspace")
+        instance_ufos = apply_instance_data(designspace, include_filenames=filenames)
         return instance_ufos
 
     def run_from_designspace(
@@ -786,8 +799,11 @@ class FontProject(object):
         interp_outputs = INTERPOLATABLE_OUTPUTS.intersection(output)
         static_outputs = STATIC_OUTPUTS.intersection(output)
         if interp_outputs:
-            for argname in ("interpolate", "masters_as_instances",
-                            "interpolate_binary_layout"):
+            for argname in (
+                "interpolate",
+                "masters_as_instances",
+                "interpolate_binary_layout",
+            ):
                 if locals()[argname]:
                     raise TypeError(
                         '"%s" argument incompatible with output %r'
@@ -836,9 +852,7 @@ class FontProject(object):
         if not interpolate or masters_as_instances:
             ufos.extend((s.path for s in designspace.sources if s.path))
         if interpolate:
-            pattern = (
-                interpolate if isinstance(interpolate, basestring) else None
-            )
+            pattern = interpolate if isinstance(interpolate, basestring) else None
             ufos.extend(
                 self.interpolate_instance_ufos(
                     designspace, include=pattern, round_instances=round_instances
@@ -865,12 +879,7 @@ class FontProject(object):
         )
 
     def _run_from_designspace_interpolatable(
-        self,
-        designspace,
-        outputs,
-        output_path=None,
-        output_dir=None,
-        **kwargs
+        self, designspace, outputs, output_path=None, output_dir=None, **kwargs
     ):
         ttf_designspace = otf_designspace = None
 
@@ -908,7 +917,7 @@ class FontProject(object):
             kwargs: Arguments passed along to save_otfs.
         """
 
-        if set(output) == set(['ufo']):
+        if set(output) == {"ufo"}:
             return
 
         # the `ufos` parameter can be a list of UFO objects
@@ -922,14 +931,18 @@ class FontProject(object):
             ufos = [Font(x) if isinstance(x, basestring) else x for x in ufos]
             ufo_paths = [x.path for x in ufos]
         else:
-            raise FontmakeError('UFOs parameter is neither a defcon.Font object, a path or a glob, nor a list of any of these.', ufos)
+            raise FontmakeError(
+                "UFOs parameter is neither a defcon.Font object, a path or a glob, "
+                "nor a list of any of these.",
+                ufos,
+            )
 
         need_reload = False
-        if 'otf' in output:
+        if "otf" in output:
             self.build_otfs(ufos, **kwargs)
             need_reload = True
 
-        if 'ttf' in output:
+        if "ttf" in output:
             if need_reload:
                 ufos = [Font(path) for path in ufo_paths]
             self.build_ttfs(ufos, **kwargs)
@@ -949,19 +962,25 @@ class FontProject(object):
     def _font_name(self, ufo):
         """Generate a postscript-style font name."""
         family_name = (
-            ufo.info.familyName.replace(' ', '')
+            ufo.info.familyName.replace(" ", "")
             if ufo.info.familyName is not None
-            else 'None'
+            else "None"
         )
         style_name = (
-            ufo.info.styleName.replace(' ', '')
+            ufo.info.styleName.replace(" ", "")
             if ufo.info.styleName is not None
-            else 'None'
+            else "None"
         )
-        return '%s-%s' % (family_name, style_name)
+        return "{}-{}".format(family_name, style_name)
 
-    def _output_dir(self, ext, is_instance=False, interpolatable=False,
-                    autohinted=False, is_variable=False):
+    def _output_dir(
+        self,
+        ext,
+        is_instance=False,
+        interpolatable=False,
+        autohinted=False,
+        is_variable=False,
+    ):
         """Generate an output directory.
 
             Args:
@@ -977,41 +996,50 @@ class FontProject(object):
         assert not (is_variable and any([is_instance, interpolatable]))
         # FIXME? Use user configurable destination folders.
         if is_variable:
-            dir_prefix = 'variable_'
+            dir_prefix = "variable_"
         elif is_instance:
-            dir_prefix = 'instance_'
+            dir_prefix = "instance_"
         else:
-            dir_prefix = 'master_'
-        dir_suffix = '_interpolatable' if interpolatable else ''
+            dir_prefix = "master_"
+        dir_suffix = "_interpolatable" if interpolatable else ""
         output_dir = dir_prefix + ext + dir_suffix
         if autohinted:
-            output_dir = os.path.join('autohinted', output_dir)
+            output_dir = os.path.join("autohinted", output_dir)
         return output_dir
 
-    def _output_path(self, ufo_or_font_name, ext, is_instance=False,
-                     interpolatable=False, autohinted=False,
-                     is_variable=False, output_dir=None, suffix=None):
+    def _output_path(
+        self,
+        ufo_or_font_name,
+        ext,
+        is_instance=False,
+        interpolatable=False,
+        autohinted=False,
+        is_variable=False,
+        output_dir=None,
+        suffix=None,
+    ):
         """Generate output path for a font file with given extension."""
 
         if isinstance(ufo_or_font_name, basestring):
             font_name = ufo_or_font_name
         elif ufo_or_font_name.path:
-            font_name = os.path.splitext(os.path.basename(
-                os.path.normpath(ufo_or_font_name.path)))[0]
+            font_name = os.path.splitext(
+                os.path.basename(os.path.normpath(ufo_or_font_name.path))
+            )[0]
         else:
             font_name = self._font_name(ufo_or_font_name)
 
         if output_dir is None:
             output_dir = self._output_dir(
-                ext, is_instance, interpolatable, autohinted, is_variable)
+                ext, is_instance, interpolatable, autohinted, is_variable
+            )
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         if suffix:
-            return os.path.join(output_dir, '%s-%s.%s' % (font_name, suffix, ext))
+            return os.path.join(output_dir, "{}-{}.{}".format(font_name, suffix, ext))
         else:
-            return os.path.join(output_dir, '%s.%s' % (font_name, ext))
-
+            return os.path.join(output_dir, "{}.{}".format(font_name, ext))
 
     def _designspace_locations(self, designspace):
         """Map font filenames to their locations in a designspace."""
@@ -1028,7 +1056,9 @@ class FontProject(object):
     def _closest_location(self, location_map, target):
         """Return path of font whose location is closest to target."""
 
-        dist = lambda a, b: math.sqrt(sum((a[k] - b[k]) ** 2 for k in a.keys()))
+        def dist(a, b):
+            return math.sqrt(sum((a[k] - b[k]) ** 2 for k in a.keys()))
+
         paths = iter(location_map.keys())
         closest = next(paths)
         closest_dist = dist(target, location_map[closest])
@@ -1060,19 +1090,11 @@ class FDKFeatureCompiler(FeatureCompiler):
             os.close(fd)
 
             fd, fea_path = tempfile.mkstemp()
-            os.write(fd, tobytes(self.features, encoding='utf-8'))
+            os.write(fd, tobytes(self.features, encoding="utf-8"))
             os.close(fd)
 
             process = subprocess.Popen(
-                [
-                    "makeotf",
-                    "-o",
-                    feasrc_path,
-                    "-f",
-                    outline_path,
-                    "-ff",
-                    fea_path,
-                ],
+                ["makeotf", "-o", feasrc_path, "-f", outline_path, "-ff", fea_path],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
@@ -1087,9 +1109,7 @@ class FDKFeatureCompiler(FeatureCompiler):
             if retcode != 0:
                 success = False
             else:
-                success = (
-                    "makeotf [Error] Failed to build output font" not in report
-                )
+                success = "makeotf [Error] Failed to build output font" not in report
                 if success:
                     with TTFont(feasrc_path) as feasrc:
                         for table in ["GDEF", "GPOS", "GSUB"]:
@@ -1109,7 +1129,7 @@ def _varLib_finder(source, directory="", ext="ttf"):
     It replaces the UFO directory with the one specified in 'directory'
     argument, and replaces the file extension with 'ext'.
     """
-    fname = os.path.splitext(os.path.basename(source))[0] + '.' + ext
+    fname = os.path.splitext(os.path.basename(source))[0] + "." + ext
     return os.path.join(directory, fname)
 
 

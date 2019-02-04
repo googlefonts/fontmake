@@ -13,31 +13,28 @@
 # limitations under the License.
 
 import sys
-from setuptools import setup, find_packages
 from io import open
 
+from setuptools import find_packages, setup
 
-needs_wheel = {'bdist_wheel'}.intersection(sys.argv)
-wheel = ['wheel'] if needs_wheel else []
+needs_wheel = {"bdist_wheel"}.intersection(sys.argv)
+wheel = ["wheel"] if needs_wheel else []
 
-with open('README.rst', 'r', encoding='utf-8') as f:
+with open("README.rst", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
     name="fontmake",
     use_scm_version={"write_to": "Lib/fontmake/_version.py"},
-    description=("Compile fonts from sources (UFO, Glyphs) to binary "
-                 "(OpenType, TrueType)."),
+    description=(
+        "Compile fonts from sources (UFO, Glyphs) to binary " "(OpenType, TrueType)."
+    ),
     long_description=long_description,
     url="https://github.com/googlei18n/fontmake",
     license="Apache Software License 2.0",
     packages=find_packages("Lib"),
-    package_dir={'': 'Lib'},
-    entry_points={
-        'console_scripts': [
-            'fontmake = fontmake.__main__:main'
-        ],
-    },
+    package_dir={"": "Lib"},
+    entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=3.36.0",
@@ -49,16 +46,14 @@ setup(
         "booleanOperations>=0.8.2",
     ],
     extras_require={
-        "pathops": [
-            "skia-pathops>=0.2.0",
-        ],
+        "pathops": ["skia-pathops>=0.2.0"],
         # this is now default; kept here for backward compatibility
         "lxml": [
             # "lxml>=4.2.4",
         ],
     },
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",
