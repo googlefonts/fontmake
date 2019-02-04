@@ -16,10 +16,11 @@ cache:
 
 install:
   - pip install --upgrade pip
-  - pip install pre-commit -r test_requirements.txt .
+  - pip install -r test_requirements.txt .
 
 script:
-  - pre-commit run --all-files --show-diff-on-failure
+  - |
+    if [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]; then pip install --upgrade pre-commit && pre-commit run --all-files --show-diff-on-failure; fi
   - (cd test && ./run.sh)
 
 after_success:
