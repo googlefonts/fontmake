@@ -9,11 +9,17 @@ python:
   - "2.7"
   - "3.6"
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.cache/pre-commit
+
 install:
   - pip install --upgrade pip
-  - pip install -r test_requirements.txt .
+  - pip install pre-commit -r test_requirements.txt .
 
 script:
+  - pre-commit run --all-files --show-diff-on-failure
   - (cd test && ./run.sh)
 
 after_success:
