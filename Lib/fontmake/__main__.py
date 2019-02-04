@@ -138,12 +138,6 @@ def main(args=None):
         '--validate-ufo', action='store_true',
         help='Enable ufoLib validation on reading/writing UFO files. It is '
              'disabled by default')
-    outputGroup.add_argument(
-        '--expand-features-to-instances', action='store_true',
-        help='Resolves all include()s in the master feature file and writes '
-             'the full feature file to all instance UFOs. Only valid when '
-             'interpolating. Use if you share feature files of masters in '
-             'external files, as instances can end up elsewhere.')
 
     contourGroup = parser.add_argument_group(title='Handling of contours')
     contourGroup.add_argument(
