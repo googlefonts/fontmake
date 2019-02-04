@@ -16,7 +16,7 @@ from __future__ import print_function, absolute_import
 from contextlib import contextmanager
 from argparse import ArgumentParser, ArgumentTypeError
 from fontmake import __version__
-from fontmake.font_project import FontProject
+from fontmake.font_project import FontProject, INTERPOLATABLE_OUTPUTS
 from fontmake.errors import FontmakeError
 from ufo2ft.featureWriters import loadFeatureWriterFromString
 from ufo2ft import CFFOptimization
@@ -93,7 +93,16 @@ def main(args=None):
         '-o', '--output', nargs='+', default=('otf', 'ttf'), metavar="FORMAT",
         help='Output font formats. Choose between: %(choices)s. '
              'Default: otf, ttf',
-        choices=('ufo', 'otf', 'ttf', 'ttf-interpolatable', 'variable'))
+        choices=(
+            'ufo',
+            'otf',
+            'ttf',
+            'ttf-interpolatable',
+            'otf-interpolatable',
+            'variable',
+            'variable-cff2',
+        )
+    )
     outputSubGroup = outputGroup.add_mutually_exclusive_group()
     outputSubGroup.add_argument(
         '--output-path', default=None,
@@ -248,7 +257,7 @@ def main(args=None):
                     "designspace" if designspace_path else
                     "UFO") + " source"
 
-    if 'variable' in args['output']:
+    if INTERPOLATABLE_OUTPUTS.intersection(args['output']):
         if not (glyphs_path or designspace_path):
             parser.error(
                 'Glyphs or designspace source required for variable font')

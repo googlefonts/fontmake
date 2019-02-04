@@ -49,7 +49,7 @@ from fontTools.ttLib import TTFont
 from fontTools import varLib
 from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
-from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
+import ufo2ft
 from ufo2ft.featureCompiler import FeatureCompiler
 from ufo2ft.featureWriters import loadFeatureWriters, FEATURE_WRITERS_KEY
 from ufo2ft.util import makeOfficialGlyphOrder
@@ -71,6 +71,16 @@ KEEP_GLYPHS_NEW_KEY = (
     + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
+
+STATIC_OUTPUTS = frozenset(["ttf", "otf"])
+INTERPOLATABLE_OUTPUTS = frozenset(
+    [
+        "ttf-interpolatable",
+        "otf-interpolatable",
+        "variable",
+        "variable-cff2",
+    ]
+)
 
 
 def _deprecated(func):
@@ -250,28 +260,109 @@ class FontProject(object):
         """Build OpenType binaries with TrueType outlines."""
         self.save_otfs(ufos, ttf=True, **kwargs)
 
-    def build_interpolatable_ttfs(self, ufos, **kwargs):
-        """Build OpenType binaries with interpolatable TrueType outlines."""
-        self.save_otfs(ufos, ttf=True, interpolatable=True, **kwargs)
+    @staticmethod
+    def _load_designspace_sources(designspace):
+        # set source.font attributes, but only load fonts once
+        masters = {}
+        for source in designspace.sources:
+            if source.path in masters:
+                source.font = masters[source.path]
+            else:
+                assert source.path is not None
+                source.font = Font(source.path)
+                masters[source.path] = source.font
 
-    def build_variable_font(self, designspace_path, output_path=None,
-                            output_dir=None, master_bin_dir=None):
+    def _build_interpolatable_masters(
+        self,
+        designspace,
+        ttf,
+        use_production_names=None,
+        reverse_direction=True,
+        conversion_error=None,
+        feature_writers=None,
+        cff_round_tolerance=None,
+        **kwargs
+    ):
+        if hasattr(designspace, "__fspath__"):
+            ds_path = designspace.__fspath__()
+        if isinstance(designspace, basestring):
+            ds_path = designspace
+        else:
+            # reload designspace from its path so we have a new copy
+            # that can be modified in-place.
+            ds_path = designspace.path
+        if ds_path is not None:
+            designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
+
+        self._load_designspace_sources(designspace)
+
+        if ttf:
+            return ufo2ft.compileInterpolatableTTFsFromDS(
+                designspace,
+                useProductionNames=use_production_names,
+                reverseDirection=reverse_direction,
+                cubicConversionError=conversion_error,
+                featureWriters=feature_writers,
+                inplace=True,
+            )
+        else:
+            return ufo2ft.compileInterpolatableOTFsFromDS(
+                designspace,
+                useProductionNames=use_production_names,
+                roundTolerance=cff_round_tolerance,
+                featureWriters=feature_writers,
+                inplace=True,
+            )
+
+    def build_interpolatable_ttfs(
+        self, designspace, **kwargs
+    ):
+        """Build OpenType binaries with interpolatable TrueType outlines
+        from DesignSpaceDocument object.
+        """
+        return self._build_interpolatable_masters(designspace, ttf=True, **kwargs)
+
+    def build_interpolatable_otfs(
+        self, designspace, **kwargs
+    ):
+        """Build OpenType binaries with interpolatable TrueType outlines
+        from DesignSpaceDocument object.
+        """
+        return self._build_interpolatable_masters(designspace, ttf=False, **kwargs)
+
+    def build_variable_font(
+        self,
+        designspace,
+        output_path=None,
+        output_dir=None,
+        master_bin_dir=None,
+        ttf=True,
+    ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
 
+        ext = "ttf" if ttf else "otf"
+
+        if hasattr(designspace, "__fspath__"):
+            designspace = designspace.__fspath__()
+        if isinstance(designspace, basestring):
+            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace)
+            if master_bin_dir is None:
+                master_bin_dir = self._output_dir(ext, interpolatable=True)
+            finder = partial(_varLib_finder, directory=master_bin_dir)
+        else:
+            assert all(isinstance(s.font, TTFont) for s in designspace.sources)
+            finder = lambda s: s
+
         if output_path is None:
             output_path = os.path.splitext(
-                os.path.basename(designspace_path))[0] + '-VF'
+                os.path.basename(designspace.path))[0] + '-VF'
             output_path = self._output_path(
-                output_path, 'ttf', is_variable=True, output_dir=output_dir)
+                output_path, ext, is_variable=True, output_dir=output_dir)
 
         logger.info('Building variable font ' + output_path)
 
-        if master_bin_dir is None:
-            master_bin_dir = self._output_dir('ttf', interpolatable=True)
-        finder = partial(_varLib_finder, directory=master_bin_dir)
-
-        font, _, _ = varLib.build(designspace_path, finder)
+        font, _, _ = varLib.build(designspace, finder)
 
         font.save(output_path)
 
@@ -282,11 +373,11 @@ class FontProject(object):
         if ttf:
             for key in ("optimizeCFF", "roundTolerance"):
                 options.pop(key, None)
-            compile_func, fmt = compileTTF, "TTF"
+            compile_func, fmt = ufo2ft.compileTTF, "TTF"
         else:
             for key in ("cubicConversionError", "reverseDirection"):
                 options.pop(key, None)
-            compile_func, fmt = compileOTF, "OTF"
+            compile_func, fmt = ufo2ft.compileOTF, "OTF"
 
         for ufo in ufos:
             name = self._font_name(ufo)
@@ -352,8 +443,8 @@ class FontProject(object):
                 default value (None) means that ufo2ft will use its built-in
                 default feature writers (for kern, mark, mkmk, etc.). An empty
                 list ([]) will skip any automatic feature generation.
-            interpolate_layout_from: A designspace path to give varLib for
-                interpolating layout tables to use in output.
+            interpolate_layout_from: A DesignSpaceDocument object to give varLib
+                for interpolating layout tables to use in output.
             interpolate_layout_dir: Directory containing the compiled master
                 fonts to use for interpolating binary layout tables.
             output_path: output font file path. Only works when the input
@@ -414,7 +505,7 @@ class FontProject(object):
 
             logger.info('Building interpolation-compatible TTFs')
 
-            fonts = compileInterpolatableTTFs(ufos, **compiler_options)
+            fonts = ufo2ft.compileInterpolatableTTFs(ufos, **compiler_options)
         else:
             fonts = self._iter_compile(
                 ufos,
@@ -493,6 +584,33 @@ class FontProject(object):
             finally:
                 # must clean up temp file
                 os.remove(otf_path)
+
+    def _save_interpolatable_fonts(self, designspace, output_dir, ttf):
+        ext = "ttf" if ttf else "otf"
+        for source in designspace.sources:
+            assert isinstance(source.font, TTFont)
+            otf_path = self._output_path(
+                source,
+                ext,
+                is_instance=False,
+                interpolatable=True,
+                output_dir=output_dir,
+                suffix=source.layerName,
+            )
+            logger.info("Saving %s", otf_path)
+            source.font.save(otf_path)
+            source.path = otf_path
+            source.layerName = None
+        for instance in designspace.instances:
+            instance.path = instance.filename = None
+
+        if output_dir is None:
+            output_dir = self._output_dir(ext, interpolatable=True)
+        designspace_path = os.path.join(
+            output_dir, os.path.basename(designspace.path)
+        )
+        logger.info("Saving %s", designspace_path)
+        designspace.write(designspace_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
         """Subset a font using export flags set by glyphsLib.
@@ -582,13 +700,68 @@ class FontProject(object):
             mti_source=mti_source)
         self.run_from_designspace(designspace_path, **kwargs)
 
+    def interpolate_instance_ufos(
+        self, designspace, include=None, round_instances=False
+    ):
+        """Interpolate master UFOs with MutatorMath and return instance UFOs.
+
+        Args:
+            designspace: a DesignSpaceDocument object containing sources and
+                instances.
+            include (str): optional regular expression pattern to match the
+                DS instance 'name' attribute and only interpolate the matching
+                instances.
+            round_instances (bool): round instances' coordinates to integer.
+        Returns:
+            list of defcon.Font objects corresponding to the UFO instances.
+        Raises:
+            FontmakeError: if any of the sources defines a custom 'layer', for
+                this is not supported by MutatorMath.
+        """
+        from glyphsLib.interpolation import apply_instance_data
+        from mutatorMath.ufo.document import DesignSpaceDocumentReader
+
+        if any(source.layerName is not None for source in designspace.sources):
+            raise FontmakeError(
+                "MutatorMath doesn't support DesignSpace sources with 'layer' "
+                "attribute"
+            )
+
+        # TODO: replace mutatorMath with ufoProcessor?
+        builder = DesignSpaceDocumentReader(
+            designspace.path,
+            ufoVersion=3,
+            roundGeometry=round_instances,
+            verbose=True,
+        )
+        logger.info('Interpolating master UFOs from designspace')
+        if include is not None:
+            instances = self._search_instances(designspace, pattern=include)
+            for instance_name in instances:
+                builder.readInstance(("name", instance_name))
+            filenames = set(instances.values())
+        else:
+            builder.readInstances()
+            filenames = None  # will include all instances
+        logger.info('Applying instance data from designspace')
+        instance_ufos = apply_instance_data(
+            designspace, include_filenames=filenames
+        )
+        return instance_ufos
+
     def run_from_designspace(
-            self, designspace_path, interpolate=False,
-            masters_as_instances=False,
-            interpolate_binary_layout=False, round_instances=False,
-            feature_writers=None,
-            **kwargs):
-        """Run toolchain from a MutatorMath design space document.
+        self,
+        designspace_path,
+        output=(),
+        interpolate=False,
+        masters_as_instances=False,
+        interpolate_binary_layout=False,
+        round_instances=False,
+        feature_writers=None,
+        **kwargs
+    ):
+        """Run toolchain from a DesignSpace document to produce either static
+        instance fonts (ttf or otf), interpolatable or variable fonts.
 
         Args:
             designspace_path: Path to designspace document.
@@ -605,21 +778,21 @@ class FontProject(object):
             kwargs: Arguments passed along to run_from_ufos.
 
         Raises:
-            TypeError: "variable" output is incompatible with arguments
-                "interpolate", "masters_as_instances", and
+            TypeError: "variable" or "interpolatable" outputs are incompatible
+                with arguments "interpolate", "masters_as_instances", and
                 "interpolate_binary_layout".
         """
 
-        if "variable" in kwargs.get("output", ()):
+        interp_outputs = INTERPOLATABLE_OUTPUTS.intersection(output)
+        static_outputs = STATIC_OUTPUTS.intersection(output)
+        if interp_outputs:
             for argname in ("interpolate", "masters_as_instances",
                             "interpolate_binary_layout"):
                 if locals()[argname]:
                     raise TypeError(
-                        '"%s" argument incompatible with "variable" output'
-                        % argname)
-
-        from glyphsLib.interpolation import apply_instance_data
-        from mutatorMath.ufo.document import DesignSpaceDocumentReader
+                        '"%s" argument incompatible with output %r'
+                        % (argname, ", ".join(sorted(interp_outputs)))
+                    )
 
         designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
 
@@ -629,58 +802,110 @@ class FontProject(object):
         if feature_writers is None and FEATURE_WRITERS_KEY in designspace.lib:
             feature_writers = loadFeatureWriters(designspace)
 
+        if static_outputs:
+            self._run_from_designspace_static(
+                designspace,
+                outputs=static_outputs,
+                interpolate=interpolate,
+                masters_as_instances=masters_as_instances,
+                interpolate_binary_layout=interpolate_binary_layout,
+                round_instances=round_instances,
+                feature_writers=feature_writers,
+                **kwargs
+            )
+        if interp_outputs:
+            self._run_from_designspace_interpolatable(
+                designspace,
+                outputs=interp_outputs,
+                feature_writers=feature_writers,
+                **kwargs
+            )
+
+    def _run_from_designspace_static(
+        self,
+        designspace,
+        outputs,
+        interpolate=False,
+        masters_as_instances=False,
+        interpolate_binary_layout=False,
+        round_instances=False,
+        feature_writers=None,
+        **kwargs
+    ):
         ufos = []
-        reader = DesignSpaceDocumentReader(designspace_path, ufoVersion=3,
-                                           roundGeometry=round_instances,
-                                           verbose=True)
         if not interpolate or masters_as_instances:
-            ufos.extend(reader.getSourcePaths())
+            ufos.extend((s.path for s in designspace.sources if s.path))
         if interpolate:
-            logger.info('Interpolating master UFOs from designspace')
-            if isinstance(interpolate, basestring):
-                instances = self._search_instances(designspace,
-                                                   pattern=interpolate)
-                for instance_name in instances:
-                    reader.readInstance(("name", instance_name))
-                filenames = set(instances.values())
-            else:
-                reader.readInstances()
-                filenames = None  # will include all instances
-            logger.info('Applying instance data from designspace')
-            ufos.extend(apply_instance_data(designspace_path,
-                                            include_filenames=filenames))
+            pattern = (
+                interpolate if isinstance(interpolate, basestring) else None
+            )
+            ufos.extend(
+                self.interpolate_instance_ufos(
+                    designspace, include=pattern, round_instances=round_instances
+                )
+            )
 
         if interpolate_binary_layout is False:
             interpolate_layout_from = interpolate_layout_dir = None
         else:
-            interpolate_layout_from = designspace_path
+            interpolate_layout_from = designspace
             if isinstance(interpolate_binary_layout, basestring):
                 interpolate_layout_dir = interpolate_binary_layout
             else:
                 interpolate_layout_dir = None
 
         self.run_from_ufos(
-            ufos, designspace_path=designspace_path,
+            ufos,
+            output=outputs,
             is_instance=(interpolate or masters_as_instances),
             interpolate_layout_from=interpolate_layout_from,
             interpolate_layout_dir=interpolate_layout_dir,
             feature_writers=feature_writers,
-            **kwargs)
+            **kwargs
+        )
 
-    def run_from_ufos(
-            self, ufos, output=(), designspace_path=None, **kwargs):
+    def _run_from_designspace_interpolatable(
+        self,
+        designspace,
+        outputs,
+        output_path=None,
+        output_dir=None,
+        **kwargs
+    ):
+        ttf_designspace = otf_designspace = None
+
+        if "variable" in outputs:
+            ttf_designspace = self.build_interpolatable_ttfs(designspace, **kwargs)
+            self.build_variable_font(
+                ttf_designspace, output_path=output_path, output_dir=output_dir
+            )
+
+        if "ttf-interpolatable" in outputs:
+            if ttf_designspace is None:
+                ttf_designspace = self.build_interpolatable_ttfs(designspace, **kwargs)
+            self._save_interpolatable_fonts(ttf_designspace, output_dir, ttf=True)
+
+        if "variable-cff2" in outputs:
+            otf_designspace = self.build_interpolatable_otfs(designspace, **kwargs)
+            self.build_variable_font(
+                otf_designspace,
+                output_path=output_path,
+                output_dir=output_dir,
+                ttf=False,
+            )
+
+        if "otf-interpolatable" in outputs:
+            if otf_designspace is None:
+                otf_designspace = self.build_interpolatable_otfs(designspace, **kwargs)
+            self._save_interpolatable_fonts(otf_designspace, output_dir, ttf=False)
+
+    def run_from_ufos(self, ufos, output=(), **kwargs):
         """Run toolchain from UFO sources.
 
         Args:
             ufos: List of UFO sources, as either paths or opened objects.
             output: List of output formats to generate.
-            designspace_path: Path to a MutatorMath designspace, used to
-                generate variable font if requested.
             kwargs: Arguments passed along to save_otfs.
-
-        Raises:
-            TypeError: 'variable' specified in output formats but designspace
-                path not provided.
         """
 
         if set(output) == set(['ufo']):
@@ -709,35 +934,6 @@ class FontProject(object):
                 ufos = [Font(path) for path in ufo_paths]
             self.build_ttfs(ufos, **kwargs)
             need_reload = True
-
-        tempdirs = []
-        if 'ttf-interpolatable' in output or 'variable' in output:
-            if need_reload:
-                ufos = [Font(path) for path in ufo_paths]
-            if 'variable' in output and 'ttf-interpolatable' not in output:
-                # when output is only 'variable', we create the master ttfs in
-                # a temporary folder; 'output_dir' is the directory where the
-                # variable font is saved
-                output_dir = kwargs.pop("output_dir", None)
-                master_bin_dir = tempfile.mkdtemp(prefix="ttf-interp-")
-                tempdirs.append(master_bin_dir)
-            else:
-                output_dir = master_bin_dir = kwargs.pop("output_dir", None)
-            output_path = kwargs.pop("output_path", None)
-            self.build_interpolatable_ttfs(
-                ufos, output_dir=master_bin_dir, **kwargs)
-
-        if 'variable' in output:
-            if designspace_path is None:
-                raise TypeError('Need designspace to build variable font.')
-            try:
-                self.build_variable_font(designspace_path,
-                                         output_path=output_path,
-                                         output_dir=output_dir,
-                                         master_bin_dir=master_bin_dir)
-            finally:
-                for tempdir in tempdirs:
-                    shutil.rmtree(tempdir)
 
     @staticmethod
     def _search_instances(designspace, pattern):
@@ -794,7 +990,7 @@ class FontProject(object):
 
     def _output_path(self, ufo_or_font_name, ext, is_instance=False,
                      interpolatable=False, autohinted=False,
-                     is_variable=False, output_dir=None):
+                     is_variable=False, output_dir=None, suffix=None):
         """Generate output path for a font file with given extension."""
 
         if isinstance(ufo_or_font_name, basestring):
@@ -811,19 +1007,20 @@ class FontProject(object):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        return os.path.join(output_dir, '%s.%s' % (font_name, ext))
+        if suffix:
+            return os.path.join(output_dir, '%s-%s.%s' % (font_name, suffix, ext))
+        else:
+            return os.path.join(output_dir, '%s.%s' % (font_name, ext))
 
-    def _designspace_locations(self, designspace_path):
+
+    def _designspace_locations(self, designspace):
         """Map font filenames to their locations in a designspace."""
 
         maps = []
-        ds = designspaceLib.DesignSpaceDocument()
-        ds.read(designspace_path)
-        for elements in (ds.sources, ds.instances):
+        for elements in (designspace.sources, designspace.instances):
             location_map = {}
             for element in elements:
-                path = _normpath(os.path.join(
-                    os.path.dirname(designspace_path), element.filename))
+                path = _normpath(element.path)
                 location_map[path] = element.location
             maps.append(location_map)
         return maps

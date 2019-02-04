@@ -22,6 +22,7 @@ except ImportError:
     import mock
     from mock import patch
 from fontTools.ttLib import TTFont
+from fontTools.designspaceLib import DesignSpaceDocument
 from fontmake.font_project import FontProject
 import fontmake.__main__ as entry
 import fontTools
@@ -60,26 +61,24 @@ class TestFunctionsAreCalledByArguments(unittest.TestCase):
         self.assertTrue(mock_build_ttfs.called)
         self.assertTrue(mock_build_otfs.called)
 
-    @patch('fontmake.font_project.FontProject.build_interpolatable_ttfs')
-    @patch('fontmake.font_project.FontProject.build_variable_font')
-    def test_run_from_ufos(self, mock_build_variable_font, mock_build_interpolatable_ttfs):
-        project = FontProject()
-        self.assertFalse(mock_build_interpolatable_ttfs.called)
-        self.assertFalse(mock_build_variable_font.called)
-        project.run_from_ufos("path to ufo", output=('variable'), designspace_path="design space")
-        self.assertTrue(mock_build_interpolatable_ttfs.called)
-        self.assertTrue(mock_build_variable_font.called)
-
 
 class TestOutputFileName(unittest.TestCase):
     @patch('fontTools.varLib.build')
     @patch('fontTools.ttLib.TTFont.save')
-    @patch('fontmake.font_project.FontProject._designspace_locations')
-    def test_variable_output_filename(self, mock_designspace_locations, mock_TTFont_save, mock_varLib_build):
+    @patch('fontTools.designspaceLib.DesignSpaceDocument.fromfile')
+    def test_variable_output_filename(
+        self,
+        mock_DesignSpaceDocument_fromfile,
+        mock_TTFont_save,
+        mock_varLib_build,
+    ):
         project = FontProject()
-        mock_designspace_locations.return_value = {'master1': 'location1'}, None
+        path = 'path/to/designspace.designspace'
+        doc = DesignSpaceDocument()
+        doc.path = path
+        mock_DesignSpaceDocument_fromfile.return_value = doc
         mock_varLib_build.return_value = TTFont(), None, None
-        project.build_variable_font('path/to/designspace.designspace')
+        project.build_variable_font(path)
         self.assertTrue(mock_TTFont_save.called)
         self.assertTrue(mock_TTFont_save.call_count == 1)
         self.assertEqual(mock_TTFont_save.call_args, mock.call('variable_ttf/designspace-VF.ttf'))
