@@ -653,7 +653,7 @@ class FontProject(object):
             ufos.extend(apply_instance_data(designspace_path,
                                             include_filenames=filenames))
             if expand_features_to_instances:
-                logger.info("Expanding features to instance UFOs")
+                logger.debug("Expanding features to instance UFOs")
                 master_source = next(
                     (s for s in designspace.sources if s.copyFeatures), None
                 )
