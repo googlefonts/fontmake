@@ -50,7 +50,7 @@ from fontTools import varLib
 from fontTools import designspaceLib
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import compileOTF, compileTTF, compileInterpolatableTTFs
-from ufo2ft.featureCompiler import FeatureCompiler, parseLayoutFeatures
+from ufo2ft.featureCompiler import FeatureCompiler
 from ufo2ft.featureWriters import loadFeatureWriters, FEATURE_WRITERS_KEY
 from ufo2ft.util import makeOfficialGlyphOrder
 from ufo2ft import CFFOptimization
@@ -553,8 +553,7 @@ class FontProject(object):
 
     def run_from_glyphs(
             self, glyphs_path, designspace_path=None, master_dir=None,
-            instance_dir=None, family_name=None, mti_source=None,
-            expand_features_to_instances=False, **kwargs):
+            instance_dir=None, family_name=None, mti_source=None, **kwargs):
         """Run toolchain from Glyphs source.
 
         Args:
@@ -587,7 +586,7 @@ class FontProject(object):
             self, designspace_path, interpolate=False,
             masters_as_instances=False,
             interpolate_binary_layout=False, round_instances=False,
-            feature_writers=None, expand_features_to_instances=False,
+            feature_writers=None,
             **kwargs):
         """Run toolchain from a MutatorMath design space document.
 
@@ -603,19 +602,12 @@ class FontProject(object):
                 master binaries.
             round_instances: apply integer rounding when interpolating with
                 MutatorMath.
-            expand_features_to_instances: parses the master feature file, expands all
-                include()s and writes the resulting full feature file to all instance
-                UFOs. Use this if you share feature files among masters in external
-                files. Otherwise, the relative include paths can break as instances
-                may end up elsewhere. Only done on interpolation.
             kwargs: Arguments passed along to run_from_ufos.
 
         Raises:
             TypeError: "variable" output is incompatible with arguments
                 "interpolate", "masters_as_instances", and
                 "interpolate_binary_layout".
-            ValueError: "expand_features_to_instances" is True but no source in the
-                designspace document is designated with '<features copy="1"/>'.
         """
 
         if "variable" in kwargs.get("output", ()):
@@ -657,23 +649,6 @@ class FontProject(object):
             logger.info('Applying instance data from designspace')
             ufos.extend(apply_instance_data(designspace_path,
                                             include_filenames=filenames))
-            if expand_features_to_instances:
-                logger.debug("Expanding features to instance UFOs")
-                master_source = next(
-                    (s for s in designspace.sources if s.copyFeatures), None
-                )
-                if not master_source:
-                    raise ValueError(
-                        "No source is designated as the master for features."
-                    )
-                else:
-                    master_source_font = reader.sources[master_source.name][0]
-                    master_source_features = parseLayoutFeatures(
-                        master_source_font
-                    ).asFea()
-                    for instance_ufo in ufos:
-                        instance_ufo.features.text = master_source_features
-                        instance_ufo.save()
 
         if interpolate_binary_layout is False:
             interpolate_layout_from = interpolate_layout_dir = None
