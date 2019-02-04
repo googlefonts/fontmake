@@ -4,5 +4,5 @@ glyphsLib==3.2.0
 ufo2ft[pathops]==2.7.0
 MutatorMath==2.1.2
 defcon[lxml]==0.6.0
-booleanOperations==0.8.1
+booleanOperations==0.8.2
 skia-pathops==0.2.0.post2
