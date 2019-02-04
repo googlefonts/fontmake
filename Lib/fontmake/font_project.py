@@ -38,7 +38,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import CFFOptimization
-from ufo2ft.featureCompiler import FeatureCompiler
+from ufo2ft.featureCompiler import FeatureCompiler, parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
 from ufo2ft.util import makeOfficialGlyphOrder
 
@@ -719,7 +719,11 @@ class FontProject(object):
         self.run_from_designspace(designspace_path, **kwargs)
 
     def interpolate_instance_ufos(
-        self, designspace, include=None, round_instances=False
+        self,
+        designspace,
+        include=None,
+        round_instances=False,
+        expand_features_to_instances=False,
     ):
         """Interpolate master UFOs with MutatorMath and return instance UFOs.
 
@@ -730,11 +734,18 @@ class FontProject(object):
                 DS instance 'name' attribute and only interpolate the matching
                 instances.
             round_instances (bool): round instances' coordinates to integer.
+            expand_features_to_instances: parses the master feature file, expands all
+                include()s and writes the resulting full feature file to all instance
+                UFOs. Use this if you share feature files among masters in external
+                files. Otherwise, the relative include paths can break as instances
+                may end up elsewhere. Only done on interpolation.
         Returns:
             list of defcon.Font objects corresponding to the UFO instances.
         Raises:
             FontmakeError: if any of the sources defines a custom 'layer', for
                 this is not supported by MutatorMath.
+            ValueError: "expand_features_to_instances" is True but no source in the
+                designspace document is designated with '<features copy="1"/>'.
         """
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
@@ -760,6 +771,21 @@ class FontProject(object):
             filenames = None  # will include all instances
         logger.info("Applying instance data from designspace")
         instance_ufos = apply_instance_data(designspace, include_filenames=filenames)
+
+        if expand_features_to_instances:
+            logger.debug("Expanding features to instance UFOs")
+            master_source = next(
+                (s for s in designspace.sources if s.copyFeatures), None
+            )
+            if not master_source:
+                raise ValueError("No source is designated as the master for features.")
+            else:
+                master_source_font = builder.sources[master_source.name][0]
+                master_source_features = parseLayoutFeatures(master_source_font).asFea()
+                for instance_ufo in instance_ufos:
+                    instance_ufo.features.text = master_source_features
+                    instance_ufo.save()
+
         return instance_ufos
 
     def run_from_designspace(
@@ -771,6 +797,7 @@ class FontProject(object):
         interpolate_binary_layout=False,
         round_instances=False,
         feature_writers=None,
+        expand_features_to_instances=False,
         **kwargs
     ):
         """Run toolchain from a DesignSpace document to produce either static
@@ -827,6 +854,7 @@ class FontProject(object):
                 interpolate_binary_layout=interpolate_binary_layout,
                 round_instances=round_instances,
                 feature_writers=feature_writers,
+                expand_features_to_instances=expand_features_to_instances,
                 **kwargs
             )
         if interp_outputs:
@@ -846,6 +874,7 @@ class FontProject(object):
         interpolate_binary_layout=False,
         round_instances=False,
         feature_writers=None,
+        expand_features_to_instances=False,
         **kwargs
     ):
         ufos = []
@@ -855,7 +884,10 @@ class FontProject(object):
             pattern = interpolate if isinstance(interpolate, basestring) else None
             ufos.extend(
                 self.interpolate_instance_ufos(
-                    designspace, include=pattern, round_instances=round_instances
+                    designspace,
+                    include=pattern,
+                    round_instances=round_instances,
+                    expand_features_to_instances=expand_features_to_instances,
                 )
             )
 
