@@ -23,6 +23,7 @@ function check_failure() {
 }
 
 for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
+    echo "# Testing ${src} with interpolation"
     cd "${src}"
     mkdir -p instance_ufo
     fontmake -i -m "${src}.designspace"
@@ -30,8 +31,8 @@ for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd ..
 done
 
-# also test the masters_as_instance parameter
 for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
+    echo "# Testing ${src} with interpolation and masters-as-instances"
     cd "${src}"
     mkdir -p instance_ufo
     fontmake -i -M -m "${src}.designspace"
@@ -39,7 +40,19 @@ for src in 'DesignspaceTest' 'AvarDesignspaceTest'; do
     cd ..
 done
 
+for src in 'DesignspaceTestSharedFeatures'; do
+    echo "# Testing ${src} with interpolation and master feature expansion"
+    cd "${src}"
+    mkdir -p instance_ufo
+    fontmake -i --expand-features-to-instances -m "${src}.designspace" -o ttf
+    check_failure "${src} failed to build"
+    grep -Fxq "# test" "instance_ufo/DesignspaceTest-Light.ufo/features.fea"
+    check_failure "${src} failed to build: no feature file in instance UFO"
+    cd ..
+done
+
 for src in 'InterpolateLayoutTest'; do
+    echo "# Testing ${src}"
     cd "${src}"
     fontmake -g "${src}.glyphs" --mti-source "${src}.plist" --no-production-names
     fontmake -g "${src}.glyphs" -i --interpolate-binary-layout --no-production-names
@@ -48,15 +61,19 @@ for src in 'InterpolateLayoutTest'; do
 done
 
 for src in 'GuidelineTest'; do
+    echo "# Testing ${src}"
     fontmake -i -g "${src}.glyphs"
     check_failure "${src} failed to build"
 done
 
+echo "# Testing subsetting with TestSubset.glyphs"
 fontmake -g TestSubset.glyphs -i "Test Subset Regular" -o ttf otf
 check_failure "TestSubset.glyphs failed to build"
 
+echo "# Running test_output.py"
 python test_output.py
 check_failure 'fontmake output incorrect'
 
+echo "# Running test_arguments.py"
 python test_arguments.py
 check_failure 'fontmake output incorrect'
