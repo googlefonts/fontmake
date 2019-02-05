@@ -51,6 +51,15 @@ for src in 'DesignspaceTestSharedFeatures'; do
     cd ..
 done
 
+for src in 'DesignspaceTestSharedFeatures'; do
+    echo "# Testing ${src} without interpolation"
+    cd "${src}"
+    mkdir -p instance_ufo
+    fontmake -u "DesignspaceTest-Light.ufo" -o ttf
+    check_failure "${src} failed to build"
+    cd ..
+done
+
 for src in 'InterpolateLayoutTest'; do
     echo "# Testing ${src}"
     cd "${src}"
