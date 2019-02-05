@@ -40,6 +40,16 @@ def _loadFeatureWriters(parser, specs):
 
 
 def exclude_args(parser, args, excluded_args, target):
+    """Delete options that are not appropriate for a following code path; exit
+    with an error if excluded options were passed in by the user.
+
+    argparse generates a namespace with all options it knows, but not every
+    attribute should be passed to all code paths (i.e. options about
+    interpolation should not reach `run_from_ufos()`). This function can be run
+    before entering a particular code path to clean up the kwargs passed to it.
+
+    Exit with an error message if the user actually passed the options in.
+    """
     msg = '"%s" option invalid for %s'
     for argname in excluded_args:
         if argname not in args:
@@ -388,7 +398,12 @@ def main(args=None):
         exclude_args(
             parser,
             args,
-            ["interpolate", "interpolate_binary_layout", "round_instances"],
+            [
+                "interpolate",
+                "interpolate_binary_layout",
+                "round_instances",
+                "expand_features_to_instances",
+            ],
             input_format,
         )
         project.run_from_ufos(
