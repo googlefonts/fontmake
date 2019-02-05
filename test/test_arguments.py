@@ -12,8 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import unittest
+
+import fontmake.__main__ as entry
+from fontmake.font_project import FontProject
+from fontTools.designspaceLib import DesignSpaceDocument
+from fontTools.ttLib import TTFont
+
 try:
     # unittest.mock is only available for python 3+
     from unittest import mock
@@ -21,69 +26,62 @@ try:
 except ImportError:
     import mock
     from mock import patch
-from fontTools.ttLib import TTFont
-from fontmake.font_project import FontProject
-import fontmake.__main__ as entry
-import fontTools
 
 
 class TestFunctionsAreCalledByArguments(unittest.TestCase):
-    @patch('fontmake.font_project.FontProject.run_from_glyphs')
+    @patch("fontmake.font_project.FontProject.run_from_glyphs")
     def test_run_from_glyphs(self, mock):
         self.assertFalse(mock.called)
-        entry.main(['-g', 'someGlyphs.glyph'])
+        entry.main(["-g", "someGlyphs.glyph"])
         self.assertTrue(mock.called)
 
-    @patch('fontmake.font_project.FontProject.run_from_designspace')
+    @patch("fontmake.font_project.FontProject.run_from_designspace")
     def test_run_from_designspace(self, mock):
         self.assertFalse(mock.called)
-        entry.main(['-m', 'someDesignspace.designspace'])
+        entry.main(["-m", "someDesignspace.designspace"])
         self.assertTrue(mock.called)
 
-    @patch('fontmake.font_project.FontProject.run_from_ufos')
+    @patch("fontmake.font_project.FontProject.run_from_ufos")
     def test_run_from_ufos(self, mock):
         self.assertFalse(mock.called)
-        entry.main(['-u', 'someUfo.ufo'])
+        entry.main(["-u", "someUfo.ufo"])
         self.assertTrue(mock.called)
 
     # When you nest patch decorators the mocks are passed in to the decorated
     # function in the same order they applied (the normal python order that
     # decorators are applied). This means from the bottom up. So mock_build_ttfs
     # is the first parameter, then mock_build_otfs.
-    @patch('fontmake.font_project.FontProject.build_otfs')
-    @patch('fontmake.font_project.FontProject.build_ttfs')
+    @patch("fontmake.font_project.FontProject.build_otfs")
+    @patch("fontmake.font_project.FontProject.build_ttfs")
     def test_build_otfs(self, mock_build_ttfs, mock_build_otfs):
         project = FontProject()
         self.assertFalse(mock_build_otfs.called)
         self.assertFalse(mock_build_ttfs.called)
-        project.run_from_ufos("path to ufo", output=('otf', 'ttf'))
+        project.run_from_ufos("path to ufo", output=("otf", "ttf"))
         self.assertTrue(mock_build_ttfs.called)
         self.assertTrue(mock_build_otfs.called)
 
-    @patch('fontmake.font_project.FontProject.build_interpolatable_ttfs')
-    @patch('fontmake.font_project.FontProject.build_variable_font')
-    def test_run_from_ufos(self, mock_build_variable_font, mock_build_interpolatable_ttfs):
-        project = FontProject()
-        self.assertFalse(mock_build_interpolatable_ttfs.called)
-        self.assertFalse(mock_build_variable_font.called)
-        project.run_from_ufos("path to ufo", output=('variable'), designspace_path="design space")
-        self.assertTrue(mock_build_interpolatable_ttfs.called)
-        self.assertTrue(mock_build_variable_font.called)
-
 
 class TestOutputFileName(unittest.TestCase):
-    @patch('fontTools.varLib.build')
-    @patch('fontTools.ttLib.TTFont.save')
-    @patch('fontmake.font_project.FontProject._designspace_locations')
-    def test_variable_output_filename(self, mock_designspace_locations, mock_TTFont_save, mock_varLib_build):
+    @patch("fontTools.varLib.build")
+    @patch("fontTools.ttLib.TTFont.save")
+    @patch("fontTools.designspaceLib.DesignSpaceDocument.fromfile")
+    def test_variable_output_filename(
+        self, mock_DesignSpaceDocument_fromfile, mock_TTFont_save, mock_varLib_build
+    ):
         project = FontProject()
-        mock_designspace_locations.return_value = {'master1': 'location1'}, None
+        path = "path/to/designspace.designspace"
+        doc = DesignSpaceDocument()
+        doc.path = path
+        mock_DesignSpaceDocument_fromfile.return_value = doc
         mock_varLib_build.return_value = TTFont(), None, None
-        project.build_variable_font('path/to/designspace.designspace')
+        project.build_variable_font(path)
         self.assertTrue(mock_TTFont_save.called)
         self.assertTrue(mock_TTFont_save.call_count == 1)
-        self.assertEqual(mock_TTFont_save.call_args, mock.call('variable_ttf/designspace-VF.ttf'))
+        self.assertEqual(
+            mock_TTFont_save.call_args, mock.call("variable_ttf/designspace-VF.ttf")
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

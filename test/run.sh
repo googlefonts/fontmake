@@ -44,9 +44,10 @@ for src in 'DesignspaceTestSharedFeatures'; do
     echo "# Testing ${src} with interpolation and master feature expansion"
     cd "${src}"
     mkdir -p instance_ufo
-    fontmake -i --expand-features-to-instances -m "${src}.designspace" \
-        -o ttf-interpolatable
+    fontmake -i --expand-features-to-instances -m "${src}.designspace" -o ttf
     check_failure "${src} failed to build"
+    grep -Fxq "# test" "instance_ufo/DesignspaceTest-Light.ufo/features.fea"
+    check_failure "${src} failed to build: no feature file in instance UFO"
     cd ..
 done
 

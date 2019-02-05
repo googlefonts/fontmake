@@ -9,11 +9,18 @@ python:
   - "2.7"
   - "3.6"
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.cache/pre-commit
+
 install:
   - pip install --upgrade pip
   - pip install -r test_requirements.txt .
 
 script:
+  - |
+    if [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]; then pip install --upgrade pre-commit && pre-commit run --all-files --show-diff-on-failure; fi
   - (cd test && ./run.sh)
 
 after_success:
