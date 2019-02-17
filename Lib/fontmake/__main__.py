@@ -90,7 +90,7 @@ def main(args=None):
     parser.add_argument("--version", action="version", version=__version__)
     inputGroup = parser.add_argument_group(
         title="Input arguments",
-        description="The following arguments are mutually exclusive.",
+        description="The following arguments are mutually exclusive (pick only one):",
     )
     xInputGroup = inputGroup.add_mutually_exclusive_group(required=True)
     xInputGroup.add_argument(
@@ -117,7 +117,8 @@ def main(args=None):
         nargs="+",
         default=("otf", "ttf"),
         metavar="FORMAT",
-        help="Output font formats. Choose between: %(choices)s. " "Default: otf, ttf",
+        help="Output font formats. Choose 1 or more from: %(choices)s. Default: otf, ttf. "
+        "Do not supply a file path.",
         choices=(
             "ufo",
             "otf",
