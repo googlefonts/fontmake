@@ -118,7 +118,7 @@ def main(args=None):
         default=("otf", "ttf"),
         metavar="FORMAT",
         help="Output font formats. Choose 1 or more from: %(choices)s. Default: otf, ttf. "
-        "Do not supply a file path.",
+        "(No file paths).",
         choices=(
             "ufo",
             "otf",
