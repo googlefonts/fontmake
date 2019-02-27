@@ -205,6 +205,13 @@ def main(args=None):
         "interpolating. Use if you share feature files of masters in "
         "external files, as instances can end up elsewhere.",
     )
+    outputGroup.add_argument(
+        "--no-varLib-optimize",
+        action="store_false",
+        dest="varlib_optimize",
+        help="Do not apply optimizations when generating variable fonts, "
+        "which might help with rendering glitches in some Adobe applications.",
+    )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
     contourGroup.add_argument(
@@ -367,6 +374,8 @@ def main(args=None):
             ["interpolate", "masters_as_instances", "interpolate_binary_layout"],
             "variable output",
         )
+    else:
+        exclude_args(parser, args, ["varlib_optimize"], "static output")
 
     try:
         project = FontProject(

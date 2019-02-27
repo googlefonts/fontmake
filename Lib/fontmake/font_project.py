@@ -345,6 +345,7 @@ class FontProject(object):
         output_dir=None,
         master_bin_dir=None,
         ttf=True,
+        varlib_optimize=True,
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
@@ -372,7 +373,7 @@ class FontProject(object):
 
         logger.info("Building variable font " + output_path)
 
-        font, _, _ = varLib.build(designspace, finder)
+        font, _, _ = varLib.build(designspace, finder, optimize=varlib_optimize)
 
         font.save(output_path)
 
