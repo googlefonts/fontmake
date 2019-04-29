@@ -30,7 +30,7 @@ Alternatively, you can download the git repository and install from source:
 
 .. code:: bash
 
-    git clone https://github.com/googlei18n/fontmake
+    git clone https://github.com/googlefonts/fontmake
     cd fontmake
     pip install .
 
@@ -70,9 +70,9 @@ process, via methods of the ``fontmake.font_project.FontProject`` class.
 .. _pip: https://pip.pypa.io
 .. _pip documentation: https://pip.readthedocs.io/en/stable/user_guide/#requirements-files
 .. _PyPI: https://pypi.org/project/fontmake
-.. _Github releases: https://github.com/googlei18n/fontmake/releases
-.. |Travis Build Status| image:: https://travis-ci.org/googlei18n/fontmake.svg
-   :target: https://travis-ci.org/googlei18n/fontmake
+.. _Github releases: https://github.com/googlefonts/fontmake/releases
+.. |Travis Build Status| image:: https://travis-ci.org/googlefonts/fontmake.svg
+   :target: https://travis-ci.org/googlefonts/fontmake
 .. |Python Versions| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/fontmake.svg
    :target: https://pypi.org/project/fontmake/
