@@ -75,6 +75,16 @@ for src in 'GuidelineTest'; do
     check_failure "${src} failed to build"
 done
 
+for src in 'GlyphsUnitTestSans'; do
+    echo "# Testing ${src} with -o ufo"
+    fontmake -i -g "${src}.glyphs" -o ufo
+    check_failure "${src} failed to build"
+    if [ ! "$(ls -A instance_ufo)" ]; then
+        echo "error: instance_ufo dir is empty"
+        exit 1
+    fi
+done
+
 echo "# Testing subsetting with TestSubset.glyphs"
 fontmake -g TestSubset.glyphs -i "Test Subset Regular" -o ttf otf
 check_failure "TestSubset.glyphs failed to build"
