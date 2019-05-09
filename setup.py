@@ -39,7 +39,7 @@ setup(
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=3.41.0",
         "cu2qu>=1.6.5",
-        "glyphsLib>=3.2.0",
+        "glyphsLib>=3.3.1",
         "ufo2ft>=2.8.0",
         "MutatorMath>=2.1.2",
         "defcon[lxml]>=0.6.0",
