@@ -76,7 +76,7 @@ for src in 'GuidelineTest'; do
 done
 
 for src in 'GlyphsUnitTestSans'; do
-    echo "# Testing ${src} with -o ufo"
+    echo "# Testing ${src} with -i -o ufo"
     fontmake -i -g "${src}.glyphs" -o ufo
     check_failure "${src} failed to build"
     if [ ! "$(ls -A instance_ufo)" ]; then
