@@ -3,7 +3,7 @@ language: python
 env:
   global:
     - TWINE_USERNAME="anthrotype"
-    - secure: VdRt0Fs7mAcDbscxeHp1IxZDFe5uZYD2cTnBav4yM6ykHglhmguJ7sLZdNHtisXBIvV3BOAxuIcplQdlHWIoKGxK7Si2UWJ29SRcy7nok84beeU27yvbJuKZooMYGGaPsqsl4NrezlEuFFYZX1jSH/yPSRdi4gd7L0JK/d8nJTlT2yVdkjRSXq/GZXv22D9IMn9mvgffChWcq9B4L0yg3Nrn0LaGwgoZ5NRq9oFXSWfKUEC41SY3lpMm/MqXEzwFsa3zNOOXSSfoJcBSPd7OP9WTWkL4Yvs24/w5qUW4q50odHoFXZ4xxjolNsazLNZKs3bFQW1wtM/+LgSs8Zi33wmfuZark7w1Ei856Tcei1a6MBxhaNX1EUHUVt9Kx2MBZ105XSinYX8U/JD7ng6c5vEh8NqqQL68zqRFpnaxYnuV15UAX1B7ntssnYYAOQS1XAoDgN+Pum7osJNSIHErM0qlxzaRKbTlekdv+mHz2wqEHaCl8efVBeKCItXzilngnZuvfGzAilfMJgveNiUMZqjAkCcEO/RME8Dzd6OKVL1Yx+gtbj1PhKtyT5iA7t95nZoRibO2e+8XrwxfcQbtfDQ7Bu+NC+8L9OCR9pppRvP/t1LqG4xWcFSaz7Difkb1+kgVbw3MTax2KqM6vSt51VxFaA0r9LUq1DQkSFCzXnc=
+    - secure: wg1vkiWvySib0Zz37R4GZyHEcW84774P09NuT8B7EyAH2McGSmCw8SrbwqzLx8VIayr7hw5ttTSrU2mSf1oapZzhRvetAW3FvaUqlBLfDIXUFbbsMXUgEPIiaahaxmjhAKHkLcZEKJyyzHwAXzCVF1KTE7z4UmjEy0whl4Tf4MP+0OSbTKcTqxNYIWj/IWn22lt8zjtoUdWFR/qmzX/WPtgOLT49CkXKOPLdndohDOjQqiALq07ofiyeL+zBYqIT/OYsX1w+bkaI1Rbj4ovr0MRPprs6Vf/s9qcyarVQgUmeSCwQDarDx5nC+hLnSY+6k8Tk4xQC94QE0LmKvCcNMQFZ/qcP5YJ4oKZJ0nIjEwktpRGLQzrHrTKqNHGMiBtRvwn1t/P8Wpl+KfbB6BjvkjzSGsLrWmzhX247zppy4u+wC4eozItgrTyHvo5Zv1BSYGlC9P9ql/pmFCt0N1Wnfal0trLTQAWS03Tt0m7Tv94Ss7LWlRqJWsOUsK2Jrygyr53ParRX4E96ho8vMGM1OWqrpaFEnYGRt5gp2SHrwBVUdJCUybw5RKH+npAG/8B0gvewGy9nSoo8+T/BYPKM41105Ses7O3ucKcgFy9NWunJYHPwQZLy5YPF9UdcKKa3Vdgm0oB8C6Qew2wYNftJXBmsJI2QtNTJBNHzY1xlNeo=
 
 python:
   - "2.7"
@@ -25,10 +25,8 @@ script:
 
 after_success:
   - |
-    if [ -n "$TRAVIS_TAG" ] && [ "$TRAVIS_REPO_SLUG" == "googlei18n/fontmake" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]; then
-      # we need to install pip from github until pypa/pip#5404 is released
-      # https://github.com/linkedin/shiv/pull/7#issuecomment-412584748
-      pip install --upgrade -e git+https://github.com/pypa/pip.git#egg=pip
+    if [ -n "$TRAVIS_TAG" ] && [ "$TRAVIS_REPO_SLUG" == "googlefonts/fontmake" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]; then
+      pip install --upgrade pip
       pip install --upgrade twine setuptools wheel shiv
       python setup.py sdist
       pip wheel --no-deps --wheel-dir dist .
@@ -40,12 +38,12 @@ deploy:
   # also create a Github Release with the current tag
   - provider: releases
     api_key:
-      secure: vfsMIz6Un0QZbS6uisUEUVO4db6b74COS5cu7ipmE13EGY0KtcIGQqgd+J71KxY7yQlnk/cm5Tp9Aei3L1UPEK6G4uC65kVFjq4hJRjOzm1QT6H/wyw6DpC5qUcr/MEZDQaPouVqvK2A30pNmMK+4Kohp61EgeMCgy+gcaTfbMao8o5Ao3FJvSrl31VWZEd/2pwFC9zi0kRmf2QtOVN+nnlCuU22GC4d78HmvjUF70p9XmgL+H73vjum4djd1O0kdw9gVYOolnRDlH8bR39jztKemOz6DnWDoTyB46RZ31Jyt5tsEdLOwWrO+fL2fDKgyg2716F+RaM9bqvM09BRbxHlO2ws+Mmn4g0kZs2DnBmdUac4V4tW5COQ0Ww3W4QaFRkR/caqjISlGujxifXJD/fisqwE+pnLUMQEcel39/UslgAWCtrPH7Bp0dDlopaEnugvQ8AX9hqe9AYaS9ySowcr6UfCWfjalXTbrCcTpH+Sj9r3JjEw1AZBecySwOUZCxZBejltAVdNsN8pnBbUR8oQN3ahLjIiUMDMxDCZnw8S2mQaUZoFqJiTz5SA9ED7yaciiehTLbW6M1cvTS/oqHFb+GGfn4D1CCF7HC9ML3oau82pHU6GcZqOj+zJr2v2YIJBf5cBDK54QBA8ERwNh+7Tq3IEhYQDX7HPtxsIvWI=
+      secure: ZZeHx2+Yc4gjEPVyhqySp700cF6Ro8xy0IOF0wD+BKOVi9/rj7AWfz5OBCb/3D18lji6lepXtEQ6/7AgqDLZNUk7R459g7GoczRt/M/iR3aXJslCiBTG/4r1O4ZCNXKLVgoX0Cavi1we7qKTot0wIYWcjk1TU9EmRoYpsnZTTWHKW0F2ZDd4O0IdWSUO6wF+g2DY4OxVy9zC7D2wdg53+LSRFao3w3hALZ7Rb32Icq/QdG+z4t9Vsa61keHULDH5MMMcUHQ6PbM96hBTydeTJrpwrojfX7WhE+SlptwH4cnTZPSFBqgOvrOwu9vKKI5TvUvfE4qt9QP+nZEfjrwnxBXMvYpRIDDoM+stc+NZ25xiEel3JXrmmue/VKtwbO4WaKSZWJXntyEcDFTnk32w6PmoawG1Rp1noVwL0b9sPXAYm4mw0yY4g+UoUsxRcxWFeKU1gXYIBGIKgqglys+WgnIUraqQcUuHn2l90n1DM86D2yOHsrg/NSFK1ePJAlNcz8rkYtUeCaffG2iyAjxf5IiqDx6k1flKphkLTqbc0eFkocj3ay7vnFINflcQRD4ISCEd5J2FuncnPkyUHTDPDYwjsNVuqceTF22e48NL+qfqLohbQ5aU6xiol6Pv4QQFOK+LG0bJb87DXlzJV9ZRjV0zai3wjhHuw2jfvvA4gHo=
     file_glob: true
     file: "shivs/*.zip"
     skip_cleanup: true
     on:
-      repo: googlei18n/fontmake
+      repo: googlefonts/fontmake
       tags: true
       all_branches: true
       python: 3.6
