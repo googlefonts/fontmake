@@ -70,7 +70,6 @@ KEEP_GLYPHS_NEW_KEY = (
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 
-STATIC_OUTPUTS = frozenset(["ttf", "otf"])
 INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
@@ -824,7 +823,7 @@ class FontProject(object):
         """
 
         interp_outputs = INTERPOLATABLE_OUTPUTS.intersection(output)
-        static_outputs = STATIC_OUTPUTS.intersection(output)
+        static_outputs = set(output).difference(interp_outputs)
         if interp_outputs:
             for argname in (
                 "interpolate",
