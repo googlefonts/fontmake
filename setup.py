@@ -37,10 +37,10 @@ setup(
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
     install_requires=[
-        "fonttools[ufo,lxml,unicode]>=3.37.3",
+        "fonttools[ufo,lxml,unicode]>=3.41.0",
         "cu2qu>=1.6.5",
-        "glyphsLib>=3.2.0b1",
-        "ufo2ft>=2.7.0",
+        "glyphsLib>=3.2.0",
+        "ufo2ft>=2.8.0",
         "MutatorMath>=2.1.2",
         "defcon[lxml]>=0.6.0",
         "booleanOperations>=0.8.2",

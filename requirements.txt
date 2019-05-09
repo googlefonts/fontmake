@@ -1,7 +1,7 @@
 fonttools[lxml,unicode,ufo]==3.41.0
 cu2qu==1.6.5
 glyphsLib==3.2.0
-ufo2ft[pathops]==2.7.0
+ufo2ft[pathops]==2.8.0
 MutatorMath==2.1.2
 defcon[lxml]==0.6.0
 booleanOperations==0.8.2
