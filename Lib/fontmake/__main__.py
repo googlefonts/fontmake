@@ -39,7 +39,7 @@ def _loadFeatureWriters(parser, specs):
     return feature_writers
 
 
-def exclude_args(parser, args, excluded_args, target):
+def exclude_args(parser, args, excluded_args, target, positive=True):
     """Delete options that are not appropriate for a following code path; exit
     with an error if excluded options were passed in by the user.
 
@@ -54,8 +54,8 @@ def exclude_args(parser, args, excluded_args, target):
     for argname in excluded_args:
         if argname not in args:
             continue
-        if args[argname]:
-            optname = "--%s" % argname.replace("_", "-")
+        if bool(args[argname]) is positive:
+            optname = "--%s%s" % ("" if positive else "no-", argname.replace("_", "-"))
             parser.error(msg % (optname, target))
         del args[argname]
 
@@ -374,6 +374,8 @@ def main(args=None):
             ["interpolate", "masters_as_instances", "interpolate_binary_layout"],
             "variable output",
         )
+    else:
+        exclude_args(parser, args, ["optimize_gvar"], "static output", positive=False)
 
     try:
         project = FontProject(
