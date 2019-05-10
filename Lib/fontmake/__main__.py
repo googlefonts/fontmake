@@ -262,6 +262,13 @@ def main(args=None):
         help="0 disables all optimizations; 1 specializes the CFF charstring "
         "operators; 2 (default) also enables subroutinization",
     )
+    contourGroup.add_argument(
+        "--no-optimize-gvar",
+        dest="optimize_gvar",
+        action="store_false",
+        help="Do not perform IUP optimization on variable font's 'gvar' table. "
+        "(only work with 'variable' TrueType-flavored output)",
+    )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
     layoutGroup.add_argument(

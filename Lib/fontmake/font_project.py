@@ -29,7 +29,7 @@ from defcon import Font
 from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
-from fontTools import designspaceLib, varLib
+from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
 from fontTools.misc.py23 import basestring, tobytes, zip
 from fontTools.misc.transform import Transform
@@ -273,6 +273,17 @@ class FontProject(object):
 
     @staticmethod
     def _load_designspace_sources(designspace):
+        if hasattr(designspace, "__fspath__"):
+            ds_path = designspace.__fspath__()
+        if isinstance(designspace, basestring):
+            ds_path = designspace
+        else:
+            # reload designspace from its path so we have a new copy
+            # that can be modified in-place.
+            ds_path = designspace.path
+        if ds_path is not None:
+            designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
+
         # set source.font attributes, but only load fonts once
         masters = {}
         for source in designspace.sources:
@@ -282,6 +293,10 @@ class FontProject(object):
                 assert source.path is not None
                 source.font = Font(source.path)
                 masters[source.path] = source.font
+        # TODO(anthrotype): use this once fonttools/fonttools#1606 is merged
+        # designspace.loadSourceFonts(opener=Font)
+
+        return designspace
 
     def _build_interpolatable_masters(
         self,
@@ -294,18 +309,7 @@ class FontProject(object):
         cff_round_tolerance=None,
         **kwargs
     ):
-        if hasattr(designspace, "__fspath__"):
-            ds_path = designspace.__fspath__()
-        if isinstance(designspace, basestring):
-            ds_path = designspace
-        else:
-            # reload designspace from its path so we have a new copy
-            # that can be modified in-place.
-            ds_path = designspace.path
-        if ds_path is not None:
-            designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
-
-        self._load_designspace_sources(designspace)
+        designspace = self._load_designspace_sources(designspace)
 
         if ttf:
             return ufo2ft.compileInterpolatableTTFsFromDS(
@@ -342,36 +346,47 @@ class FontProject(object):
         designspace,
         output_path=None,
         output_dir=None,
-        master_bin_dir=None,
         ttf=True,
+        optimize_gvar=True,
+        use_production_names=None,
+        reverse_direction=True,
+        conversion_error=None,
+        feature_writers=None,
+        cff_round_tolerance=None,
+        **kwargs
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
 
-        ext = "ttf" if ttf else "otf"
-
-        if hasattr(designspace, "__fspath__"):
-            designspace = designspace.__fspath__()
-        if isinstance(designspace, basestring):
-            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace)
-            if master_bin_dir is None:
-                master_bin_dir = self._output_dir(ext, interpolatable=True)
-            finder = partial(_varLib_finder, directory=master_bin_dir)
-        else:
-            assert all(isinstance(s.font, TTFont) for s in designspace.sources)
-            finder = lambda s: s  # noqa: E731
+        designspace = self._load_designspace_sources(designspace)
 
         if output_path is None:
             output_path = (
                 os.path.splitext(os.path.basename(designspace.path))[0] + "-VF"
             )
+            ext = "ttf" if ttf else "otf"
             output_path = self._output_path(
                 output_path, ext, is_variable=True, output_dir=output_dir
             )
 
         logger.info("Building variable font " + output_path)
 
-        font, _, _ = varLib.build(designspace, finder)
+        if ttf:
+            font = ufo2ft.compileVariableTTF(
+                designspace,
+                featureWriters=feature_writers,
+                useProductionNames=use_production_names,
+                cubicConversionError=conversion_error,
+                reverseDirection=reverse_direction,
+                optimizeGvar=optimize_gvar,
+            )
+        else:
+            font = ufo2ft.compileVariableCFF2(
+                designspace,
+                featureWriters=feature_writers,
+                useProductionNames=use_production_names,
+                roundTolerance=cff_round_tolerance,
+            )
 
         font.save(output_path)
 
@@ -915,28 +930,25 @@ class FontProject(object):
         ttf_designspace = otf_designspace = None
 
         if "variable" in outputs:
-            ttf_designspace = self.build_interpolatable_ttfs(designspace, **kwargs)
             self.build_variable_font(
-                ttf_designspace, output_path=output_path, output_dir=output_dir
+                designspace, output_path=output_path, output_dir=output_dir, **kwargs
             )
 
         if "ttf-interpolatable" in outputs:
-            if ttf_designspace is None:
-                ttf_designspace = self.build_interpolatable_ttfs(designspace, **kwargs)
+            ttf_designspace = self.build_interpolatable_ttfs(designspace, **kwargs)
             self._save_interpolatable_fonts(ttf_designspace, output_dir, ttf=True)
 
         if "variable-cff2" in outputs:
-            otf_designspace = self.build_interpolatable_otfs(designspace, **kwargs)
             self.build_variable_font(
-                otf_designspace,
+                designspace,
                 output_path=output_path,
                 output_dir=output_dir,
                 ttf=False,
+                **kwargs
             )
 
         if "otf-interpolatable" in outputs:
-            if otf_designspace is None:
-                otf_designspace = self.build_interpolatable_otfs(designspace, **kwargs)
+            otf_designspace = self.build_interpolatable_otfs(designspace, **kwargs)
             self._save_interpolatable_fonts(otf_designspace, output_dir, ttf=False)
 
     def run_from_ufos(self, ufos, output=(), **kwargs):
