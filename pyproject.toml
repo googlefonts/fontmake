@@ -5,3 +5,6 @@ requires = [
     "setuptools_scm",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.black]
+target-version = ["py27"]
