@@ -267,7 +267,7 @@ def main(args=None):
         dest="optimize_gvar",
         action="store_false",
         help="Do not perform IUP optimization on variable font's 'gvar' table. "
-        "(only work with 'variable' TrueType-flavored output)",
+        "(only works with 'variable' TrueType-flavored output)",
     )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
