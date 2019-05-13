@@ -284,17 +284,7 @@ class FontProject(object):
         if ds_path is not None:
             designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
 
-        # set source.font attributes, but only load fonts once
-        masters = {}
-        for source in designspace.sources:
-            if source.path in masters:
-                source.font = masters[source.path]
-            else:
-                assert source.path is not None
-                source.font = Font(source.path)
-                masters[source.path] = source.font
-        # TODO(anthrotype): use this once fonttools/fonttools#1606 is merged
-        # designspace.loadSourceFonts(opener=Font)
+        designspace.loadSourceFonts(opener=Font)
 
         return designspace
 
