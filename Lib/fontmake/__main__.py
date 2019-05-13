@@ -55,7 +55,9 @@ def exclude_args(parser, args, excluded_args, target, positive=True):
         if argname not in args:
             continue
         if bool(args[argname]) is positive:
-            optname = "--%s%s" % ("" if positive else "no-", argname.replace("_", "-"))
+            optname = "--{}{}".format(
+                "" if positive else "no-", argname.replace("_", "-")
+            )
             parser.error(msg % (optname, target))
         del args[argname]
 
