@@ -369,6 +369,7 @@ class FontProject(object):
                 cubicConversionError=conversion_error,
                 reverseDirection=reverse_direction,
                 optimizeGvar=optimize_gvar,
+                inplace=True,
             )
         else:
             font = ufo2ft.compileVariableCFF2(
@@ -376,6 +377,7 @@ class FontProject(object):
                 featureWriters=feature_writers,
                 useProductionNames=use_production_names,
                 roundTolerance=cff_round_tolerance,
+                inplace=True,
             )
 
         font.save(output_path)
