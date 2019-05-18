@@ -878,7 +878,7 @@ class FontProject(object):
     ):
         ufos = []
         if not interpolate or masters_as_instances:
-            ufos.extend((s.path for s in designspace.sources if s.path))
+            ufos.extend(s.path for s in designspace.sources if s.path)
         if interpolate:
             pattern = interpolate if isinstance(interpolate, basestring) else None
             ufos.extend(
