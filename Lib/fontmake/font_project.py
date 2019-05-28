@@ -23,7 +23,6 @@ import shutil
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from copy import deepcopy
 from functools import partial, wraps
 
 import ufo2ft
