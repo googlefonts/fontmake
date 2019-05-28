@@ -63,18 +63,21 @@ class TestFunctionsAreCalledByArguments(unittest.TestCase):
 
 
 class TestOutputFileName(unittest.TestCase):
-    @patch("fontTools.varLib.build")
+    @patch("ufo2ft.compileVariableTTF")
     @patch("fontTools.ttLib.TTFont.save")
     @patch("fontTools.designspaceLib.DesignSpaceDocument.fromfile")
     def test_variable_output_filename(
-        self, mock_DesignSpaceDocument_fromfile, mock_TTFont_save, mock_varLib_build
+        self,
+        mock_DesignSpaceDocument_fromfile,
+        mock_TTFont_save,
+        mock_compileVariableTTF,
     ):
         project = FontProject()
         path = "path/to/designspace.designspace"
         doc = DesignSpaceDocument()
         doc.path = path
         mock_DesignSpaceDocument_fromfile.return_value = doc
-        mock_varLib_build.return_value = TTFont(), None, None
+        mock_compileVariableTTF.return_value = TTFont()
         project.build_variable_font(path)
         self.assertTrue(mock_TTFont_save.called)
         self.assertTrue(mock_TTFont_save.call_count == 1)
