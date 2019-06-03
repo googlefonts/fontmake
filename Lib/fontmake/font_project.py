@@ -22,6 +22,7 @@ import os
 import shutil
 import tempfile
 from collections import OrderedDict
+from contextlib import contextmanager
 from functools import partial, wraps
 
 import ufo2ft
@@ -88,6 +89,44 @@ def _deprecated(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+@contextmanager
+def temporarily_disabling_axis_maps(designspace_path):
+    """Context manager to prevent MutatorMath from warping designspace locations.
+
+    MutatorMath assumes that the masters and instances' locations are in
+    user-space coordinates -- whereas they actually are in internal design-space
+    coordinates, and thus they do not need any 'bending'. To work around this we
+    we create a temporary designspace document without the axis maps, and with the
+    min/default/max triplet mapped "forward" from user-space coordinates (input)
+    to internal designspace coordinates (output).
+
+    Args:
+        designspace_path: A path to a designspace document.
+
+    Yields:
+        A temporary path string to the thus modified designspace document.
+        After the context is exited, it removes the temporary file.
+
+    Related issues:
+        https://github.com/LettError/designSpaceDocument/issues/16
+        https://github.com/fonttools/fonttools/pull/1395
+    """
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+    for axis in designspace.axes:
+        axis.minimum = axis.map_forward(axis.minimum)
+        axis.default = axis.map_forward(axis.default)
+        axis.maximum = axis.map_forward(axis.maximum)
+        del axis.map[:]
+
+    fd, temp_designspace_path = tempfile.mkstemp()
+    os.close(fd)
+    try:
+        designspace.write(temp_designspace_path)
+        yield temp_designspace_path
+    finally:
+        os.remove(temp_designspace_path)
 
 
 class FontProject(object):
@@ -762,19 +801,23 @@ class FontProject(object):
                 "attribute"
             )
 
-        # TODO: replace mutatorMath with ufoProcessor?
-        builder = DesignSpaceDocumentReader(
-            designspace.path, ufoVersion=3, roundGeometry=round_instances, verbose=True
-        )
-        logger.info("Interpolating master UFOs from designspace")
-        if include is not None:
-            instances = self._search_instances(designspace, pattern=include)
-            for instance_name in instances:
-                builder.readInstance(("name", instance_name))
-            filenames = set(instances.values())
-        else:
-            builder.readInstances()
-            filenames = None  # will include all instances
+        with temporarily_disabling_axis_maps(designspace.path) as temp_designspace_path:
+            builder = DesignSpaceDocumentReader(
+                temp_designspace_path,
+                ufoVersion=3,
+                roundGeometry=round_instances,
+                verbose=True,
+            )
+            logger.info("Interpolating master UFOs from designspace")
+            if include is not None:
+                instances = self._search_instances(designspace, pattern=include)
+                for instance_name in instances:
+                    builder.readInstance(("name", instance_name))
+                filenames = set(instances.values())
+            else:
+                builder.readInstances()
+                filenames = None  # will include all instances
+
         logger.info("Applying instance data from designspace")
         instance_ufos = apply_instance_data(designspace, include_filenames=filenames)
 
