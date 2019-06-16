@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.0">
+  <axes>
+    <axis tag="wght" name="weight" minimum="100" maximum="400" default="400"/>
+  </axes>
+  <sources>
+    <source filename="DesignspaceTest-Light.ufo" name="Designspace Test Light" familyname="Designspace Test" stylename="Light">
+      <location>
+        <dimension name="weight" xvalue="100"/>
+      </location>
+    </source>
+    <source filename="DesignspaceTest-Regular.ufo" name="Designspace Test Regular" familyname="Designspace Test" stylename="Regular">
+      <lib copy="1"/>
+      <groups copy="1"/>
+      <features copy="1"/>
+      <info copy="1"/>
+      <location>
+        <dimension name="weight" xvalue="400"/>
+      </location>
+    </source>
+  </sources>
+  <instances>
+    <instance name="Designspace Test Light" familyname="Designspace Test" stylename="Light" filename="instance_ufo/DesignspaceTest-Light.ufo">
+      <location>
+        <dimension name="weight" xvalue="250"/>
+      </location>
+      <kerning/>
+      <info/>
+    </instance>
+  </instances>
+</designspace>

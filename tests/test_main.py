@@ -1,0 +1,489 @@
+import shutil
+
+import fontTools.designspaceLib as designspaceLib
+import fontTools.ttLib
+
+import fontmake.__main__
+
+
+def test_interpolation(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-i",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MyFont-Regular.ttf",
+        "MyFont-Regular.otf",
+    }
+
+    test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.ttf")
+    assert test_output_ttf["OS/2"].usWeightClass == 400
+    glyph = test_output_ttf.getGlyphSet()["l"]._glyph
+    assert glyph.xMin == 50
+    assert glyph.xMax == 170
+
+    test_output_otf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.otf")
+    assert test_output_otf["OS/2"].usWeightClass == 400
+    glyph_set = test_output_otf.getGlyphSet()
+    glyph = glyph_set["l"]._glyph
+    x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
+    assert x_min == 50
+    assert x_max == 170
+
+
+def test_interpolation_and_masters_as_instances(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-i",
+            "-M",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MyFont-Bold.otf",
+        "MyFont-Bold.ttf",
+        "MyFont-Light.otf",
+        "MyFont-Light.ttf",
+        "MyFont-Regular.otf",
+        "MyFont-Regular.ttf",
+    }
+
+    test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.ttf")
+    assert test_output_ttf["OS/2"].usWeightClass == 400
+    glyph = test_output_ttf.getGlyphSet()["l"]._glyph
+    assert glyph.xMin == 50
+    assert glyph.xMax == 170
+
+    test_output_otf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.otf")
+    assert test_output_otf["OS/2"].usWeightClass == 400
+    glyph_set = test_output_otf.getGlyphSet()
+    glyph = glyph_set["l"]._glyph
+    x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
+    assert x_min == 50
+    assert x_max == 170
+
+
+def test_masters_and_instances_ttf_interpolatable(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-o",
+            "ttf-interpolatable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MyFont-Bold.ttf",
+        "MyFont-Light.ttf",
+        "DesignspaceTest.designspace",
+    }
+
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        tmp_path / "DesignspaceTest.designspace"
+    )
+    assert {s.filename for s in designspace.sources} == {
+        "MyFont-Bold.ttf",
+        "MyFont-Light.ttf",
+    }
+
+
+def test_masters_and_instances_otf_interpolatable(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-o",
+            "otf-interpolatable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MyFont-Bold.otf",
+        "MyFont-Light.otf",
+        "DesignspaceTest.designspace",
+    }
+
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        tmp_path / "DesignspaceTest.designspace"
+    )
+    assert {s.filename for s in designspace.sources} == {
+        "MyFont-Bold.otf",
+        "MyFont-Light.otf",
+    }
+
+
+def test_variable_ttf(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-o",
+            "variable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {"DesignspaceTest-VF.ttf"}
+
+
+def test_variable_otf(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-o",
+            "variable-cff2",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {"DesignspaceTest-VF.otf"}
+
+
+def test_no_interpolation(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MyFont-Bold.otf",
+        "MyFont-Bold.ttf",
+        "MyFont-Light.otf",
+        "MyFont-Light.ttf",
+    }
+
+
+def test_ufo_interpolation(data_dir, tmp_path):
+    shutil.copyfile(
+        data_dir / "GlyphsUnitTestSans.glyphs", tmp_path / "GlyphsUnitTestSans.glyphs"
+    )
+
+    instance_dir = tmp_path / "instance_ufos"
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "GlyphsUnitTestSans.glyphs"),
+            "--master-dir",
+            str(tmp_path / "master_ufos"),
+            "--instance-dir",
+            str(instance_dir),
+            "-i",
+            "-o",
+            "ufo",
+        ]
+    )
+
+    assert {p.name for p in instance_dir.glob("*.ufo")} == {
+        "GlyphsUnitTestSans-Black.ufo",
+        "GlyphsUnitTestSans-Bold.ufo",
+        "GlyphsUnitTestSans-ExtraLight.ufo",
+        "GlyphsUnitTestSans-Light.ufo",
+        "GlyphsUnitTestSans-Medium.ufo",
+        "GlyphsUnitTestSans-Regular.ufo",
+        "GlyphsUnitTestSans-Thin.ufo",
+        "GlyphsUnitTestSans-Web.ufo",
+    }
+
+
+def test_ufo_interpolation_specific(data_dir, tmp_path):
+    shutil.copyfile(
+        data_dir / "GlyphsUnitTestSans.glyphs", tmp_path / "GlyphsUnitTestSans.glyphs"
+    )
+
+    instance_dir = tmp_path / "instance_ufos"
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "GlyphsUnitTestSans.glyphs"),
+            "--master-dir",
+            str(tmp_path / "master_ufos"),
+            "--instance-dir",
+            str(instance_dir),
+            "-i",
+            r".*Light.*",
+            "-o",
+            "ufo",
+        ]
+    )
+
+    assert {p.name for p in instance_dir.glob("*.ufo")} == {
+        "GlyphsUnitTestSans-ExtraLight.ufo",
+        "GlyphsUnitTestSans-Light.ufo",
+    }
+
+
+def test_subsetting(data_dir, tmp_path):
+    shutil.copyfile(data_dir / "TestSubset.glyphs", tmp_path / "TestSubset.glyphs")
+
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "TestSubset.glyphs"),
+            "--master-dir",
+            str(tmp_path / "master_ufos"),
+            "--instance-dir",
+            str(tmp_path / "instance_ufos"),
+            "-i",
+            "Test Subset Regular",
+            "-o",
+            "ttf",
+            "otf",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    for output_format in ("ttf", "otf"):
+        for font_path in tmp_path.glob("*." + output_format):
+            font = fontTools.ttLib.TTFont(font_path)
+            assert font.getGlyphOrder() == [".notdef", "space", "A", "C", "B"]
+
+
+def test_shared_features_expansion(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTestSharedFeatures", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTestSharedFeatures.designspace"),
+            "-i",
+            "--expand-features-to-instances",
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    test_feature_file = (
+        tmp_path / "sources/instance_ufo/DesignspaceTest-Light.ufo/features.fea"
+    )
+    assert test_feature_file.read_text() == "# test"
+
+
+def test_shared_features_ufo(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTestSharedFeatures", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(tmp_path / "sources" / "DesignspaceTest-Light.ufo"),
+            str(tmp_path / "sources" / "DesignspaceTest-Regular.ufo"),
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "DesignspaceTest-Light.ttf",
+        "DesignspaceTest-Regular.ttf",
+    }
+
+
+def test_mti_sources(data_dir, tmp_path):
+    shutil.copytree(data_dir / "InterpolateLayoutTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "sources" / "InterpolateLayoutTest.glyphs"),
+            "--designspace-path",
+            str(tmp_path / "InterpolateLayoutTest.designspace"),
+            "--master-dir",
+            str(tmp_path / "master_ufos"),
+            "--instance-dir",
+            str(tmp_path / "instance_ufos"),
+            "--mti-source",
+            str(tmp_path / "sources" / "InterpolateLayoutTest.plist"),
+            "--no-production-names",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "InterpolateLayoutTest-Bold.otf",
+        "InterpolateLayoutTest-Bold.ttf",
+        "InterpolateLayoutTest-Light.otf",
+        "InterpolateLayoutTest-Light.ttf",
+        "InterpolateLayoutTest.designspace",
+    }
+
+    font_bold = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Bold.ttf")
+    assert font_bold["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font_bold["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -40
+    )
+
+    font_light = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Light.ttf")
+    assert font_light["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font_light["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -12
+    )
+
+
+def test_interpolate_layout(data_dir, tmp_path):
+    shutil.copytree(data_dir / "InterpolateLayoutTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "sources" / "InterpolateLayoutTest.glyphs"),
+            "--designspace-path",
+            str(tmp_path / "InterpolateLayoutTest.designspace"),
+            "--master-dir",
+            str(tmp_path / "master_ufos"),
+            "--instance-dir",
+            str(tmp_path / "instance_ufos"),
+            "--mti-source",
+            str(tmp_path / "sources" / "InterpolateLayoutTest.plist"),
+            "--no-production-names",
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path / "master_ttf"),
+        ]
+    )
+
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "sources" / "InterpolateLayoutTest.glyphs"),
+            "--designspace-path",
+            str(tmp_path / "InterpolateLayoutTest.designspace"),
+            "--master-dir",
+            str(tmp_path / "master_ufos"),
+            "--instance-dir",
+            str(tmp_path / "instance_ufos"),
+            "-i",
+            "--interpolate-binary-layout",
+            str(tmp_path / "master_ttf"),
+            "--no-production-names",
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    font = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Black.ttf")
+    assert font["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -40
+    )
+
+    font = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Bold.ttf")
+    assert font["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -35
+    )
+
+    font = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-SemiBold.ttf")
+    assert font["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -29
+    )
+
+    font = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Regular.ttf")
+    assert font["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -22
+    )
+
+    font = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Light.ttf")
+    assert font["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -15
+    )
+
+    font = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-ExtraLight.ttf")
+    assert font["GDEF"].table.GlyphClassDef.classDefs == {"V": 1, "a": 1}
+    assert (
+        font["GPOS"]
+        .table.LookupList.Lookup[0]
+        .SubTable[0]
+        .PairSet[0]
+        .PairValueRecord[0]
+        .Value1.XAdvance
+        == -12
+    )
