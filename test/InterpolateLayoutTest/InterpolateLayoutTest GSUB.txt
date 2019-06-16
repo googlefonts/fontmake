@@ -1,8 +1,0 @@
-FontDame GSUB table
-
-EM	1000
-
-script table begin
-DFLT	default
-latn	default
-script table end
