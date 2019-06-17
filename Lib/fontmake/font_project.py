@@ -560,7 +560,6 @@ class FontProject:
         do_autohint = ttf and autohint is not None
 
         for font, ufo in zip(fonts, ufos):
-
             if interpolate_layout_from is not None:
                 master_locations, instance_locations = self._designspace_locations(
                     interpolate_layout_from
