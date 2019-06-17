@@ -26,7 +26,7 @@ setup(
     name="fontmake",
     use_scm_version={"write_to": "Lib/fontmake/_version.py"},
     description=(
-        "Compile fonts from sources (UFO, Glyphs) to binary " "(OpenType, TrueType)."
+        "Compile fonts from sources (UFO, Glyphs) to binary (OpenType, TrueType)."
     ),
     long_description=long_description,
     url="https://github.com/googlei18n/fontmake",
