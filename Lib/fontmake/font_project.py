@@ -296,10 +296,8 @@ class FontProject:
 
     @staticmethod
     def _load_designspace_sources(designspace):
-        if hasattr(designspace, "__fspath__"):
-            ds_path = designspace.__fspath__()
-        if isinstance(designspace, str):
-            ds_path = designspace
+        if isinstance(designspace, (str, os.PathLike)):
+            ds_path = os.fspath(designspace)
         else:
             # reload designspace from its path so we have a new copy
             # that can be modified in-place.
