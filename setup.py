@@ -13,13 +13,10 @@
 # limitations under the License.
 
 import sys
+from io import open
 
 from setuptools import find_packages, setup
 
-
-if sys.version_info < (3, 6, 0):
-    print("fontmake requires at least Python 3.6.0 to run.")
-    sys.exit(1)
 
 needs_wheel = {"bdist_wheel"}.intersection(sys.argv)
 wheel = ["wheel"] if needs_wheel else []
