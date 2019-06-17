@@ -20,7 +20,7 @@ import shutil
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from functools import partial, wraps
+from functools import partial
 from re import fullmatch
 
 import ufo2ft
@@ -29,9 +29,6 @@ from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
 from fontTools.misc.plistlib import load as readPlist
-from fontTools.misc.transform import Transform
-from fontTools.pens.reverseContourPen import ReverseContourPen
-from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import CFFOptimization
@@ -58,21 +55,6 @@ GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
-
-
-def _deprecated(func):
-    import warnings
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        warnings.warn(
-            "'%s' is deprecated and will be dropped in future versions" % func.__name__,
-            category=UserWarning,
-            stacklevel=2,
-        )
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 @contextmanager
@@ -203,88 +185,6 @@ class FontProject:
                 # it only contains junk information anyway.
                 master.features.text = ""
             master.save()
-
-    @_deprecated
-    @timer()
-    def remove_overlaps(self, ufos, glyph_filter=lambda g: len(g)):
-        """Remove overlaps in UFOs' glyphs' contours."""
-        from booleanOperations import union, BooleanOperationsError
-
-        for ufo in ufos:
-            font_name = self._font_name(ufo)
-            logger.info("Removing overlaps for " + font_name)
-            for glyph in ufo:
-                if not glyph_filter(glyph):
-                    continue
-                contours = list(glyph)
-                glyph.clearContours()
-                try:
-                    union(contours, glyph.getPointPen())
-                except BooleanOperationsError:
-                    logger.error(
-                        "Failed to remove overlaps for %s: %r", font_name, glyph.name
-                    )
-                    raise
-
-    @_deprecated
-    @timer()
-    def decompose_glyphs(self, ufos, glyph_filter=lambda g: True):
-        """Move components of UFOs' glyphs to their outlines."""
-
-        for ufo in ufos:
-            logger.info("Decomposing glyphs for " + self._font_name(ufo))
-            for glyph in ufo:
-                if not glyph.components or not glyph_filter(glyph):
-                    continue
-                self._deep_copy_contours(ufo, glyph, glyph, Transform())
-                glyph.clearComponents()
-
-    def _deep_copy_contours(self, ufo, parent, component, transformation):
-        """Copy contours from component to parent, including nested components."""
-
-        for nested in component.components:
-            self._deep_copy_contours(
-                ufo,
-                parent,
-                ufo[nested.baseGlyph],
-                transformation.transform(nested.transformation),
-            )
-
-        if component != parent:
-            pen = TransformPen(parent.getPen(), transformation)
-
-            # if the transformation has a negative determinant, it will reverse
-            # the contour direction of the component
-            xx, xy, yx, yy = transformation[:4]
-            if xx * yy - xy * yx < 0:
-                pen = ReverseContourPen(pen)
-
-            component.draw(pen)
-
-    @_deprecated
-    @timer()
-    def convert_curves(
-        self, ufos, compatible=False, reverse_direction=True, conversion_error=None
-    ):
-        from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
-
-        if compatible:
-            logger.info("Converting curves compatibly")
-            fonts_to_quadratic(
-                ufos,
-                max_err_em=conversion_error,
-                reverse_direction=reverse_direction,
-                dump_stats=True,
-            )
-        else:
-            for ufo in ufos:
-                logger.info("Converting curves for " + self._font_name(ufo))
-                font_to_quadratic(
-                    ufo,
-                    max_err_em=conversion_error,
-                    reverse_direction=reverse_direction,
-                    dump_stats=True,
-                )
 
     def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""
