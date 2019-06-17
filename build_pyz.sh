@@ -9,7 +9,7 @@ PLATFORMS=(manylinux1_x86_64 macosx_10_6_intel win32 win_amd64)
 PYTHON_VERSIONS=(3.6 3.7)
 FONTMAKE_VERSION="$(python setup.py --version)"
 
-FONTMAKE_WHEEL="${HERE}/dist/fontmake-${FONTMAKE_VERSION}-py2.py3-none-any.whl"
+FONTMAKE_WHEEL="${HERE}/dist/fontmake-${FONTMAKE_VERSION}-py3-none-any.whl"
 REQUIREMENTS="${HERE}/requirements.txt"
 LICENSE_FILE="${HERE}/LICENSE"
 

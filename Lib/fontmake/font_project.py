@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import glob
 import logging
 import math
@@ -24,15 +21,14 @@ import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
 from functools import partial, wraps
+from plistlib import load as readPlist
+from re import fullmatch
 
 import ufo2ft
 from defcon import Font
 from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
-from fontmake.errors import FontmakeError, TTFAError
-from fontmake.ttfautohint import ttfautohint
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
-from fontTools.misc.py23 import basestring, tobytes, zip
 from fontTools.misc.transform import Transform
 from fontTools.pens.reverseContourPen import ReverseContourPen
 from fontTools.pens.transformPen import TransformPen
@@ -43,20 +39,8 @@ from ufo2ft.featureCompiler import FeatureCompiler, parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
 from ufo2ft.util import makeOfficialGlyphOrder
 
-try:
-    from plistlib import load as readPlist  # PY3
-except ImportError:
-    from plistlib import readPlist  # PY2
-
-try:
-    from re import fullmatch
-except ImportError:
-    import re
-
-    def fullmatch(regex, string, flags=0):
-        """Backport of python3.4 re.fullmatch()."""
-        return re.match("(?:" + regex + r")\Z", string, flags=flags)
-
+from fontmake.errors import FontmakeError, TTFAError
+from fontmake.ttfautohint import ttfautohint
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger("fontmake.timer"), level=logging.DEBUG)
@@ -129,7 +113,7 @@ def temporarily_disabling_axis_maps(designspace_path):
         os.remove(temp_designspace_path)
 
 
-class FontProject(object):
+class FontProject:
     """Provides methods for building fonts."""
 
     def __init__(self, timing=False, verbose="INFO", validate_ufo=False):
@@ -314,7 +298,7 @@ class FontProject(object):
     def _load_designspace_sources(designspace):
         if hasattr(designspace, "__fspath__"):
             ds_path = designspace.__fspath__()
-        if isinstance(designspace, basestring):
+        if isinstance(designspace, str):
             ds_path = designspace
         else:
             # reload designspace from its path so we have a new copy
@@ -336,7 +320,7 @@ class FontProject(object):
         conversion_error=None,
         feature_writers=None,
         cff_round_tolerance=None,
-        **kwargs
+        **kwargs,
     ):
         designspace = self._load_designspace_sources(designspace)
 
@@ -382,7 +366,7 @@ class FontProject(object):
         conversion_error=None,
         feature_writers=None,
         cff_round_tolerance=None,
-        **kwargs
+        **kwargs,
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
@@ -436,7 +420,7 @@ class FontProject(object):
 
         for ufo in ufos:
             name = self._font_name(ufo)
-            logger.info("Building {} for {}".format(fmt, name))
+            logger.info(f"Building {fmt} for {name}")
 
             yield compile_func(ufo, **options)
 
@@ -570,7 +554,7 @@ class FontProject(object):
                 overlapsBackend=overlaps_backend,
                 optimizeCFF=optimize_cff,
                 roundTolerance=cff_round_tolerance,
-                **compiler_options
+                **compiler_options,
             )
 
         do_autohint = ttf and autohint is not None
@@ -732,7 +716,7 @@ class FontProject(object):
         instance_dir=None,
         family_name=None,
         mti_source=None,
-        **kwargs
+        **kwargs,
     ):
         """Run toolchain from Glyphs source.
 
@@ -847,7 +831,7 @@ class FontProject(object):
         round_instances=False,
         feature_writers=None,
         expand_features_to_instances=False,
-        **kwargs
+        **kwargs,
     ):
         """Run toolchain from a DesignSpace document to produce either static
         instance fonts (ttf or otf), interpolatable or variable fonts.
@@ -904,14 +888,14 @@ class FontProject(object):
                 round_instances=round_instances,
                 feature_writers=feature_writers,
                 expand_features_to_instances=expand_features_to_instances,
-                **kwargs
+                **kwargs,
             )
         if interp_outputs:
             self._run_from_designspace_interpolatable(
                 designspace,
                 outputs=interp_outputs,
                 feature_writers=feature_writers,
-                **kwargs
+                **kwargs,
             )
 
     def _run_from_designspace_static(
@@ -924,13 +908,13 @@ class FontProject(object):
         round_instances=False,
         feature_writers=None,
         expand_features_to_instances=False,
-        **kwargs
+        **kwargs,
     ):
         ufos = []
         if not interpolate or masters_as_instances:
             ufos.extend(s.path for s in designspace.sources if s.path)
         if interpolate:
-            pattern = interpolate if isinstance(interpolate, basestring) else None
+            pattern = interpolate if isinstance(interpolate, str) else None
             ufos.extend(
                 self.interpolate_instance_ufos(
                     designspace,
@@ -944,7 +928,7 @@ class FontProject(object):
             interpolate_layout_from = interpolate_layout_dir = None
         else:
             interpolate_layout_from = designspace
-            if isinstance(interpolate_binary_layout, basestring):
+            if isinstance(interpolate_binary_layout, str):
                 interpolate_layout_dir = interpolate_binary_layout
             else:
                 interpolate_layout_dir = None
@@ -956,7 +940,7 @@ class FontProject(object):
             interpolate_layout_from=interpolate_layout_from,
             interpolate_layout_dir=interpolate_layout_dir,
             feature_writers=feature_writers,
-            **kwargs
+            **kwargs,
         )
 
     def _run_from_designspace_interpolatable(
@@ -979,7 +963,7 @@ class FontProject(object):
                 output_path=output_path,
                 output_dir=output_dir,
                 ttf=False,
-                **kwargs
+                **kwargs,
             )
 
         if "otf-interpolatable" in outputs:
@@ -1001,12 +985,12 @@ class FontProject(object):
         # the `ufos` parameter can be a list of UFO objects
         # or it can be a path (string) with a glob syntax
         ufo_paths = []
-        if isinstance(ufos, basestring):
+        if isinstance(ufos, str):
             ufo_paths = glob.glob(ufos)
             ufos = [Font(x) for x in ufo_paths]
         elif isinstance(ufos, list):
             # ufos can be either paths or open Font objects, so normalize them
-            ufos = [Font(x) if isinstance(x, basestring) else x for x in ufos]
+            ufos = [Font(x) if isinstance(x, str) else x for x in ufos]
             ufo_paths = [x.path for x in ufos]
         else:
             raise FontmakeError(
@@ -1049,7 +1033,7 @@ class FontProject(object):
             if ufo.info.styleName is not None
             else "None"
         )
-        return "{}-{}".format(family_name, style_name)
+        return f"{family_name}-{style_name}"
 
     def _output_dir(
         self,
@@ -1098,7 +1082,7 @@ class FontProject(object):
     ):
         """Generate output path for a font file with given extension."""
 
-        if isinstance(ufo_or_font_name, basestring):
+        if isinstance(ufo_or_font_name, str):
             font_name = ufo_or_font_name
         elif ufo_or_font_name.path:
             font_name = os.path.splitext(
@@ -1115,9 +1099,9 @@ class FontProject(object):
             os.makedirs(output_dir)
 
         if suffix:
-            return os.path.join(output_dir, "{}-{}.{}".format(font_name, suffix, ext))
+            return os.path.join(output_dir, f"{font_name}-{suffix}.{ext}")
         else:
-            return os.path.join(output_dir, "{}.{}".format(font_name, ext))
+            return os.path.join(output_dir, f"{font_name}.{ext}")
 
     def _designspace_locations(self, designspace):
         """Map font filenames to their locations in a designspace."""
@@ -1156,7 +1140,6 @@ class FDKFeatureCompiler(FeatureCompiler):
             return
 
         import subprocess
-        from fontTools.misc.py23 import tostr
 
         outline_path = feasrc_path = fea_path = None
         try:
@@ -1168,7 +1151,7 @@ class FDKFeatureCompiler(FeatureCompiler):
             os.close(fd)
 
             fd, fea_path = tempfile.mkstemp()
-            os.write(fd, tobytes(self.features, encoding="utf-8"))
+            os.write(fd, bytes(self.features, encoding="utf-8"))
             os.close(fd)
 
             process = subprocess.Popen(
@@ -1179,7 +1162,7 @@ class FDKFeatureCompiler(FeatureCompiler):
             stdout, stderr = process.communicate()
             retcode = process.poll()
 
-            report = tostr(stdout + (b"\n" + stderr if stderr else b""))
+            report = str(stdout + (b"\n" + stderr if stderr else b""))
             logger.info(report)
 
             # before afdko >= 2.7.1rc1, makeotf did not exit with non-zero
