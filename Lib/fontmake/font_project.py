@@ -1159,7 +1159,7 @@ class FDKFeatureCompiler(FeatureCompiler):
             stdout, stderr = process.communicate()
             retcode = process.poll()
 
-            report = str(stdout + (b"\n" + stderr if stderr else b""))
+            report = (stdout + (b"\n" + stderr if stderr else b"")).decode("ascii")
             logger.info(report)
 
             # before afdko >= 2.7.1rc1, makeotf did not exit with non-zero
