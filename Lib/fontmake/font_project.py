@@ -21,7 +21,6 @@ import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
 from functools import partial, wraps
-from plistlib import load as readPlist
 from re import fullmatch
 
 import ufo2ft
@@ -29,6 +28,7 @@ from defcon import Font
 from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
+from fontTools.misc.plistlib import load as readPlist
 from fontTools.misc.transform import Transform
 from fontTools.pens.reverseContourPen import ReverseContourPen
 from fontTools.pens.transformPen import TransformPen
