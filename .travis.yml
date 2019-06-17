@@ -5,6 +5,17 @@ env:
     - TWINE_USERNAME="anthrotype"
     - secure: wg1vkiWvySib0Zz37R4GZyHEcW84774P09NuT8B7EyAH2McGSmCw8SrbwqzLx8VIayr7hw5ttTSrU2mSf1oapZzhRvetAW3FvaUqlBLfDIXUFbbsMXUgEPIiaahaxmjhAKHkLcZEKJyyzHwAXzCVF1KTE7z4UmjEy0whl4Tf4MP+0OSbTKcTqxNYIWj/IWn22lt8zjtoUdWFR/qmzX/WPtgOLT49CkXKOPLdndohDOjQqiALq07ofiyeL+zBYqIT/OYsX1w+bkaI1Rbj4ovr0MRPprs6Vf/s9qcyarVQgUmeSCwQDarDx5nC+hLnSY+6k8Tk4xQC94QE0LmKvCcNMQFZ/qcP5YJ4oKZJ0nIjEwktpRGLQzrHrTKqNHGMiBtRvwn1t/P8Wpl+KfbB6BjvkjzSGsLrWmzhX247zppy4u+wC4eozItgrTyHvo5Zv1BSYGlC9P9ql/pmFCt0N1Wnfal0trLTQAWS03Tt0m7Tv94Ss7LWlRqJWsOUsK2Jrygyr53ParRX4E96ho8vMGM1OWqrpaFEnYGRt5gp2SHrwBVUdJCUybw5RKH+npAG/8B0gvewGy9nSoo8+T/BYPKM41105Ses7O3ucKcgFy9NWunJYHPwQZLy5YPF9UdcKKa3Vdgm0oB8C6Qew2wYNftJXBmsJI2QtNTJBNHzY1xlNeo=
 
+# The following prevents Travis from running CI on pull requests that come from a
+# branch in the same repository. Without this, it will run the same CI for the
+# pull request branch _and_ the pull request itself, which makes no sense.
+branches:
+  only:
+    - master
+    # We want to build wip/* branches since these are not usually used for PRs
+    - /^wip\/.*$/
+    # We want to build version tags as well.
+    - /^v\d+\.\d+.*$/
+
 cache:
   directories:
     - $HOME/.cache/pip
