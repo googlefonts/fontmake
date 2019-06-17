@@ -35,6 +35,7 @@ setup(
     package_dir={"": "Lib"},
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
+    python_requires=">=3.6",
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=3.42.0",
         "cu2qu>=1.6.5",
