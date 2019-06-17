@@ -7,4 +7,4 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.black]
-target-version = ["py27"]
+target-version = ["py36"]

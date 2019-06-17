@@ -11,7 +11,7 @@ binaries (.otf, .ttf).
 Installation
 ~~~~~~~~~~~~
 
-Fontmake requires Python 2.7, 3.5 or later.
+Fontmake requires Python 3.6 or later.
 
 Releases are available on `PyPI`_ and can be installed with `pip`_.
 
@@ -73,6 +73,6 @@ process, via methods of the ``fontmake.font_project.FontProject`` class.
 .. _Github releases: https://github.com/googlefonts/fontmake/releases
 .. |Travis Build Status| image:: https://travis-ci.org/googlefonts/fontmake.svg
    :target: https://travis-ci.org/googlefonts/fontmake
-.. |Python Versions| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
+.. |Python Versions| image:: https://img.shields.io/badge/python-3.6-blue.svg
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/fontmake.svg
    :target: https://pypi.org/project/fontmake/

@@ -17,6 +17,7 @@ from io import open
 
 from setuptools import find_packages, setup
 
+
 needs_wheel = {"bdist_wheel"}.intersection(sys.argv)
 wheel = ["wheel"] if needs_wheel else []
 
@@ -27,7 +28,7 @@ setup(
     name="fontmake",
     use_scm_version={"write_to": "Lib/fontmake/_version.py"},
     description=(
-        "Compile fonts from sources (UFO, Glyphs) to binary " "(OpenType, TrueType)."
+        "Compile fonts from sources (UFO, Glyphs) to binary (OpenType, TrueType)."
     ),
     long_description=long_description,
     url="https://github.com/googlei18n/fontmake",
@@ -36,6 +37,7 @@ setup(
     package_dir={"": "Lib"},
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
+    python_requires=">=3.6",
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=3.42.0",
         "cu2qu>=1.6.5",
@@ -60,7 +62,6 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Multimedia :: Graphics",
         "Topic :: Multimedia :: Graphics :: Graphics Conversion",
