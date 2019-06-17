@@ -20,7 +20,7 @@ import shutil
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from functools import partial, wraps
+from functools import partial
 from re import fullmatch
 
 import ufo2ft
@@ -29,13 +29,10 @@ from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
 from fontTools.misc.plistlib import load as readPlist
-from fontTools.misc.transform import Transform
-from fontTools.pens.reverseContourPen import ReverseContourPen
-from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import CFFOptimization
-from ufo2ft.featureCompiler import FeatureCompiler, parseLayoutFeatures
+from ufo2ft.featureCompiler import parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
 from ufo2ft.util import makeOfficialGlyphOrder
 
@@ -58,21 +55,6 @@ GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
-
-
-def _deprecated(func):
-    import warnings
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        warnings.warn(
-            "'%s' is deprecated and will be dropped in future versions" % func.__name__,
-            category=UserWarning,
-            stacklevel=2,
-        )
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 @contextmanager
@@ -203,88 +185,6 @@ class FontProject:
                 # it only contains junk information anyway.
                 master.features.text = ""
             master.save()
-
-    @_deprecated
-    @timer()
-    def remove_overlaps(self, ufos, glyph_filter=lambda g: len(g)):
-        """Remove overlaps in UFOs' glyphs' contours."""
-        from booleanOperations import union, BooleanOperationsError
-
-        for ufo in ufos:
-            font_name = self._font_name(ufo)
-            logger.info("Removing overlaps for " + font_name)
-            for glyph in ufo:
-                if not glyph_filter(glyph):
-                    continue
-                contours = list(glyph)
-                glyph.clearContours()
-                try:
-                    union(contours, glyph.getPointPen())
-                except BooleanOperationsError:
-                    logger.error(
-                        "Failed to remove overlaps for %s: %r", font_name, glyph.name
-                    )
-                    raise
-
-    @_deprecated
-    @timer()
-    def decompose_glyphs(self, ufos, glyph_filter=lambda g: True):
-        """Move components of UFOs' glyphs to their outlines."""
-
-        for ufo in ufos:
-            logger.info("Decomposing glyphs for " + self._font_name(ufo))
-            for glyph in ufo:
-                if not glyph.components or not glyph_filter(glyph):
-                    continue
-                self._deep_copy_contours(ufo, glyph, glyph, Transform())
-                glyph.clearComponents()
-
-    def _deep_copy_contours(self, ufo, parent, component, transformation):
-        """Copy contours from component to parent, including nested components."""
-
-        for nested in component.components:
-            self._deep_copy_contours(
-                ufo,
-                parent,
-                ufo[nested.baseGlyph],
-                transformation.transform(nested.transformation),
-            )
-
-        if component != parent:
-            pen = TransformPen(parent.getPen(), transformation)
-
-            # if the transformation has a negative determinant, it will reverse
-            # the contour direction of the component
-            xx, xy, yx, yy = transformation[:4]
-            if xx * yy - xy * yx < 0:
-                pen = ReverseContourPen(pen)
-
-            component.draw(pen)
-
-    @_deprecated
-    @timer()
-    def convert_curves(
-        self, ufos, compatible=False, reverse_direction=True, conversion_error=None
-    ):
-        from cu2qu.ufo import font_to_quadratic, fonts_to_quadratic
-
-        if compatible:
-            logger.info("Converting curves compatibly")
-            fonts_to_quadratic(
-                ufos,
-                max_err_em=conversion_error,
-                reverse_direction=reverse_direction,
-                dump_stats=True,
-            )
-        else:
-            for ufo in ufos:
-                logger.info("Converting curves for " + self._font_name(ufo))
-                font_to_quadratic(
-                    ufo,
-                    max_err_em=conversion_error,
-                    reverse_direction=reverse_direction,
-                    dump_stats=True,
-                )
 
     def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""
@@ -429,7 +329,6 @@ class FontProject:
         ttf=False,
         is_instance=False,
         interpolatable=False,
-        use_afdko=False,
         autohint=None,
         subset=None,
         use_production_names=None,
@@ -454,7 +353,6 @@ class FontProject:
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
             interpolatable: If output is interpolatable, for generating paths.
-            use_afdko: If True, use AFDKO to compile feature source.
             autohint: Parameters to provide to ttfautohint. If not provided, the
                 autohinting step is skipped.
             subset: Whether to subset the output according to data in the UFOs.
@@ -534,8 +432,6 @@ class FontProject:
             featureWriters=feature_writers,
             inplace=True,  # avoid extra copy
         )
-        if use_afdko:
-            compiler_options["featureCompilerClass"] = FDKFeatureCompiler
 
         if interpolatable:
             if not ttf:
@@ -1127,58 +1023,6 @@ class FontProject:
                 closest = path
                 closest_dist = cur_dist
         return closest
-
-
-class FDKFeatureCompiler(FeatureCompiler):
-    """An OTF compiler which uses the AFDKO to compile feature syntax."""
-
-    def buildTables(self):
-        if not self.features.strip():
-            return
-
-        import subprocess
-
-        outline_path = feasrc_path = fea_path = None
-        try:
-            fd, outline_path = tempfile.mkstemp()
-            os.close(fd)
-            self.ttFont.save(outline_path)
-
-            fd, feasrc_path = tempfile.mkstemp()
-            os.close(fd)
-
-            fd, fea_path = tempfile.mkstemp()
-            os.write(fd, bytes(self.features, encoding="utf-8"))
-            os.close(fd)
-
-            process = subprocess.Popen(
-                ["makeotf", "-o", feasrc_path, "-f", outline_path, "-ff", fea_path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            stdout, stderr = process.communicate()
-            retcode = process.poll()
-
-            report = (stdout + (b"\n" + stderr if stderr else b"")).decode("ascii")
-            logger.info(report)
-
-            # before afdko >= 2.7.1rc1, makeotf did not exit with non-zero
-            # on failure, so we have to parse the error message
-            if retcode != 0:
-                success = False
-            else:
-                success = "makeotf [Error] Failed to build output font" not in report
-                if success:
-                    with TTFont(feasrc_path) as feasrc:
-                        for table in ["GDEF", "GPOS", "GSUB"]:
-                            if table in feasrc:
-                                self.ttFont[table] = feasrc[table]
-            if not success:
-                raise FontmakeError("Feature syntax compilation failed.")
-        finally:
-            for path in (outline_path, fea_path, feasrc_path):
-                if path is not None:
-                    os.remove(path)
 
 
 def _varLib_finder(source, directory="", ext="ttf"):
