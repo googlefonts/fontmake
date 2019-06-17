@@ -5,6 +5,7 @@
 # to native line endings on checkout.
 *.cfg text
 *.in text
+*.ini text
 *.md text
 *.py text
 *.rst text

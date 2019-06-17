@@ -1,0 +1,32 @@
+[run]
+# measure 'branch' coverage in addition to 'statement' coverage
+# See: http://coverage.readthedocs.org/en/coverage-4.0.3/branch.html#branch
+branch = True
+parallel = True
+omit = tests/*
+
+# list of directories or packages to measure
+source = fontmake
+
+# these are treated as equivalent when combining data
+[paths]
+source =
+    Lib/fontmake
+    */site-packages/fontmake
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # keywords to use in inline comments to skip coverage
+    pragma: no cover
+
+    # don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # don't complain if non-runnable code isn't run
+    if 0:
+    if __name__ == .__main__.:
+
+# ignore source code that can’t be found
+ignore_errors = True
