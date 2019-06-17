@@ -296,11 +296,6 @@ def main(args=None):
 
     feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
     feaCompilerGroup.add_argument(
-        "--use-afdko",
-        action="store_true",
-        help="Use makeOTF instead of feaLib to compile FEA.",
-    )
-    feaCompilerGroup.add_argument(
         "--mti-source",
         help="Path to mtiLib .txt feature definitions (use instead of FEA)",
     )

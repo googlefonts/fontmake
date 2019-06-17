@@ -35,7 +35,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import CFFOptimization
-from ufo2ft.featureCompiler import FeatureCompiler, parseLayoutFeatures
+from ufo2ft.featureCompiler import parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
 from ufo2ft.util import makeOfficialGlyphOrder
 
@@ -429,7 +429,6 @@ class FontProject:
         ttf=False,
         is_instance=False,
         interpolatable=False,
-        use_afdko=False,
         autohint=None,
         subset=None,
         use_production_names=None,
@@ -454,7 +453,6 @@ class FontProject:
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
             interpolatable: If output is interpolatable, for generating paths.
-            use_afdko: If True, use AFDKO to compile feature source.
             autohint: Parameters to provide to ttfautohint. If not provided, the
                 autohinting step is skipped.
             subset: Whether to subset the output according to data in the UFOs.
@@ -534,8 +532,6 @@ class FontProject:
             featureWriters=feature_writers,
             inplace=True,  # avoid extra copy
         )
-        if use_afdko:
-            compiler_options["featureCompilerClass"] = FDKFeatureCompiler
 
         if interpolatable:
             if not ttf:
@@ -1127,58 +1123,6 @@ class FontProject:
                 closest = path
                 closest_dist = cur_dist
         return closest
-
-
-class FDKFeatureCompiler(FeatureCompiler):
-    """An OTF compiler which uses the AFDKO to compile feature syntax."""
-
-    def buildTables(self):
-        if not self.features.strip():
-            return
-
-        import subprocess
-
-        outline_path = feasrc_path = fea_path = None
-        try:
-            fd, outline_path = tempfile.mkstemp()
-            os.close(fd)
-            self.ttFont.save(outline_path)
-
-            fd, feasrc_path = tempfile.mkstemp()
-            os.close(fd)
-
-            fd, fea_path = tempfile.mkstemp()
-            os.write(fd, bytes(self.features, encoding="utf-8"))
-            os.close(fd)
-
-            process = subprocess.Popen(
-                ["makeotf", "-o", feasrc_path, "-f", outline_path, "-ff", fea_path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            stdout, stderr = process.communicate()
-            retcode = process.poll()
-
-            report = (stdout + (b"\n" + stderr if stderr else b"")).decode("ascii")
-            logger.info(report)
-
-            # before afdko >= 2.7.1rc1, makeotf did not exit with non-zero
-            # on failure, so we have to parse the error message
-            if retcode != 0:
-                success = False
-            else:
-                success = "makeotf [Error] Failed to build output font" not in report
-                if success:
-                    with TTFont(feasrc_path) as feasrc:
-                        for table in ["GDEF", "GPOS", "GSUB"]:
-                            if table in feasrc:
-                                self.ttFont[table] = feasrc[table]
-            if not success:
-                raise FontmakeError("Feature syntax compilation failed.")
-        finally:
-            for path in (outline_path, fea_path, feasrc_path):
-                if path is not None:
-                    os.remove(path)
 
 
 def _varLib_finder(source, directory="", ext="ttf"):
