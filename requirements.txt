@@ -1,4 +1,4 @@
-fonttools[lxml,unicode,ufo]==3.42.0
+fonttools[lxml,unicode,ufo]==3.43.0
 cu2qu==1.6.5
 glyphsLib==4.0.0
 ufo2ft[pathops]==2.9.0

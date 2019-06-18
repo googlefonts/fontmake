@@ -37,7 +37,7 @@ setup(
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
     install_requires=[
-        "fonttools[ufo,lxml,unicode]>=3.42.0",
+        "fonttools[ufo,lxml,unicode]>=3.43.0",
         "cu2qu>=1.6.5",
         "glyphsLib>=4.0.0",
         "ufo2ft>=2.9.0",
