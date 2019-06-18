@@ -40,7 +40,7 @@ setup(
         "fonttools[ufo,lxml,unicode]>=3.43.0",
         "cu2qu>=1.6.5",
         "glyphsLib>=4.0.0",
-        "ufo2ft>=2.9.0",
+        "ufo2ft>=2.9.1",
         "MutatorMath>=2.1.2",
         "defcon[lxml]>=0.6.0",
         "booleanOperations>=0.8.2",
