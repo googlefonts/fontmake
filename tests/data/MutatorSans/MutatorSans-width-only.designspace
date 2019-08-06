@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.0">
+  <axes>
+    <axis tag="wdth" name="width" minimum="0" maximum="1000" default="0"/>
+  </axes>
+  <sources>
+    <source filename="MutatorSansLightCondensed.ufo" familyname="MutatorMathTest" stylename="LightCondensed">
+      <lib copy="1"/>
+      <groups copy="1"/>
+      <features copy="1"/>
+      <info copy="1"/>
+      <location>
+        <dimension name="width" xvalue="0"/>
+      </location>
+    </source>
+    <source filename="MutatorSansLightWide.ufo" familyname="MutatorMathTest" stylename="LightWide">
+      <location>
+        <dimension name="width" xvalue="1000"/>
+      </location>
+    </source>
+  </sources>
+  <instances>
+    <instance familyname="MutatorMathTest" stylename="LightCondensed" filename="instances/MutatorMathTest-Style_1.ufo">
+      <location>
+        <dimension name="width" xvalue="0"/>
+      </location>
+      <kerning/>
+      <info/>
+    </instance>
+    <instance familyname="MutatorMathTest" stylename="LightWide" filename="instances/MutatorMathTest-Style_3.ufo">
+      <location>
+        <dimension name="width" xvalue="1000"/>
+      </location>
+      <kerning/>
+      <info/>
+    </instance>
+  </instances>
+  <lib>
+    <dict>
+      <key>com.letterror.skateboard.previewLocation</key>
+      <dict>
+        <key>width</key>
+        <real>0.0</real>
+      </dict>
+    </dict>
+  </lib>
+</designspace>

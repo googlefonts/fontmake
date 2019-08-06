@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="a.swap" format="2">
+  <advance width="666.0"/>
+  <outline>
+    <contour>
+      <point x="127" y="500" type="line"/>
+      <point x="125" y="1" type="line"/>
+      <point x="515" y="1" type="line"/>
+      <point x="511" y="175" type="line"/>
+      <point x="238" y="184" type="line"/>
+      <point x="231" y="333" type="line"/>
+      <point x="519" y="329" type="line"/>
+      <point x="519" y="500" type="line"/>
+    </contour>
+  </outline>
+</glyph>

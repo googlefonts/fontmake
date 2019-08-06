@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="S.closed" format="2">
+  <advance width="671"/>
+  <outline>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.letterror.skateboard.navigator</key>
+      <dict>
+        <key>location</key>
+        <dict>
+          <key>weight</key>
+          <real>800.0</real>
+          <key>width</key>
+          <real>0.0</real>
+        </dict>
+      </dict>
+    </dict>
+  </lib>
+</glyph>

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.0">
+  <axes>
+    <axis tag="wght" name="weight" minimum="300" maximum="700" default="300">
+      <map input="300" output="50"/>
+      <map input="400" output="100"/>
+      <map input="700" output="150"/>
+    </axis>
+  </axes>
+  <sources>
+    <source filename="MyFont-Light.ufo">
+      <location>
+        <dimension name="weight" xvalue="50"/>
+      </location>
+    </source>
+    <source filename="MyFont-Bold.ufo">
+      <location>
+        <dimension name="weight" xvalue="150"/>
+      </location>
+    </source>
+  </sources>
+  <instances>
+    <instance>
+      <location>
+        <dimension name="weight" xvalue="100"/>
+      </location>
+      <lib>
+        <dict>
+          <key>blorb</key>
+          <string>hurx</string>
+          <key>public.skipExportGlyphs</key>
+          <array>
+            <string>x</string>
+            <string>y</string>
+            <string>z</string>
+          </array>
+        </dict>
+      </lib>
+    </instance>
+    <instance>
+      <location>
+        <dimension name="weight" xvalue="110"/>
+      </location>
+    </instance>
+  </instances>
+  <lib>
+    <dict>
+      <key>public.skipExportGlyphs</key>
+      <array>
+        <string>a</string>
+        <string>b</string>
+        <string>c</string>
+      </array>
+    </dict>
+  </lib>
+</designspace>

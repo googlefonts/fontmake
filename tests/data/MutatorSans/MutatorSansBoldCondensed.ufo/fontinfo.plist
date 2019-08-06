@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>ascender</key>
+    <integer>800</integer>
+    <key>capHeight</key>
+    <integer>800</integer>
+    <key>copyright</key>
+    <string>License same as MutatorMath. BSD 3-clause. [test-token: A]</string>
+    <key>descender</key>
+    <integer>-200</integer>
+    <key>familyName</key>
+    <string>MutatorMathTest</string>
+    <key>guidelines</key>
+    <array/>
+    <key>italicAngle</key>
+    <integer>0</integer>
+    <key>openTypeNameLicense</key>
+    <string>License same as MutatorMath. BSD 3-clause. [test-token: A]</string>
+    <key>openTypeOS2VendorID</key>
+    <string>LTTR</string>
+    <key>postscriptBlueValues</key>
+    <array/>
+    <key>postscriptDefaultWidthX</key>
+    <integer>500</integer>
+    <key>postscriptFamilyBlues</key>
+    <array/>
+    <key>postscriptFamilyOtherBlues</key>
+    <array/>
+    <key>postscriptFontName</key>
+    <string>MutatorMathTest-BoldCondensed</string>
+    <key>postscriptFullName</key>
+    <string>MutatorMathTest BoldCondensed</string>
+    <key>postscriptOtherBlues</key>
+    <array/>
+    <key>postscriptSlantAngle</key>
+    <integer>0</integer>
+    <key>postscriptStemSnapH</key>
+    <array/>
+    <key>postscriptStemSnapV</key>
+    <array/>
+    <key>postscriptWindowsCharacterSet</key>
+    <integer>1</integer>
+    <key>styleMapFamilyName</key>
+    <string></string>
+    <key>styleMapStyleName</key>
+    <string>regular</string>
+    <key>styleName</key>
+    <string>BoldCondensed</string>
+    <key>unitsPerEm</key>
+    <integer>1000</integer>
+    <key>versionMajor</key>
+    <integer>1</integer>
+    <key>versionMinor</key>
+    <integer>2</integer>
+    <key>xHeight</key>
+    <integer>500</integer>
+    <key>year</key>
+    <integer>2004</integer>
+  </dict>
+</plist>

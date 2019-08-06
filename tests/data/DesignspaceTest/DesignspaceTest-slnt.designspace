@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.0">
+  <axes>
+    <axis tag="slnt" name="slant" minimum="0" maximum="90" default="0" />
+  </axes>
+  <sources>
+    <source filename="MyFont-Light.ufo">
+      <location>
+        <dimension name="slant" xvalue="0"/>
+      </location>
+    </source>
+    <source filename="MyFont-Bold.ufo">
+      <location>
+        <dimension name="slant" xvalue="90"/>
+      </location>
+    </source>
+  </sources>
+  <instances>
+    <instance>
+      <location>
+        <dimension name="slant" xvalue="40.123"/>
+      </location>
+    </instance>
+  </instances>
+</designspace>

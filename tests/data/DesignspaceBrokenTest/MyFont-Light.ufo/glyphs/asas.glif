@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="asas" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="227" y="568" type="line"/>
+      <point x="182" y="248" type="line"/>
+      <point x="508" y="157" type="line"/>
+      <point x="516" y="563" type="line"/>
+      <point x="459" y="540"/>
+      <point x="361" y="403"/>
+      <point x="353" y="496" type="curve"/>
+      <point x="276" y="562" type="line"/>
+    </contour>
+  </outline>
+</glyph>
