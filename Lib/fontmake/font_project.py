@@ -23,6 +23,7 @@ from contextlib import contextmanager
 from functools import partial
 from re import fullmatch
 
+import attr
 import ufo2ft
 from defcon import Font
 from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
@@ -36,6 +37,7 @@ from ufo2ft.featureCompiler import parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
 from ufo2ft.util import makeOfficialGlyphOrder
 
+from fontmake import instantiator
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
 
@@ -647,6 +649,78 @@ class FontProject:
         round_instances=False,
         expand_features_to_instances=False,
     ):
+        """Interpolate master UFOs with Instantiator and return instance UFOs.
+
+        Args:
+            designspace: a DesignSpaceDocument object containing sources and
+                instances.
+            include (str): optional regular expression pattern to match the
+                DS instance 'name' attribute and only interpolate the matching
+                instances.
+            round_instances (bool): round instances' coordinates to integer.
+            expand_features_to_instances: parses the master feature file, expands all
+                include()s and writes the resulting full feature file to all instance
+                UFOs. Use this if you share feature files among masters in external
+                files. Otherwise, the relative include paths can break as instances
+                may end up elsewhere. Only done on interpolation.
+        Returns:
+            generator of ufoLib2.Font objects corresponding to the UFO instances.
+        Raises:
+            ValueError: The Designspace has no default source or contains incompatible
+                glyphs or contains anisotropic (MutatorMath) locations or contains a
+                <rules> substitution for a non-existant glyph.
+        """
+        from glyphsLib.interpolation import apply_instance_data_to_ufo
+
+        logger.info(
+            "Interpolating master UFOs from designspace and applying instance data"
+        )
+        designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace.path)
+        generator = instantiator.Instantiator.from_designspace(
+            designspace, round_geometry=round_instances
+        )
+
+        if expand_features_to_instances:
+            logger.debug("Expanding features to instance UFOs")
+            fea_txt = parseLayoutFeatures(designspace.default.font).asFea()
+            generator = attr.evolve(generator, copy_feature_text=fea_txt)
+
+        for instance in designspace.instances:
+            # Skip instances that have been set to non-export in Glyphs, stored as the
+            # instance's `com.schriftgestaltung.export` lib key.
+            if not instance.lib.get("com.schriftgestaltung.export", True):
+                continue
+
+            # Skip instances that do not match the user's inclusion regex if given.
+            if include is not None and not fullmatch(include, instance.name):
+                continue
+
+            instance.font = generator.generate_instance(instance)
+
+            apply_instance_data_to_ufo(instance.font, instance, designspace)
+
+            # TODO: Making filenames up on the spot is complicated, ideally don't save
+            # anything if filename is not set, but make something up when "ufo" is in
+            # output formats, but also consider output_path.
+            if instance.filename is None:
+                raise ValueError(
+                    "It is currently required that instances have filenames set."
+                )
+            ufo_path = os.path.join(
+                os.path.dirname(designspace.path), instance.filename
+            )
+            os.makedirs(os.path.dirname(ufo_path), exist_ok=True)
+            instance.font.save(ufo_path, overwrite=True)
+
+            yield instance.font
+
+    def interpolate_instance_ufos_mutatormath(
+        self,
+        designspace,
+        include=None,
+        round_instances=False,
+        expand_features_to_instances=False,
+    ):
         """Interpolate master UFOs with MutatorMath and return instance UFOs.
 
         Args:
@@ -724,6 +798,7 @@ class FontProject:
         round_instances=False,
         feature_writers=None,
         expand_features_to_instances=False,
+        use_mutatormath=False,
         **kwargs,
     ):
         """Run toolchain from a DesignSpace document to produce either static
@@ -781,6 +856,7 @@ class FontProject:
                 round_instances=round_instances,
                 feature_writers=feature_writers,
                 expand_features_to_instances=expand_features_to_instances,
+                use_mutatormath=use_mutatormath,
                 **kwargs,
             )
         if interp_outputs:
@@ -801,6 +877,7 @@ class FontProject:
         round_instances=False,
         feature_writers=None,
         expand_features_to_instances=False,
+        use_mutatormath=False,
         **kwargs,
     ):
         ufos = []
@@ -808,14 +885,24 @@ class FontProject:
             ufos.extend(s.path for s in designspace.sources if s.path)
         if interpolate:
             pattern = interpolate if isinstance(interpolate, str) else None
-            ufos.extend(
-                self.interpolate_instance_ufos(
-                    designspace,
-                    include=pattern,
-                    round_instances=round_instances,
-                    expand_features_to_instances=expand_features_to_instances,
+            if use_mutatormath:
+                ufos.extend(
+                    self.interpolate_instance_ufos_mutatormath(
+                        designspace,
+                        include=pattern,
+                        round_instances=round_instances,
+                        expand_features_to_instances=expand_features_to_instances,
+                    )
                 )
-            )
+            else:
+                ufos.extend(
+                    self.interpolate_instance_ufos(
+                        designspace,
+                        include=pattern,
+                        round_instances=round_instances,
+                        expand_features_to_instances=expand_features_to_instances,
+                    )
+                )
 
         if interpolate_binary_layout is False:
             interpolate_layout_from = interpolate_layout_dir = None

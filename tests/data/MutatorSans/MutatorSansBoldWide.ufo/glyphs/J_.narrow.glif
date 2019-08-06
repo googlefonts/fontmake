@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="J.narrow" format="2">
+  <advance width="889"/>
+  <outline>
+    <contour>
+      <point x="225" y="-10" type="curve" smooth="yes"/>
+      <point x="596" y="-10"/>
+      <point x="829" y="134"/>
+      <point x="829" y="433" type="curve" smooth="yes"/>
+      <point x="829" y="800" type="line"/>
+      <point x="398" y="800" type="line"/>
+      <point x="398" y="463" type="line" smooth="yes"/>
+      <point x="398" y="337"/>
+      <point x="332" y="284"/>
+      <point x="226" y="284" type="curve" smooth="yes"/>
+      <point x="205" y="284"/>
+      <point x="156" y="285"/>
+      <point x="104" y="293" type="curve"/>
+      <point x="60" y="1" type="line"/>
+      <point x="112" y="-7"/>
+      <point x="167" y="-10"/>
+    </contour>
+  </outline>
+</glyph>

@@ -157,6 +157,14 @@ def main(args=None):
         "(for Glyphs or MutatorMath sources only). ",
     )
     outputGroup.add_argument(
+        "--use-mutatormath",
+        action="store_true",
+        help=(
+            "Use MutatorMath to generate instances (supports extrapolation and "
+            "anisotropic locations)."
+        ),
+    )
+    outputGroup.add_argument(
         "-M",
         "--masters-as-instances",
         action="store_true",
@@ -366,7 +374,12 @@ def main(args=None):
         exclude_args(
             parser,
             args,
-            ["interpolate", "masters_as_instances", "interpolate_binary_layout"],
+            [
+                "interpolate",
+                "masters_as_instances",
+                "interpolate_binary_layout",
+                "use_mutatormath",
+            ],
             "variable output",
         )
     else:
@@ -405,6 +418,7 @@ def main(args=None):
             args,
             [
                 "interpolate",
+                "use_mutatormath",
                 "interpolate_binary_layout",
                 "round_instances",
                 "expand_features_to_instances",

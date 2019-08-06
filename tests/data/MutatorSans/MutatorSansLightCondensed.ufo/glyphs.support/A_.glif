@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="A" format="2">
+  <advance width="930"/>
+  <unicode hex="0041"/>
+  <outline>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.letterror.skateboard.navigator</key>
+      <dict>
+        <key>location</key>
+        <dict>
+          <key>space</key>
+          <real>0.0</real>
+          <key>weight</key>
+          <real>600.0</real>
+          <key>width</key>
+          <real>500.0</real>
+        </dict>
+      </dict>
+      <key>com.typemytype.robofont.Image.Brightness</key>
+      <integer>0</integer>
+      <key>com.typemytype.robofont.Image.Contrast</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Saturation</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Sharpness</key>
+      <real>0.4</real>
+    </dict>
+  </lib>
+</glyph>

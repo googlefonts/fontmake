@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>a</key>
+    <string>a.glif</string>
+    <key>a.swap</key>
+    <string>a.swap.glif</string>
+    <key>aaa</key>
+    <string>aaa.glif</string>
+    <key>aaa.swap</key>
+    <string>aaa.swap.glif</string>
+    <key>space</key>
+    <string>space.glif</string>
+    <key>x</key>
+    <string>x.glif</string>
+    <key>y</key>
+    <string>y.glif</string>
+  </dict>
+</plist>

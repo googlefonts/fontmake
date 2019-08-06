@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="aaa.swap" format="2">
+  <advance width="555.0"/>
+  <outline>
+    <component base="a.swap" xOffset="-22.27952803095792" yOffset="2.97223361843902"/>
+    <component base="a.swap" xOffset="-10.025236583837625" yOffset="552.3294584030505"/>
+    <component base="y" xOffset="4.64136183491604" yOffset="-540.6435574903336"/>
+  </outline>
+</glyph>

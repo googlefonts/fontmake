@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="E" format="2">
+  <advance width="597"/>
+  <unicode hex="0045"/>
+  <anchor x="312" y="841" name="top"/>
+  <outline>
+    <contour>
+      <point x="40" y="0" type="line" smooth="yes"/>
+      <point x="330" y="0" type="line"/>
+      <point x="330" y="800" type="line"/>
+      <point x="40" y="800" type="line" smooth="yes"/>
+    </contour>
+    <contour>
+      <point x="130" y="530" type="line"/>
+      <point x="570" y="530" type="line"/>
+      <point x="570" y="800" type="line"/>
+      <point x="130" y="800" type="line"/>
+    </contour>
+    <contour>
+      <point x="130" y="0" type="line"/>
+      <point x="570" y="0" type="line"/>
+      <point x="570" y="270" type="line"/>
+      <point x="130" y="270" type="line"/>
+    </contour>
+    <contour>
+      <point x="130" y="315" type="line"/>
+      <point x="536" y="315" type="line"/>
+      <point x="536" y="485" type="line"/>
+      <point x="130" y="485" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.typemytype.robofont.Image.Brightness</key>
+      <integer>0</integer>
+      <key>com.typemytype.robofont.Image.Contrast</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Saturation</key>
+      <integer>1</integer>
+      <key>com.typemytype.robofont.Image.Sharpness</key>
+      <real>0.4</real>
+    </dict>
+  </lib>
+</glyph>

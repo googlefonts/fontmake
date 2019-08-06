@@ -439,6 +439,7 @@ instanceInterpolations = {
 "5C1BB0B4-E06E-4398-8A0A-FC3D2F3AAFA2" = 1;
 };
 name = Bold;
+weightClass = Bold;
 }
 );
 unitsPerEm = 1000;

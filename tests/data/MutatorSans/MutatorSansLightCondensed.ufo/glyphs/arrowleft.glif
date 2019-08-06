@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="arrowleft" format="2">
+  <advance width="569"/>
+  <unicode hex="2190"/>
+  <guideline x="26" y="356" angle="0" identifier="BBpvSTOdm4"/>
+  <outline>
+    <contour>
+      <point x="136" y="371" type="line"/>
+      <point x="136" y="342" type="line"/>
+      <point x="559" y="336" type="line"/>
+      <point x="559" y="377" type="line"/>
+    </contour>
+    <contour>
+      <point x="195" y="408" type="line"/>
+      <point x="5" y="356" type="line"/>
+      <point x="194" y="306" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>public.markColor</key>
+      <string>0,0.95,0.95,1</string>
+    </dict>
+  </lib>
+</glyph>
