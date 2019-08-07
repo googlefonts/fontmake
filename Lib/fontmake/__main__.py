@@ -200,6 +200,14 @@ def main(args=None):
         "is created and removed at the end (for Glyphs sources only).",
     )
     outputGroup.add_argument(
+        "--no-write-skipexportglyphs",
+        action="store_false",
+        dest="write_skipexportglyphs",
+        help="Do not store the glyph export flags in the 'public.skipExportGlyphs' "
+        "key of designspace/UFO lib, but use the old private glyph lib key "
+        "'com.schriftgestaltung.Glyphs.Export' (for Glyphs sources only).",
+    )
+    outputGroup.add_argument(
         "--validate-ufo",
         action="store_true",
         help="Enable ufoLib validation on reading/writing UFO files. It is "
@@ -408,6 +416,9 @@ def main(args=None):
                 "instance_dir",
             ],
             input_format,
+        )
+        exclude_args(
+            parser, args, ["write_skipexportglyphs"], input_format, positive=False
         )
         if designspace_path:
             project.run_from_designspace(designspace_path, **args)
