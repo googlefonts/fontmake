@@ -121,6 +121,7 @@ class FontProject:
         instance_dir=None,
         family_name=None,
         mti_source=None,
+        write_skipexportglyphs=True,
     ):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
@@ -144,7 +145,10 @@ class FontProject:
         instance_dir = os.path.relpath(instance_dir, designspace_dir)
 
         designspace = glyphsLib.to_designspace(
-            font, family_name=family_name, instance_dir=instance_dir
+            font,
+            family_name=family_name,
+            instance_dir=instance_dir,
+            write_skipexportglyphs=write_skipexportglyphs,
         )
 
         masters = {}
@@ -611,6 +615,7 @@ class FontProject:
         instance_dir=None,
         family_name=None,
         mti_source=None,
+        write_skipexportglyphs=True,
         **kwargs,
     ):
         """Run toolchain from Glyphs source.
@@ -639,6 +644,7 @@ class FontProject:
             instance_dir=instance_dir,
             family_name=family_name,
             mti_source=mti_source,
+            write_skipexportglyphs=write_skipexportglyphs,
         )
         self.run_from_designspace(designspace_path, **kwargs)
 

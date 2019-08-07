@@ -3,6 +3,7 @@ import shutil
 import fontTools.designspaceLib as designspaceLib
 import fontTools.ttLib
 import pytest
+import ufoLib2
 
 import fontmake.__main__
 
@@ -541,3 +542,47 @@ def test_interpolate_layout(data_dir, tmp_path):
         .Value1.XAdvance
         == -12
     )
+
+
+def test_write_skipexportglyphs(data_dir, tmp_path):
+    shutil.copyfile(
+        data_dir / "GlyphsUnitTestSans.glyphs", tmp_path / "GlyphsUnitTestSans.glyphs"
+    )
+
+    args = [
+        "-g",
+        str(tmp_path / "GlyphsUnitTestSans.glyphs"),
+        "--master-dir",
+        str(tmp_path / "master_ufos"),
+        "-o",
+        "ufo",
+    ]
+    fontmake.__main__.main(args)
+
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        tmp_path / "master_ufos" / "GlyphsUnitTestSans.designspace"
+    )
+
+    assert "public.skipExportGlyphs" in designspace.lib
+    assert designspace.lib["public.skipExportGlyphs"] == [
+        "_part.shoulder",
+        "_part.stem",
+    ]
+    for path in (tmp_path / "master_ufos").glob("*.ufo"):
+        with ufoLib2.Font.open(path) as ufo:
+            assert "public.skipExportGlyphs" in ufo.lib
+
+    shutil.rmtree(tmp_path / "master_ufos")
+
+    fontmake.__main__.main(args + ["--no-write-skipexportglyphs"])
+
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        tmp_path / "master_ufos" / "GlyphsUnitTestSans.designspace"
+    )
+    assert "public.skipExportGlyphs" not in designspace.lib
+
+    for path in (tmp_path / "master_ufos").glob("*.ufo"):
+        with ufoLib2.Font.open(path) as ufo:
+            assert "public.skipExportGlyphs" not in ufo.lib
+            assert not ufo["_part.shoulder"].lib["com.schriftgestaltung.Glyphs.Export"]
+            assert not ufo["_part.stem"].lib["com.schriftgestaltung.Glyphs.Export"]
