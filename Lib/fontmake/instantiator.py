@@ -589,9 +589,12 @@ class Variator:
         there is actual interpolation to be done. This enables us to
         store incompatible bare masters in one Designspace and having
         arbitrary instance data applied to them.
+
+        Note: Since we might return an actual master wrapped in a
+        fontMath shell, the return value must not be modified in-place.
         """
         normalized_location_key = location_to_key(normalized_location)
         if normalized_location_key in self.location_to_master:
-            return copy.deepcopy(self.location_to_master[normalized_location_key])
+            return self.location_to_master[normalized_location_key]
 
         return self.model.interpolateFromMasters(normalized_location, self.masters)
