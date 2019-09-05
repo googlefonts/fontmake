@@ -208,7 +208,7 @@ class Instantiator:
         # Kerning
         kerning_instance = self.kerning_mutator.instance_at(location_normalized)
         if self.round_geometry:
-            kerning_instance = kerning_instance.round()
+            kerning_instance.round()
         kerning_instance.extractKerning(font)
 
         # Info
