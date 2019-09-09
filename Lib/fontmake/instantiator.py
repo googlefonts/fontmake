@@ -160,7 +160,7 @@ class Instantiator:
 
     axis_bounds: AxisBounds  # Design space!
     copy_feature_text: str
-    copy_groups: Mapping[str, List[str]]
+    copy_nonkerning_groups: Mapping[str, List[str]]
     copy_info: ufoLib2.objects.Info
     copy_lib: Mapping[str, Any]
     default_design_location: Location
@@ -228,7 +228,11 @@ class Instantiator:
 
         # Construct defaults to copy over
         copy_feature_text: str = default_font.features.text
-        copy_groups: Mapping[str, List[str]] = default_font.groups
+        copy_nonkerning_groups: Mapping[str, List[str]] = {
+            key: glyph_names
+            for key, glyph_names in default_font.groups.items()
+            if not key.startswith(("public.kern1.", "public.kern2."))
+        }  # Kerning groups are taken care of by the kerning Variator.
         copy_info: ufoLib2.objects.Info = default_font.info
         copy_lib: Mapping[str, Any] = default_font.lib
 
@@ -241,7 +245,7 @@ class Instantiator:
         return cls(
             axis_bounds,
             copy_feature_text,
-            copy_groups,
+            copy_nonkerning_groups,
             copy_info,
             copy_lib,
             designspace.default.location,
@@ -285,8 +289,9 @@ class Instantiator:
         # Info
         self._generate_instance_info(instance, location_normalized, location, font)
 
-        # Groups
-        for key, glyph_names in self.copy_groups.items():
+        # Non-kerning groups. Kerning groups have been taken care of by the kerning
+        # instance.
+        for key, glyph_names in self.copy_nonkerning_groups.items():
             font.groups[key] = [name for name in glyph_names]
 
         # Features

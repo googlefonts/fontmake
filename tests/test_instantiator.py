@@ -255,6 +255,19 @@ def test_raise_anisotropic_location(data_dir):
         )
 
 
+def test_copy_nonkerning_group(data_dir):
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "DesignspaceTest" / "DesignspaceTest.designspace"
+    )
+    generator = fontmake.instantiator.Instantiator.from_designspace(designspace)
+
+    instance_font = generator.generate_instance(designspace.instances[0])
+    assert instance_font.groups == {
+        "nonkerning_group": ["A"],
+        "public.kern2.asdf": ["A"],
+    }
+
+
 def test_interpolation(data_dir):
     designspace = designspaceLib.DesignSpaceDocument.fromfile(
         data_dir / "DesignspaceTest" / "DesignspaceTest.designspace"
