@@ -102,6 +102,9 @@ WDTH_VALUE_TO_OS2_WIDTH_CLASS = {
 # - macintoshFONDFamilyID
 # - macintoshFONDName
 # - year
+#
+# This means we implicitly require the `stylename` attribute in the Designspace
+# `<instance>` element.
 UFO_INFO_ATTRIBUTES_TO_COPY_TO_INSTANCES = {
     "copyright",
     "familyName",
@@ -371,9 +374,16 @@ class Instantiator:
         # TODO: multilingual names to replace possibly existing name records.
         if instance.familyName:
             font.info.familyName = instance.familyName
-        # styleName is implicitly required because it is not copied from the default
-        # font.
-        font.info.styleName = instance.styleName
+        if instance.styleName is None:
+            logger.warning(
+                "The given instance or instance at location %s is missing the "
+                "stylename attribute, which is required. Copying over the styleName "
+                "from the default font, which is probably wrong.",
+                location,
+            )
+            font.info.styleName = self.copy_info.styleName
+        else:
+            font.info.styleName = instance.styleName
         if instance.postScriptFontName:
             font.info.postscriptFontName = instance.postScriptFontName
         if instance.styleMapFamilyName:

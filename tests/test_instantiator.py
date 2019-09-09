@@ -1,3 +1,5 @@
+import logging
+
 import fontTools.designspaceLib as designspaceLib
 import pytest
 import ufoLib2
@@ -299,7 +301,7 @@ def test_instance_attributes(data_dir):
     assert instance_font.info.styleMapStyleName == "xxx"
 
 
-def test_instance_no_attributes(data_dir):
+def test_instance_no_attributes(data_dir, caplog):
     designspace = designspaceLib.DesignSpaceDocument.fromfile(
         data_dir / "DesignspaceTest" / "DesignspaceTest-bare.designspace"
     )
@@ -307,9 +309,12 @@ def test_instance_no_attributes(data_dir):
         designspace, round_geometry=True
     )
 
-    instance_font = generator.generate_instance(designspace.instances[0])
+    with caplog.at_level(logging.WARNING):
+        instance_font = generator.generate_instance(designspace.instances[0])
+    assert "missing the stylename attribute" in caplog.text
+
     assert instance_font.info.familyName == "MyFont"
-    assert instance_font.info.styleName is None
+    assert instance_font.info.styleName == "Light"
     assert instance_font.info.postscriptFontName is None
     assert instance_font.info.styleMapFamilyName is None
     assert instance_font.info.styleMapStyleName is None
