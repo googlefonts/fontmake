@@ -1,3 +1,5 @@
+import logging
+
 import fontTools.designspaceLib as designspaceLib
 import pytest
 import ufoLib2
@@ -299,7 +301,7 @@ def test_instance_attributes(data_dir):
     assert instance_font.info.styleMapStyleName == "xxx"
 
 
-def test_instance_no_attributes(data_dir):
+def test_instance_no_attributes(data_dir, caplog):
     designspace = designspaceLib.DesignSpaceDocument.fromfile(
         data_dir / "DesignspaceTest" / "DesignspaceTest-bare.designspace"
     )
@@ -307,7 +309,10 @@ def test_instance_no_attributes(data_dir):
         designspace, round_geometry=True
     )
 
-    instance_font = generator.generate_instance(designspace.instances[0])
+    with caplog.at_level(logging.WARNING):
+        instance_font = generator.generate_instance(designspace.instances[0])
+    assert "missing the stylename attribute" in caplog.text
+
     assert instance_font.info.familyName == "MyFont"
     assert instance_font.info.styleName == "Light"
     assert instance_font.info.postscriptFontName is None
@@ -459,10 +464,8 @@ def test_data_independence(data_dir):
 
     assert generator.copy_info.openTypeOS2Panose == [2, 11, 5, 4, 2, 2, 2, 2, 2, 4]
     generator.copy_info.openTypeOS2Panose.append(1000)
-    assert instance_font1.info.openTypeOS2Panose == [2, 11, 5, 4, 2, 2, 2, 2, 2, 4]
-    assert instance_font2.info.openTypeOS2Panose == [2, 11, 5, 4, 2, 2, 2, 2, 2, 4]
-    instance_font1.info.openTypeOS2Panose.append(2000)
-    assert instance_font2.info.openTypeOS2Panose == [2, 11, 5, 4, 2, 2, 2, 2, 2, 4]
+    assert instance_font1.info.openTypeOS2Panose is None
+    assert instance_font2.info.openTypeOS2Panose is None
 
     # copy_feature_text not tested because it is a(n immutable) string
 
@@ -472,3 +475,38 @@ def test_data_independence(data_dir):
     assert not instance_font2.lib["public.skipExportGlyphs"]
     instance_font1.lib["public.skipExportGlyphs"].append("z")
     assert not instance_font2.lib["public.skipExportGlyphs"]
+
+
+def test_skipped_fontinfo_attributes():
+    """Test that we consider all available font info attributes for copying."""
+    import fontTools.ufoLib
+    import fontMath.mathInfo
+
+    SKIPPED_ATTRS = {
+        "guidelines",
+        "macintoshFONDFamilyID",
+        "macintoshFONDName",
+        "openTypeNameCompatibleFullName",
+        "openTypeNamePreferredFamilyName",
+        "openTypeNamePreferredSubfamilyName",
+        "openTypeNameUniqueID",
+        "openTypeNameWWSFamilyName",
+        "openTypeNameWWSSubfamilyName",
+        "openTypeOS2Panose",
+        "postscriptFontName",
+        "postscriptFullName",
+        "postscriptUniqueID",
+        "styleMapFamilyName",
+        "styleMapStyleName",
+        "styleName",
+        "woffMetadataUniqueID",
+        "year",
+    }
+
+    assert (
+        fontTools.ufoLib.fontInfoAttributesVersion3
+        - set(fontMath.mathInfo._infoAttrs.keys())
+        - {"postscriptWeightName"}  # Handled in fontMath specially.
+        - fontmake.instantiator.UFO_INFO_ATTRIBUTES_TO_COPY_TO_INSTANCES
+        == SKIPPED_ATTRS
+    )
