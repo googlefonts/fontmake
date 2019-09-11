@@ -44,6 +44,7 @@ setup(
         "glyphsLib>=4.1.2",
         "ufo2ft>=2.9.1",
         "MutatorMath>=2.1.2",
+        "fontMath>=0.5.0",
         "defcon[lxml]>=0.6.0",
         "booleanOperations>=0.8.2",
         "ufoLib2>=0.4.0",
