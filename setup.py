@@ -40,7 +40,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=4.0.1",
-        "cu2qu>=1.6.5",
+        "cu2qu>=1.6.6",
         "glyphsLib>=4.1.2",
         "ufo2ft>=2.9.1",
         "MutatorMath>=2.1.2",
