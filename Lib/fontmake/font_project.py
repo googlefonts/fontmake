@@ -551,18 +551,23 @@ class FontProject:
         designspace.write(designspace_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
-        """Subset a font using export flags set by glyphsLib.
+        """Subset a font using "Keep Glyphs" custom parameter and export flags as set
+        by glyphsLib.
 
-        There are two more settings that can change export behavior:
-        "Export Glyphs" and "Remove Glyphs", which are currently not supported
-        for complexity reasons. See
+        "Export Glyphs" and "Remove Glyphs" are currently not supported:
         https://github.com/googlei18n/glyphsLib/issues/295.
         """
         from fontTools import subset
 
+        # we must exclude from the final UFO glyphOrder all the glyphs that were not
+        # exported to OTF because included in 'public.skipExportGlyphs'
+        skip_export_glyphs = set(ufo.lib.get("public.skipExportGlyphs", ()))
+        exported_glyphs = dict.fromkeys(
+            g for g in ufo.keys() if g not in skip_export_glyphs
+        )
+        ufo_order = makeOfficialGlyphOrder(exported_glyphs, glyphOrder=ufo.glyphOrder)
         # ufo2ft always inserts a ".notdef" glyph as the first glyph
-        ufo_order = makeOfficialGlyphOrder(ufo)
-        if ".notdef" not in ufo_order:
+        if ".notdef" not in exported_glyphs:
             ufo_order.insert(0, ".notdef")
         ot_order = TTFont(otf_path).getGlyphOrder()
         assert ot_order[0] == ".notdef"
