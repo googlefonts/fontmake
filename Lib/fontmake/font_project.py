@@ -683,9 +683,7 @@ class FontProject:
         """
         from glyphsLib.interpolation import apply_instance_data_to_ufo
 
-        logger.info(
-            "Interpolating master UFOs from designspace"
-        )
+        logger.info("Interpolating master UFOs from designspace")
         designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace.path)
         generator = instantiator.Instantiator.from_designspace(
             designspace, round_geometry=round_instances
