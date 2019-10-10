@@ -679,7 +679,7 @@ class FontProject:
         from glyphsLib.interpolation import apply_instance_data_to_ufo
 
         logger.info(
-            "Interpolating master UFOs from designspace and applying instance data"
+            "Interpolating master UFOs from designspace"
         )
         designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace.path)
         generator = instantiator.Instantiator.from_designspace(
@@ -700,6 +700,8 @@ class FontProject:
             # Skip instances that do not match the user's inclusion regex if given.
             if include is not None and not fullmatch(include, instance.name):
                 continue
+
+            logger.info(f'Generating instance UFO for "{instance.name}"')
 
             instance.font = generator.generate_instance(instance)
 
