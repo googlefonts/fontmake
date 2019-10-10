@@ -303,31 +303,40 @@ def test_ufo_interpolation_specific(data_dir, tmp_path):
     }
 
 
-def test_subsetting(data_dir, tmp_path):
+@pytest.mark.parametrize(
+    "write_skipexportglyphs",
+    [
+        pytest.param(True, id="default"),
+        pytest.param(False, id="no-write-skipexportglyphs"),
+    ],
+)
+def test_subsetting(data_dir, tmp_path, write_skipexportglyphs):
     shutil.copyfile(data_dir / "TestSubset.glyphs", tmp_path / "TestSubset.glyphs")
 
-    fontmake.__main__.main(
-        [
-            "-g",
-            str(tmp_path / "TestSubset.glyphs"),
-            "--master-dir",
-            str(tmp_path / "master_ufos"),
-            "--instance-dir",
-            str(tmp_path / "instance_ufos"),
-            "-i",
-            "Test Subset Regular",
-            "-o",
-            "ttf",
-            "otf",
-            "--output-dir",
-            str(tmp_path),
-        ]
-    )
+    args = [
+        "-g",
+        str(tmp_path / "TestSubset.glyphs"),
+        "--master-dir",
+        str(tmp_path / "master_ufos"),
+        "--instance-dir",
+        str(tmp_path / "instance_ufos"),
+        "-i",
+        "Test Subset Regular",
+        "-o",
+        "ttf",
+        "otf",
+        "--output-dir",
+        str(tmp_path),
+    ]
+    if not write_skipexportglyphs:
+        args.append("--no-write-skipexportglyphs")
+
+    fontmake.__main__.main(args)
 
     for output_format in ("ttf", "otf"):
         for font_path in tmp_path.glob("*." + output_format):
             font = fontTools.ttLib.TTFont(font_path)
-            assert font.getGlyphOrder() == [".notdef", "space", "A", "C", "B"]
+            assert font.getGlyphOrder() == [".notdef", "space", "A", "C"]
 
 
 def test_shared_features_expansion(data_dir, tmp_path):

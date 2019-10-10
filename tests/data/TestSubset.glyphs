@@ -208,6 +208,7 @@ unicode = 0043;
 },
 {
 glyphname = B;
+export = 0;
 lastChange = "2018-06-15 11:34:17 +0000";
 layers = (
 {
