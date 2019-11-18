@@ -393,6 +393,16 @@ def main(args=None):
     else:
         exclude_args(parser, args, ["optimize_gvar"], "static output", positive=False)
 
+    if args.get("use_mutatormath"):
+        for module in ("defcon", "mutatorMath"):
+            try:
+                __import__(module)
+            except ImportError:
+                parser.error(
+                    f"{module} module not found; reinstall fontmake with the "
+                    "[mutatormath] extra"
+                )
+
     try:
         project = FontProject(
             timing=args.pop("timing"),
