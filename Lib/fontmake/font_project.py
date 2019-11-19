@@ -25,8 +25,7 @@ from re import fullmatch
 
 import attr
 import ufo2ft
-from defcon import Font
-from defcon.objects.base import setUfoLibReadValidate, setUfoLibWriteValidate
+import ufoLib2
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
 from fontTools.misc.plistlib import load as readPlist
@@ -109,8 +108,13 @@ class FontProject:
         logger.debug(
             "ufoLib UFO validation is %s", "enabled" if validate_ufo else "disabled"
         )
-        setUfoLibReadValidate(validate_ufo)
-        setUfoLibWriteValidate(validate_ufo)
+        self.validate_ufo = validate_ufo
+
+    def open_ufo(self, path):
+        return ufoLib2.Font.open(path, validate=self.validate_ufo)
+
+    def save_ufo_as(self, font, path):
+        font.save(path, overwrite=True, validate=self.validate_ufo)
 
     @timer()
     def build_master_ufos(
@@ -149,27 +153,31 @@ class FontProject:
             family_name=family_name,
             instance_dir=instance_dir,
             write_skipexportglyphs=write_skipexportglyphs,
+            ufo_module=ufoLib2,
         )
 
         masters = {}
         # multiple sources can have the same font/filename (but different layer),
         # we want to save a font only once
         for source in designspace.sources:
-            if source.filename in masters:
-                assert source.font is masters[source.filename]
+            if source.path in masters:
+                assert source.font is masters[source.path]
                 continue
             ufo_path = os.path.join(master_dir, source.filename)
             # no need to also set the relative 'filename' attribute as that
             # will be auto-updated on writing the designspace document
             source.path = ufo_path
-            source.font.save(ufo_path)
-            masters[source.filename] = source.font
+            masters[ufo_path] = source.font
 
         if designspace_path is None:
             designspace_path = os.path.join(master_dir, designspace.filename)
         designspace.write(designspace_path)
         if mti_source:
-            self.add_mti_features_to_master_ufos(mti_source, masters.values())
+            self.add_mti_features_to_master_ufos(mti_source, masters)
+
+        for ufo_path, ufo in masters.items():
+            self.save_ufo_as(ufo, ufo_path)
+
         return designspace_path
 
     @timer()
@@ -177,8 +185,8 @@ class FontProject:
         mti_dir = os.path.dirname(mti_source)
         with open(mti_source, "rb") as mti_file:
             mti_paths = readPlist(mti_file)
-        for master in masters:
-            key = os.path.basename(master.path).rstrip(".ufo")
+        for master_path, master in masters.items():
+            key = os.path.basename(master_path).rstrip(".ufo")
             for table, path in mti_paths[key].items():
                 with open(os.path.join(mti_dir, path), "rb") as mti_source:
                     ufo_path = (
@@ -190,7 +198,6 @@ class FontProject:
                 # the Glyphs file should be ignored. We clear it here because
                 # it only contains junk information anyway.
                 master.features.text = ""
-            master.save()
 
     def build_otfs(self, ufos, **kwargs):
         """Build OpenType binaries with CFF outlines."""
@@ -200,8 +207,7 @@ class FontProject:
         """Build OpenType binaries with TrueType outlines."""
         self.save_otfs(ufos, ttf=True, **kwargs)
 
-    @staticmethod
-    def _load_designspace_sources(designspace):
+    def _load_designspace_sources(self, designspace):
         if isinstance(designspace, (str, os.PathLike)):
             ds_path = os.fspath(designspace)
         else:
@@ -211,7 +217,7 @@ class FontProject:
         if ds_path is not None:
             designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
 
-        designspace.loadSourceFonts(opener=Font)
+        designspace.loadSourceFonts(opener=self.open_ufo)
 
         return designspace
 
@@ -721,7 +727,7 @@ class FontProject:
                 os.path.dirname(designspace.path), instance.filename
             )
             os.makedirs(os.path.dirname(ufo_path), exist_ok=True)
-            instance.font.save(ufo_path, overwrite=True)
+            self.save_ufo_as(instance.font, ufo_path)
 
             yield instance.font
 
@@ -978,10 +984,10 @@ class FontProject:
         ufo_paths = []
         if isinstance(ufos, str):
             ufo_paths = glob.glob(ufos)
-            ufos = [Font(x) for x in ufo_paths]
+            ufos = [self.open_ufo(x) for x in ufo_paths]
         elif isinstance(ufos, list):
             # ufos can be either paths or open Font objects, so normalize them
-            ufos = [Font(x) if isinstance(x, str) else x for x in ufos]
+            ufos = [self.open_ufo(x) if isinstance(x, str) else x for x in ufos]
             ufo_paths = [x.path for x in ufos]
         else:
             raise FontmakeError(
@@ -997,7 +1003,7 @@ class FontProject:
 
         if "ttf" in output:
             if need_reload:
-                ufos = [Font(path) for path in ufo_paths]
+                ufos = [self.open_ufo(path) for path in ufo_paths]
             self.build_ttfs(ufos, **kwargs)
             need_reload = True
 
