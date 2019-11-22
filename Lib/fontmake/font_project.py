@@ -230,6 +230,7 @@ class FontProject:
         conversion_error=None,
         feature_writers=None,
         cff_round_tolerance=None,
+        debug_feature_file=None,
         **kwargs,
     ):
         designspace = self._load_designspace_sources(designspace)
@@ -241,6 +242,7 @@ class FontProject:
                 reverseDirection=reverse_direction,
                 cubicConversionError=conversion_error,
                 featureWriters=feature_writers,
+                debugFeatureFile=debug_feature_file,
                 inplace=True,
             )
         else:
@@ -249,6 +251,7 @@ class FontProject:
                 useProductionNames=use_production_names,
                 roundTolerance=cff_round_tolerance,
                 featureWriters=feature_writers,
+                debugFeatureFile=debug_feature_file,
                 inplace=True,
             )
 
@@ -276,6 +279,7 @@ class FontProject:
         conversion_error=None,
         feature_writers=None,
         cff_round_tolerance=None,
+        debug_feature_file=None,
         **kwargs,
     ):
         """Build OpenType variable font from masters in a designspace."""
@@ -302,6 +306,7 @@ class FontProject:
                 cubicConversionError=conversion_error,
                 reverseDirection=reverse_direction,
                 optimizeGvar=optimize_gvar,
+                debugFeatureFile=debug_feature_file,
                 inplace=True,
             )
         else:
@@ -310,12 +315,13 @@ class FontProject:
                 featureWriters=feature_writers,
                 useProductionNames=use_production_names,
                 roundTolerance=cff_round_tolerance,
+                debugFeatureFile=debug_feature_file,
                 inplace=True,
             )
 
         font.save(output_path)
 
-    def _iter_compile(self, ufos, ttf=False, **kwargs):
+    def _iter_compile(self, ufos, ttf=False, debugFeatureFile=None, **kwargs):
         # generator function that calls ufo2ft compiler for each ufo and
         # yields ttFont instances
         options = dict(kwargs)
@@ -328,11 +334,15 @@ class FontProject:
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileOTF, "OTF"
 
+        writeFontName = len(ufos) > 1
         for ufo in ufos:
             name = self._font_name(ufo)
             logger.info(f"Building {fmt} for {name}")
 
-            yield compile_func(ufo, **options)
+            if debugFeatureFile and writeFontName:
+                debugFeatureFile.write(f"\n### {name} ###\n")
+
+            yield compile_func(ufo, debugFeatureFile=debugFeatureFile, **options)
 
     @timer()
     def save_otfs(
@@ -356,6 +366,7 @@ class FontProject:
         interpolate_layout_dir=None,
         output_path=None,
         output_dir=None,
+        debug_feature_file=None,
         inplace=True,
     ):
         """Build OpenType binaries from UFOs.
@@ -442,6 +453,7 @@ class FontProject:
             reverseDirection=reverse_direction,
             cubicConversionError=conversion_error,
             featureWriters=feature_writers,
+            debugFeatureFile=debug_feature_file,
             inplace=True,  # avoid extra copy
         )
 

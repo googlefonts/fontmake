@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, FileType
 from contextlib import contextmanager
 
 from fontmake import __version__
@@ -308,6 +308,16 @@ def main(args=None):
         "for each writer class. A special value of 'None' will disable "
         "all automatic feature generation. The option overrides both the "
         "default ufo2ft writers and those specified in the UFO lib.",
+    )
+    layoutGroup.add_argument(
+        "--debug-feature-file",
+        metavar="FILE",
+        type=FileType("w", encoding="utf-8"),
+        default=None,
+        help=(
+            "Path were to dump OpenType features text to debug auto-generated "
+            "features (kern, mark, mkmk, etc.)."
+        ),
     )
 
     feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
