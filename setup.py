@@ -45,7 +45,7 @@ setup(
         "ufo2ft>=2.10.0",
         "fontMath>=0.5.0",
         "booleanOperations>=0.9.0",
-        "ufoLib2>=0.5.0",
+        "ufoLib2>=0.5.1",
         "attrs>=19",
     ],
     extras_require={
