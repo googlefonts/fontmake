@@ -595,3 +595,33 @@ def test_write_skipexportglyphs(data_dir, tmp_path):
             assert "public.skipExportGlyphs" not in ufo.lib
             assert not ufo["_part.shoulder"].lib["com.schriftgestaltung.Glyphs.Export"]
             assert not ufo["_part.stem"].lib["com.schriftgestaltung.Glyphs.Export"]
+
+
+def test_debug_feature_file(data_dir, tmp_path):
+    shutil.copyfile(
+        data_dir / "GlyphsUnitTestSans.glyphs", tmp_path / "GlyphsUnitTestSans.glyphs"
+    )
+
+    debug_feature_path = data_dir / "test.fea"
+
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "GlyphsUnitTestSans.glyphs"),
+            "--master-dir",
+            "{tmp}",
+            "--instance-dir",
+            "{tmp}",
+            "-i",
+            "-o",
+            "ttf",
+            "--debug-feature-file",
+            str(debug_feature_path),
+        ]
+    )
+
+    with open(debug_feature_path, "r") as debug_feature_file:
+        features = debug_feature_file.read()
+
+    assert "### GlyphsUnitTestSans-Regular" in features
+    assert "### GlyphsUnitTestSans-Black" in features
