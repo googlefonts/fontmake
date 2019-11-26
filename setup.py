@@ -43,7 +43,7 @@ setup(
         "cu2qu>=1.6.6",
         "glyphsLib>=5.1.0",
         "ufo2ft>=2.10.0",
-        "fontMath>=0.5.0",
+        "fontMath>=0.5.2",
         "booleanOperations>=0.9.0",
         "ufoLib2>=0.5.1",
         "attrs>=19",
