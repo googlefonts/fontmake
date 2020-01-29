@@ -3,6 +3,7 @@ import logging
 import fontTools.designspaceLib as designspaceLib
 import pytest
 import ufoLib2
+from ufoLib2.objects.anchor import Anchor
 
 import fontmake.instantiator
 
@@ -139,6 +140,16 @@ def test_swap_glyph_names(data_dir):
         "x",
     ]
     assert sorted(c.baseGlyph for c in ufo["aaa.swap"].components) == ["a", "a", "y"]
+
+    # Test swapped anchors.
+    assert ufo["a"].anchors == [
+        Anchor(x=153, y=0, name="bottom"),
+        Anchor(x=153, y=316, name="top"),
+    ]
+    assert ufo["a.swap"].anchors == [
+        Anchor(x=351, y=0, name="bottom"),
+        Anchor(x=351, y=613, name="top"),
+    ]
 
     # Test swapped glyph kerning.
     assert ufo.kerning == {
