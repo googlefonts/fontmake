@@ -6,7 +6,7 @@ set -x
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 PLATFORMS=(manylinux1_x86_64 macosx_10_6_intel win32 win_amd64)
-PYTHON_VERSIONS=(3.6 3.7)
+PYTHON_VERSIONS=(3.6 3.7 3.8)
 FONTMAKE_VERSION="$(python setup.py --version)"
 
 FONTMAKE_WHEEL="${HERE}/dist/fontmake-${FONTMAKE_VERSION}-py3-none-any.whl"
@@ -21,8 +21,18 @@ pushd "${OUTPUT_DIR}"
 
 for platform in ${PLATFORMS[*]}; do
     for version in ${PYTHON_VERSIONS[*]}; do
+        if [ "${version}" == "3.8" ]; then
+            if [ "$platform" == "macosx_10_6_intel" ]; then
+                # for python 3.8 on macOS we only target >= 10.9 64-bit
+                platform="macosx_10_9_x86_64"
+            fi
+            # python 3.8 removed the 'm' ABI flag
+            m=""
+        else
+            m="m"
+        fi
         v=${version//.}
-        abi="cp${v}m"
+        abi="cp${v}${m}"
         outdir="fontmake-${FONTMAKE_VERSION}-cp${v}-${abi}-${platform}"
         mkdir -p "${outdir}"
 
