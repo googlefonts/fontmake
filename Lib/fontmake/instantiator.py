@@ -582,17 +582,24 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
     glyph_old.drawPoints(p)
     glyph_swap.width = glyph_old.width
 
-    glyph_old.clear()
+    glyph_old.clearContours()
+    glyph_old.clearComponents()
     p = glyph_old.getPointPen()
     glyph_new.drawPoints(p)
     glyph_old.width = glyph_new.width
 
-    glyph_new.clear()
+    glyph_new.clearContours()
+    glyph_new.clearComponents()
     p = glyph_new.getPointPen()
     glyph_swap.drawPoints(p)
     glyph_new.width = glyph_swap.width
 
-    # 2. Remap components.
+    # 2. Swap anchors.
+    glyph_swap.anchors = glyph_old.anchors
+    glyph_old.anchors = glyph_new.anchors
+    glyph_new.anchors = glyph_swap.anchors
+
+    # 3. Remap components.
     for g in font:
         for c in g.components:
             if c.baseGlyph == name_old:
@@ -600,7 +607,7 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
             elif c.baseGlyph == name_new:
                 c.baseGlyph = name_old
 
-    # 3. Swap literal names in kerning.
+    # 4. Swap literal names in kerning.
     kerning_new = {}
     for first, second in font.kerning.keys():
         value = font.kerning[(first, second)]
@@ -615,7 +622,7 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
         kerning_new[(first, second)] = value
     font.kerning = kerning_new
 
-    # 4. Swap names in groups.
+    # 5. Swap names in groups.
     for group_name, group_members in font.groups.items():
         group_members_new = []
         for name in group_members:
