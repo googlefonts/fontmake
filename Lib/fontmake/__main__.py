@@ -323,7 +323,7 @@ def main(args=None):
     feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
     feaCompilerGroup.add_argument(
         "--mti-source",
-        help="Path to mtiLib .txt feature definitions (use instead of FEA)",
+        help="mtiLib feature definition .plist file path (use instead of FEA)",
     )
 
     glyphnamesGroup = parser.add_mutually_exclusive_group(required=False)
