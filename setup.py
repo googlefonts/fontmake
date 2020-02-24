@@ -39,17 +39,17 @@ setup(
     setup_requires=wheel + ["setuptools_scm"],
     python_requires=">=3.6",
     install_requires=[
-        "fonttools[ufo,lxml,unicode]>=4.2.5",
-        "cu2qu>=1.6.6",
-        "glyphsLib>=5.1.3",
-        "ufo2ft>=2.11.1",
+        "fonttools[ufo,lxml,unicode]>=4.4.0",
+        "cu2qu>=1.6.7",
+        "glyphsLib>=5.1.6",
+        "ufo2ft>=2.12.0",
         "fontMath>=0.5.2",
         "booleanOperations>=0.9.0",
-        "ufoLib2>=0.5.1",
+        "ufoLib2>=0.6.1",
         "attrs>=19",
     ],
     extras_require={
-        "pathops": ["skia-pathops>=0.2.0"],
+        "pathops": ["skia-pathops>=0.3.0"],
         # this is now default; kept here for backward compatibility
         "lxml": [
             # "lxml>=4.2.4",
