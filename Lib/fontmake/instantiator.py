@@ -181,14 +181,13 @@ class Instantiator:
     ):
         """Instantiates a new data class from a Designspace object."""
         if designspace.default is None:
-            raise InstantiatorError(
-                "Can't generate UFOs from this designspace: no default font."
-            )
+            raise InstantiatorError(_error_msg_no_default(designspace))
 
         if any(anisotropic(instance.location) for instance in designspace.instances):
             raise InstantiatorError(
                 "The Designspace contains anisotropic instance locations, which are "
-                "not supported by varLib."
+                "not supported by varLib. Look for and remove all 'yvalue=\"...\"' or "
+                "use MutatorMath instead."
             )
 
         designspace.loadSourceFonts(ufoLib2.Font.open)
@@ -325,7 +324,11 @@ class Instantiator:
                 # whatever reason (usually outline incompatibility)...
                 if glyph_name not in self.skip_export_glyphs:
                     raise InstantiatorError(
-                        f"Failed to generate instance of glyph '{glyph_name}'."
+                        f"Failed to generate instance of glyph '{glyph_name}': "
+                        f"{str(e)}. (Note: the most common cause for an error here is "
+                        "that the glyph outlines are not point-for-point compatible or "
+                        "have the same starting point or are in the same order in all "
+                        "masters.)"
                     ) from e
 
                 # ...except if the glyph is in public.skipExportGlyphs and would
@@ -415,6 +418,28 @@ class Instantiator:
             font.info.italicAngle = italic_angle_from_slnt_value(
                 slant_axis.map_backward(location[slant_axis.name])
             )
+
+
+def _error_msg_no_default(designspace: designspaceLib.DesignSpaceDocument) -> str:
+    if any(axis.map for axis in designspace.axes):
+        bonus_msg = (
+            "For axes with a mapping, the 'default' values should have an "
+            "'input=\"...\"' map value, where the corresponding 'output=\"...\"' "
+            "value then points to the master source."
+        )
+    else:
+        bonus_msg = ""
+
+    default_location = ", ".join(
+        f"{k}: {v}" for k, v in designspace.newDefaultLocation().items()
+    )
+
+    return (
+        "Can't generate UFOs from this Designspace because there is no default "
+        f"master source at location '{default_location}'. Check that all 'default' "
+        "values of all axes together point to a single actual master source. "
+        f"{bonus_msg}"
+    )
 
 
 def location_to_key(location: Location) -> LocationKey:
