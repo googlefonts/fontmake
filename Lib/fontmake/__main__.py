@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+import sys
 from argparse import ArgumentParser, FileType
 from contextlib import contextmanager
 
@@ -413,6 +415,7 @@ def main(args=None):
                     "[mutatormath] extra"
                 )
 
+    PRINT_TRACEBACK = args.get("verbose", "INFO") == "DEBUG"
     try:
         project = FontProject(
             timing=args.pop("timing"),
@@ -460,12 +463,11 @@ def main(args=None):
             ufo_paths, is_instance=args.pop("masters_as_instances"), **args
         )
     except FontmakeError as e:
-        import sys
-
-        sys.exit("fontmake: error: %s" % e)
+        if PRINT_TRACEBACK:
+            logging.exception(e)
+            sys.exit(1)
+        sys.exit(f"fontmake: Error: {str(e)}")
 
 
 if __name__ == "__main__":
-    import sys
-
     sys.exit(main())

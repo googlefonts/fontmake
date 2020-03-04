@@ -25,6 +25,7 @@ from re import fullmatch
 
 import attr
 import ufo2ft
+import ufo2ft.errors
 import ufoLib2
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
@@ -80,7 +81,11 @@ def temporarily_disabling_axis_maps(designspace_path):
         https://github.com/LettError/designSpaceDocument/issues/16
         https://github.com/fonttools/fonttools/pull/1395
     """
-    designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+    try:
+        designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+    except Exception as e:
+        raise FontmakeError("Reading Designspace failed", designspace_path) from e
+
     for axis in designspace.axes:
         axis.minimum = axis.map_forward(axis.minimum)
         axis.default = axis.map_forward(axis.default)
@@ -111,10 +116,16 @@ class FontProject:
         self.validate_ufo = validate_ufo
 
     def open_ufo(self, path):
-        return ufoLib2.Font.open(path, validate=self.validate_ufo)
+        try:
+            return ufoLib2.Font.open(path, validate=self.validate_ufo)
+        except Exception as e:
+            raise FontmakeError("Reading UFO source failed", path) from e
 
     def save_ufo_as(self, font, path):
-        font.save(path, overwrite=True, validate=self.validate_ufo)
+        try:
+            font.save(path, overwrite=True, validate=self.validate_ufo)
+        except Exception as e:
+            raise FontmakeError("Writing UFO source failed", path) from e
 
     @timer()
     def build_master_ufos(
@@ -139,7 +150,10 @@ class FontProject:
         if not os.path.isdir(instance_dir):
             os.mkdir(instance_dir)
 
-        font = glyphsLib.GSFont(glyphs_path)
+        try:
+            font = glyphsLib.GSFont(glyphs_path)
+        except Exception as e:
+            raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
 
         if designspace_path is not None:
             designspace_dir = os.path.dirname(designspace_path)
@@ -215,7 +229,10 @@ class FontProject:
             # that can be modified in-place.
             ds_path = designspace.path
         if ds_path is not None:
-            designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
+            try:
+                designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
+            except Exception as e:
+                raise FontmakeError("Reading Designspace failed", ds_path) from e
 
         designspace.loadSourceFonts(opener=self.open_ufo)
 
@@ -342,7 +359,10 @@ class FontProject:
             if debugFeatureFile and writeFontName:
                 debugFeatureFile.write(f"\n### {name} ###\n")
 
-            yield compile_func(ufo, debugFeatureFile=debugFeatureFile, **options)
+            try:
+                yield compile_func(ufo, debugFeatureFile=debugFeatureFile, **options)
+            except Exception as e:
+                raise FontmakeError("Compiling UFO failed", ufo.path) from e
 
     @timer()
     def save_otfs(
@@ -350,7 +370,6 @@ class FontProject:
         ufos,
         ttf=False,
         is_instance=False,
-        interpolatable=False,
         autohint=None,
         subset=None,
         use_production_names=None,
@@ -375,7 +394,6 @@ class FontProject:
             ufos: Font objects to compile.
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
-            interpolatable: If output is interpolatable, for generating paths.
             autohint: Parameters to provide to ttfautohint. If not provided, the
                 autohinting step is skipped.
             subset: Whether to subset the output according to data in the UFOs.
@@ -436,9 +454,7 @@ class FontProject:
 
         if interpolate_layout_from is not None:
             if interpolate_layout_dir is None:
-                interpolate_layout_dir = self._output_dir(
-                    ext, is_instance=False, interpolatable=interpolatable
-                )
+                interpolate_layout_dir = self._output_dir(ext, is_instance=False)
             finder = partial(_varLib_finder, directory=interpolate_layout_dir, ext=ext)
             # no need to generate automatic features in ufo2ft, since here we
             # are interpolating precompiled GPOS table with fontTools.varLib.
@@ -448,7 +464,13 @@ class FontProject:
             # completely skip compiling features into OTL tables
             feature_writers = []
 
-        compiler_options = dict(
+        fonts = self._iter_compile(
+            ufos,
+            ttf,
+            removeOverlaps=remove_overlaps,
+            overlapsBackend=overlaps_backend,
+            optimizeCFF=optimize_cff,
+            roundTolerance=cff_round_tolerance,
             useProductionNames=use_production_names,
             reverseDirection=reverse_direction,
             cubicConversionError=conversion_error,
@@ -456,24 +478,6 @@ class FontProject:
             debugFeatureFile=debug_feature_file,
             inplace=True,  # avoid extra copy
         )
-
-        if interpolatable:
-            if not ttf:
-                raise NotImplementedError("interpolatable CFF not supported yet")
-
-            logger.info("Building interpolation-compatible TTFs")
-
-            fonts = ufo2ft.compileInterpolatableTTFs(ufos, **compiler_options)
-        else:
-            fonts = self._iter_compile(
-                ufos,
-                ttf,
-                removeOverlaps=remove_overlaps,
-                overlapsBackend=overlaps_backend,
-                optimizeCFF=optimize_cff,
-                roundTolerance=cff_round_tolerance,
-                **compiler_options,
-            )
 
         do_autohint = ttf and autohint is not None
 
@@ -500,7 +504,7 @@ class FontProject:
                 os.close(fd)
             elif output_path is None:
                 otf_path = self._output_path(
-                    ufo, ext, is_instance, interpolatable, output_dir=output_dir
+                    ufo, ext, is_instance, output_dir=output_dir
                 )
             else:
                 otf_path = output_path
@@ -526,12 +530,7 @@ class FontProject:
                 hinted_otf_path = output_path
             else:
                 hinted_otf_path = self._output_path(
-                    ufo,
-                    ext,
-                    is_instance,
-                    interpolatable,
-                    autohinted=True,
-                    output_dir=output_dir,
+                    ufo, ext, is_instance, autohinted=True, output_dir=output_dir
                 )
             try:
                 ttfautohint(otf_path, hinted_otf_path, args=autohint)
@@ -669,7 +668,11 @@ class FontProject:
             mti_source=mti_source,
             write_skipexportglyphs=write_skipexportglyphs,
         )
-        self.run_from_designspace(designspace_path, **kwargs)
+        try:
+            self.run_from_designspace(designspace_path, **kwargs)
+        except FontmakeError as e:
+            e.source_trail.append(glyphs_path)
+            raise
 
     def interpolate_instance_ufos(
         self,
@@ -695,17 +698,26 @@ class FontProject:
         Returns:
             generator of ufoLib2.Font objects corresponding to the UFO instances.
         Raises:
-            ValueError: The Designspace has no default source or contains incompatible
-                glyphs or contains anisotropic (MutatorMath) locations or contains a
-                <rules> substitution for a non-existant glyph.
+            FontmakeError: instances could not be prepared for interpolation or
+                interpolation failed.
+            ValueError: an instance descriptor did not have a filename attribute set.
         """
         from glyphsLib.interpolation import apply_instance_data_to_ufo
 
         logger.info("Interpolating master UFOs from designspace")
-        designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace.path)
-        generator = instantiator.Instantiator.from_designspace(
-            designspace, round_geometry=round_instances
-        )
+        try:
+            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace.path)
+        except Exception as e:
+            raise FontmakeError("Reading Designspace failed", designspace.path) from e
+
+        try:
+            generator = instantiator.Instantiator.from_designspace(
+                designspace, round_geometry=round_instances
+            )
+        except instantiator.InstantiatorError as e:
+            raise FontmakeError(
+                "Preparing the Designspace for interpolation failed", designspace.path
+            ) from e
 
         if expand_features_to_instances:
             logger.debug("Expanding features to instance UFOs")
@@ -724,7 +736,13 @@ class FontProject:
 
             logger.info(f'Generating instance UFO for "{instance.name}"')
 
-            instance.font = generator.generate_instance(instance)
+            try:
+                instance.font = generator.generate_instance(instance)
+            except instantiator.InstantiatorError as e:
+                raise FontmakeError(
+                    f"Interpolating instance '{instance.styleName}' failed.",
+                    designspace.path,
+                ) from e
 
             apply_instance_data_to_ufo(instance.font, instance, designspace)
 
@@ -778,7 +796,8 @@ class FontProject:
         if any(source.layerName is not None for source in designspace.sources):
             raise FontmakeError(
                 "MutatorMath doesn't support DesignSpace sources with 'layer' "
-                "attribute"
+                "attribute",
+                None,
             )
 
         with temporarily_disabling_axis_maps(designspace.path) as temp_designspace_path:
@@ -867,7 +886,10 @@ class FontProject:
                         % (argname, ", ".join(sorted(interp_outputs)))
                     )
 
-        designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+        try:
+            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+        except Exception as e:
+            raise FontmakeError("Reading Designspace failed", designspace_path) from e
 
         # if no --feature-writers option was passed, check in the designspace's
         # <lib> element if user supplied a custom featureWriters configuration;
@@ -875,26 +897,34 @@ class FontProject:
         if feature_writers is None and FEATURE_WRITERS_KEY in designspace.lib:
             feature_writers = loadFeatureWriters(designspace)
 
-        if static_outputs:
-            self._run_from_designspace_static(
-                designspace,
-                outputs=static_outputs,
-                interpolate=interpolate,
-                masters_as_instances=masters_as_instances,
-                interpolate_binary_layout=interpolate_binary_layout,
-                round_instances=round_instances,
-                feature_writers=feature_writers,
-                expand_features_to_instances=expand_features_to_instances,
-                use_mutatormath=use_mutatormath,
-                **kwargs,
-            )
-        if interp_outputs:
-            self._run_from_designspace_interpolatable(
-                designspace,
-                outputs=interp_outputs,
-                feature_writers=feature_writers,
-                **kwargs,
-            )
+        try:
+            if static_outputs:
+                self._run_from_designspace_static(
+                    designspace,
+                    outputs=static_outputs,
+                    interpolate=interpolate,
+                    masters_as_instances=masters_as_instances,
+                    interpolate_binary_layout=interpolate_binary_layout,
+                    round_instances=round_instances,
+                    feature_writers=feature_writers,
+                    expand_features_to_instances=expand_features_to_instances,
+                    use_mutatormath=use_mutatormath,
+                    **kwargs,
+                )
+            if interp_outputs:
+                self._run_from_designspace_interpolatable(
+                    designspace,
+                    outputs=interp_outputs,
+                    feature_writers=feature_writers,
+                    **kwargs,
+                )
+        except FontmakeError as e:
+            e.source_trail.append(designspace.path)
+            raise
+        except Exception as e:
+            raise FontmakeError(
+                "Generating fonts from Designspace failed", designspace.path
+            ) from e
 
     def _run_from_designspace_static(
         self,
@@ -1002,10 +1032,9 @@ class FontProject:
             ufos = [self.open_ufo(x) if isinstance(x, str) else x for x in ufos]
             ufo_paths = [x.path for x in ufos]
         else:
-            raise FontmakeError(
+            raise TypeError(
                 "UFOs parameter is neither a defcon.Font object, a path or a glob, "
-                "nor a list of any of these.",
-                ufos,
+                f"nor a list of any of these: {ufos:r}."
             )
 
         need_reload = False
