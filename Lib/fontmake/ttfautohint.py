@@ -15,7 +15,7 @@
 
 import subprocess
 
-from fontmake.errors import TTFAError
+from fontmake.errors import TTFAError, FontmakeError
 
 
 def ttfautohint(in_file, out_file, args=None, **kwargs):
@@ -31,9 +31,14 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
     if args is not None:
         if kwargs:
             raise TypeError("Should not provide both cmd args and kwargs.")
-        rv = subprocess.call(arg_list + args.split() + file_args)
+        try:
+            rv = subprocess.call(arg_list + args.split() + file_args)
+        except OSError as e:
+            raise FontmakeError(
+                "Could not launch ttfautohint (is it installed?)", in_file
+            ) from e
         if rv != 0:
-            raise TTFAError(rv)
+            raise TTFAError(rv, in_file)
         return
 
     boolean_options = (
@@ -79,4 +84,4 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
 
     rv = subprocess.call(arg_list + file_args)
     if rv != 0:
-        raise TTFAError(rv)
+        raise TTFAError(rv, in_file)
