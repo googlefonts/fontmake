@@ -45,8 +45,8 @@ source checkout:
 It is recommended to install fontmake inside a "virtual environment" to prevent
 conflicts between its dependencies and other modules installed globally.
 
-You could also use the [pipx](https://github.com/pipxproject/pipx) tool to automate
-the installation/upgrade of python apps like fontmake in isolated environments.
+You could also use the `pipx`_ tool to automate the installation/upgrade of
+python apps like fontmake in isolated environments.
 
 Usage
 ~~~~~
@@ -69,6 +69,7 @@ process, via methods of the ``fontmake.font_project.FontProject`` class.
 .. _pip documentation: https://pip.readthedocs.io/en/stable/user_guide/#requirements-files
 .. _PyPI: https://pypi.org/project/fontmake
 .. _Github releases: https://github.com/googlefonts/fontmake/releases
+.. _pipx: https://github.com/pipxproject/pipx
 .. |Travis Build Status| image:: https://travis-ci.org/googlefonts/fontmake.svg
    :target: https://travis-ci.org/googlefonts/fontmake
 .. |Python Versions| image:: https://img.shields.io/badge/python-3.6-blue.svg
