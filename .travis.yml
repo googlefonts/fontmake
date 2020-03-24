@@ -44,10 +44,9 @@ after_success:
   - |
     if [ -n "$TRAVIS_TAG" ] && [ "$TRAVIS_REPO_SLUG" == "googlefonts/fontmake" ] && [ "$TOXENV" == "py37-cov" ]; then
       pip install --upgrade pip
-      pip install --upgrade twine setuptools wheel shiv
+      pip install --upgrade twine setuptools wheel
       python setup.py sdist
       pip wheel --no-deps --wheel-dir dist .
-      ./build_pyz.sh
       twine upload dist/*.whl dist/*.zip
     fi
 
@@ -56,9 +55,6 @@ deploy:
   - provider: releases
     api_key:
       secure: ZZeHx2+Yc4gjEPVyhqySp700cF6Ro8xy0IOF0wD+BKOVi9/rj7AWfz5OBCb/3D18lji6lepXtEQ6/7AgqDLZNUk7R459g7GoczRt/M/iR3aXJslCiBTG/4r1O4ZCNXKLVgoX0Cavi1we7qKTot0wIYWcjk1TU9EmRoYpsnZTTWHKW0F2ZDd4O0IdWSUO6wF+g2DY4OxVy9zC7D2wdg53+LSRFao3w3hALZ7Rb32Icq/QdG+z4t9Vsa61keHULDH5MMMcUHQ6PbM96hBTydeTJrpwrojfX7WhE+SlptwH4cnTZPSFBqgOvrOwu9vKKI5TvUvfE4qt9QP+nZEfjrwnxBXMvYpRIDDoM+stc+NZ25xiEel3JXrmmue/VKtwbO4WaKSZWJXntyEcDFTnk32w6PmoawG1Rp1noVwL0b9sPXAYm4mw0yY4g+UoUsxRcxWFeKU1gXYIBGIKgqglys+WgnIUraqQcUuHn2l90n1DM86D2yOHsrg/NSFK1ePJAlNcz8rkYtUeCaffG2iyAjxf5IiqDx6k1flKphkLTqbc0eFkocj3ay7vnFINflcQRD4ISCEd5J2FuncnPkyUHTDPDYwjsNVuqceTF22e48NL+qfqLohbQ5aU6xiol6Pv4QQFOK+LG0bJb87DXlzJV9ZRjV0zai3wjhHuw2jfvvA4gHo=
-    file_glob: true
-    file: "shivs/*.zip"
-    skip_cleanup: true
     on:
       repo: googlefonts/fontmake
       tags: true
