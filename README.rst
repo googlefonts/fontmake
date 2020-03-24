@@ -45,10 +45,8 @@ source checkout:
 It is recommended to install fontmake inside a "virtual environment" to prevent
 conflicts between its dependencies and other modules installed globally.
 
-Alternatively, we also provide a self-contained, standalone version of fontmake
-that only requires a Python 3.6 or 3.7 installation to run. These are available
-to download from the fontmake `Github releases`_ page.
-You simply unzip them and run the included `fontmake` command from your console.
+You could also use the [pipx](https://github.com/pipxproject/pipx) tool to automate
+the installation/upgrade of python apps like fontmake in isolated environments.
 
 Usage
 ~~~~~
