@@ -144,7 +144,8 @@ def main(args=None):
         help="Output folder. By default, output folders are created in the "
         "current working directory, grouping output fonts by format.",
     )
-    outputGroup.add_argument(
+    outputInstanceGroup = outputGroup.add_mutually_exclusive_group()
+    outputInstanceGroup.add_argument(
         "-i",
         "--interpolate",
         nargs="?",
@@ -157,6 +158,14 @@ def main(args=None):
         "the full instance name or a regular expression. "
         'E.g.: -i "Noto Sans Bold"; or -i ".* UI Condensed". '
         "(for Glyphs or MutatorMath sources only). ",
+    )
+    outputInstanceGroup.add_argument(
+        "--filter-instances",
+        default=None,
+        help="Filter which instances to export. This argument is similar to "
+        "`--interpolate` but it also works on variable fonts. It also matches "
+        "instances by passing a full instance name or regular expression. "
+        'E.g.: --filter-instances "Inconsolata Condensed .*". ',
     )
     outputGroup.add_argument(
         "--use-mutatormath",
@@ -454,6 +463,7 @@ def main(args=None):
                 "interpolate",
                 "use_mutatormath",
                 "interpolate_binary_layout",
+                "filter_instances",
                 "round_instances",
                 "expand_features_to_instances",
             ],

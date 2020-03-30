@@ -841,6 +841,7 @@ class FontProject:
         designspace_path,
         output=(),
         interpolate=False,
+        filter_instances=None,
         masters_as_instances=False,
         interpolate_binary_layout=False,
         round_instances=False,
@@ -859,6 +860,10 @@ class FontProject:
                 match given name. The string is compiled into a regular
                 expression and matched against the "name" attribute of
                 designspace instances using `re.fullmatch`.
+            filter_instances: Filter which instances to export. This argument is
+                similar to `interpolate` but it also works on variable fonts.
+                It also matches instances by passing a full instance name or
+                regular expression.
             masters_as_instances: If True, output master fonts as instances.
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
@@ -871,7 +876,6 @@ class FontProject:
                 with arguments "interpolate", "masters_as_instances", and
                 "interpolate_binary_layout".
         """
-
         interp_outputs = INTERPOLATABLE_OUTPUTS.intersection(output)
         static_outputs = set(output).difference(interp_outputs)
         if interp_outputs:
@@ -896,6 +900,12 @@ class FontProject:
         # if so, use that for all the UFOs built from this designspace
         if feature_writers is None and FEATURE_WRITERS_KEY in designspace.lib:
             feature_writers = loadFeatureWriters(designspace)
+        if filter_instances:
+            instances = self._search_instances(designspace, pattern=filter_instances)
+            logger.info("Keeping instances:\n{}".format("\n".join(instances.keys())))
+            designspace.instances = [
+                i for i in designspace.instances if i.name in instances
+            ]
 
         try:
             if static_outputs:
@@ -1056,7 +1066,7 @@ class FontProject:
             if fullmatch(pattern, instance.name):
                 instances[instance.name] = instance.filename
         if not instances:
-            raise FontmakeError("No instance found with %r" % pattern)
+            raise FontmakeError("No instance found with %r" % pattern, designspace.path)
         return instances
 
     def _font_name(self, ufo):
