@@ -212,17 +212,32 @@ class Instantiator:
                 special_axes[axis.tag] = axis
 
         masters_info = collect_info_masters(designspace, axis_bounds)
-        info_mutator = Variator.from_masters(masters_info, axis_order)
+        try:
+            info_mutator = Variator.from_masters(masters_info, axis_order)
+        except varLib.errors.VarLibError as e:
+            raise InstantiatorError(
+                f"Cannot set up fontinfo for interpolation: {e}'"
+            ) from e
 
         masters_kerning = collect_kerning_masters(designspace, axis_bounds)
-        kerning_mutator = Variator.from_masters(masters_kerning, axis_order)
+        try:
+            kerning_mutator = Variator.from_masters(masters_kerning, axis_order)
+        except varLib.errors.VarLibError as e:
+            raise InstantiatorError(
+                f"Cannot set up kerning for interpolation: {e}'"
+            ) from e
 
         default_font = designspace.findDefault().font
         glyph_mutators: Dict[str, Variator] = {}
         glyph_name_to_unicodes: Dict[str, List[int]] = {}
         for glyph_name in glyph_names:
             items = collect_glyph_masters(designspace, glyph_name, axis_bounds)
-            glyph_mutators[glyph_name] = Variator.from_masters(items, axis_order)
+            try:
+                glyph_mutators[glyph_name] = Variator.from_masters(items, axis_order)
+            except varLib.errors.VarLibError as e:
+                raise InstantiatorError(
+                    f"Cannot set up glyph '{glyph_name}' for interpolation: {e}'"
+                ) from e
             glyph_name_to_unicodes[glyph_name] = default_font[glyph_name].unicodes
 
         # Construct defaults to copy over

@@ -919,7 +919,10 @@ class FontProject:
                     **kwargs,
                 )
         except FontmakeError as e:
-            e.source_trail.append(designspace.path)
+            # Some called functions already added the Designspace file to the source
+            # trail.
+            if e.source_trail[-1] != designspace.path:
+                e.source_trail.append(designspace.path)
             raise
         except Exception as e:
             raise FontmakeError(
