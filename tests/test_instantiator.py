@@ -60,6 +60,63 @@ def test_interpolation_weight_width_class(data_dir):
     assert font.info.openTypeOS2WidthClass == 9
 
 
+def test_default_groups_only(data_dir, caplog):
+    """Test that only the default source's groups end up in instances."""
+
+    d = designspaceLib.DesignSpaceDocument()
+    d.addAxisDescriptor(
+        name="Weight", tag="wght", minimum=300, default=300, maximum=900
+    )
+    d.addSourceDescriptor(location={"Weight": 300}, font=ufoLib2.Font())
+    d.addSourceDescriptor(location={"Weight": 900}, font=ufoLib2.Font())
+    d.addInstanceDescriptor(styleName="2", location={"Weight": 400})
+    d.findDefault()
+
+    d.sources[0].font.groups["public.kern1.GRK_alpha_alt_LC_1ST"] = [
+        "alpha.alt",
+        "alphatonos.alt",
+    ]
+    d.sources[1].font.groups["public.kern1.GRK_alpha_LC_1ST"] = [
+        "alpha.alt",
+        "alphatonos.alt",
+    ]
+
+    generator = fontmake.instantiator.Instantiator.from_designspace(d)
+    assert "contains different groups than the default source" in caplog.text
+
+    instance = generator.generate_instance(d.instances[0])
+    assert instance.groups == {
+        "public.kern1.GRK_alpha_alt_LC_1ST": ["alpha.alt", "alphatonos.alt"]
+    }
+
+
+def test_default_groups_only2(data_dir, caplog):
+    """Test that the group difference warning is not triggered if non-default
+    source groups are empty."""
+
+    d = designspaceLib.DesignSpaceDocument()
+    d.addAxisDescriptor(
+        name="Weight", tag="wght", minimum=300, default=300, maximum=900
+    )
+    d.addSourceDescriptor(location={"Weight": 300}, font=ufoLib2.Font())
+    d.addSourceDescriptor(location={"Weight": 900}, font=ufoLib2.Font())
+    d.addInstanceDescriptor(styleName="2", location={"Weight": 400})
+    d.findDefault()
+
+    d.sources[0].font.groups["public.kern1.GRK_alpha_alt_LC_1ST"] = [
+        "alpha.alt",
+        "alphatonos.alt",
+    ]
+
+    generator = fontmake.instantiator.Instantiator.from_designspace(d)
+    assert "contains different groups than the default source" not in caplog.text
+
+    instance = generator.generate_instance(d.instances[0])
+    assert instance.groups == {
+        "public.kern1.GRK_alpha_alt_LC_1ST": ["alpha.alt", "alphatonos.alt"]
+    }
+
+
 def test_interpolation_no_rounding(data_dir):
     designspace = designspaceLib.DesignSpaceDocument.fromfile(
         data_dir / "MutatorSans" / "MutatorSans.designspace"
