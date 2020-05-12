@@ -227,7 +227,7 @@ class Instantiator:
                 f"Cannot set up kerning for interpolation: {e}'"
             ) from e
 
-        default_font = designspace.findDefault().font
+        default_font = designspace.default.font
         glyph_mutators: Dict[str, Variator] = {}
         glyph_name_to_unicodes: Dict[str, List[int]] = {}
         for glyph_name in glyph_names:
@@ -492,6 +492,11 @@ def collect_kerning_masters(
     designspace: designspaceLib.DesignSpaceDocument, axis_bounds: AxisBounds
 ) -> List[Tuple[Location, FontMathObject]]:
     """Return master kerning objects wrapped by MathKerning."""
+
+    # Always take the groups from the default source. This also avoids fontMath
+    # making a union of all groups it is given.
+    groups = designspace.default.font.groups
+
     locations_and_masters = []
     for source in designspace.sources:
         if source.layerName is not None:
@@ -502,10 +507,7 @@ def collect_kerning_masters(
             source.location, axis_bounds
         )
         locations_and_masters.append(
-            (
-                normalized_location,
-                fontMath.MathKerning(source.font.kerning, source.font.groups),
-            )
+            (normalized_location, fontMath.MathKerning(source.font.kerning, groups))
         )
 
     return locations_and_masters
