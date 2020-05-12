@@ -502,6 +502,15 @@ def collect_kerning_masters(
         if source.layerName is not None:
             continue  # No kerning in source layers.
 
+        # If a source has groups, they should match the default's.
+        if source.font.groups and source.font.groups != groups:
+            logger.warning(
+                "The source %s (%s) contains different groups than the default source. "
+                "The default source's groups will be used for the instances.",
+                source.name,
+                source.filename,
+            )
+
         # This assumes that groups of all sources are the same.
         normalized_location = varLib.models.normalizeLocation(
             source.location, axis_bounds
