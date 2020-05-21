@@ -361,7 +361,7 @@ def test_interpolation_only_default(data_dir, caplog):
         generator = fontmake.instantiator.Instantiator.from_designspace(
             designspace, round_geometry=True
         )
-    assert "has more glyphs than the default source" in caplog.text
+    assert "contains glyphs that are missing from the" in caplog.text
 
     instance_font = generator.generate_instance(designspace.instances[0])
     assert {g.name for g in instance_font} == {"A"}

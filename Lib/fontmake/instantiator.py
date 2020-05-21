@@ -203,10 +203,10 @@ class Instantiator:
             diff_names = other_names - glyph_names
             if diff_names:
                 logger.warning(
-                    "The source %s (%s) contains glyphs that are missing from the default source, which "
-                    "will be ignored: %s. If this is unintended, check that these "
-                    "glyphs have the exact same name as the corresponding glyphs in "
-                    "the default source.",
+                    "The source %s (%s) contains glyphs that are missing from the "
+                    "default source, which will be ignored: %s. If this is unintended, "
+                    "check that these glyphs have the exact same name as the "
+                    "corresponding glyphs in the default source.",
                     source.name,
                     source.filename,
                     ", ".join(sorted(diff_names)),
