@@ -348,6 +348,25 @@ def test_interpolation(data_dir):
     assert instance_font["l"].width == 220
 
 
+def test_interpolation_only_default(data_dir, caplog):
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "MutatorSans" / "MutatorSans.designspace"
+    )
+    designspace.loadSourceFonts(ufoLib2.Font.open)
+    for name in designspace.default.font.glyphOrder:
+        if name != "A":
+            del designspace.default.font[name]
+
+    with caplog.at_level(logging.WARNING):
+        generator = fontmake.instantiator.Instantiator.from_designspace(
+            designspace, round_geometry=True
+        )
+    assert "has more glyphs than the default source" in caplog.text
+
+    instance_font = generator.generate_instance(designspace.instances[0])
+    assert {g.name for g in instance_font} == {"A"}
+
+
 def test_interpolation_masters_as_instances(data_dir):
     designspace = designspaceLib.DesignSpaceDocument.fromfile(
         data_dir
