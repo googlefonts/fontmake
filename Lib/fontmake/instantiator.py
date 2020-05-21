@@ -192,9 +192,25 @@ class Instantiator:
 
         designspace.loadSourceFonts(ufoLib2.Font.open)
 
-        glyph_names: Set[str] = set()
+        # The default font (default layer) determines which glyphs are interpolated,
+        # because the math behind varLib and MutatorMath uses the default font as the
+        # point of reference for all data.
+        default_font = designspace.default.font
+        glyph_names: Set[str] = set(default_font.keys())
+
         for source in designspace.sources:
-            glyph_names.update(source.font.keys())
+            other_names = set(source.font.keys())
+            diff_names = other_names - glyph_names
+            if diff_names:
+                logger.warning(
+                    "The source %s (%s) contains glyphs that are missing from the default source, which "
+                    "will be ignored: %s. If this is unintended, check that these "
+                    "glyphs have the exact same name as the corresponding glyphs in "
+                    "the default source.",
+                    source.name,
+                    source.filename,
+                    ", ".join(sorted(diff_names)),
+                )
 
         # Construct Variators
         axis_bounds: AxisBounds = {}  # Design space!
@@ -227,7 +243,6 @@ class Instantiator:
                 f"Cannot set up kerning for interpolation: {e}'"
             ) from e
 
-        default_font = designspace.default.font
         glyph_mutators: Dict[str, Variator] = {}
         glyph_name_to_unicodes: Dict[str, List[int]] = {}
         for glyph_name in glyph_names:
