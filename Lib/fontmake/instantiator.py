@@ -192,14 +192,14 @@ class Instantiator:
 
         designspace.loadSourceFonts(ufoLib2.Font.open)
 
-        # The default font determines which glyphs are interpolated, because the math
-        # behind varLib and MutatorMath needs the default font as a point of reference
-        # for all data to be interpolated.
+        # The default font (default layer) determines which glyphs are interpolated,
+        # because the math behind varLib and MutatorMath uses the default font as the
+        # point of reference for all data.
         default_font = designspace.default.font
-        glyph_names: Set[str] = set(default_font.layers.defaultLayer.keys())
+        glyph_names: Set[str] = set(default_font.keys())
 
         for source in designspace.sources:
-            other_names = set(source.font.layers.defaultLayer.keys())
+            other_names = set(source.font.keys())
             diff_names = other_names - glyph_names
             if diff_names:
                 logger.warning(
