@@ -1050,8 +1050,8 @@ class FontProject:
             )
 
         need_reload = False
-        if "otf" in output or "otf-cff2" in output:
-            cff_version = 2 if "otf-cff2" in output else 1
+        cff_version = 1 if "otf" in output else 2 if "otf-cff2" in output else None
+        if cff_version is not None:
             self.build_otfs(ufos, cff_version=cff_version, **kwargs)
             need_reload = True
 
