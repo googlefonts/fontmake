@@ -625,3 +625,35 @@ def test_debug_feature_file(data_dir, tmp_path):
 
     assert "### GlyphsUnitTestSans-Regular" in features
     assert "### GlyphsUnitTestSans-Black" in features
+
+
+def test_ufo_to_static_otf_cff2(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "DesignspaceTest" / "MyFont-Light.ufo"),
+            "-o",
+            "otf-cff2",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
+
+
+def test_static_otf_cffsubr_subroutinizer(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "DesignspaceTest" / "MyFont-Light.ufo"),
+            "-o",
+            "otf",
+            "--subroutinizer",
+            "cffsubr",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
