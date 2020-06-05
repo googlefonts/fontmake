@@ -291,6 +291,7 @@ class FontProject:
         output_dir=None,
         ttf=True,
         optimize_gvar=True,
+        optimize_cff=CFFOptimization.SPECIALIZE,
         use_production_names=None,
         reverse_direction=True,
         conversion_error=None,
@@ -333,6 +334,7 @@ class FontProject:
                 useProductionNames=use_production_names,
                 roundTolerance=cff_round_tolerance,
                 debugFeatureFile=debug_feature_file,
+                optimizeCFF=optimize_cff,
                 inplace=True,
             )
 
@@ -343,7 +345,7 @@ class FontProject:
         # yields ttFont instances
         options = dict(kwargs)
         if ttf:
-            for key in ("optimizeCFF", "roundTolerance"):
+            for key in ("optimizeCFF", "roundTolerance", "subroutinizer", "cffVersion"):
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileTTF, "TTF"
         else:
@@ -387,6 +389,8 @@ class FontProject:
         output_dir=None,
         debug_feature_file=None,
         inplace=True,
+        cff_version=1,
+        subroutinizer=None,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -476,6 +480,8 @@ class FontProject:
             cubicConversionError=conversion_error,
             featureWriters=feature_writers,
             debugFeatureFile=debug_feature_file,
+            cffVersion=cff_version,
+            subroutinizer=subroutinizer,
             inplace=True,  # avoid extra copy
         )
 
@@ -1024,6 +1030,9 @@ class FontProject:
         if set(output) == {"ufo"}:
             return
 
+        if "otf" in output and "otf-cff2" in output:
+            raise ValueError("'otf' and 'otf-cff2' outputs are mutually exclusive")
+
         # the `ufos` parameter can be a list of UFO objects
         # or it can be a path (string) with a glob syntax
         ufo_paths = []
@@ -1041,8 +1050,9 @@ class FontProject:
             )
 
         need_reload = False
-        if "otf" in output:
-            self.build_otfs(ufos, **kwargs)
+        if "otf" in output or "otf-cff2" in output:
+            cff_version = 2 if "otf-cff2" in output else 1
+            self.build_otfs(ufos, cff_version=cff_version, **kwargs)
             need_reload = True
 
         if "ttf" in output:

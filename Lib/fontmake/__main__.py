@@ -124,6 +124,7 @@ def main(args=None):
         choices=(
             "ufo",
             "otf",
+            "otf-cff2",
             "ttf",
             "ttf-interpolatable",
             "otf-interpolatable",
@@ -279,6 +280,14 @@ def main(args=None):
         default=CFFOptimization.SUBROUTINIZE,
         help="0 disables all optimizations; 1 specializes the CFF charstring "
         "operators; 2 (default) also enables subroutinization",
+    )
+    contourGroup.add_argument(
+        "--subroutinizer",
+        default=None,
+        choices=["compreffor", "cffsubr"],
+        help="name of the library to use for compressing CFF charstrings. "
+        "Choose between: %(choices)s. By default compreffor is used for CFF 1, "
+        "and cffsubr for CFF2. NOTE: compreffor doesn't support CFF2.",
     )
     contourGroup.add_argument(
         "--no-optimize-gvar",
