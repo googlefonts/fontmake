@@ -6,6 +6,6 @@ MutatorMath==2.1.2
 fontMath==0.6.0
 defcon[lxml]==0.6.0
 booleanOperations==0.9.0
-ufoLib2==0.7.1
+ufoLib2==0.8.0
 attrs==19.3.0
 cffsubr==0.2.6
