@@ -39,7 +39,7 @@ setup(
     setup_requires=wheel + ["setuptools_scm"],
     python_requires=">=3.6",
     install_requires=[
-        "fonttools[ufo,lxml,unicode]>=4.11.0",
+        "fonttools[ufo,lxml,unicode]>=4.12.0",
         "cu2qu>=1.6.7",
         "glyphsLib>=5.1.10",
         "ufo2ft[cffsubr]>=2.15.0",
