@@ -326,6 +326,19 @@ def main(args=None):
         help="Do not perform IUP optimization on variable font's 'gvar' table. "
         "(only works with 'variable' TrueType-flavored output)",
     )
+    contourGroup.add_argument(
+        "--filters",
+        metavar="CLASS",
+        action="append",
+        dest="filters_specs",
+        help="string specifying a filter class to load, either "
+        "built-in or from an external module, optionally initialized with "
+        "the given keyword arguments. The class and module names are "
+        "separated by '::'. The option can be repeated multiple times "
+        "for each writer class. A special value of 'None' will disable "
+        "all automatic filters. The option overrides both the "
+        "default ufo2ft filters and those specified in the UFO lib.",
+    )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
     layoutGroup.add_argument(
