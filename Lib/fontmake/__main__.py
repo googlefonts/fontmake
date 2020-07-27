@@ -19,6 +19,7 @@ from contextlib import contextmanager
 
 from ufo2ft import CFFOptimization
 from ufo2ft.featureWriters import loadFeatureWriterFromString
+from ufo2ft.filters import loadFilterFromString
 
 from fontmake import __version__
 from fontmake.errors import FontmakeError
@@ -38,6 +39,21 @@ def _loadFeatureWriters(parser, specs):
                 "Failed to load --feature-writer:\n  {}: {}".format(type(e).__name__, e)
             )
     return feature_writers
+
+
+def _loadFilters(parser, specs):
+    filters = []
+    for s in specs:
+        if s == "None":
+            # magic value that means "don't apply any filters!"
+            return []
+        try:
+            filters.append(loadFilterFromString(s))
+        except Exception as e:
+            parser.error(
+                "Failed to load --filters:\n  {}: {}".format(type(e).__name__, e)
+            )
+    return filters
 
 
 def exclude_args(parser, args, excluded_args, target, positive=True):
@@ -403,6 +419,10 @@ def main(args=None):
     specs = args.pop("feature_writer_specs")
     if specs is not None:
         args["feature_writers"] = _loadFeatureWriters(parser, specs)
+
+    specs = args.pop("filter_specs")
+    if specs is not None:
+        args["filters"] = _loadFilters(parser, specs)
 
     glyphs_path = args.pop("glyphs_path")
     ufo_paths = args.pop("ufo_paths")
