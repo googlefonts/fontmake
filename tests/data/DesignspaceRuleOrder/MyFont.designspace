@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.1">
+    <axes>
+        <axis tag="wght" name="Weight" minimum="100" maximum="900" default="100" />
+        <axis tag="STYL" name="Style" minimum="0" maximum="1" default="0"/>
+    </axes>
+
+    <rules processing="last">
+        <rule>
+            <conditionset>
+                <condition name="Weight" minimum="780"/>
+            </conditionset>
+            <sub name="Q" with="Q.alt"/>
+        </rule>
+
+        <rule>
+            <conditionset>
+                <condition name="Weight" minimum="730"/>
+            </conditionset>
+            <sub name="Q.ss01" with="Q.ss01.alt"/>
+        </rule>
+
+        <rule>
+            <conditionset>
+                <condition name="Style" minimum="0.5" maximum="1"/>
+            </conditionset>
+            <sub name="Q" with="Q.ss01"/>
+            <sub name="Q.alt" with="Q.ss01.alt"/>
+        </rule>
+    </rules>
+
+    <sources>
+        <source filename="MyFont_Hair.ufo" name="MyFont Hairline" familyname="MyFont" stylename="Hairline">
+            <lib copy="1"/>
+            <groups copy="1"/>
+            <features copy="1"/>
+            <info copy="1"/>
+            <location>
+                <dimension name="Weight" xvalue="100"/>
+                <dimension name="Style" xvalue="0"/>
+            </location>
+        </source>
+        <source filename="MyFont_Black.ufo" name="MyFont Black" familyname="MyFont" stylename="Black">
+            <location>
+                <dimension name="Weight" xvalue="900"/>
+                <dimension name="Style" xvalue="0"/>
+            </location>
+        </source>
+    </sources>
+
+    <instances>
+        <instance name="MyFont Style Black" familyname="MyFont" stylename="Style Black" filename="instance_ufos/MyFont_StyleBlack.ufo">
+            <location>
+                <dimension name="Weight" xvalue="900"/>
+                <dimension name="Style" xvalue="0.5"/>
+            </location>
+            <kerning/>
+            <info/>
+        </instance>
+    </instances>
+</designspace>
