@@ -153,6 +153,26 @@ class InstantiatorError(Exception):
     pass
 
 
+def process_rules_swaps(rules, location, glyphNames):
+    """ Apply these rules at this location to these glyphnames
+        - rule order matters
+
+        Return a list of (oldName, newName) in the same order as the rules.
+    """
+    swaps = []
+    glyphNames = set(glyphNames)
+    for rule in rules:
+        if designspaceLib.evaluateRule(rule, location):
+            for oldName, newName in rule.subs:
+                # Here I don't check if the new name is also in glyphNames...
+                # I guess it should be, so that we can swap, and if it isn't,
+                # then it's better to error out later when we try to swap,
+                # instead of silently ignoring the rule here.
+                if oldName in glyphNames:
+                    swaps.append((oldName, newName))
+    return swaps
+
+
 @attr.s(auto_attribs=True, frozen=True, slots=True)
 class Instantiator:
     """Data class that holds all necessary information to generate a static
@@ -375,10 +395,10 @@ class Instantiator:
 
         # Process rules
         glyph_names_list = self.glyph_mutators.keys()
-        glyph_names_list_renamed = designspaceLib.processRules(
-            self.designspace_rules, location, glyph_names_list
-        )
-        for name_old, name_new in zip(glyph_names_list, glyph_names_list_renamed):
+        # The order of the swaps below is independent of the order of glyph names.
+        # It depends on the order of the <sub>s in the designspace rules.
+        swaps = process_rules_swaps(self.designspace_rules, location, glyph_names_list)
+        for name_old, name_new in swaps:
             if name_old != name_new:
                 swap_glyph_names(font, name_old, name_new)
 

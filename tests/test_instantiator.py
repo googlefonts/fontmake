@@ -1,5 +1,6 @@
 import logging
 
+from fontTools.pens.recordingPen import RecordingPen
 import fontTools.designspaceLib as designspaceLib
 import pytest
 import ufoLib2
@@ -269,6 +270,40 @@ def test_swap_glyph_names_spec(data_dir):
         "a",
         "dieresiscomb",
     ]
+
+
+def test_rules_are_applied_deterministically(data_dir):
+    """Test that a combination of designspace rules that end up mapping
+    serveral input glyphs to the same destination glyph result in a correct and
+    deterministic series of glyph swaps.
+
+    The example is a font with 2 Q designs that depend on a style axis
+        style < 0.5: Q        style >= 0.5: Q.ss01
+    and each Q also has an alternative shape in bolder weights (like Skia)
+        weight < 780: Q       weight >= 780: Q.alt
+        weight < 730: Q.ss01  weight >= 730: Q.ss01.alt
+
+    Then we generate an instance at style = 1, weight = 900. From the rules,
+    the default CMAP entry for Q should have the outlines of Q.ss01.alt from
+    the black UFO.
+    """
+    doc = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "DesignspaceRuleOrder" / "MyFont.designspace"
+    )
+    instanciator = fontmake.instantiator.Instantiator.from_designspace(doc)
+    instance = instanciator.generate_instance(doc.instances[0])
+    pen = RecordingPen()
+    instance["Q"].draw(pen)
+    instance_recording = pen.value
+
+    black_ufo = ufoLib2.Font.open(
+        data_dir / "DesignspaceRuleOrder" / "MyFont_Black.ufo"
+    )
+    pen = RecordingPen()
+    black_ufo["Q.ss01.alt"].draw(pen)
+    black_ufo_recording = pen.value
+
+    assert instance_recording == black_ufo_recording
 
 
 def test_raise_no_default_master(data_dir):
