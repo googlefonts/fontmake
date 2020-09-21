@@ -34,7 +34,7 @@ extrapolation.
 import copy
 import logging
 import typing
-from typing import Any, Dict, List, Mapping, Set, Tuple, Union
+from typing import AbstractSet, Any, Dict, List, Mapping, Sequence, Set, Tuple, Union
 
 import attr
 import fontMath
@@ -42,6 +42,7 @@ import fontTools.designspaceLib as designspaceLib
 import fontTools.misc.fixedTools
 import fontTools.varLib as varLib
 import ufoLib2
+from fontTools.designspaceLib import RuleDescriptor
 
 logger = logging.getLogger(__name__)
 
@@ -153,23 +154,27 @@ class InstantiatorError(Exception):
     pass
 
 
-def process_rules_swaps(rules, location, glyphNames):
-    """ Apply these rules at this location to these glyphnames
-        - rule order matters
+def process_rules_swaps(
+    rules: Sequence[RuleDescriptor],
+    location: Location,
+    glyph_names: Union[Sequence[str], AbstractSet[str]],
+) -> List[Tuple[str, str]]:
+    """Apply these rules at this location to these glyphnames
+    - rule order matters
 
-        Return a list of (oldName, newName) in the same order as the rules.
+    Return a list of (oldName, newName) in the same order as the rules.
     """
-    swaps = []
-    glyphNames = set(glyphNames)
+    swaps: List[Tuple[str, str]] = []
+    glyph_names = set(glyph_names)
     for rule in rules:
         if designspaceLib.evaluateRule(rule, location):
-            for oldName, newName in rule.subs:
+            for name_old, name_new in rule.subs:
                 # Here I don't check if the new name is also in glyphNames...
                 # I guess it should be, so that we can swap, and if it isn't,
                 # then it's better to error out later when we try to swap,
                 # instead of silently ignoring the rule here.
-                if oldName in glyphNames:
-                    swaps.append((oldName, newName))
+                if name_old in glyph_names:
+                    swaps.append((name_old, name_new))
     return swaps
 
 
@@ -198,7 +203,7 @@ class Instantiator:
         cls,
         designspace: designspaceLib.DesignSpaceDocument,
         round_geometry: bool = True,
-    ):
+    ) -> "Instantiator":
         """Instantiates a new data class from a Designspace object."""
         if designspace.default is None:
             raise InstantiatorError(_error_msg_no_default(designspace))
@@ -348,7 +353,7 @@ class Instantiator:
 
         # Lib
         #  1. Copy the default lib to the instance.
-        font.lib = typing.cast(dict, copy.deepcopy(self.copy_lib))
+        font.lib = typing.cast(Dict[str, Any], copy.deepcopy(self.copy_lib))
         #  2. Copy the Designspace's skipExportGlyphs list over to the UFO to
         #     make sure it wins over the default UFO one.
         font.lib["public.skipExportGlyphs"] = [name for name in self.skip_export_glyphs]
@@ -607,7 +612,7 @@ def collect_glyph_masters(
     return locations_and_masters
 
 
-def width_class_from_wdth_value(wdth_user_value) -> int:
+def width_class_from_wdth_value(wdth_user_value: int) -> int:
     """Return the OS/2 width class from the wdth axis user value.
 
     The OpenType 1.8.3 specification states:
@@ -627,19 +632,19 @@ def width_class_from_wdth_value(wdth_user_value) -> int:
     return fontTools.misc.fixedTools.otRound(width_user_value_mapped)
 
 
-def weight_class_from_wght_value(wght_user_value) -> int:
+def weight_class_from_wght_value(wght_user_value: int) -> int:
     """Return the OS/2 weight class from the wght axis user value."""
     weight_user_value = min(max(wght_user_value, 1), 1000)
     return fontTools.misc.fixedTools.otRound(weight_user_value)
 
 
-def italic_angle_from_slnt_value(slnt_user_value) -> Union[int, float]:
+def italic_angle_from_slnt_value(slnt_user_value: int) -> Union[int, float]:
     """Return the italic angle from the slnt axis user value."""
     slant_user_value = min(max(slnt_user_value, -90), 90)
     return slant_user_value
 
 
-def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
+def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str) -> None:
     """Swap two existing glyphs in the default layer of a font (outlines,
     width, component references, kerning references, group membership).
 
@@ -739,7 +744,7 @@ class Variator:
     @classmethod
     def from_masters(
         cls, items: List[Tuple[Location, FontMathObject]], axis_order: List[str]
-    ):
+    ) -> "Variator":
         masters = []
         master_locations = []
         location_to_master = {}
