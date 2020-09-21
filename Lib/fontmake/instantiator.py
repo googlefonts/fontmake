@@ -153,7 +153,7 @@ class InstantiatorError(Exception):
     pass
 
 
-def processRulesSwaps(rules, location, glyphNames):
+def process_rules_swaps(rules, location, glyphNames):
     """ Apply these rules at this location to these glyphnames
         - rule order matters
 
@@ -397,7 +397,7 @@ class Instantiator:
         glyph_names_list = self.glyph_mutators.keys()
         # The order of the swaps below is independent of the order of glyph names.
         # It depends on the order of the <sub>s in the designspace rules.
-        swaps = processRulesSwaps(self.designspace_rules, location, glyph_names_list)
+        swaps = process_rules_swaps(self.designspace_rules, location, glyph_names_list)
         for name_old, name_new in swaps:
             if name_old != name_new:
                 swap_glyph_names(font, name_old, name_new)
