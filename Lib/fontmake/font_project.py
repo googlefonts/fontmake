@@ -159,8 +159,10 @@ class FontProject:
             designspace_dir = os.path.dirname(designspace_path)
         else:
             designspace_dir = master_dir
-        # glyphsLib.to_designspace expects instance_dir to be relative
-        instance_dir = os.path.relpath(instance_dir, designspace_dir)
+        if os.path.isabs(instance_dir):
+            # glyphsLib.to_designspace expects instance_dir to be relative
+            instance_dir = os.path.relpath(instance_dir, designspace_dir)
+            assert not os.path.isabs(instance_dir)
 
         designspace = glyphsLib.to_designspace(
             font,
