@@ -1,6 +1,17 @@
 import os
 
 
+def _try_relative_path(path):
+    # Try to return 'path' relative to the current working directory, or
+    # return input 'path' if we can't make a relative path.
+    # E.g. on Windows, os.path.relpath fails when path and "." are on
+    # different mount points, C: or D: etc.
+    try:
+        return os.path.relpath(path)
+    except ValueError:
+        return path
+
+
 class FontmakeError(Exception):
     """Base class for all fontmake exceptions.
 
@@ -15,7 +26,7 @@ class FontmakeError(Exception):
 
     def __str__(self):
         trail = " -> ".join(
-            f"'{str(os.path.relpath(s))}'"
+            f"'{str(_try_relative_path(s))}'"
             for s in reversed(self.source_trail)
             if s is not None
         )
@@ -38,6 +49,6 @@ class TTFAError(FontmakeError):
 
     def __str__(self):
         return (
-            f"ttfautohint failed for '{str(os.path.relpath(self.source_trail))}': "
+            f"ttfautohint failed for '{str(_try_relative_path(self.source_trail))}': "
             f"error code {str(self.exitcode)}."
         )
