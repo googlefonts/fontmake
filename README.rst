@@ -1,4 +1,4 @@
-|Travis Build Status| |Python Versions| |PyPI Version|
+|GitHub Actions Build Status| |Python Versions| |PyPI Version|
 
 fontmake
 ========
@@ -70,8 +70,7 @@ process, via methods of the ``fontmake.font_project.FontProject`` class.
 .. _PyPI: https://pypi.org/project/fontmake
 .. _Github releases: https://github.com/googlefonts/fontmake/releases
 .. _pipx: https://github.com/pipxproject/pipx
-.. |Travis Build Status| image:: https://travis-ci.org/googlefonts/fontmake.svg
-   :target: https://travis-ci.org/googlefonts/fontmake
+.. |GitHub Actions Build Status| image:: https://github.com/googlefonts/fontmake/workflows/Test/badge.svg
 .. |Python Versions| image:: https://img.shields.io/badge/python-3.6-blue.svg
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/fontmake.svg
    :target: https://pypi.org/project/fontmake/
