@@ -137,6 +137,7 @@ class FontProject:
         family_name=None,
         mti_source=None,
         write_skipexportglyphs=True,
+        generate_GDEF=True,
     ):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
@@ -170,6 +171,7 @@ class FontProject:
             instance_dir=instance_dir,
             write_skipexportglyphs=write_skipexportglyphs,
             ufo_module=ufoLib2,
+            generate_GDEF=generate_GDEF,
         )
 
         masters = {}
@@ -393,6 +395,7 @@ class FontProject:
         inplace=True,
         cff_version=1,
         subroutinizer=None,
+        generate_GDEF=True,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -646,6 +649,7 @@ class FontProject:
         family_name=None,
         mti_source=None,
         write_skipexportglyphs=True,
+        generate_GDEF=True,
         **kwargs,
     ):
         """Run toolchain from Glyphs source.
@@ -675,6 +679,7 @@ class FontProject:
             family_name=family_name,
             mti_source=mti_source,
             write_skipexportglyphs=write_skipexportglyphs,
+            generate_GDEF=generate_GDEF,
         )
         try:
             self.run_from_designspace(designspace_path, **kwargs)
