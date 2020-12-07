@@ -351,7 +351,7 @@ class FontProject:
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileTTF, "TTF"
         else:
-            for key in ("cubicConversionError", "reverseDirection"):
+            for key in ("cubicConversionError", "reverseDirection", "flattenComponents"):
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileOTF, "OTF"
 
@@ -393,6 +393,7 @@ class FontProject:
         inplace=True,
         cff_version=1,
         subroutinizer=None,
+        flatten_components=False,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -435,6 +436,8 @@ class FontProject:
                 'ufos' list contains a single font.
             output_dir: directory where to save output files. Mutually
                 exclusive with 'output_path' argument.
+            flatten_components: If True, flatten nested components to a single
+                level.
         """
         assert not (output_path and output_dir), "mutually exclusive args"
 
@@ -484,6 +487,7 @@ class FontProject:
             debugFeatureFile=debug_feature_file,
             cffVersion=cff_version,
             subroutinizer=subroutinizer,
+            flattenComponents=flatten_components,
             inplace=True,  # avoid extra copy
         )
 
