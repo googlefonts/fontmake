@@ -250,6 +250,7 @@ class FontProject:
         feature_writers=None,
         cff_round_tolerance=None,
         debug_feature_file=None,
+        flatten_components=False,
         **kwargs,
     ):
         designspace = self._load_designspace_sources(designspace)
@@ -262,6 +263,7 @@ class FontProject:
                 cubicConversionError=conversion_error,
                 featureWriters=feature_writers,
                 debugFeatureFile=debug_feature_file,
+                flattenComponents=flatten_components,
                 inplace=True,
             )
         else:
@@ -300,11 +302,11 @@ class FontProject:
         feature_writers=None,
         cff_round_tolerance=None,
         debug_feature_file=None,
+        flatten_components=False,
         **kwargs,
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
-
         designspace = self._load_designspace_sources(designspace)
 
         if output_path is None:
@@ -326,6 +328,7 @@ class FontProject:
                 cubicConversionError=conversion_error,
                 reverseDirection=reverse_direction,
                 optimizeGvar=optimize_gvar,
+                flattenComponents=flatten_components,
                 debugFeatureFile=debug_feature_file,
                 inplace=True,
             )
