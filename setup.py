@@ -17,7 +17,6 @@ from io import open
 
 from setuptools import find_packages, setup
 
-
 needs_wheel = {"bdist_wheel"}.intersection(sys.argv)
 wheel = ["wheel"] if needs_wheel else []
 

@@ -1,9 +1,9 @@
 import logging
 
-from fontTools.pens.recordingPen import RecordingPen
 import fontTools.designspaceLib as designspaceLib
 import pytest
 import ufoLib2
+from fontTools.pens.recordingPen import RecordingPen
 from ufoLib2.objects.anchor import Anchor
 
 import fontmake.instantiator
@@ -614,8 +614,8 @@ def test_data_independence(data_dir):
 
 def test_skipped_fontinfo_attributes():
     """Test that we consider all available font info attributes for copying."""
-    import fontTools.ufoLib
     import fontMath.mathInfo
+    import fontTools.ufoLib
 
     SKIPPED_ATTRS = {
         "guidelines",

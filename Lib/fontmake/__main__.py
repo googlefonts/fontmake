@@ -17,11 +17,12 @@ import sys
 from argparse import ArgumentParser, FileType
 from contextlib import contextmanager
 
+from ufo2ft import CFFOptimization
+from ufo2ft.featureWriters import loadFeatureWriterFromString
+
 from fontmake import __version__
 from fontmake.errors import FontmakeError
 from fontmake.font_project import INTERPOLATABLE_OUTPUTS, FontProject
-from ufo2ft import CFFOptimization
-from ufo2ft.featureWriters import loadFeatureWriterFromString
 
 
 def _loadFeatureWriters(parser, specs):

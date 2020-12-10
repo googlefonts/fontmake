@@ -15,7 +15,7 @@
 
 import subprocess
 
-from fontmake.errors import TTFAError, FontmakeError
+from fontmake.errors import FontmakeError, TTFAError
 
 
 def ttfautohint(in_file, out_file, args=None, **kwargs):
