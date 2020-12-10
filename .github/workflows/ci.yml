@@ -10,6 +10,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    # https://github.community/t/github-actions-does-not-respect-skip-ci/17325/8
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -22,6 +24,7 @@ jobs:
       run: tox -e lint
   test:
     runs-on: ${{ matrix.platform }}
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
