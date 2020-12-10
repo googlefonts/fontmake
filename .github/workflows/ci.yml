@@ -18,7 +18,7 @@ jobs:
         python-version: "3.x"
     - name: Install dependencies
       run: pip install tox
-    - name: Run style and typing checks
+    - name: Run style and static checks
       run: tox -e lint
   test:
     runs-on: ${{ matrix.platform }}
