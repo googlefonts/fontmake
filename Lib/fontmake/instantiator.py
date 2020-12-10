@@ -601,7 +601,9 @@ def collect_glyph_masters(
     # Filter out empty glyphs if the default glyph is not empty.
     if not default_glyph_empty and other_glyph_empty:
         locations_and_masters = [
-            (l, m) for l, m in locations_and_masters if m.contours or m.components
+            (loc, master)
+            for loc, master in locations_and_masters
+            if master.contours or master.components
         ]
 
     return locations_and_masters
