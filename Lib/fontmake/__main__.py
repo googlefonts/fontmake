@@ -259,6 +259,13 @@ def main(args=None):
         "measured in EM",
     )
     contourGroup.add_argument(
+        "-f",
+        "--flatten-components",
+        dest="flatten_components",
+        action="store_true",
+        help="Flatten nested components to single level.",
+    )
+    contourGroup.add_argument(
         "-a",
         "--autohint",
         nargs="?",

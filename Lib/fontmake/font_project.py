@@ -250,6 +250,7 @@ class FontProject:
         feature_writers=None,
         cff_round_tolerance=None,
         debug_feature_file=None,
+        flatten_components=False,
         **kwargs,
     ):
         designspace = self._load_designspace_sources(designspace)
@@ -262,6 +263,7 @@ class FontProject:
                 cubicConversionError=conversion_error,
                 featureWriters=feature_writers,
                 debugFeatureFile=debug_feature_file,
+                flattenComponents=flatten_components,
                 inplace=True,
             )
         else:
@@ -300,11 +302,11 @@ class FontProject:
         feature_writers=None,
         cff_round_tolerance=None,
         debug_feature_file=None,
+        flatten_components=False,
         **kwargs,
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
-
         designspace = self._load_designspace_sources(designspace)
 
         if output_path is None:
@@ -326,6 +328,7 @@ class FontProject:
                 cubicConversionError=conversion_error,
                 reverseDirection=reverse_direction,
                 optimizeGvar=optimize_gvar,
+                flattenComponents=flatten_components,
                 debugFeatureFile=debug_feature_file,
                 inplace=True,
             )
@@ -351,7 +354,11 @@ class FontProject:
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileTTF, "TTF"
         else:
-            for key in ("cubicConversionError", "reverseDirection"):
+            for key in (
+                "cubicConversionError",
+                "reverseDirection",
+                "flattenComponents",
+            ):
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileOTF, "OTF"
 
@@ -393,6 +400,7 @@ class FontProject:
         inplace=True,
         cff_version=1,
         subroutinizer=None,
+        flatten_components=False,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -435,6 +443,8 @@ class FontProject:
                 'ufos' list contains a single font.
             output_dir: directory where to save output files. Mutually
                 exclusive with 'output_path' argument.
+            flatten_components: If True, flatten nested components to a single
+                level.
         """
         assert not (output_path and output_dir), "mutually exclusive args"
 
@@ -484,6 +494,7 @@ class FontProject:
             debugFeatureFile=debug_feature_file,
             cffVersion=cff_version,
             subroutinizer=subroutinizer,
+            flattenComponents=flatten_components,
             inplace=True,  # avoid extra copy
         )
 
