@@ -1098,14 +1098,14 @@ class FontProject:
     ):
         """Generate an output directory.
 
-            Args:
-                ext: extension string.
-                is_instance: The output is instance font or not.
-                interpolatable: The output is interpolatable or not.
-                autohinted: The output is autohinted or not.
-                is_variable: The output is variable font or not.
-            Return:
-                output directory string.
+        Args:
+            ext: extension string.
+            is_instance: The output is instance font or not.
+            interpolatable: The output is interpolatable or not.
+            autohinted: The output is autohinted or not.
+            is_variable: The output is variable font or not.
+        Return:
+            output directory string.
         """
 
         assert not (is_variable and any([is_instance, interpolatable]))

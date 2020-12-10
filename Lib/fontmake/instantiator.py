@@ -154,10 +154,10 @@ class InstantiatorError(Exception):
 
 
 def process_rules_swaps(rules, location, glyphNames):
-    """ Apply these rules at this location to these glyphnames
-        - rule order matters
+    """Apply these rules at this location to these glyphnames
+    - rule order matters
 
-        Return a list of (oldName, newName) in the same order as the rules.
+    Return a list of (oldName, newName) in the same order as the rules.
     """
     swaps = []
     glyphNames = set(glyphNames)
