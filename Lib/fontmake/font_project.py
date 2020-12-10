@@ -354,7 +354,11 @@ class FontProject:
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileTTF, "TTF"
         else:
-            for key in ("cubicConversionError", "reverseDirection", "flattenComponents"):
+            for key in (
+                "cubicConversionError",
+                "reverseDirection",
+                "flattenComponents",
+            ):
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileOTF, "OTF"
 
