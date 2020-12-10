@@ -257,7 +257,7 @@ def test_swap_glyph_names_spec(data_dir):
 
     `adieresis` should look the same as before the rule application.
 
-    [1]: https://github.com/fonttools/fonttools/tree/master/Doc/source/designspaceLib#ufo-instances
+    [1]: fonttools/Doc/source/designspaceLib#ufo-instances
     """
     ufo = ufoLib2.Font.open(data_dir / "SwapGlyphNames" / "B.ufo")
     fontmake.instantiator.swap_glyph_names(ufo, "a", "a.alt")
