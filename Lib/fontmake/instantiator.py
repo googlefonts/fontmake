@@ -646,7 +646,7 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
     width, component references, kerning references, group membership).
 
     The idea behind swapping instead of overwriting is explained in
-    https://github.com/fonttools/fonttools/tree/master/Doc/source/designspaceLib#ufo-instances.
+    https://github.com/fonttools/fonttools/tree/main/Doc/source/designspaceLib#ufo-instances.
     We need to keep the old glyph around in case any other glyph references
     it; glyphs that are not explicitly substituted by rules should not be
     affected by the rule application.
