@@ -154,10 +154,10 @@ class InstantiatorError(Exception):
 
 
 def process_rules_swaps(rules, location, glyphNames):
-    """ Apply these rules at this location to these glyphnames
-        - rule order matters
+    """Apply these rules at this location to these glyphnames
+    - rule order matters
 
-        Return a list of (oldName, newName) in the same order as the rules.
+    Return a list of (oldName, newName) in the same order as the rules.
     """
     swaps = []
     glyphNames = set(glyphNames)
@@ -601,7 +601,9 @@ def collect_glyph_masters(
     # Filter out empty glyphs if the default glyph is not empty.
     if not default_glyph_empty and other_glyph_empty:
         locations_and_masters = [
-            (l, m) for l, m in locations_and_masters if m.contours or m.components
+            (loc, master)
+            for loc, master in locations_and_masters
+            if master.contours or master.components
         ]
 
     return locations_and_masters
@@ -644,7 +646,7 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
     width, component references, kerning references, group membership).
 
     The idea behind swapping instead of overwriting is explained in
-    https://github.com/fonttools/fonttools/tree/master/Doc/source/designspaceLib#ufo-instances.
+    https://github.com/fonttools/fonttools/tree/main/Doc/source/designspaceLib#ufo-instances.
     We need to keep the old glyph around in case any other glyph references
     it; glyphs that are not explicitly substituted by rules should not be
     affected by the rule application.

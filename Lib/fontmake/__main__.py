@@ -17,11 +17,12 @@ import sys
 from argparse import ArgumentParser, FileType
 from contextlib import contextmanager
 
+from ufo2ft import CFFOptimization
+from ufo2ft.featureWriters import loadFeatureWriterFromString
+
 from fontmake import __version__
 from fontmake.errors import FontmakeError
 from fontmake.font_project import INTERPOLATABLE_OUTPUTS, FontProject
-from ufo2ft import CFFOptimization
-from ufo2ft.featureWriters import loadFeatureWriterFromString
 
 
 def _loadFeatureWriters(parser, specs):
@@ -263,6 +264,13 @@ def main(args=None):
         metavar="ERROR",
         help="Maximum approximation error for cubic to quadratic conversion "
         "measured in EM",
+    )
+    contourGroup.add_argument(
+        "-f",
+        "--flatten-components",
+        dest="flatten_components",
+        action="store_true",
+        help="Flatten nested components to single level.",
     )
     contourGroup.add_argument(
         "-a",
