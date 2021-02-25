@@ -16,6 +16,7 @@ import glob
 import logging
 import math
 import os
+import re
 import shutil
 import tempfile
 from collections import OrderedDict
@@ -164,12 +165,20 @@ class FontProject:
             instance_dir = os.path.relpath(instance_dir, designspace_dir)
             assert not os.path.isabs(instance_dir)
 
+        # https://github.com/googlefonts/fontmake/issues/702
+        generate_GDEF = True
+        for fea in font.featurePrefixes:
+            if re.search(r"^\s*table\s+GDEF\s+{", fea.code, flags=re.MULTILINE):
+                generate_GDEF = False
+                break
+
         designspace = glyphsLib.to_designspace(
             font,
             family_name=family_name,
             instance_dir=instance_dir,
             write_skipexportglyphs=write_skipexportglyphs,
             ufo_module=ufoLib2,
+            generate_GDEF=generate_GDEF,
         )
 
         masters = {}
