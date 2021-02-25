@@ -657,3 +657,28 @@ def test_static_otf_cffsubr_subroutinizer(data_dir, tmp_path):
     )
 
     assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
+
+
+def test_GDEF_in_glyphs_features(data_dir, tmp_path):
+    shutil.copyfile(data_dir / "GDEFPresent.glyphs", tmp_path / "GDEFPresent.glyphs")
+
+    output_dir = tmp_path / "master_ttf"
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "GDEFPresent.glyphs"),
+            "--output-dir",
+            str(output_dir),
+            "-o",
+            "ttf",
+        ]
+    )
+
+    assert {p.name for p in output_dir.glob("*.*")} == {
+        "GDEFPresent-Regular.ttf",
+    }
+
+    test_output_ttf = fontTools.ttLib.TTFont(output_dir / "GDEFPresent-Regular.ttf")
+    assert "GDEF" in test_output_ttf
+    gdef = test_output_ttf["GDEF"].table
+    assert gdef.GlyphClassDef.classDefs == {"A": 1}

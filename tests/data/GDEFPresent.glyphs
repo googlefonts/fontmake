@@ -1,0 +1,133 @@
+{
+.appVersion = "1354";
+classes = (
+{
+automatic = 1;
+code = A;
+name = Uppercase;
+}
+);
+customParameters = (
+{
+name = "Use Line Breaks";
+value = 1;
+}
+);
+date = "2021-02-25 11:04:52 +0000";
+familyName = GDEFPresent;
+featurePrefixes = (
+{
+code = "table GDEF {
+  GlyphClassDef [A], , , ;
+} GDEF;
+";
+name = Prefix;
+}
+);
+features = (
+{
+automatic = 1;
+code = "pos @Uppercase <5 0 10 0>;
+";
+name = cpsp;
+}
+);
+fontMaster = (
+{
+ascender = 800;
+capHeight = 700;
+descender = -200;
+id = "A82E8779-E9D6-4341-BA1A-AF1FA001C07D";
+xHeight = 500;
+}
+);
+glyphs = (
+{
+glyphname = A;
+lastChange = "2021-02-25 11:11:10 +0000";
+layers = (
+{
+anchors = (
+{
+name = top;
+position = "{300, 700}";
+}
+);
+layerId = "A82E8779-E9D6-4341-BA1A-AF1FA001C07D";
+paths = (
+{
+closed = 1;
+nodes = (
+"60 0 LINE",
+"540 0 LINE",
+"540 700 LINE",
+"60 700 LINE"
+);
+}
+);
+width = 600;
+}
+);
+unicode = 0041;
+},
+{
+glyphname = B;
+lastChange = "2021-02-25 11:20:00 +0000";
+layers = (
+{
+anchors = (
+{
+name = top;
+position = "{300, 700}";
+}
+);
+layerId = "A82E8779-E9D6-4341-BA1A-AF1FA001C07D";
+paths = (
+{
+closed = 1;
+nodes = (
+"60 0 LINE",
+"540 0 LINE",
+"540 700 LINE",
+"60 700 LINE"
+);
+}
+);
+width = 600;
+}
+);
+unicode = 0042;
+},
+{
+glyphname = acutecomb;
+lastChange = "2021-02-25 11:12:05 +0000";
+layers = (
+{
+anchors = (
+{
+name = _top;
+position = "{300, 621}";
+}
+);
+layerId = "A82E8779-E9D6-4341-BA1A-AF1FA001C07D";
+paths = (
+{
+closed = 1;
+nodes = (
+"60 621 LINE",
+"540 621 LINE",
+"540 700 LINE",
+"60 700 LINE"
+);
+}
+);
+width = 600;
+}
+);
+unicode = 0301;
+}
+);
+unitsPerEm = 1000;
+versionMajor = 1;
+versionMinor = 0;
+}
