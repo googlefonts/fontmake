@@ -229,8 +229,7 @@ def main(args=None):
         "--no-generate-GDEF",
         dest="generate_GDEF",
         action="store_false",
-        help="Do not auto-generate a GDEF table, but keep an existing one "
-        "intact.",
+        help="Do not auto-generate a GDEF table, but keep an existing one intact.",
     )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
