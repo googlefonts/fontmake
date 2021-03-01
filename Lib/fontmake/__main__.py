@@ -225,6 +225,12 @@ def main(args=None):
         "interpolating. Use if you share feature files of masters in "
         "external files, as instances can end up elsewhere.",
     )
+    outputGroup.add_argument(
+        "--no-generate-GDEF",
+        dest="generate_GDEF",
+        action="store_false",
+        help="Do not auto-generate a GDEF table, but keep an existing one intact.",
+    )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
     contourGroup.add_argument(
