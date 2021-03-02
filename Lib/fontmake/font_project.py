@@ -35,6 +35,7 @@ from fontTools.varLib.interpolate_layout import interpolate_layout
 from ufo2ft import CFFOptimization
 from ufo2ft.featureCompiler import parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
+from ufo2ft.filters import FILTERS_KEY, loadFilters
 from ufo2ft.util import makeOfficialGlyphOrder
 
 from fontmake import instantiator
@@ -253,6 +254,7 @@ class FontProject:
         cff_round_tolerance=None,
         debug_feature_file=None,
         flatten_components=False,
+        filters=None,
         **kwargs,
     ):
         designspace = self._load_designspace_sources(designspace)
@@ -265,6 +267,7 @@ class FontProject:
                 cubicConversionError=conversion_error,
                 featureWriters=feature_writers,
                 debugFeatureFile=debug_feature_file,
+                filters=filters,
                 flattenComponents=flatten_components,
                 inplace=True,
             )
@@ -275,6 +278,7 @@ class FontProject:
                 roundTolerance=cff_round_tolerance,
                 featureWriters=feature_writers,
                 debugFeatureFile=debug_feature_file,
+                filters=filters,
                 inplace=True,
             )
 
@@ -305,6 +309,7 @@ class FontProject:
         cff_round_tolerance=None,
         debug_feature_file=None,
         flatten_components=False,
+        filters=None,
         **kwargs,
     ):
         """Build OpenType variable font from masters in a designspace."""
@@ -332,6 +337,7 @@ class FontProject:
                 optimizeGvar=optimize_gvar,
                 flattenComponents=flatten_components,
                 debugFeatureFile=debug_feature_file,
+                filters=filters,
                 inplace=True,
             )
         else:
@@ -342,6 +348,7 @@ class FontProject:
                 roundTolerance=cff_round_tolerance,
                 debugFeatureFile=debug_feature_file,
                 optimizeCFF=optimize_cff,
+                filters=filters,
                 inplace=True,
             )
 
@@ -403,6 +410,7 @@ class FontProject:
         cff_version=1,
         subroutinizer=None,
         flatten_components=False,
+        filters=None,
         generate_GDEF=True,
     ):
         """Build OpenType binaries from UFOs.
@@ -448,6 +456,12 @@ class FontProject:
                 exclusive with 'output_path' argument.
             flatten_components: If True, flatten nested components to a single
                 level.
+            filters: list of ufo2ft-compatible filter classes or
+                pre-initialized objects that are passed on to ufo2ft
+                pre-processor to modify the glyph set. The filters are either
+                pre-filters or post-filters, called before or after the default
+                filters. The default filters are format specific and some can
+                be disabled with other arguments.
         """
         assert not (output_path and output_dir), "mutually exclusive args"
 
@@ -498,6 +512,7 @@ class FontProject:
             cffVersion=cff_version,
             subroutinizer=subroutinizer,
             flattenComponents=flatten_components,
+            filters=filters,
             inplace=True,  # avoid extra copy
         )
 
@@ -869,6 +884,7 @@ class FontProject:
         interpolate_binary_layout=False,
         round_instances=False,
         feature_writers=None,
+        filters=None,
         expand_features_to_instances=False,
         use_mutatormath=False,
         **kwargs,
@@ -921,6 +937,10 @@ class FontProject:
         if feature_writers is None and FEATURE_WRITERS_KEY in designspace.lib:
             feature_writers = loadFeatureWriters(designspace)
 
+        if filters is None and FILTERS_KEY in designspace.lib:
+            preFilters, postFilters = loadFilters(designspace)
+            filters = preFilters + postFilters
+
         try:
             if static_outputs:
                 self._run_from_designspace_static(
@@ -933,6 +953,7 @@ class FontProject:
                     feature_writers=feature_writers,
                     expand_features_to_instances=expand_features_to_instances,
                     use_mutatormath=use_mutatormath,
+                    filters=filters,
                     **kwargs,
                 )
             if interp_outputs:
@@ -940,6 +961,7 @@ class FontProject:
                     designspace,
                     outputs=interp_outputs,
                     feature_writers=feature_writers,
+                    filters=filters,
                     **kwargs,
                 )
         except FontmakeError as e:
