@@ -51,7 +51,7 @@ def _loadFilters(parser, specs):
             filters.append(loadFilterFromString(s))
         except Exception as e:
             parser.error(
-                "Failed to load --filters:\n  {}: {}".format(type(e).__name__, e)
+                "Failed to load --filter:\n  {}: {}".format(type(e).__name__, e)
             )
     return filters
 
@@ -327,17 +327,16 @@ def main(args=None):
         "(only works with 'variable' TrueType-flavored output)",
     )
     contourGroup.add_argument(
-        "--filters",
+        "--filter",
         metavar="CLASS",
         action="append",
-        dest="filters_specs",
+        dest="filter_specs",
         help="string specifying a filter class to load, either "
         "built-in or from an external module, optionally initialized with "
         "the given keyword arguments. The class and module names are "
         "separated by '::'. The option can be repeated multiple times "
-        "for each writer class. A special value of 'None' will disable "
-        "all automatic filters. The option overrides both the "
-        "default ufo2ft filters and those specified in the UFO lib.",
+        "for each filter class. The option overrides the filters specified "
+        "in the UFO lib.",
     )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
