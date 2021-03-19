@@ -41,7 +41,7 @@ setup(
         "fonttools[ufo,lxml,unicode]>=4.18.1",
         "cu2qu>=1.6.7",
         "glyphsLib>=5.3.0",
-        "ufo2ft[cffsubr]>=2.19.1",
+        "ufo2ft[cffsubr]>=2.20.0",
         "fontMath>=0.6.0",
         "booleanOperations>=0.9.0",
         "ufoLib2>=0.8.0",
