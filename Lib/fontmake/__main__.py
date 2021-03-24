@@ -26,34 +26,33 @@ from fontmake.errors import FontmakeError
 from fontmake.font_project import INTERPOLATABLE_OUTPUTS, FontProject
 
 
-def _loadFeatureWriters(parser, specs):
-    feature_writers = []
+def _loadPlugins(parser, specs, from_string_func, parser_error_message):
+    plugins = []
     for s in specs:
         if s == "None":
-            # magic value that means "don't generate any features!"
+            # magic value that means "don't write any features or don't apply
+            # any filters!"
             return []
         try:
-            feature_writers.append(loadFeatureWriterFromString(s))
+            plugins.append(from_string_func(s))
         except Exception as e:
-            parser.error(
-                "Failed to load --feature-writer:\n  {}: {}".format(type(e).__name__, e)
-            )
-    return feature_writers
+            parser.error(parser_error_message.format(type(e).__name__, e))
+    return plugins
+
+
+def _loadFeatureWriters(parser, specs):
+    return _loadPlugins(
+        parser,
+        specs,
+        loadFeatureWriterFromString,
+        "Failed to load --feature-writer:\n  {}: {}",
+    )
 
 
 def _loadFilters(parser, specs):
-    filters = []
-    for s in specs:
-        if s == "None":
-            # magic value that means "don't apply any filters!"
-            return []
-        try:
-            filters.append(loadFilterFromString(s))
-        except Exception as e:
-            parser.error(
-                "Failed to load --filter:\n  {}: {}".format(type(e).__name__, e)
-            )
-    return filters
+    return _loadPlugins(
+        parser, specs, loadFilterFromString, "Failed to load --filter:\n  {}: {}"
+    )
 
 
 def exclude_args(parser, args, excluded_args, target, positive=True):
