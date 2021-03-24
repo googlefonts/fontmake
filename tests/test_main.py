@@ -657,3 +657,40 @@ def test_static_otf_cffsubr_subroutinizer(data_dir, tmp_path):
     )
 
     assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
+
+
+def test_main_with_feature_writer_none(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "MutatorSans" / "MutatorSansBoldCondensed.ufo"),
+            "-o",
+            "ttf",
+            "--feature-writer",
+            "None",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MutatorSansBoldCondensed.ttf")
+    assert "GPOS" not in test_output_ttf
+
+
+def test_main_with_filter(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "DesignspaceTest" / "MyFont-Light.ufo"),
+            "-o",
+            "ttf",
+            "--filter",
+            "TransformationsFilter(OffsetX=100)",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Light.ttf")
+    hmtx = test_output_ttf["hmtx"]
+    assert hmtx["l"] == (160, 170)
