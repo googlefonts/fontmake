@@ -659,6 +659,23 @@ def test_static_otf_cffsubr_subroutinizer(data_dir, tmp_path):
     assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
 
 
+def test_static_otf_compreffor_subroutinizer(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "DesignspaceTest" / "MyFont-Light.ufo"),
+            "-o",
+            "otf",
+            "--subroutinizer",
+            "compreffor",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
+
+
 def test_main_with_feature_writer_none(data_dir, tmp_path):
     fontmake.__main__.main(
         [
