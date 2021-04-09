@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import site
 import sys
 from io import open
 
 from setuptools import find_packages, setup
+
+# See https://github.com/pypa/pip/issues/7953
+site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
 needs_wheel = {"bdist_wheel"}.intersection(sys.argv)
 wheel = ["wheel"] if needs_wheel else []
