@@ -42,7 +42,8 @@ setup(
     setup_requires=wheel + ["setuptools_scm"],
     python_requires=">=3.6",
     install_requires=[
-        "fonttools[ufo,lxml,unicode]>=4.21.1",
+        "fonttools[ufo,lxml,unicode]>=4.21.1 ; platform_python_implementation == 'CPython'",
+        "fonttools[ufo,unicode]>=4.21.1 ; platform_python_implementation != 'CPython'",
         "cu2qu>=1.6.7",
         "glyphsLib>=5.3.2",
         "ufo2ft[compreffor]>=2.20.0",
