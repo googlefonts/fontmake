@@ -1,5 +1,5 @@
 pytest>=4.5.0
 coverage>=5
-black
-isort
-flake8-bugbear
+black ; platform_python_implementation == 'CPython'
+isort ; platform_python_implementation == 'CPython'
+flake8-bugbear ; platform_python_implementation == 'CPython'
