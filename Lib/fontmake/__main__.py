@@ -444,7 +444,9 @@ def main(args=None):
 
     for file in unknown:
         if any_input and not (ufo_paths and file.endswith(".ufo")):
-            logging.warn("Only one input file type accepted; additional file '%s' ignored" % file)
+            logging.warn(
+                "Only one input file type accepted; additional file '%s' ignored" % file
+            )
         elif file.endswith(".glyphs"):
             glyphs_path = file
             any_input = True
