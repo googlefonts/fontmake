@@ -110,7 +110,7 @@ def main(args=None):
         title="Input arguments",
         description="The following arguments are mutually exclusive (pick only one):",
     )
-    xInputGroup = inputGroup.add_mutually_exclusive_group(required=True)
+    xInputGroup = inputGroup.add_mutually_exclusive_group()
     xInputGroup.add_argument(
         "-g", "--glyphs-path", metavar="GLYPHS", help="Path to .glyphs source file"
     )
@@ -425,7 +425,9 @@ def main(args=None):
         help="Configure the logger verbosity level. Choose between: "
         "%(choices)s. Default: INFO",
     )
-    args = vars(parser.parse_args(args))
+
+    parsed_args, unknown = parser.parse_known_args(args)
+    args = vars(parsed_args)
 
     specs = args.pop("feature_writer_specs")
     if specs is not None:
@@ -438,6 +440,29 @@ def main(args=None):
     glyphs_path = args.pop("glyphs_path")
     ufo_paths = args.pop("ufo_paths")
     designspace_path = args.pop("mm_designspace")
+    any_input = glyphs_path or ufo_paths or designspace_path
+
+    for file in unknown:
+        if any_input and not (ufo_paths and file.endswith(".ufo")):
+            logging.warn("Only one input file type accepted; additional file '%s' ignored" % file)
+        elif file.endswith(".glyphs"):
+            glyphs_path = file
+            any_input = True
+        elif file.endswith(".designspace"):
+            designspace_path = file
+            any_input = True
+        elif file.endswith(".ufo"):
+            if not ufo_paths:
+                ufo_paths = []
+            ufo_paths.append(file)
+            any_input = True
+        else:
+            logging.warning("Unknown input file type '%s' ignored" % file)
+    if not any_input:
+        parser.print_help(sys.stderr)
+        print("fontmake: No input files specified")
+        sys.exit(1)
+
     input_format = (
         "Glyphs" if glyphs_path else "designspace" if designspace_path else "UFO"
     ) + " source"
