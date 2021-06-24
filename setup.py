@@ -27,6 +27,17 @@ wheel = ["wheel"] if needs_wheel else []
 with open("README.rst", "r", encoding="utf-8") as f:
     long_description = f.read()
 
+extras_require={
+    "pathops": ["skia-pathops>=0.3.0"],
+    # this is now default; kept here for backward compatibility
+    "lxml": [
+        # "lxml>=4.2.4",
+    ],
+    "mutatormath": ["MutatorMath>=2.1.2"],
+}
+# use a special 'all' key as shorthand to includes all the extra dependencies
+extras_require["all"] = sum(extras_require.values(), [])
+
 setup(
     name="fontmake",
     use_scm_version={"write_to": "Lib/fontmake/_version.py"},
@@ -50,14 +61,7 @@ setup(
         "ufoLib2>=0.8.0",
         "attrs>=19",
     ],
-    extras_require={
-        "pathops": ["skia-pathops>=0.3.0"],
-        # this is now default; kept here for backward compatibility
-        "lxml": [
-            # "lxml>=4.2.4",
-        ],
-        "mutatormath": ["MutatorMath>=2.1.2"],
-    },
+    extras_require=extras_require,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
