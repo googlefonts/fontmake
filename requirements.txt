@@ -7,6 +7,6 @@ fontMath==0.8.1
 defcon[lxml]==0.8.1
 booleanOperations==0.9.0
 ufoLib2==0.8.0
-attrs==20.3.0
+attrs==21.2.0
 cffsubr==0.2.8
 compreffor==0.5.1
