@@ -521,6 +521,10 @@ def main(args=None):
             logging.exception(e)
             sys.exit(1)
         sys.exit(f"fontmake: Error: {str(e)}")
+    finally:
+        debug_feature_file = args.get("debug_feature_file")
+        if debug_feature_file is not None:
+            debug_feature_file.close()
 
 
 if __name__ == "__main__":
