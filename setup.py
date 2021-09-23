@@ -27,7 +27,7 @@ wheel = ["wheel"] if needs_wheel else []
 with open("README.rst", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-extras_require={
+extras_require = {
     "pathops": ["skia-pathops>=0.3.0"],
     # this is now default; kept here for backward compatibility
     "lxml": [
