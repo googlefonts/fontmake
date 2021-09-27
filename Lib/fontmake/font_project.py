@@ -173,6 +173,8 @@ class FontProject:
             write_skipexportglyphs=write_skipexportglyphs,
             ufo_module=ufoLib2,
             generate_GDEF=generate_GDEF,
+            store_editor_state=False,
+            minimal=True,
         )
 
         masters = {}
