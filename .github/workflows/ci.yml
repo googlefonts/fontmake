@@ -27,7 +27,7 @@ jobs:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, "pypy-3.7"]
+        python-version: [3.7, 3.8, 3.9, "pypy-3.7"]
         platform: [ubuntu-latest, windows-latest]
         exclude:
           - platform: windows-latest

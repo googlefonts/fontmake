@@ -6,7 +6,7 @@ set -x
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 PLATFORMS=(manylinux1_x86_64 macosx_10_6_intel win32 win_amd64)
-PYTHON_VERSIONS=(3.6 3.7 3.8)
+PYTHON_VERSIONS=(3.7 3.8 3.9)
 FONTMAKE_VERSION="$(python setup.py --version)"
 
 FONTMAKE_WHEEL="${HERE}/dist/fontmake-${FONTMAKE_VERSION}-py3-none-any.whl"
