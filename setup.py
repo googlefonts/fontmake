@@ -55,7 +55,7 @@ setup(
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=4.21.1 ; platform_python_implementation == 'CPython'",
         "fonttools[ufo,unicode]>=4.21.1 ; platform_python_implementation != 'CPython'",
-        "glyphsLib>=6.0.0b3",
+        "glyphsLib>=6.0.0b4",
         "ufo2ft[compreffor]>=2.20.0",
         "fontMath>=0.6.0",
         "ufoLib2>=0.8.0",
