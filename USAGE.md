@@ -24,7 +24,7 @@ For most people, the default settings will produce optimal results, but in some 
 
 * `--no-production-names`: By default, `fontmake` renames the glyphs in the output binary font file during post-processing based on the value of the `public.postscriptNames` lib key in the UFO file. (In the case of Glyphs source files, conversion to UFO populates this lib key with the production names from the Glyphs file.) Any encoded glyphs without production names are renamed to `uniXXXX` based on their Unicode code point, unencoded ligature glyphs are renamed based on the production names of their components, and other unencoded glyphs are not renamed. The `--no-production-names` flag suppresses all glyph renaming.
 
-* `-a "<arguments>"`: Run ttfautohint on TrueType output binary font files. Any arguments in the quoted string are passed to the `ttfautohint` binary.
+* `-a`/`-a "<arguments>"`: Run ttfautohint on TrueType output binary font files. If any arguments are provided in a quoted string, these are passed to the `ttfautohint` binary.
 
 * `--mti-source <plist>`: Instead of generating feature files from the design sources, this takes an external plist file which links masters to Monotype FontDame feature definition files. You may safely ignore this option unless you are compiling Monotype-supplied font sources for the Noto project.
 
@@ -104,27 +104,33 @@ This can be done in two ways: either by writing, manually or automatically, entr
 
 This calls the `EraseOpenCornersFilter` class from the Python module `glyphsLib.filters.eraseOpenCorners` as part of the `pre`-processing step, which converts any external open corners in the glyph outlines into plain corners.
 
-Any Python class inheriting from `ufo2ft.filters.BaseFilter` can be used as a filter, although the `namespace` must be provided, as in this case. Filters available through the `ufo2ft` library do not require a `namespace` key, as this library is the default source of filters. Filters can be further customized through optional arguments, as described below.
+Any Python class inheriting from [`ufo2ft.filters.BaseFilter`](https://github.com/googlefonts/ufo2ft/blob/main/Lib/ufo2ft/filters/base.py) can be used as a filter, although the `namespace` must be provided, as in this case. Filters available through the `ufo2ft` library do not require a `namespace` key, as this library is the default source of filters. Filters can be further customized through optional arguments, as described below.
 
-To apply filters via a command-line, use the `--filter` argument with the following syntax: `--filter "python.package::ClassName(argument,argument)`; add the pseudo-argument `pre=True` to run the filter as a preprocessing step. For example, to use the `ufostroker` library to apply "noodling" effects to open paths in a source font, use `--filter 'ufostroker::StrokeFilter(Width=50,pre=True)`
+To apply filters via a command-line, use the `--filter` argument with the following syntax: `--filter "python.package::ClassName(argument,argument)`; add the pseudo-argument `pre=True` to run the filter as a preprocessing step. For example, to use the `ufostroker` library to apply "noodling" effects to open paths in a source font, use `--filter 'ufostroker::StrokeFilter(Width=50,pre=True)`.
 
 ### Included filters
 
-The `ufo2ft` library provides the following filters. Most of the filters are called automatically as part of `fontmake`'s ordinary pipeline, but some can be added manually:
+The `ufo2ft` library provides some default filters described below. Most of the filters are called automatically as part of `fontmake`'s ordinary pipeline, but some can be added manually. The filters are run in the following order:
 
-* `CubicToQuadratic`: Called automatically when producing TTF binaries.
-
-* `DecomposeComponents`: Called automatically when producing OTF outlines, and called on glyphs which have components *and* outlines when producing TTF binaries.
-
-* `DecomposeTransformedComponents`: Decomposes any components which have a non-identity transformation matrix (i.e. which are translated or scaled). For example, a `u` glyph from an `n` component flipped horizontally. Fonts constructed in this way can have rasterizing and hinting errors (see [here](https://github.com/googlefonts/fontmake/issues/253) and [here](https://github.com/googlefonts/fontbakery/issues/2011)). To fix fonts with these errors, add `--filter DecomposeTransformedComponentsFilter` to the `fontmake` command line.
+* (Any manually added pre-filters are called first.)
 
 * `ExplodeColorLayerGlyphs`: Called automatically to create glyphs out of color layers when constructing a `COLR` font with `colorPalettes` and `colorLayerMapping` lib keys.
 
+* `DecomposeComponents`: Called automatically when producing OTF outlines, and called on glyphs which have components *and* outlines when producing TTF binaries.
+
 * `FlattenComponents`: Called automatically to flatten nested components when the `-f` flag is passed to `fontmake`.
 
-* `PropagateAnchors`: Creates additional anchors for composite glyphs based on the anchors of their components.
-
 * `RemoveOverlaps`: Called automatically to remove overlaps on TrueType outlines.
+
+* `CubicToQuadratic`: Called automatically when producing TTF binaries.
+
+* (Any manually added post-filters are called last.)
+
+Other filters available as part of `ufo2ft` are:
+
+* `DecomposeTransformedComponents`: Decomposes any components which have a non-identity transformation matrix (i.e. which are translated or scaled). For example, a `u` glyph from an `n` component flipped horizontally. Fonts constructed in this way can have rasterizing and hinting errors (see [here](https://github.com/googlefonts/fontmake/issues/253) and [here](https://github.com/googlefonts/fontbakery/issues/2011)). To fix fonts with these errors, add `--filter DecomposeTransformedComponentsFilter` to the `fontmake` command line.
+
+* `PropagateAnchors`: Creates additional anchors for composite glyphs based on the anchors of their components.
 
 * `SortContours`: Sorts the contours based on their bounding box size. Can be added manually to alleviate overlap removal bugs, but must be manually placed in the UFO lib so that it is executed between `DecomposeComponents` and `RemoveOverlaps`.
 

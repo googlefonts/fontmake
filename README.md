@@ -32,7 +32,7 @@ For example, to compile a variable font from a Glyphs source file, use:
 fontmake -g MyFont.glyphs -o variable
 ```
 
-The most important options to the `fontmake` executable are the `-g`/`-u`/`-m` options, which choose the source file format, and the `-o` option, which chooses the output file format.
+The most important command line arguments to the `fontmake` executable are the `-g`/`-u`/`-m` flags, one of which is required and selects the source file format, and the optional `-o` flag, which chooses the output file format.
 
 ### Source file format options
 
@@ -57,6 +57,8 @@ The following output file formats are also available, but are generally used int
 * `otf-interpolatable`: OTF binaries suitable for merging into a variable font. Placed in the `master_otf_interpolatable/` directory. (These differ from `otf` in that the outlines are unoptimized.)
 * `ttf-interpolatable`: TTF binaries suitable for merging into a variable font. Placed in the `master_ttf_interpolatable/` directory. (The outlines are converted to quadratic curves in an interpolation-compatible way.)
 * `ufo`: Glyphs sources can be converted to UFO. Placed in the `master_ufo/` directory.
+
+If no format option is specified, the default is `-o otf ttf`.
 
 ### Other important command line options
 
