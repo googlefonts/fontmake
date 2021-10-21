@@ -24,7 +24,7 @@ site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 needs_wheel = {"bdist_wheel"}.intersection(sys.argv)
 wheel = ["wheel"] if needs_wheel else []
 
-with open("README.rst", "r", encoding="utf-8") as f:
+with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 extras_require = {
@@ -45,6 +45,7 @@ setup(
         "Compile fonts from sources (UFO, Glyphs) to binary (OpenType, TrueType)."
     ),
     long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/googlei18n/fontmake",
     license="Apache Software License 2.0",
     packages=find_packages("Lib"),
