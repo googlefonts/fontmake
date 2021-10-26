@@ -29,16 +29,30 @@ After installation, you will be able to use the `fontmake` executable.
 For example, to compile a variable font from a Glyphs source file, use:
 
 ``` bash
-fontmake -g MyFont.glyphs -o variable
+fontmake MyFont.glyphs -o variable
 ```
 
-The most important command line arguments to the `fontmake` executable are the `-g`/`-u`/`-m` flags, one of which is required and selects the source file format, and the optional `-o` flag, which chooses the output file format.
+The most important command line arguments to the `fontmake` executable are the required input, specified either as positional argument or using one of `-g`/`-u`/`-m` flags, and the optional `-o` flag, which chooses the output file format.
 
 ### Source file format options
 
+There are two ways to specify the source file or files:
+
+One can either use the following, mutually exclusive, flags:
 * `-g filename.glyphs`: Converts a Glyphs source file to binary.
 * `-u filename.ufo ...`: Converts one or more UFO files to binary.
 * `-m filename.designspace`: Converts a Designspace file to binary. (The `-m` is for `mutatormath`, an old Python library for handling designspaces.)
+
+Alternatively, one can specify the input(s) as positional arguments without the flag, letting fontmake infer the source format from the file extension: e.g. ``fontmake MyFont.designspace``, etc.
+
+Note: if the positional arguments are preceded by an option that takes one or more arguments, you need to use the special `--` separator to mark all following
+arguments as posional (non-options), otherwise the parser gets confused. E.g., the `-i` option takes zero or one arguments (see futher below for details); without `--`, argparse thinks you didn't provide any inputs:
+
+```bash
+fontmake -i -- MyFont.designspace
+```
+
+Exactly one type of input can/must be specified, using either approaches.
 
 ### Output file format options
 
