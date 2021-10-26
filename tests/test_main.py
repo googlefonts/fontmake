@@ -563,6 +563,8 @@ def test_write_skipexportglyphs(data_dir, tmp_path):
         str(tmp_path / "GlyphsUnitTestSans.glyphs"),
         "--master-dir",
         str(tmp_path / "master_ufos"),
+        "--instance-dir",
+        str(tmp_path / "instance_ufos"),
         "-o",
         "ufo",
     ]

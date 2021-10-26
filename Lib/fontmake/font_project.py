@@ -149,22 +149,28 @@ class FontProject:
             os.mkdir(master_dir)
         if instance_dir is None:
             instance_dir = self._output_dir("ufo", is_instance=True)
-        if not os.path.isdir(instance_dir):
-            os.mkdir(instance_dir)
-
-        try:
-            font = glyphsLib.GSFont(glyphs_path)
-        except Exception as e:
-            raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
 
         if designspace_path is not None:
             designspace_dir = os.path.dirname(designspace_path)
         else:
             designspace_dir = master_dir
-        if os.path.isabs(instance_dir):
-            # glyphsLib.to_designspace expects instance_dir to be relative
+        # glyphsLib.to_designspace expects instance_dir to be relative to the
+        # designspace's own directory
+        try:
             instance_dir = os.path.relpath(instance_dir, designspace_dir)
-            assert not os.path.isabs(instance_dir)
+        except ValueError as e:
+            raise FontmakeError(
+                "Can't make instance_dir path relative to designspace. "
+                "If on Windows, please make sure that --instance-dir, "
+                "--master-dir and --designspace-path are on the same mount drive "
+                "(e.g. C: or D:)",
+                glyphs_path,
+            ) from e
+
+        try:
+            font = glyphsLib.GSFont(glyphs_path)
+        except Exception as e:
+            raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
 
         designspace = glyphsLib.to_designspace(
             font,
