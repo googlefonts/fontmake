@@ -15,6 +15,7 @@
 import logging
 import sys
 from argparse import ArgumentParser, FileType
+from collections import namedtuple
 from contextlib import contextmanager
 
 from ufo2ft import CFFOptimization
@@ -78,6 +79,63 @@ def exclude_args(parser, args, excluded_args, target, positive=True):
         del args[argname]
 
 
+_ParsedInputs = namedtuple(
+    "_ParsedInputs",
+    [
+        "glyphs_path",
+        "ufo_paths",
+        "designspace_path",
+        "format_name",
+    ],
+)
+
+
+def parse_mutually_exclusive_inputs(parser, args):
+    glyphs_path = args.pop("glyphs_path")
+    ufo_paths = args.pop("ufo_paths") or []
+    designspace_path = args.pop("mm_designspace")
+    posargs = args.pop("posargs")
+
+    # assert input -flags are already mutually exclusive via argparse
+    assert sum(bool(p) for p in (glyphs_path, ufo_paths, designspace_path)) <= 1
+
+    input_flag = (
+        "g" if glyphs_path else "m" if designspace_path else "u" if ufo_paths else None
+    )
+    if input_flag and posargs:
+        parser.error(
+            f"argument -{input_flag} not allowed with positional input args: "
+            f"{' '.join(posargs)}"
+        )
+
+    for filename in posargs:
+        if filename.endswith(".glyphs"):
+            glyphs_path = filename
+        elif filename.endswith(".designspace"):
+            designspace_path = filename
+        elif filename.endswith(".ufo"):
+            ufo_paths.append(filename)
+        else:
+            parser.error(f"Unknown input file extension: '{filename}'")
+
+    count = sum(bool(p) for p in (glyphs_path, ufo_paths, designspace_path))
+    if count == 0:
+        parser.error("No input files specified")
+    elif count > 1:
+        parser.error(f"Expected 1, got {count} different types of inputs files")
+
+    format_name = (
+        "Glyphs" if glyphs_path else "designspace" if designspace_path else "UFO"
+    ) + " source"
+
+    return _ParsedInputs(
+        glyphs_path,
+        ufo_paths,
+        designspace_path,
+        format_name,
+    )
+
+
 @contextmanager
 def _make_tempdirs(parser, args):
     output = args["output"]
@@ -107,7 +165,7 @@ def main(args=None):
     parser = ArgumentParser()
     parser.add_argument("--version", action="version", version=__version__)
     inputGroup = parser.add_argument_group(
-        title="Input arguments",
+        title="Input arguments (flags)",
         description="The following arguments are mutually exclusive (pick only one):",
     )
     xInputGroup = inputGroup.add_mutually_exclusive_group()
@@ -126,6 +184,16 @@ def main(args=None):
         "--mm-designspace",
         metavar="DESIGNSPACE",
         help="Path to .designspace file",
+    )
+    positionalInputs = parser.add_argument_group(
+        title="Input arguments (positonal)",
+        description="Alternatively, guess source format from filename extension",
+    )
+    positionalInputs.add_argument(
+        "posargs",
+        nargs="*",
+        metavar="INPUTS",
+        help="Either one *.designspace or *.glyphs file, or one or more *.ufo",
     )
 
     outputGroup = parser.add_argument_group(title="Output arguments")
@@ -426,8 +494,7 @@ def main(args=None):
         "%(choices)s. Default: INFO",
     )
 
-    parsed_args, unknown = parser.parse_known_args(args)
-    args = vars(parsed_args)
+    args = vars(parser.parse_args(args))
 
     specs = args.pop("feature_writer_specs")
     if specs is not None:
@@ -437,40 +504,10 @@ def main(args=None):
     if specs is not None:
         args["filters"] = _loadFilters(parser, specs)
 
-    glyphs_path = args.pop("glyphs_path")
-    ufo_paths = args.pop("ufo_paths")
-    designspace_path = args.pop("mm_designspace")
-    any_input = glyphs_path or ufo_paths or designspace_path
-
-    for file in unknown:
-        if any_input and not (ufo_paths and file.endswith(".ufo")):
-            logging.warn(
-                "Only one input file type accepted; additional file '%s' ignored" % file
-            )
-        elif file.endswith(".glyphs"):
-            glyphs_path = file
-            any_input = True
-        elif file.endswith(".designspace"):
-            designspace_path = file
-            any_input = True
-        elif file.endswith(".ufo"):
-            if not ufo_paths:
-                ufo_paths = []
-            ufo_paths.append(file)
-            any_input = True
-        else:
-            logging.warning("Unknown input file type '%s' ignored" % file)
-    if not any_input:
-        parser.print_help(sys.stderr)
-        print("fontmake: No input files specified")
-        sys.exit(1)
-
-    input_format = (
-        "Glyphs" if glyphs_path else "designspace" if designspace_path else "UFO"
-    ) + " source"
+    inputs = parse_mutually_exclusive_inputs(parser, args)
 
     if INTERPOLATABLE_OUTPUTS.intersection(args["output"]):
-        if not (glyphs_path or designspace_path):
+        if not (inputs.glyphs_path or inputs.designspace_path):
             parser.error("Glyphs or designspace source required for variable font")
         exclude_args(
             parser,
@@ -504,9 +541,9 @@ def main(args=None):
             validate_ufo=args.pop("validate_ufo"),
         )
 
-        if glyphs_path:
+        if inputs.glyphs_path:
             with _make_tempdirs(parser, args):
-                project.run_from_glyphs(glyphs_path, **args)
+                project.run_from_glyphs(inputs.glyphs_path, **args)
             return
 
         exclude_args(
@@ -519,13 +556,13 @@ def main(args=None):
                 "master_dir",
                 "instance_dir",
             ],
-            input_format,
+            inputs.format_name,
         )
         exclude_args(
-            parser, args, ["write_skipexportglyphs"], input_format, positive=False
+            parser, args, ["write_skipexportglyphs"], inputs.format_name, positive=False
         )
-        if designspace_path:
-            project.run_from_designspace(designspace_path, **args)
+        if inputs.designspace_path:
+            project.run_from_designspace(inputs.designspace_path, **args)
             return
 
         exclude_args(
@@ -538,10 +575,10 @@ def main(args=None):
                 "round_instances",
                 "expand_features_to_instances",
             ],
-            input_format,
+            inputs.format_name,
         )
         project.run_from_ufos(
-            ufo_paths, is_instance=args.pop("masters_as_instances"), **args
+            inputs.ufo_paths, is_instance=args.pop("masters_as_instances"), **args
         )
     except FontmakeError as e:
         if PRINT_TRACEBACK:
