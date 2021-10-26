@@ -145,24 +145,25 @@ class FontProject:
 
         if master_dir is None:
             master_dir = self._output_dir("ufo")
+        master_dir = os.path.abspath(master_dir)
         if not os.path.isdir(master_dir):
             os.mkdir(master_dir)
         if instance_dir is None:
-            instance_dir = os.path.join("..", self._output_dir("ufo", is_instance=True))
-
-        try:
-            font = glyphsLib.GSFont(glyphs_path)
-        except Exception as e:
-            raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
+            instance_dir = self._output_dir("ufo", is_instance=True)
+        instance_dir = os.path.abspath(instance_dir)
 
         if designspace_path is not None:
             designspace_dir = os.path.dirname(designspace_path)
         else:
             designspace_dir = master_dir
-        if os.path.isabs(instance_dir):
-            # glyphsLib.to_designspace expects instance_dir to be relative
-            instance_dir = os.path.relpath(instance_dir, designspace_dir)
-            assert not os.path.isabs(instance_dir)
+        # glyphsLib.to_designspace expects instance_dir to be relative to the
+        # designspace's own directory
+        instance_dir = os.path.relpath(instance_dir, designspace_dir)
+
+        try:
+            font = glyphsLib.GSFont(glyphs_path)
+        except Exception as e:
+            raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
 
         designspace = glyphsLib.to_designspace(
             font,
