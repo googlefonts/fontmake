@@ -145,12 +145,10 @@ class FontProject:
 
         if master_dir is None:
             master_dir = self._output_dir("ufo")
-        master_dir = os.path.abspath(master_dir)
         if not os.path.isdir(master_dir):
             os.mkdir(master_dir)
         if instance_dir is None:
             instance_dir = self._output_dir("ufo", is_instance=True)
-        instance_dir = os.path.abspath(instance_dir)
 
         if designspace_path is not None:
             designspace_dir = os.path.dirname(designspace_path)
