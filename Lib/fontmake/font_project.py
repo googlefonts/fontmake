@@ -148,9 +148,7 @@ class FontProject:
         if not os.path.isdir(master_dir):
             os.mkdir(master_dir)
         if instance_dir is None:
-            instance_dir = self._output_dir("ufo", is_instance=True)
-        if not os.path.isdir(instance_dir):
-            os.mkdir(instance_dir)
+            instance_dir = os.path.join("..", self._output_dir("ufo", is_instance=True))
 
         try:
             font = glyphsLib.GSFont(glyphs_path)
