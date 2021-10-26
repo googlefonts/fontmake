@@ -158,7 +158,15 @@ class FontProject:
             designspace_dir = master_dir
         # glyphsLib.to_designspace expects instance_dir to be relative to the
         # designspace's own directory
-        instance_dir = os.path.relpath(instance_dir, designspace_dir)
+        try:
+            instance_dir = os.path.relpath(instance_dir, designspace_dir)
+        except ValueError as e:
+            raise FontmakeError(
+                "Can't make instance_dir path relative to designspace. "
+                "If on Windows, please make sure that instance_dir and "
+                "designspace_path are both on the same mount drive (e.g. C: or D:)",
+                glyphs_path,
+            ) from e
 
         try:
             font = glyphsLib.GSFont(glyphs_path)
