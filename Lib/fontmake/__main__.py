@@ -110,8 +110,12 @@ def parse_mutually_exclusive_inputs(parser, args):
 
     for filename in posargs:
         if filename.endswith(".glyphs"):
+            if glyphs_path:
+                parser.error("Only one *.glyphs source file is allowed")
             glyphs_path = filename
         elif filename.endswith(".designspace"):
+            if designspace_path:
+                parser.error("Only one *.designspace source file is allowed")
             designspace_path = filename
         elif filename.endswith(".ufo"):
             ufo_paths.append(filename)
