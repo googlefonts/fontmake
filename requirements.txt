@@ -9,6 +9,6 @@ defcon[lxml]==0.9.0; platform_python_implementation == 'CPython'
 defcon==0.9.0; platform_python_implementation != 'CPython'
 booleanOperations==0.9.0
 ufoLib2==0.12.1
-attrs==20.3.0
+attrs==21.2.0
 cffsubr==0.2.8
 compreffor==0.5.1
