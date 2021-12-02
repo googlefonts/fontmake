@@ -46,7 +46,7 @@ One can either use the following, mutually exclusive, flags:
 Alternatively, one can specify the input(s) as positional arguments without the flag, letting fontmake infer the source format from the file extension: e.g. ``fontmake MyFont.designspace``, etc.
 
 Note: if the positional arguments are preceded by an option that takes one or more arguments, you need to use the special `--` separator to mark all following
-arguments as posional (non-options), otherwise the parser gets confused. E.g., the `-i` option takes zero or one arguments (see futher below for details); without `--`, argparse thinks you didn't provide any inputs:
+arguments as positional (non-options), otherwise the parser gets confused. E.g., the `-i` option takes zero or one arguments (see futher below for details); without `--`, argparse thinks you didn't provide any inputs:
 
 ```bash
 fontmake -i -- MyFont.designspace
