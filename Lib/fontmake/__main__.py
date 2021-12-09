@@ -551,7 +551,6 @@ def main(args=None):
             timing=args.pop("timing"),
             verbose=args.pop("verbose"),
             validate_ufo=args.pop("validate_ufo"),
-            check_compatibility=args.pop("check_compatibility"),
         )
 
         if inputs.glyphs_path:

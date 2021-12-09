@@ -55,6 +55,7 @@ KEEP_GLYPHS_NEW_KEY = (
     GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
+COMPAT_CHECK_KEY = GLYPHS_PREFIX + "customParameter.GSFont.Enforce Compatibility Check"
 
 INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
@@ -106,13 +107,7 @@ def temporarily_disabling_axis_maps(designspace_path):
 class FontProject:
     """Provides methods for building fonts."""
 
-    def __init__(
-        self,
-        timing=False,
-        verbose="INFO",
-        validate_ufo=False,
-        check_compatibility=False,
-    ):
+    def __init__(self, timing=False, verbose="INFO", validate_ufo=False):
         logging.basicConfig(level=getattr(logging, verbose.upper()))
         logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
         if timing:
@@ -122,7 +117,6 @@ class FontProject:
             "ufoLib UFO validation is %s", "enabled" if validate_ufo else "disabled"
         )
         self.validate_ufo = validate_ufo
-        self.check_compatibility = check_compatibility
 
     def open_ufo(self, path):
         try:
@@ -179,9 +173,6 @@ class FontProject:
             font = glyphsLib.GSFont(glyphs_path)
         except Exception as e:
             raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
-
-        if font.customParameters["Enforce Compatibility Check"]:
-            self.check_compatibility = True
 
         designspace = glyphsLib.to_designspace(
             font,
@@ -903,6 +894,7 @@ class FontProject:
         filters=None,
         expand_features_to_instances=False,
         use_mutatormath=False,
+        check_compatibility=False,
         **kwargs,
     ):
         """Run toolchain from a DesignSpace document to produce either static
@@ -959,8 +951,14 @@ class FontProject:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
 
-        if interp_outputs or self.check_compatibility:
-            source_fonts = [source.font for source in designspace.sources]
+        source_fonts = [source.font for source in designspace.sources]
+        # glyphsLib currently stores this custom parameter on the fonts,
+        # not the designspace, so we check if it exists in any font's lib.
+        if (
+            interp_outputs
+            or check_compatibility
+            or any(COMPAT_CHECK_KEY in font.lib for font in source_fonts)
+        ):
             if not CompatibilityChecker(source_fonts).check():
                 raise FontmakeError("Compatibility check failed", designspace.path)
 
