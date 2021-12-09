@@ -39,9 +39,9 @@ from ufo2ft.filters import FILTERS_KEY, loadFilters
 from ufo2ft.util import makeOfficialGlyphOrder
 
 from fontmake import instantiator
+from fontmake.compatibility import CompatibilityChecker
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
-from fontmake.compatibility import CompatibilityChecker
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger("fontmake.timer"), level=logging.DEBUG)
