@@ -41,6 +41,7 @@ from ufo2ft.util import makeOfficialGlyphOrder
 from fontmake import instantiator
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
+from fontmake.compatibility import CompatibilityChecker
 
 logger = logging.getLogger(__name__)
 timer = Timer(logging.getLogger("fontmake.timer"), level=logging.DEBUG)
@@ -54,6 +55,7 @@ KEEP_GLYPHS_NEW_KEY = (
     GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
+COMPAT_CHECK_KEY = GLYPHS_PREFIX + "customParameter.GSFont.Enforce Compatibility Check"
 
 INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
@@ -265,7 +267,6 @@ class FontProject:
         filters=None,
         **kwargs,
     ):
-        designspace = self._load_designspace_sources(designspace)
 
         if ttf:
             return ufo2ft.compileInterpolatableTTFsFromDS(
@@ -936,6 +937,7 @@ class FontProject:
 
         try:
             designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
+            designspace = self._load_designspace_sources(designspace)
         except Exception as e:
             raise FontmakeError("Reading Designspace failed", designspace_path) from e
 
@@ -948,6 +950,11 @@ class FontProject:
         if filters is None and FILTERS_KEY in designspace.lib:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
+
+        source_fonts = [source.font for source in designspace.sources]
+        if interp_outputs or any(COMPAT_CHECK_KEY in font.lib for font in source_fonts):
+            if not CompatibilityChecker(source_fonts).check():
+                raise FontmakeError("Compatibility check failed", designspace.path)
 
         try:
             if static_outputs:
