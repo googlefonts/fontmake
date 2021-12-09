@@ -305,6 +305,14 @@ def main(args=None):
         "disabled by default",
     )
     outputGroup.add_argument(
+        "--check-compatibility",
+        action="store_true",
+        help="Check if the source files are interpolatable. It is "
+        "disabled by default, but enabled when building variable fonts "
+        "or what the 'Enforce Compatibility Check' custom parameter is "
+        "set on a Glyphs file",
+    )
+    outputGroup.add_argument(
         "--expand-features-to-instances",
         action="store_true",
         help="Resolves all include()s in the master feature file and writes "
@@ -543,6 +551,7 @@ def main(args=None):
             timing=args.pop("timing"),
             verbose=args.pop("verbose"),
             validate_ufo=args.pop("validate_ufo"),
+            check_compatibility=args.pop("check_compatibility"),
         )
 
         if inputs.glyphs_path:

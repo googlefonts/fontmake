@@ -107,7 +107,13 @@ def temporarily_disabling_axis_maps(designspace_path):
 class FontProject:
     """Provides methods for building fonts."""
 
-    def __init__(self, timing=False, verbose="INFO", validate_ufo=False):
+    def __init__(
+        self,
+        timing=False,
+        verbose="INFO",
+        validate_ufo=False,
+        check_compatibility=False,
+    ):
         logging.basicConfig(level=getattr(logging, verbose.upper()))
         logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
         if timing:
@@ -117,6 +123,7 @@ class FontProject:
             "ufoLib UFO validation is %s", "enabled" if validate_ufo else "disabled"
         )
         self.validate_ufo = validate_ufo
+        self.check_compatibility = check_compatibility
 
     def open_ufo(self, path):
         try:
@@ -173,6 +180,9 @@ class FontProject:
             font = glyphsLib.GSFont(glyphs_path)
         except Exception as e:
             raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
+
+        if font.customParameters["Enforce Compatibility Check"]:
+            self.check_compatibility = True
 
         designspace = glyphsLib.to_designspace(
             font,
@@ -950,8 +960,8 @@ class FontProject:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
 
-        source_fonts = [source.font for source in designspace.sources]
-        if interp_outputs or any(COMPAT_CHECK_KEY in font.lib for font in source_fonts):
+        if interp_outputs or self.check_compatibility:
+            source_fonts = [source.font for source in designspace.sources]
             if not CompatibilityChecker(source_fonts).check():
                 raise FontmakeError("Compatibility check failed", designspace.path)
 
