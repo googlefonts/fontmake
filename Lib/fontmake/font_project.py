@@ -39,6 +39,7 @@ from ufo2ft.filters import FILTERS_KEY, loadFilters
 from ufo2ft.util import makeOfficialGlyphOrder
 
 from fontmake import instantiator
+from fontmake.compatibility import CompatibilityChecker
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
 
@@ -54,6 +55,7 @@ KEEP_GLYPHS_NEW_KEY = (
     GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
+COMPAT_CHECK_KEY = GLYPHS_PREFIX + "customParameter.GSFont.Enforce Compatibility Check"
 
 INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
@@ -265,8 +267,6 @@ class FontProject:
         filters=None,
         **kwargs,
     ):
-        designspace = self._load_designspace_sources(designspace)
-
         if ttf:
             return ufo2ft.compileInterpolatableTTFsFromDS(
                 designspace,
@@ -322,7 +322,6 @@ class FontProject:
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
-        designspace = self._load_designspace_sources(designspace)
 
         if output_path is None:
             output_path = (
@@ -895,6 +894,7 @@ class FontProject:
         filters=None,
         expand_features_to_instances=False,
         use_mutatormath=False,
+        check_compatibility=False,
         **kwargs,
     ):
         """Run toolchain from a DesignSpace document to produce either static
@@ -939,6 +939,8 @@ class FontProject:
         except Exception as e:
             raise FontmakeError("Reading Designspace failed", designspace_path) from e
 
+        designspace = self._load_designspace_sources(designspace)
+
         # if no --feature-writers option was passed, check in the designspace's
         # <lib> element if user supplied a custom featureWriters configuration;
         # if so, use that for all the UFOs built from this designspace
@@ -948,6 +950,16 @@ class FontProject:
         if filters is None and FILTERS_KEY in designspace.lib:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
+
+        source_fonts = [source.font for source in designspace.sources]
+        # glyphsLib currently stores this custom parameter on the fonts,
+        # not the designspace, so we check if it exists in any font's lib.
+        explicit_check = any(
+            font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
+        )
+        if interp_outputs or check_compatibility or explicit_check:
+            if not CompatibilityChecker(source_fonts).check():
+                raise FontmakeError("Compatibility check failed", designspace.path)
 
         try:
             if static_outputs:
@@ -1024,6 +1036,9 @@ class FontProject:
             interpolate_layout_from = interpolate_layout_dir = None
         else:
             interpolate_layout_from = designspace
+            # Unload UFO fonts, we will reload them as binary
+            for s in interpolate_layout_from.sources:
+                s.font = None
             if isinstance(interpolate_binary_layout, str):
                 interpolate_layout_dir = interpolate_binary_layout
             else:

@@ -305,6 +305,14 @@ def main(args=None):
         "disabled by default",
     )
     outputGroup.add_argument(
+        "--check-compatibility",
+        action="store_true",
+        help="Check if the source files are interpolatable. It is "
+        "disabled by default, but enabled when building variable fonts "
+        "or what the 'Enforce Compatibility Check' custom parameter is "
+        "set on a Glyphs file",
+    )
+    outputGroup.add_argument(
         "--expand-features-to-instances",
         action="store_true",
         help="Resolves all include()s in the master feature file and writes "
@@ -578,6 +586,7 @@ def main(args=None):
                 "interpolate_binary_layout",
                 "round_instances",
                 "expand_features_to_instances",
+                "check_compatibility",
             ],
             inputs.format_name,
         )
