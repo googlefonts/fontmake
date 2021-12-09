@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.1">
+  <axes>
+    <axis tag="wght" name="Weight" minimum="200" maximum="1000" default="200"/>
+  </axes>
+  <sources>
+    <source filename="IncompatibleSans-Regular.ufo" name="Incompatible Sans Regular" familyname="Incompatible Sans" stylename="Regular">
+      <lib copy="1"/>
+      <groups copy="1"/>
+      <features copy="1"/>
+      <info copy="1"/>
+      <location>
+        <dimension name="Weight" xvalue="200"/>
+      </location>
+    </source>
+    <source filename="IncompatibleSans-Bold.ufo" name="Incompatible Sans Bold" familyname="Incompatible Sans" stylename="Bold">
+      <location>
+        <dimension name="Weight" xvalue="1000"/>
+      </location>
+    </source>
+  </sources>
+</designspace>
