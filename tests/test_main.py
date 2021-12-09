@@ -76,17 +76,13 @@ def test_interpolation_mutatormath(data_dir, tmp_path):
 
 
 def test_interpolation_mutatormath_source_layer(data_dir, tmp_path):
-    shutil.copytree(
-        data_dir / "MutatorSans",
-        tmp_path,
-        dirs_exist_ok=True
-    )
+    shutil.copytree(data_dir / "MutatorSans", tmp_path / "layertest")
 
     with pytest.raises(SystemExit, match="sources with 'layer'"):
         fontmake.__main__.main(
             [
                 "-m",
-                str(tmp_path / "MutatorSans.designspace"),
+                str(tmp_path / "layertest" / "MutatorSans.designspace"),
                 "-i",
                 "--use-mutatormath",
                 "--output-dir",
