@@ -954,11 +954,10 @@ class FontProject:
         source_fonts = [source.font for source in designspace.sources]
         # glyphsLib currently stores this custom parameter on the fonts,
         # not the designspace, so we check if it exists in any font's lib.
-        if (
-            interp_outputs
-            or check_compatibility
-            or any(COMPAT_CHECK_KEY in font.lib for font in source_fonts)
-        ):
+        explicit_check = any(
+            font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
+        )
+        if interp_outputs or check_compatibility or explicit_check:
             if not CompatibilityChecker(source_fonts).check():
                 raise FontmakeError("Compatibility check failed", designspace.path)
 
