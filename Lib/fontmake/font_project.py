@@ -267,8 +267,6 @@ class FontProject:
         filters=None,
         **kwargs,
     ):
-        designspace = self._load_designspace_sources(designspace)
-
         if ttf:
             return ufo2ft.compileInterpolatableTTFsFromDS(
                 designspace,
@@ -324,7 +322,6 @@ class FontProject:
     ):
         """Build OpenType variable font from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
-        designspace = self._load_designspace_sources(designspace)
 
         if output_path is None:
             output_path = (
@@ -941,6 +938,8 @@ class FontProject:
         except Exception as e:
             raise FontmakeError("Reading Designspace failed", designspace_path) from e
 
+        designspace = self._load_designspace_sources(designspace)
+
         # if no --feature-writers option was passed, check in the designspace's
         # <lib> element if user supplied a custom featureWriters configuration;
         # if so, use that for all the UFOs built from this designspace
@@ -951,8 +950,7 @@ class FontProject:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
 
-        designspace_copy = self._load_designspace_sources(designspace)
-        source_fonts = [source.font for source in designspace_copy.sources]
+        source_fonts = [source.font for source in designspace.sources]
         if interp_outputs or any(COMPAT_CHECK_KEY in font.lib for font in source_fonts):
             if not CompatibilityChecker(source_fonts).check():
                 raise FontmakeError("Compatibility check failed", designspace.path)
@@ -1032,6 +1030,9 @@ class FontProject:
             interpolate_layout_from = interpolate_layout_dir = None
         else:
             interpolate_layout_from = designspace
+            # Unload UFO fonts, we will reload them as binary
+            for s in interpolate_layout_from.sources:
+                s.font = None
             if isinstance(interpolate_binary_layout, str):
                 interpolate_layout_dir = interpolate_binary_layout
             else:
