@@ -586,6 +586,7 @@ def main(args=None):
                 "interpolate_binary_layout",
                 "round_instances",
                 "expand_features_to_instances",
+                "check_compatibility",
             ],
             inputs.format_name,
         )
