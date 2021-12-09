@@ -1,5 +1,5 @@
-from fontTools import designspaceLib
 import ufoLib2
+from fontTools import designspaceLib
 
 from fontmake.compatibility import CompatibilityChecker
 
