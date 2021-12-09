@@ -419,7 +419,6 @@ class FontProject:
         flatten_components=False,
         filters=None,
         generate_GDEF=True,
-        check_compatibility=None,
     ):
         """Build OpenType binaries from UFOs.
 
