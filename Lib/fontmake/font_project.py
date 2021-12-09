@@ -267,6 +267,7 @@ class FontProject:
         filters=None,
         **kwargs,
     ):
+        designspace = self._load_designspace_sources(designspace)
 
         if ttf:
             return ufo2ft.compileInterpolatableTTFsFromDS(
@@ -937,7 +938,6 @@ class FontProject:
 
         try:
             designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
-            designspace = self._load_designspace_sources(designspace)
         except Exception as e:
             raise FontmakeError("Reading Designspace failed", designspace_path) from e
 
@@ -951,7 +951,8 @@ class FontProject:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
 
-        source_fonts = [source.font for source in designspace.sources]
+        designspace_copy = self._load_designspace_sources(designspace)
+        source_fonts = [source.font for source in designspace_copy.sources]
         if interp_outputs or any(COMPAT_CHECK_KEY in font.lib for font in source_fonts):
             if not CompatibilityChecker(source_fonts).check():
                 raise FontmakeError("Compatibility check failed", designspace.path)
