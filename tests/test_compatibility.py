@@ -21,4 +21,6 @@ def test_compatibility_checker(data_dir, caplog):
 
     assert "Fonts had differing number of components in glyph C" in caplog.text
 
-    assert "Fonts had differing point type in glyph D, contour 0, point 10" in caplog.text
+    assert (
+        "Fonts had differing point type in glyph D, contour 0, point 10" in caplog.text
+    )
