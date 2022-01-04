@@ -24,7 +24,10 @@ class CompatibilityChecker:
 
     def check(self):
         first = self.fonts[0]
+        skip_export_glyphs = set(first.lib.get("public.skipExportGlyphs", ()))
         for glyph in first.keys():
+            if glyph in skip_export_glyphs:
+                continue
             self.current_fonts = [font for font in self.fonts if glyph in font]
             glyphs = [font[glyph] for font in self.current_fonts]
             with Context(self, f"glyph {glyph}"):
