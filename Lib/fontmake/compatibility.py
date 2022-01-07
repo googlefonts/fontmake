@@ -42,7 +42,7 @@ class CompatibilityChecker:
 
         anchors = [g.anchors for g in glyphs]
         self.ensure_all_same(
-            lambda anchors: '"' + (", ".join(a.name for a in anchors)) + '"',
+            lambda anchors: '"' + (", ".join(sorted(a.name for a in anchors))) + '"',
             anchors,
             "anchors",
         )
