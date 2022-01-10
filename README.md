@@ -116,6 +116,13 @@ You could also use the [pipx][] tool to automate the
 installation/upgrade of python apps like fontmake in isolated
 environments.
 
+### Releasing a New Version
+
+0. Commit and push your final changes for the new version.
+1. Create an annotated Git tag of the version number, with a prepended "v", like so: `git tag -a v3.1.1`
+2. Write the release notes into the tag message. They will show up as release notes on the release page in GitHub.
+3. Push the tag like so: `git push origin v3.1.1`, where `origin` is the name of the usual remote you want to push the version to.
+
   [GitHub Actions Build Status]: https://github.com/googlefonts/fontmake/workflows/Test%20+%20Deploy/badge.svg
   [Python Versions]: https://img.shields.io/badge/python-3.7-blue.svg
   [PyPI Version]: https://img.shields.io/pypi/v/fontmake.svg
