@@ -27,6 +27,7 @@ import attr
 import ufo2ft
 import ufo2ft.errors
 import ufoLib2
+import ufoLib2.objects
 from fontTools import designspaceLib
 from fontTools.misc.loggingTools import Timer, configLogger
 from fontTools.misc.plistlib import load as readPlist
@@ -120,6 +121,12 @@ class FontProject:
 
     def open_ufo(self, path):
         try:
+            try:
+                import iondrive
+
+                return iondrive.load(ufoLib2.objects, path)
+            except ImportError:
+                pass
             return ufoLib2.Font.open(path, validate=self.validate_ufo)
         except Exception as e:
             raise FontmakeError("Reading UFO source failed", path) from e
