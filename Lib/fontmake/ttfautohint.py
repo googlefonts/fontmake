@@ -13,9 +13,24 @@
 # limitations under the License.
 
 
+import shutil
 import subprocess
+import sys
+from typing import List, Optional
 
 from fontmake.errors import FontmakeError, TTFAError
+
+
+def _which_ttfautohint() -> Optional[List[str]]:
+    # First check if ttfautohint-py is installed, else try to find the standalone
+    # ttfautohint command-line tool, or None if neither is found.
+    try:
+        import ttfautohint  # noqa: F401
+    except ImportError:
+        ttfautohint_path = shutil.which("ttfautohint")
+        return [ttfautohint_path] if ttfautohint_path else None
+    else:
+        return [sys.executable, "-m", "ttfautohint"]
 
 
 def ttfautohint(in_file, out_file, args=None, **kwargs):
@@ -25,14 +40,19 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
     Python keyword arguments.
     """
 
-    arg_list = ["ttfautohint"]
     file_args = [in_file, out_file]
+
+    ttfautohint = _which_ttfautohint()
+    if ttfautohint is None:
+        raise FontmakeError(
+            "ttfautohint not found; try `pip install ttfautohint-py`", in_file
+        )
 
     if args is not None:
         if kwargs:
             raise TypeError("Should not provide both cmd args and kwargs.")
         try:
-            rv = subprocess.call(arg_list + args.split() + file_args)
+            rv = subprocess.call(ttfautohint + args.split() + file_args)
         except OSError as e:
             raise FontmakeError(
                 "Could not launch ttfautohint (is it installed?)", in_file
@@ -70,6 +90,7 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
         "x_height_snapping_exceptions",
     )
 
+    arg_list = []
     for option in boolean_options:
         if kwargs.pop(option, False):
             arg_list.append("--" + option.replace("_", "-"))
@@ -82,6 +103,6 @@ def ttfautohint(in_file, out_file, args=None, **kwargs):
     if kwargs:
         raise TypeError("Unexpected argument(s): " + ", ".join(kwargs.keys()))
 
-    rv = subprocess.call(arg_list + file_args)
+    rv = subprocess.call(ttfautohint + arg_list + file_args)
     if rv != 0:
         raise TTFAError(rv, in_file)
