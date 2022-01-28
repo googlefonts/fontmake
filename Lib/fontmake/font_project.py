@@ -428,7 +428,7 @@ class FontProject:
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
             autohint: Parameters to provide to ttfautohint. If not provided, the
-                UFO lib is scanned for autohinting parameters. If nothing is found, 
+                UFO lib is scanned for autohinting parameters. If nothing is found,
                 the autohinting step is skipped.
             subset: Whether to subset the output according to data in the UFOs.
                 If not provided, also determined by flags in the UFOs.
@@ -540,7 +540,6 @@ class FontProject:
                     font["GDEF"] = gsub_src["GDEF"]
                 if "GSUB" in gsub_src:
                     font["GSUB"] = gsub_src["GSUB"]
-
 
             # Read autohinting parameters from autohint variable
             if autohint is not None:
