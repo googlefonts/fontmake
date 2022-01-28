@@ -61,6 +61,7 @@ INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
 
+AUTOHINTING_PARAMETERS = GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
 
 @contextmanager
 def temporarily_disabling_axis_maps(designspace_path):
@@ -541,14 +542,8 @@ class FontProject:
                     font["GSUB"] = gsub_src["GSUB"]
 
             # Read autohinting parameters from ufo lib if present
-            if (
-                "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
-                in ufo.lib
-                and autohint is None
-            ):
-                autohint = ufo.lib[
-                    "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
-                ]
+            if AUTOHINTING_PARAMETERS in ufo.lib and autohint is None:
+                autohint = ufo.lib[AUTOHINTING_PARAMETERS]
 
             do_autohint = ttf and autohint is not None
 
