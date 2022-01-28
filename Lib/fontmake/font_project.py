@@ -545,18 +545,15 @@ class FontProject:
                 if "GSUB" in gsub_src:
                     font["GSUB"] = gsub_src["GSUB"]
 
-            # Read autohinting parameters from autohint variable
-            if autohint is not None:
-                autohint_parameters = autohint
-            # otherwise read autohinting parameters from ufo lib if present
-            elif AUTOHINTING_PARAMETERS in ufo.lib and autohint is None:
-                autohint_parameters = ufo.lib[AUTOHINTING_PARAMETERS]
-            else:
-                autohint_parameters = None
+            # Decide on autohinting and its parameters
+            autohint_thisfont = (
+                ttf and (
+                    autohint
+                    or ufo.lib.get(AUTOHINTING_PARAMETERS)
+                )
+            )
 
-            do_autohint = ttf and autohint_parameters is not None
-
-            if do_autohint:
+            if autohint_thisfont:
                 # if we are autohinting, we save the unhinted font to a
                 # temporary path, and the hinted one to the final destination
                 fd, otf_path = tempfile.mkstemp("." + ext)
@@ -582,7 +579,7 @@ class FontProject:
             ):
                 self.subset_otf_from_ufo(otf_path, ufo)
 
-            if not do_autohint:
+            if not autohint_thisfont:
                 continue
 
             if output_path is not None:
@@ -593,7 +590,7 @@ class FontProject:
                 )
             try:
                 logger.info("Autohinting %s", otf_path)
-                ttfautohint(otf_path, hinted_otf_path, args=autohint_parameters)
+                ttfautohint(otf_path, hinted_otf_path, args=autohint_thisfont)
             except TTFAError:
                 # copy unhinted font to destination before re-raising error
                 shutil.copyfile(otf_path, hinted_otf_path)
