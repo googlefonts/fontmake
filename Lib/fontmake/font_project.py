@@ -61,7 +61,10 @@ INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
 
-AUTOHINTING_PARAMETERS = GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
+AUTOHINTING_PARAMETERS = (
+    GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
+)
+
 
 @contextmanager
 def temporarily_disabling_axis_maps(designspace_path):
