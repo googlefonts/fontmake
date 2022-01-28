@@ -547,14 +547,14 @@ class FontProject:
 
             # Read autohinting parameters from autohint variable
             if autohint is not None:
-                autohint_thisfont = autohint
+                autohint_parameters = autohint
             # otherwise read autohinting parameters from ufo lib if present
             elif AUTOHINTING_PARAMETERS in ufo.lib and autohint is None:
-                autohint_thisfont = ufo.lib[AUTOHINTING_PARAMETERS]
+                autohint_parameters = ufo.lib[AUTOHINTING_PARAMETERS]
             else:
-                autohint_thisfont = None
+                autohint_parameters = None
 
-            do_autohint = ttf and autohint_thisfont is not None
+            do_autohint = ttf and autohint_parameters is not None
 
             if do_autohint:
                 # if we are autohinting, we save the unhinted font to a
@@ -593,7 +593,7 @@ class FontProject:
                 )
             try:
                 logger.info("Autohinting %s", otf_path)
-                ttfautohint(otf_path, hinted_otf_path, args=autohint)
+                ttfautohint(otf_path, hinted_otf_path, args=autohint_parameters)
             except TTFAError:
                 # copy unhinted font to destination before re-raising error
                 shutil.copyfile(otf_path, hinted_otf_path)
