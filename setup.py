@@ -34,6 +34,7 @@ extras_require = {
         # "lxml>=4.2.4",
     ],
     "mutatormath": ["MutatorMath>=2.1.2"],
+    "autohint": ["ttfautohint-py>=0.4.3"],
 }
 # use a special 'all' key as shorthand to includes all the extra dependencies
 extras_require["all"] = sum(extras_require.values(), [])
