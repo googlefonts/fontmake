@@ -541,8 +541,14 @@ class FontProject:
                     font["GSUB"] = gsub_src["GSUB"]
 
             # Read autohinting parameters from ufo lib if present
-            if "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options" in ufo.lib and autohint is None:
-                autohint = ufo.lib["com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"]
+            if (
+                "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
+                in ufo.lib
+                and autohint is None
+            ):
+                autohint = ufo.lib[
+                    "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
+                ]
 
             do_autohint = ttf and autohint is not None
 
