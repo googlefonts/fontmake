@@ -541,11 +541,17 @@ class FontProject:
                 if "GSUB" in gsub_src:
                     font["GSUB"] = gsub_src["GSUB"]
 
-            # Read autohinting parameters from ufo lib if present
-            if AUTOHINTING_PARAMETERS in ufo.lib and autohint is None:
-                autohint = ufo.lib[AUTOHINTING_PARAMETERS]
 
-            do_autohint = ttf and autohint is not None
+            # Read autohinting parameters from autohint variable
+            if autohint is not None:
+                autohint_thisfont = autohint
+            # otherwise read autohinting parameters from ufo lib if present
+            elif AUTOHINTING_PARAMETERS in ufo.lib and autohint is None:
+                autohint_thisfont = ufo.lib[AUTOHINTING_PARAMETERS]
+            else:
+                autohint_thisfont = None
+
+            do_autohint = ttf and autohint_thisfont is not None
 
             if do_autohint:
                 # if we are autohinting, we save the unhinted font to a
