@@ -731,5 +731,7 @@ def test_autohinting(data_dir, tmp_path):
         "PadyakkeExpandedOne-Regular.ttf",
     }
 
-    test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "PadyakkeExpandedOne-Regular.ttf")
+    test_output_ttf = fontTools.ttLib.TTFont(
+        tmp_path / "PadyakkeExpandedOne-Regular.ttf"
+    )
     assert "fpgm" in test_output_ttf
