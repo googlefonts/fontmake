@@ -1,3 +1,4 @@
+import platform
 import shutil
 
 import fontTools.designspaceLib as designspaceLib
@@ -712,6 +713,12 @@ def test_main_with_filter(data_dir, tmp_path):
     assert hmtx["l"] == (160, 170)
 
 
+# TODO(anthrotype): Re-enable this test once upstream issue is fixed:
+# https://github.com/fonttools/ttfautohint-py/issues/11
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy",
+    reason="ttfautohint-py doesn't work with pypy",
+)
 def test_autohinting(data_dir, tmp_path):
     shutil.copytree(data_dir / "AutohintingTest", tmp_path / "sources")
 
