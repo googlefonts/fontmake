@@ -45,7 +45,7 @@ class FontmakeError(Exception):
 class TTFAError(FontmakeError):
     def __init__(self, exitcode, source_file):
         self.exitcode = exitcode
-        self.source_trail = source_file
+        self.source_trail = [source_file]
 
     def __str__(self):
         return (
