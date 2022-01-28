@@ -61,6 +61,10 @@ INTERPOLATABLE_OUTPUTS = frozenset(
     ["ttf-interpolatable", "otf-interpolatable", "variable", "variable-cff2"]
 )
 
+AUTOHINTING_PARAMETERS = (
+    GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
+)
+
 
 @contextmanager
 def temporarily_disabling_axis_maps(designspace_path):
@@ -427,7 +431,9 @@ class FontProject:
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
             autohint: Parameters to provide to ttfautohint. If not provided, the
-                autohinting step is skipped.
+                UFO lib is scanned for autohinting parameters. If nothing is found,
+                the autohinting step is skipped. The lib key is
+                "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
             subset: Whether to subset the output according to data in the UFOs.
                 If not provided, also determined by flags in the UFOs.
             use_production_names: Whether to use production glyph names in the
@@ -469,7 +475,7 @@ class FontProject:
                 pre-filters or post-filters, called before or after the default
                 filters. The default filters are format specific and some can
                 be disabled with other arguments.
-        """
+        """  # noqa: B950
         assert not (output_path and output_dir), "mutually exclusive args"
 
         if output_path is not None and len(ufos) > 1:
@@ -523,8 +529,6 @@ class FontProject:
             inplace=True,  # avoid extra copy
         )
 
-        do_autohint = ttf and autohint is not None
-
         for font, ufo in zip(fonts, ufos):
             if interpolate_layout_from is not None:
                 master_locations, instance_locations = self._designspace_locations(
@@ -541,7 +545,12 @@ class FontProject:
                 if "GSUB" in gsub_src:
                     font["GSUB"] = gsub_src["GSUB"]
 
-            if do_autohint:
+            # Decide on autohinting and its parameters
+            autohint_thisfont = ttf and (
+                autohint or ufo.lib.get(AUTOHINTING_PARAMETERS)
+            )
+
+            if autohint_thisfont:
                 # if we are autohinting, we save the unhinted font to a
                 # temporary path, and the hinted one to the final destination
                 fd, otf_path = tempfile.mkstemp("." + ext)
@@ -567,7 +576,7 @@ class FontProject:
             ):
                 self.subset_otf_from_ufo(otf_path, ufo)
 
-            if not do_autohint:
+            if not autohint_thisfont:
                 continue
 
             if output_path is not None:
@@ -577,7 +586,8 @@ class FontProject:
                     ufo, ext, is_instance, autohinted=True, output_dir=output_dir
                 )
             try:
-                ttfautohint(otf_path, hinted_otf_path, args=autohint)
+                logger.info("Autohinting %s", otf_path)
+                ttfautohint(otf_path, hinted_otf_path, args=autohint_thisfont)
             except TTFAError:
                 # copy unhinted font to destination before re-raising error
                 shutil.copyfile(otf_path, hinted_otf_path)

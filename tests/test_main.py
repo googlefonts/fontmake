@@ -710,3 +710,28 @@ def test_main_with_filter(data_dir, tmp_path):
     test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Light.ttf")
     hmtx = test_output_ttf["hmtx"]
     assert hmtx["l"] == (160, 170)
+
+
+def test_autohinting(data_dir, tmp_path):
+    shutil.copytree(data_dir / "AutohintingTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(tmp_path / "sources" / "Padyakke.glyphs"),
+            "-o",
+            "ttf",
+            "-i",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "PadyakkeExpandedOne-Regular.ttf",
+    }
+
+    test_output_ttf = fontTools.ttLib.TTFont(
+        tmp_path / "PadyakkeExpandedOne-Regular.ttf"
+    )
+    assert "fpgm" in test_output_ttf
