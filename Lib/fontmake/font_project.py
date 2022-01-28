@@ -475,7 +475,7 @@ class FontProject:
                 pre-filters or post-filters, called before or after the default
                 filters. The default filters are format specific and some can
                 be disabled with other arguments.
-        """
+        """  # noqa: B950
         assert not (output_path and output_dir), "mutually exclusive args"
 
         if output_path is not None and len(ufos) > 1:
