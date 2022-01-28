@@ -546,11 +546,8 @@ class FontProject:
                     font["GSUB"] = gsub_src["GSUB"]
 
             # Decide on autohinting and its parameters
-            autohint_thisfont = (
-                ttf and (
-                    autohint
-                    or ufo.lib.get(AUTOHINTING_PARAMETERS)
-                )
+            autohint_thisfont = ttf and (
+                autohint or ufo.lib.get(AUTOHINTING_PARAMETERS)
             )
 
             if autohint_thisfont:
