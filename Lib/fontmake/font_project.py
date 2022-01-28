@@ -430,6 +430,8 @@ class FontProject:
             autohint: Parameters to provide to ttfautohint. If not provided, the
                 UFO lib is scanned for autohinting parameters. If nothing is found,
                 the autohinting step is skipped.
+                The lib key is "com.schriftgestaltung.customParameter.\\
+                InstanceDescriptorAsGSInstance.TTFAutohint options"
             subset: Whether to subset the output according to data in the UFOs.
                 If not provided, also determined by flags in the UFOs.
             use_production_names: Whether to use production glyph names in the
