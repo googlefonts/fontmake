@@ -427,7 +427,8 @@ class FontProject:
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
             autohint: Parameters to provide to ttfautohint. If not provided, the
-                autohinting step is skipped.
+                UFO lib is scanned for autohinting parameters. If nothing is found, 
+                the autohinting step is skipped.
             subset: Whether to subset the output according to data in the UFOs.
                 If not provided, also determined by flags in the UFOs.
             use_production_names: Whether to use production glyph names in the
@@ -523,8 +524,6 @@ class FontProject:
             inplace=True,  # avoid extra copy
         )
 
-        do_autohint = ttf and autohint is not None
-
         for font, ufo in zip(fonts, ufos):
             if interpolate_layout_from is not None:
                 master_locations, instance_locations = self._designspace_locations(
@@ -540,6 +539,12 @@ class FontProject:
                     font["GDEF"] = gsub_src["GDEF"]
                 if "GSUB" in gsub_src:
                     font["GSUB"] = gsub_src["GSUB"]
+
+            # Read autohinting parameters from ufo lib if present
+            if "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options" in ufo.lib and autohint is None:
+                autohint = ufo.lib["com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"]
+
+            do_autohint = ttf and autohint is not None
 
             if do_autohint:
                 # if we are autohinting, we save the unhinted font to a
@@ -577,6 +582,7 @@ class FontProject:
                     ufo, ext, is_instance, autohinted=True, output_dir=output_dir
                 )
             try:
+                logger.info("Autohinting %s", otf_path)
                 ttfautohint(otf_path, hinted_otf_path, args=autohint)
             except TTFAError:
                 # copy unhinted font to destination before re-raising error
