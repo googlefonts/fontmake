@@ -586,7 +586,7 @@ class FontProject:
                     ufo, ext, is_instance, autohinted=True, output_dir=output_dir
                 )
             try:
-                logger.info("Autohinting %s", otf_path)
+                logger.info("Autohinting %s", hinted_otf_path)
                 ttfautohint(otf_path, hinted_otf_path, args=autohint_thisfont)
             except TTFAError:
                 # copy unhinted font to destination before re-raising error
