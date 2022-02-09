@@ -725,7 +725,7 @@ def test_main_with_filter(data_dir, tmp_path):
         (),
         ("-a",),
         ("--autohint", "-D latn"),
-    ]
+    ],
 )
 def test_autohinting(data_dir, tmp_path, autohint_options):
     shutil.copytree(data_dir / "AutohintingTest", tmp_path / "sources")
