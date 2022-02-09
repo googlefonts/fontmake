@@ -546,11 +546,17 @@ class FontProject:
                     font["GSUB"] = gsub_src["GSUB"]
 
             # Decide on autohinting and its parameters
-            autohint_thisfont = ttf and (
-                autohint or ufo.lib.get(AUTOHINTING_PARAMETERS)
+            autohint_thisfont = (
+                (
+                    autohint
+                    if autohint is not None
+                    else ufo.lib.get(AUTOHINTING_PARAMETERS)
+                )
+                if ttf
+                else None
             )
 
-            if autohint_thisfont:
+            if autohint_thisfont is not None:
                 # if we are autohinting, we save the unhinted font to a
                 # temporary path, and the hinted one to the final destination
                 fd, otf_path = tempfile.mkstemp("." + ext)
@@ -576,7 +582,7 @@ class FontProject:
             ):
                 self.subset_otf_from_ufo(otf_path, ufo)
 
-            if not autohint_thisfont:
+            if autohint_thisfont is None:
                 continue
 
             if output_path is not None:

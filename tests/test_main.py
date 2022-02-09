@@ -719,7 +719,15 @@ def test_main_with_filter(data_dir, tmp_path):
     platform.python_implementation() == "PyPy",
     reason="ttfautohint-py doesn't work with pypy",
 )
-def test_autohinting(data_dir, tmp_path):
+@pytest.mark.parametrize(
+    "autohint_options",
+    [
+        (),
+        ("-a",),
+        ("--autohint", "-D latn"),
+    ]
+)
+def test_autohinting(data_dir, tmp_path, autohint_options):
     shutil.copytree(data_dir / "AutohintingTest", tmp_path / "sources")
 
     fontmake.__main__.main(
@@ -731,6 +739,7 @@ def test_autohinting(data_dir, tmp_path):
             "-i",
             "--output-dir",
             str(tmp_path),
+            *autohint_options,
         ]
     )
 
