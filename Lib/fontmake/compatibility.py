@@ -69,9 +69,13 @@ class CompatibilityChecker:
             logger.debug(f"All fonts had same {what} in {context}")
             return True
         logger.error(f"Fonts had differing {what} in {context}:")
+        debug_enabled = logger.isEnabledFor(logging.DEBUG)
         for value, fonts in values.items():
-            fontlist = ", ".join(fonts)
-            logger.error(f" * {fontlist} had {value}")
+            if debug_enabled or len(fonts) <= 6:
+                key = ", ".join(fonts)
+            else:
+                key = f"{len(fonts)} fonts"
+            logger.error(f" * {key} had {value}")
         self.okay = False
         return False
 
