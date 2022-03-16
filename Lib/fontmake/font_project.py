@@ -21,6 +21,7 @@ import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
 from functools import partial
+from pathlib import Path
 from re import fullmatch
 
 import attr
@@ -28,6 +29,7 @@ import ufo2ft
 import ufo2ft.errors
 import ufoLib2
 from fontTools import designspaceLib
+from fontTools.designspaceLib.split import splitInterpolable
 from fontTools.misc.loggingTools import Timer, configLogger
 from fontTools.misc.plistlib import load as readPlist
 from fontTools.ttLib import TTFont
@@ -306,9 +308,10 @@ class FontProject:
         """
         return self._build_interpolatable_masters(designspace, ttf=False, **kwargs)
 
-    def build_variable_font(
+    def build_variable_fonts(
         self,
-        designspace,
+        designspace: designspaceLib.DesignSpaceDocument,
+        variable_fonts=True,
         output_path=None,
         output_dir=None,
         ttf=True,
@@ -324,22 +327,55 @@ class FontProject:
         filters=None,
         **kwargs,
     ):
-        """Build OpenType variable font from masters in a designspace."""
+        """Build OpenType variable fonts from masters in a designspace."""
         assert not (output_path and output_dir), "mutually exclusive args"
 
-        if output_path is None:
-            output_path = (
-                os.path.splitext(os.path.basename(designspace.path))[0] + "-VF"
+        vfs_in_document = designspace.getVariableFonts()
+        if not vfs_in_document:
+            logger.warning(
+                "No variable fonts in given designspace %s", designspace.path
             )
-            ext = "ttf" if ttf else "otf"
-            output_path = self._output_path(
-                output_path, ext, is_variable=True, output_dir=output_dir
+            return {}
+
+        vfs_to_build = []
+        for vf in vfs_in_document:
+            # Skip variable fonts that do not match the user's inclusion regex if given.
+            if isinstance(variable_fonts, str) and not fullmatch(
+                variable_fonts, vf.name
+            ):
+                continue
+            vfs_to_build.append(vf)
+
+        if not vfs_to_build:
+            logger.warning("No variable fonts matching %s", variable_fonts)
+            return {}
+
+        if len(vfs_to_build) > 1 and output_path:
+            raise FontmakeError(
+                "can't specify output path because there are several VFs to build",
+                designspace,
             )
 
-        logger.info("Building variable font " + output_path)
+        vf_name_to_output_path = {}
+        if len(vfs_to_build) == 1 and output_path is not None:
+            vf_name_to_output_path[vfs_to_build[0].name] = output_path
+        else:
+            for vf in vfs_to_build:
+                ext = "ttf" if ttf else "otf"
+                font_name = vf.name
+                if vf.filename is not None:
+                    font_name = Path(vf.filename).stem
+                output_path = self._output_path(
+                    font_name, ext, is_variable=True, output_dir=output_dir
+                )
+                vf_name_to_output_path[vf.name] = output_path
+
+        logger.info(
+            "Building variable fonts " + ", ".join(vf_name_to_output_path.values())
+        )
 
         if ttf:
-            font = ufo2ft.compileVariableTTF(
+            fonts = ufo2ft.compileVariableTTFs(
                 designspace,
                 featureWriters=feature_writers,
                 useProductionNames=use_production_names,
@@ -350,9 +386,10 @@ class FontProject:
                 debugFeatureFile=debug_feature_file,
                 filters=filters,
                 inplace=True,
+                variableFontNames=list(vf_name_to_output_path),
             )
         else:
-            font = ufo2ft.compileVariableCFF2(
+            fonts = ufo2ft.compileVariableCFF2s(
                 designspace,
                 featureWriters=feature_writers,
                 useProductionNames=use_production_names,
@@ -361,9 +398,11 @@ class FontProject:
                 optimizeCFF=optimize_cff,
                 filters=filters,
                 inplace=True,
+                variableFontNames=list(vf_name_to_output_path),
             )
 
-        font.save(output_path)
+        for name, font in fonts.items():
+            font.save(vf_name_to_output_path[name])
 
     def _iter_compile(self, ufos, ttf=False, debugFeatureFile=None, **kwargs):
         # generator function that calls ufo2ft compiler for each ufo and
@@ -771,6 +810,8 @@ class FontProject:
                 interpolation failed.
             ValueError: an instance descriptor did not have a filename attribute set.
         """
+        # TODO: (Jany) for each instance, figure out in which "interpolatable sub-space" it is, and give that to mutatormath/the other one
+        # Maybe easier to make 1 designspace per interpolatable sub-space, and call this function X times?
         from glyphsLib.interpolation import apply_instance_data_to_ufo
 
         logger.info("Interpolating master UFOs from designspace")
@@ -859,6 +900,8 @@ class FontProject:
             ValueError: "expand_features_to_instances" is True but no source in the
                 designspace document is designated with '<features copy="1"/>'.
         """
+        # TODO: (Jany) for each instance, figure out in which "interpolatable sub-space" it is, and give that to mutatormath/the other one
+        # Maybe easier to make 1 designspace per interpolatable sub-space, and call this function X times?
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
@@ -910,6 +953,7 @@ class FontProject:
         designspace_path,
         output=(),
         interpolate=False,
+        variable_fonts=True,
         masters_as_instances=False,
         interpolate_binary_layout=False,
         round_instances=False,
@@ -930,6 +974,11 @@ class FontProject:
                 match given name. The string is compiled into a regular
                 expression and matched against the "name" attribute of
                 designspace instances using `re.fullmatch`.
+            variable_fonts: if True output all variable fonts, otherwise if the
+                value is a string, only build variable fonts that match the
+                given filename. As above, the string is compiled into a regular
+                expression and matched against the "filename" attribute of
+                designspace variable fonts using `re.fullmatch`.
             masters_as_instances: If True, output master fonts as instances.
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
@@ -974,15 +1023,22 @@ class FontProject:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
 
-        source_fonts = [source.font for source in designspace.sources]
-        # glyphsLib currently stores this custom parameter on the fonts,
-        # not the designspace, so we check if it exists in any font's lib.
-        explicit_check = any(
-            font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
-        )
-        if interp_outputs or check_compatibility or explicit_check:
-            if not CompatibilityChecker(source_fonts).check():
-                raise FontmakeError("Compatibility check failed", designspace.path)
+        # Since Designspace version 5, one designspace file can have discrete
+        # axes (that do not interpolate) and thus only some sub-spaces are
+        # actually compatible for interpolation.
+        for discrete_location, subDoc in splitInterpolable(designspace):
+            # glyphsLib currently stores this custom parameter on the fonts,
+            # not the designspace, so we check if it exists in any font's lib.
+            source_fonts = [source.font for source in subDoc.sources]
+            explicit_check = any(
+                font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
+            )
+            if interp_outputs or check_compatibility or explicit_check:
+                if not CompatibilityChecker(source_fonts).check():
+                    message = "Compatibility check failed"
+                    if discrete_location:
+                        message += f" in interpolable sub-space at {discrete_location}"
+                    raise FontmakeError(message, designspace.path)
 
         try:
             if static_outputs:
@@ -1003,6 +1059,7 @@ class FontProject:
                 self._run_from_designspace_interpolatable(
                     designspace,
                     outputs=interp_outputs,
+                    variable_fonts=variable_fonts,
                     feature_writers=feature_writers,
                     filters=filters,
                     **kwargs,
@@ -1078,13 +1135,23 @@ class FontProject:
         )
 
     def _run_from_designspace_interpolatable(
-        self, designspace, outputs, output_path=None, output_dir=None, **kwargs
+        self,
+        designspace,
+        outputs,
+        variable_fonts=True,
+        output_path=None,
+        output_dir=None,
+        **kwargs,
     ):
         ttf_designspace = otf_designspace = None
 
         if "variable" in outputs:
-            self.build_variable_font(
-                designspace, output_path=output_path, output_dir=output_dir, **kwargs
+            self.build_variable_fonts(
+                designspace,
+                variable_fonts=variable_fonts,
+                output_path=output_path,
+                output_dir=output_dir,
+                **kwargs,
             )
 
         if "ttf-interpolatable" in outputs:
@@ -1092,8 +1159,9 @@ class FontProject:
             self._save_interpolatable_fonts(ttf_designspace, output_dir, ttf=True)
 
         if "variable-cff2" in outputs:
-            self.build_variable_font(
+            self.build_variable_fonts(
                 designspace,
+                variable_fonts=variable_fonts,
                 output_path=output_path,
                 output_dir=output_dir,
                 ttf=False,
@@ -1281,3 +1349,4 @@ def _varLib_finder(source, directory="", ext="ttf"):
 
 def _normpath(fname):
     return os.path.normcase(os.path.normpath(fname))
+
