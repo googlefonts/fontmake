@@ -203,7 +203,7 @@ class Instantiator:
         if designspace.default is None:
             raise InstantiatorError(_error_msg_no_default(designspace))
 
-        if any(hasattr(axis, 'values') for axis in designspace.axes):
+        if any(hasattr(axis, "values") for axis in designspace.axes):
             raise InstantiatorError(
                 "The given designspace has one or more discrete (= non-interpolating) "
                 "axes. You should split this designspace into smaller interpolating "

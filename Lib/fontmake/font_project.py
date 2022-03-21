@@ -900,8 +900,6 @@ class FontProject:
             ValueError: "expand_features_to_instances" is True but no source in the
                 designspace document is designated with '<features copy="1"/>'.
         """
-        # TODO: (Jany) for each instance, figure out in which "interpolatable sub-space" it is, and give that to mutatormath/the other one
-        # Maybe easier to make 1 designspace per interpolatable sub-space, and call this function X times?
         from glyphsLib.interpolation import apply_instance_data
         from mutatorMath.ufo.document import DesignSpaceDocumentReader
 
