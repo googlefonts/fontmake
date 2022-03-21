@@ -45,6 +45,28 @@ def test_interpolation(data_dir, tmp_path):
     assert x_max == 170
 
 
+def test_interpolation_designspace_5(data_dir, tmp_path):
+    shutil.copytree(data_dir / "MutatorSansLite", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "MutatorFamily_v5_discrete_axis.designspace"),
+            "-i",
+            ".*Light Condensed",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MutatorMathTest-Sans Light Condensed.ttf",
+        "MutatorMathTest-Serif Light Condensed.otf",
+        "MutatorMathTest-Sans Light Condensed.otf",
+        "MutatorMathTest-Serif Light Condensed.ttf",
+    }
+
+
 def test_interpolation_mutatormath(data_dir, tmp_path):
     shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
 

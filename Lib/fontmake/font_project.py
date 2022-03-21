@@ -810,8 +810,6 @@ class FontProject:
                 interpolation failed.
             ValueError: an instance descriptor did not have a filename attribute set.
         """
-        # TODO: (Jany) for each instance, figure out in which "interpolatable sub-space" it is, and give that to mutatormath/the other one
-        # Maybe easier to make 1 designspace per interpolatable sub-space, and call this function X times?
         from glyphsLib.interpolation import apply_instance_data_to_ufo
 
         logger.info("Interpolating master UFOs from designspace")
@@ -820,56 +818,58 @@ class FontProject:
         except Exception as e:
             raise FontmakeError("Reading Designspace failed", designspace.path) from e
 
-        try:
-            generator = instantiator.Instantiator.from_designspace(
-                designspace, round_geometry=round_instances
-            )
-        except instantiator.InstantiatorError as e:
-            raise FontmakeError(
-                "Preparing the Designspace for interpolation failed", designspace.path
-            ) from e
-
-        if expand_features_to_instances:
-            logger.debug("Expanding features to instance UFOs")
-            fea_txt = parseLayoutFeatures(designspace.default.font).asFea()
-            generator = attr.evolve(generator, copy_feature_text=fea_txt)
-
-        for instance in designspace.instances:
-            # Skip instances that have been set to non-export in Glyphs, stored as the
-            # instance's `com.schriftgestaltung.export` lib key.
-            if not instance.lib.get("com.schriftgestaltung.export", True):
-                continue
-
-            # Skip instances that do not match the user's inclusion regex if given.
-            if include is not None and not fullmatch(include, instance.name):
-                continue
-
-            logger.info(f'Generating instance UFO for "{instance.name}"')
-
+        for _location, subDoc in splitInterpolable(designspace):
             try:
-                instance.font = generator.generate_instance(instance)
+                generator = instantiator.Instantiator.from_designspace(
+                    subDoc, round_geometry=round_instances
+                )
             except instantiator.InstantiatorError as e:
                 raise FontmakeError(
-                    f"Interpolating instance '{instance.styleName}' failed.",
+                    "Preparing the Designspace for interpolation failed",
                     designspace.path,
                 ) from e
 
-            apply_instance_data_to_ufo(instance.font, instance, designspace)
+            if expand_features_to_instances:
+                logger.debug("Expanding features to instance UFOs")
+                fea_txt = parseLayoutFeatures(subDoc.default.font).asFea()
+                generator = attr.evolve(generator, copy_feature_text=fea_txt)
 
-            # TODO: Making filenames up on the spot is complicated, ideally don't save
-            # anything if filename is not set, but make something up when "ufo" is in
-            # output formats, but also consider output_path.
-            if instance.filename is None:
-                raise ValueError(
-                    "It is currently required that instances have filenames set."
+            for instance in subDoc.instances:
+                # Skip instances that have been set to non-export in Glyphs, stored as the
+                # instance's `com.schriftgestaltung.export` lib key.
+                if not instance.lib.get("com.schriftgestaltung.export", True):
+                    continue
+
+                # Skip instances that do not match the user's inclusion regex if given.
+                if include is not None and not fullmatch(include, instance.name):
+                    continue
+
+                logger.info(f'Generating instance UFO for "{instance.name}"')
+
+                try:
+                    instance.font = generator.generate_instance(instance)
+                except instantiator.InstantiatorError as e:
+                    raise FontmakeError(
+                        f"Interpolating instance '{instance.styleName}' failed.",
+                        designspace.path,
+                    ) from e
+
+                apply_instance_data_to_ufo(instance.font, instance, subDoc)
+
+                # TODO: Making filenames up on the spot is complicated, ideally don't save
+                # anything if filename is not set, but make something up when "ufo" is in
+                # output formats, but also consider output_path.
+                if instance.filename is None:
+                    raise ValueError(
+                        "It is currently required that instances have filenames set."
+                    )
+                ufo_path = os.path.join(
+                    os.path.dirname(designspace.path), instance.filename
                 )
-            ufo_path = os.path.join(
-                os.path.dirname(designspace.path), instance.filename
-            )
-            os.makedirs(os.path.dirname(ufo_path), exist_ok=True)
-            self.save_ufo_as(instance.font, ufo_path)
+                os.makedirs(os.path.dirname(ufo_path), exist_ok=True)
+                self.save_ufo_as(instance.font, ufo_path)
 
-            yield instance.font
+                yield instance.font
 
     def interpolate_instance_ufos_mutatormath(
         self,
@@ -1349,4 +1349,3 @@ def _varLib_finder(source, directory="", ext="ttf"):
 
 def _normpath(fname):
     return os.path.normcase(os.path.normpath(fname))
-

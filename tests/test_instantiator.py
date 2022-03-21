@@ -645,3 +645,14 @@ def test_skipped_fontinfo_attributes():
         - fontmake.instantiator.UFO_INFO_ATTRIBUTES_TO_COPY_TO_INSTANCES
         == SKIPPED_ATTRS
     )
+
+
+def test_designspace_v5_discrete_axis_raises_error(data_dir):
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "MutatorSansLite" / "MutatorFamily_v5_discrete_axis.designspace"
+    )
+    # The error message should advise to use `splitInterpolable()`
+    with pytest.raises(
+        fontmake.instantiator.InstantiatorError, match="splitInterpolable"
+    ):
+        fontmake.instantiator.Instantiator.from_designspace(designspace)

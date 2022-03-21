@@ -203,6 +203,14 @@ class Instantiator:
         if designspace.default is None:
             raise InstantiatorError(_error_msg_no_default(designspace))
 
+        if any(hasattr(axis, 'values') for axis in designspace.axes):
+            raise InstantiatorError(
+                "The given designspace has one or more discrete (= non-interpolating) "
+                "axes. You should split this designspace into smaller interpolating "
+                "spaces and use the Instantiator on each. See the method "
+                "`fontTools.designspaceLib.split.splitInterpolable()`"
+            )
+
         if any(anisotropic(instance.location) for instance in designspace.instances):
             raise InstantiatorError(
                 "The Designspace contains anisotropic instance locations, which are "
