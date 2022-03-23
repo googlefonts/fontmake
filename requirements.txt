@@ -1,14 +1,13 @@
-fonttools[unicode,lxml,ufo]==4.32.0
+fonttools[unicode,lxml,ufo]==4.33.2
 cu2qu==1.6.7.post1
 glyphsLib==6.0.4
-ufo2ft[pathops]==2.27.0
+git+https://github.com/daltonmaag/ufo2ft@build-ds5
 MutatorMath==3.0.1
 fontMath==0.9.1
 defcon[lxml]==0.10.0; platform_python_implementation == 'CPython'
 defcon==0.10.0; platform_python_implementation != 'CPython'
 booleanOperations==0.9.0
-# ufoLib2==0.13.1
-git+https://github.com/googlefonts/ufoLib2@build-ds5
+ufoLib2==0.13.1
 attrs==21.4.0
 cffsubr==0.2.9.post1
 compreffor==0.5.1.post1
