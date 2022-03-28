@@ -1,7 +1,7 @@
 fonttools[unicode,lxml,ufo]==4.31.2
 cu2qu==1.6.7.post1
 glyphsLib==6.0.4
-ufo2ft[pathops]==2.25.3
+ufo2ft[pathops]==2.26.0
 MutatorMath==3.0.1
 fontMath==0.9.1
 defcon[lxml]==0.10.0; platform_python_implementation == 'CPython'
