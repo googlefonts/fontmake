@@ -430,10 +430,13 @@ class FontProject:
             ufos: Font objects to compile.
             ttf: If True, build fonts with TrueType outlines and .ttf extension.
             is_instance: If output fonts are instances, for generating paths.
-            autohint: Parameters to provide to ttfautohint. If not provided, the
-                UFO lib is scanned for autohinting parameters. If nothing is found,
-                the autohinting step is skipped. The lib key is
-                "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
+            autohint (Union[bool, None, str]): Parameters to provide to ttfautohint.
+                If set to None (default), the UFO lib is scanned for autohinting parameters.
+                If nothing is found, the autohinting step is skipped. The lib key is
+                "com.schriftgestaltung.customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options".
+                If set to False, then no autohinting takes place whether or not the
+                source specifies 'TTFAutohint options'. If True, it runs ttfautohint
+                with no additional options.
             subset: Whether to subset the output according to data in the UFOs.
                 If not provided, also determined by flags in the UFOs.
             use_production_names: Whether to use production glyph names in the
@@ -548,7 +551,11 @@ class FontProject:
             # Decide on autohinting and its parameters
             autohint_thisfont = (
                 (
-                    autohint
+                    None
+                    if autohint is False
+                    else ""  # use default options if autohint=True
+                    if autohint is True
+                    else autohint
                     if autohint is not None
                     else ufo.lib.get(AUTOHINTING_PARAMETERS)
                 )
