@@ -373,7 +373,7 @@ def main(args=None):
         const=True,  # without args means run ttfautohint with default options
         help="Run ttfautohint. Can provide arguments, quoted. By default, ttfautohint "
         "is run if the (.glyphs) source contains a 'TTFAutohint options' instance "
-        "custom parameter. This option overrides that. See --no-autohint to disable."
+        "custom parameter. This option overrides that. See --no-autohint to disable.",
     )
     contourGroup.add_argument(
         "-A",
