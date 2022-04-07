@@ -29,11 +29,23 @@ from fontmake.font_project import INTERPOLATABLE_OUTPUTS, FontProject
 
 def _loadPlugins(parser, specs, from_string_func, parser_error_message):
     plugins = []
+    seen_ellipsis = False
     for s in specs:
         if s == "None":
             # magic value that means "don't write any features or don't apply
             # any filters!"
             return []
+        elif s == "...":
+            if seen_ellipsis:
+                parser.error(
+                    parser_error_message.format(
+                        "ValueError", "'...' can only be provided once"
+                    )
+                )
+            seen_ellipsis = True
+            plugins.append(...)
+            continue
+
         try:
             plugins.append(from_string_func(s))
         except Exception as e:
@@ -425,7 +437,8 @@ def main(args=None):
         "the given keyword arguments. The class and module names are "
         "separated by '::'. The option can be repeated multiple times "
         "for each filter class. The option overrides the filters specified "
-        "in the UFO lib.",
+        "in the UFO lib. You can use an ellipsis --filter='...' to keep the "
+        "latter and insert additional --filter(s), either before or after it.",
     )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
@@ -449,7 +462,9 @@ def main(args=None):
         "separated by '::'. The option can be repeated multiple times "
         "for each writer class. A special value of 'None' will disable "
         "all automatic feature generation. The option overrides both the "
-        "default ufo2ft writers and those specified in the UFO lib.",
+        "default ufo2ft writers and those specified in the UFO lib. "
+        "You can use ellipsis --feature-writer='...' to keep the latter and "
+        "insert additional --feature-writer(s) either before or after those.",
     )
     layoutGroup.add_argument(
         "--debug-feature-file",
