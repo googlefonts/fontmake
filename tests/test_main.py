@@ -725,6 +725,8 @@ def test_main_with_filter(data_dir, tmp_path):
         (),
         ("-a",),
         ("--autohint", "-D latn"),
+        ("-A",),
+        ("--no-autohint",),
     ],
 )
 def test_autohinting(data_dir, tmp_path, autohint_options):
@@ -750,4 +752,8 @@ def test_autohinting(data_dir, tmp_path, autohint_options):
     test_output_ttf = fontTools.ttLib.TTFont(
         tmp_path / "PadyakkeExpandedOne-Regular.ttf"
     )
-    assert "fpgm" in test_output_ttf
+
+    if not {"-A", "--no-autohint"}.intersection(autohint_options):
+        assert "fpgm" in test_output_ttf  # hinted
+    else:
+        assert "fpgm" not in test_output_ttf  # unhinted

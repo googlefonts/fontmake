@@ -370,8 +370,18 @@ def main(args=None):
         "-a",
         "--autohint",
         nargs="?",
-        const="",
-        help="Run ttfautohint. Can provide arguments, quoted",
+        const=True,  # without args means run ttfautohint with default options
+        help="Run ttfautohint. Can provide arguments, quoted. By default, ttfautohint "
+        "is run if the (.glyphs) source contains a 'TTFAutohint options' instance "
+        "custom parameter. This option overrides that. See --no-autohint to disable.",
+    )
+    contourGroup.add_argument(
+        "-A",
+        "--no-autohint",
+        dest="autohint",
+        action="store_false",
+        help="Do not run ttfautohint, even if source contains a 'TTFAutohint options' "
+        "custom parameter",
     )
     contourGroup.add_argument(
         "--cff-round-tolerance",
