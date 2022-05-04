@@ -353,7 +353,7 @@ class FontProject:
         if len(vfs_to_build) > 1 and output_path:
             raise FontmakeError(
                 "can't specify output path because there are several VFs to build",
-                designspace,
+                designspace.path,
             )
 
         vf_name_to_output_path = {}
