@@ -263,7 +263,7 @@ def main(args=None):
     outputGroup.add_argument(
         "--variable-fonts",
         nargs="?",
-        default=True,
+        default=".*",
         const=True,
         metavar="VARIABLE_FONT_FILENAME",
         help=dedent(

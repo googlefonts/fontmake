@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import glob
 import logging
 import math
@@ -311,7 +313,7 @@ class FontProject:
     def build_variable_fonts(
         self,
         designspace: designspaceLib.DesignSpaceDocument,
-        variable_fonts=True,
+        variable_fonts: str = ".*",
         output_path=None,
         output_dir=None,
         ttf=True,
@@ -340,9 +342,7 @@ class FontProject:
         vfs_to_build = []
         for vf in vfs_in_document:
             # Skip variable fonts that do not match the user's inclusion regex if given.
-            if isinstance(variable_fonts, str) and not fullmatch(
-                variable_fonts, vf.name
-            ):
+            if not fullmatch(variable_fonts, vf.name):
                 continue
             vfs_to_build.append(vf)
 
@@ -951,7 +951,7 @@ class FontProject:
         designspace_path,
         output=(),
         interpolate=False,
-        variable_fonts=True,
+        variable_fonts: str = ".*",
         masters_as_instances=False,
         interpolate_binary_layout=False,
         round_instances=False,
@@ -1136,7 +1136,7 @@ class FontProject:
         self,
         designspace,
         outputs,
-        variable_fonts=True,
+        variable_fonts: str = ".*",
         output_path=None,
         output_dir=None,
         **kwargs,
