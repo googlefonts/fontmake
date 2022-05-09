@@ -1,6 +1,6 @@
 fonttools[unicode,lxml,ufo]==4.33.3
 cu2qu==1.6.7.post1
-glyphsLib==6.0.4
+glyphsLib==6.0.5
 ufo2ft[pathops]==2.27.0
 MutatorMath==3.0.1
 fontMath==0.9.1
