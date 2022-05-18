@@ -57,7 +57,7 @@ setup(
     install_requires=[
         "fonttools[ufo,lxml,unicode]>=4.32.0",
         "glyphsLib>=6.0.4",
-        "ufo2ft[compreffor]>=2.27.0",
+        "ufo2ft[compreffor]>=2.28.0a1",
         "fontMath>=0.9.1",
         "ufoLib2>=0.13.0",
         "attrs>=19",
