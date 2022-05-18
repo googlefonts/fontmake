@@ -17,6 +17,7 @@ import sys
 from argparse import ArgumentParser, FileType
 from collections import namedtuple
 from contextlib import contextmanager
+from textwrap import dedent
 
 from ufo2ft import CFFOptimization
 from ufo2ft.featureWriters import loadFeatureWriterFromString
@@ -237,7 +238,7 @@ def main(args=None):
         "--output-path",
         default=None,
         help="Output font file path. Only valid when the output is a single "
-        "file (e.g. input is a single UFO or output is variable font)",
+        "file (e.g. input is a single UFO or output is a single variable font)",
     )
     outputSubGroup.add_argument(
         "--output-dir",
@@ -258,6 +259,24 @@ def main(args=None):
         "the full instance name or a regular expression. "
         'E.g.: -i "Noto Sans Bold"; or -i ".* UI Condensed". '
         "(for Glyphs or MutatorMath sources only). ",
+    )
+    outputGroup.add_argument(
+        "--variable-fonts",
+        nargs="?",
+        default=".*",
+        const=True,
+        metavar="VARIABLE_FONT_FILENAME",
+        help=dedent(
+            """\
+            Filter the list of variable fonts produced from the input
+            Designspace file. By default all listed variable fonts are
+            generated. To generate a specific variable font (or variable fonts)
+            that match a given "filename" attribute, you can pass as argument
+            the full filename or a regular expression. E.g.: --variable-fonts
+            "MyFontVF_WeightOnly.ttf"; or --variable-fonts
+            "MyFontVFItalic_.*.ttf".
+        """
+        ),
     )
     outputGroup.add_argument(
         "--use-mutatormath",
@@ -558,7 +577,13 @@ def main(args=None):
             "variable output",
         )
     else:
-        exclude_args(parser, args, ["optimize_gvar"], "static output", positive=False)
+        exclude_args(
+            parser,
+            args,
+            ["variable_fonts", "optimize_gvar"],
+            "static output",
+            positive=False,
+        )
 
     if args.get("use_mutatormath"):
         for module in ("defcon", "mutatorMath"):
@@ -607,6 +632,7 @@ def main(args=None):
             args,
             [
                 "interpolate",
+                "variable_fonts",
                 "use_mutatormath",
                 "interpolate_binary_layout",
                 "round_instances",

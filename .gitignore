@@ -49,6 +49,7 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+tests/data/test.fea
 
 # Translations
 *.mo

@@ -1,10 +1,13 @@
+import logging
 import platform
 import shutil
+from textwrap import dedent
 
 import fontTools.designspaceLib as designspaceLib
 import fontTools.ttLib
 import pytest
 import ufoLib2
+from fontTools.misc.testTools import getXML
 
 import fontmake.__main__
 
@@ -40,6 +43,28 @@ def test_interpolation(data_dir, tmp_path):
     x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
     assert x_min == 50
     assert x_max == 170
+
+
+def test_interpolation_designspace_5(data_dir, tmp_path):
+    shutil.copytree(data_dir / "MutatorSansLite", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "MutatorFamily_v5_discrete_axis.designspace"),
+            "-i",
+            ".*Light Condensed",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {
+        "MutatorMathTest-Sans Light Condensed.ttf",
+        "MutatorMathTest-Serif Light Condensed.otf",
+        "MutatorMathTest-Sans Light Condensed.otf",
+        "MutatorMathTest-Serif Light Condensed.ttf",
+    }
 
 
 def test_interpolation_mutatormath(data_dir, tmp_path):
@@ -757,3 +782,239 @@ def test_autohinting(data_dir, tmp_path, autohint_options):
         assert "fpgm" in test_output_ttf  # hinted
     else:
         assert "fpgm" not in test_output_ttf  # unhinted
+
+
+def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "--verbose",
+            "DEBUG",
+            "-m",
+            str(
+                data_dir
+                / "MutatorSansLite"
+                / "MutatorSans_v5_implicit_one_vf.designspace"
+            ),
+            "-o",
+            "variable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+    test_output_ttf = fontTools.ttLib.TTFont(
+        tmp_path / "MutatorSans_v5_implicit_one_vf-VF.ttf"
+    )
+    stat = test_output_ttf["STAT"]
+    assert (
+        getXML(stat.toXML)
+        == dedent(
+            """\
+            <Version value="0x00010002"/>
+            <DesignAxisRecordSize value="8"/>
+            <!-- DesignAxisCount=2 -->
+            <DesignAxisRecord>
+              <Axis index="0">
+                <AxisTag value="wght"/>
+                <AxisNameID value="274"/>
+                <AxisOrdering value="0"/>
+              </Axis>
+              <Axis index="1">
+                <AxisTag value="wdth"/>
+                <AxisNameID value="276"/>
+                <AxisOrdering value="1"/>
+              </Axis>
+            </DesignAxisRecord>
+            <!-- AxisValueCount=8 -->
+            <AxisValueArray>
+              <AxisValue index="0" Format="4">
+                <!-- AxisCount=2 -->
+                <Flags value="0"/>
+                <ValueNameID value="280"/>
+                <AxisValueRecord index="0">
+                  <AxisIndex value="0"/>
+                  <Value value="610.2436"/>
+                </AxisValueRecord>
+                <AxisValueRecord index="1">
+                  <AxisIndex value="1"/>
+                  <Value value="158.9044"/>
+                </AxisValueRecord>
+              </AxisValue>
+              <AxisValue index="1" Format="4">
+                <!-- AxisCount=2 -->
+                <Flags value="0"/>
+                <ValueNameID value="281"/>
+                <AxisValueRecord index="0">
+                  <AxisIndex value="0"/>
+                  <Value value="642.2196"/>
+                </AxisValueRecord>
+                <AxisValueRecord index="1">
+                  <AxisIndex value="1"/>
+                  <Value value="159.1956"/>
+                </AxisValueRecord>
+              </AxisValue>
+              <AxisValue index="2" Format="2">
+                <AxisIndex value="0"/>
+                <Flags value="0"/>
+                <ValueNameID value="275"/>
+                <NominalValue value="300.0"/>
+                <RangeMinValue value="300.0"/>
+                <RangeMaxValue value="400.0"/>
+              </AxisValue>
+              <AxisValue index="3" Format="2">
+                <AxisIndex value="0"/>
+                <Flags value="0"/>
+                <ValueNameID value="266"/>
+                <NominalValue value="500.0"/>
+                <RangeMinValue value="400.0"/>
+                <RangeMaxValue value="600.0"/>
+              </AxisValue>
+              <AxisValue index="4" Format="2">
+                <AxisIndex value="0"/>
+                <Flags value="0"/>
+                <ValueNameID value="269"/>
+                <NominalValue value="700.0"/>
+                <RangeMinValue value="600.0"/>
+                <RangeMaxValue value="700.0"/>
+              </AxisValue>
+              <AxisValue index="5" Format="2">
+                <AxisIndex value="1"/>
+                <Flags value="0"/>
+                <ValueNameID value="277"/>
+                <NominalValue value="50.0"/>
+                <RangeMinValue value="50.0"/>
+                <RangeMaxValue value="75.0"/>
+              </AxisValue>
+              <AxisValue index="6" Format="2">
+                <AxisIndex value="1"/>
+                <Flags value="2"/>  <!-- ElidableAxisValueName -->
+                <ValueNameID value="278"/>
+                <NominalValue value="100.0"/>
+                <RangeMinValue value="75.0"/>
+                <RangeMaxValue value="125.0"/>
+              </AxisValue>
+              <AxisValue index="7" Format="2">
+                <AxisIndex value="1"/>
+                <Flags value="0"/>
+                <ValueNameID value="279"/>
+                <NominalValue value="200.0"/>
+                <RangeMinValue value="125.0"/>
+                <RangeMaxValue value="200.0"/>
+              </AxisValue>
+            </AxisValueArray>
+            <ElidedFallbackNameID value="273"/>"""
+        ).splitlines()
+    )
+
+
+def test_main_designspace_v5_builds_all_vfs(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(
+                data_dir
+                / "MutatorSansLite"
+                / "MutatorFamily_v5_discrete_axis.designspace"
+            ),
+            "-o",
+            "variable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert (tmp_path / "MutatorSansVariable_Weight_Width.ttf").exists()
+    assert (tmp_path / "MutatorSansVariable_Weight.ttf").exists()
+    assert (tmp_path / "MutatorSansVariable_Width.ttf").exists()
+    assert (tmp_path / "MutatorSerifVariable_Width.ttf").exists()
+
+
+def test_main_designspace_v5_select_no_matching_fonts_shows_nice_message(
+    data_dir, tmp_path, caplog
+):
+    with caplog.at_level(logging.WARNING):
+        fontmake.__main__.main(
+            [
+                "-m",
+                str(
+                    data_dir
+                    / "MutatorSansLite"
+                    / "MutatorFamily_v5_discrete_axis.designspace"
+                ),
+                "--variable-fonts",
+                "NothingMatchesThisRegex",
+                "-o",
+                "variable",
+                "--output-dir",
+                str(tmp_path),
+            ]
+        )
+
+    assert "No variable fonts matching NothingMatchesThisRegex" in caplog.text
+
+    # Nothing gets built
+    assert not (tmp_path / "MutatorSansVariable_Weight_Width.ttf").exists()
+    assert not (tmp_path / "MutatorSansVariable_Weight.ttf").exists()
+    assert not (tmp_path / "MutatorSansVariable_Width.ttf").exists()
+    assert not (tmp_path / "MutatorSerifVariable_Width.ttf").exists()
+
+
+def test_main_designspace_v5_select_vfs_to_build(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(
+                data_dir
+                / "MutatorSansLite"
+                / "MutatorFamily_v5_discrete_axis.designspace"
+            ),
+            "--variable-fonts",
+            "MutatorSansVariable_Weight.*",
+            "-o",
+            "variable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert (tmp_path / "MutatorSansVariable_Weight_Width.ttf").exists()
+    assert (tmp_path / "MutatorSansVariable_Weight.ttf").exists()
+    assert not (tmp_path / "MutatorSansVariable_Width.ttf").exists()
+    assert not (tmp_path / "MutatorSerifVariable_Width.ttf").exists()
+
+
+def test_main_designspace_v5_can_use_output_path_with_1_vf(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(
+                data_dir / "MutatorSansLite" / "MutatorSans_v5_several_vfs.designspace"
+            ),
+            "-o",
+            "variable",
+            "--variable-fonts",
+            "MutatorSansVariable_Width",
+            "--output-path",
+            str(tmp_path / "MySingleVF.ttf"),
+        ]
+    )
+
+    assert (tmp_path / "MySingleVF.ttf").exists()
+
+
+def test_main_designspace_v5_dont_interpolate_discrete_axis(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(
+                data_dir
+                / "MutatorSansLite"
+                / "MutatorSans_v5_several_vfs_discrete_axis.designspace"
+            ),
+            "-o",
+            "variable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+    assert (tmp_path / "MutatorSansCondensedVariable_Weight.ttf").exists()
+    assert (tmp_path / "MutatorSansExtendedVariable_Weight.ttf").exists()
