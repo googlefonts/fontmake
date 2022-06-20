@@ -4,7 +4,7 @@ cu2qu==1.6.7.post1
 glyphsLib==6.0.5
 ufo2ft==2.28.0a1
 MutatorMath==3.0.1
-fontMath==0.9.1
+fontMath==0.9.2
 defcon[lxml]==0.10.0; platform_python_implementation == 'CPython'
 defcon==0.10.0; platform_python_implementation != 'CPython'
 booleanOperations==0.9.0
