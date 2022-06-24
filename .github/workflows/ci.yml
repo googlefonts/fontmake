@@ -56,7 +56,7 @@ jobs:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     strategy:
       matrix:
-        python-version: ["3.x-dev"]
+        python-version: ["3.11-dev"]
         platform: [ubuntu-latest, windows-latest]
     steps:
     - uses: actions/checkout@v3
