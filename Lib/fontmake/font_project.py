@@ -134,7 +134,9 @@ class FontProject:
 
     def save_ufo_as(self, font, path):
         try:
-            font.save(path, overwrite=True, validate=self.validate_ufo)
+            font.save(
+                path, overwrite=True, validate=self.validate_ufo, structure="package"
+            )
         except Exception as e:
             raise FontmakeError("Writing UFO source failed", path) from e
 
