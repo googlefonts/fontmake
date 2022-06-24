@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import logging
-import sys
 import os
+import sys
 from argparse import ArgumentParser, FileType
 from collections import namedtuple
 from contextlib import contextmanager
