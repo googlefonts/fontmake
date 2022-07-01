@@ -360,6 +360,15 @@ def main(args=None):
         action="store_false",
         help="Do not auto-generate a GDEF table, but keep an existing one intact.",
     )
+    outputGroup.add_argument(
+        "--save-ufo-as-zip",
+        dest="ufo_structure",
+        action="store_const",
+        const="zip",
+        default="package",
+        help="Save UFOs as .ufoz format. Only valid when generating UFO masters "
+        "from designspace or interpolating UFO instances.",
+    )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
     contourGroup.add_argument(

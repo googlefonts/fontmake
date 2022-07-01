@@ -132,10 +132,10 @@ class FontProject:
         except Exception as e:
             raise FontmakeError("Reading UFO source failed", path) from e
 
-    def save_ufo_as(self, font, path):
+    def save_ufo_as(self, font, path, ufo_structure="package"):
         try:
             font.save(
-                path, overwrite=True, validate=self.validate_ufo, structure="package"
+                path, overwrite=True, validate=self.validate_ufo, structure=ufo_structure
             )
         except Exception as e:
             raise FontmakeError("Writing UFO source failed", path) from e
@@ -151,6 +151,7 @@ class FontProject:
         mti_source=None,
         write_skipexportglyphs=True,
         generate_GDEF=True,
+        ufo_structure="package",
     ):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
@@ -215,7 +216,7 @@ class FontProject:
             self.add_mti_features_to_master_ufos(mti_source, masters)
 
         for ufo_path, ufo in masters.items():
-            self.save_ufo_as(ufo, ufo_path)
+            self.save_ufo_as(ufo, ufo_path, ufo_structure)
 
         return designspace_path
 
@@ -777,6 +778,7 @@ class FontProject:
             mti_source=mti_source,
             write_skipexportglyphs=write_skipexportglyphs,
             generate_GDEF=generate_GDEF,
+            ufo_structure=kwargs.get("ufo_structure"),
         )
         try:
             self.run_from_designspace(designspace_path, **kwargs)
@@ -790,6 +792,7 @@ class FontProject:
         include=None,
         round_instances=False,
         expand_features_to_instances=False,
+        ufo_structure="package",
     ):
         """Interpolate master UFOs with Instantiator and return instance UFOs.
 
@@ -869,7 +872,7 @@ class FontProject:
                     os.path.dirname(designspace.path), instance.filename
                 )
                 os.makedirs(os.path.dirname(ufo_path), exist_ok=True)
-                self.save_ufo_as(instance.font, ufo_path)
+                self.save_ufo_as(instance.font, ufo_path, ufo_structure)
 
                 yield instance.font
 
@@ -1109,6 +1112,7 @@ class FontProject:
                         include=pattern,
                         round_instances=round_instances,
                         expand_features_to_instances=expand_features_to_instances,
+                        ufo_structure=kwargs.get("ufo_structure"),
                     )
                 )
 
