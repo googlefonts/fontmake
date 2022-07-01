@@ -1130,6 +1130,8 @@ class FontProject:
                 interpolate_layout_dir = interpolate_binary_layout
             else:
                 interpolate_layout_dir = None
+                
+        kwargs.pop("ufo_structure", None)
 
         self.run_from_ufos(
             ufos,
