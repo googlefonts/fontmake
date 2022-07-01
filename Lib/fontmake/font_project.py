@@ -1196,6 +1196,8 @@ class FontProject:
         if "otf" in output and "otf-cff2" in output:
             raise ValueError("'otf' and 'otf-cff2' outputs are mutually exclusive")
 
+        kwargs.pop("ufo_structure", None)
+
         # the `ufos` parameter can be a list of UFO objects
         # or it can be a path (string) with a glob syntax
         ufo_paths = []
