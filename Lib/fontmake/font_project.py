@@ -138,7 +138,7 @@ class FontProject:
                 path,
                 overwrite=True,
                 validate=self.validate_ufo,
-                structure=ufo_structure
+                structure=ufo_structure,
             )
         except Exception as e:
             raise FontmakeError("Writing UFO source failed", path) from e
