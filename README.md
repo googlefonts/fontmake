@@ -40,7 +40,7 @@ There are two ways to specify the source file or files:
 
 One can either use the following, mutually exclusive, flags:
 * `-g filename.glyphs`: Converts a Glyphs source file to binary.
-* `-u filename.ufo ...`: Converts one or more UFO files to binary.
+* `-u filename.ufo ...`: Converts one or more UFO(Z) files to binary.
 * `-m filename.designspace`: Converts a Designspace file to binary. (The `-m` is for `mutatormath`, an old Python library for handling designspaces.)
 
 Alternatively, one can specify the input(s) as positional arguments without the flag, letting fontmake infer the source format from the file extension: e.g. ``fontmake MyFont.designspace``, etc.
@@ -70,7 +70,7 @@ The following output file formats are also available, but are generally used int
 
 * `otf-interpolatable`: OTF binaries suitable for merging into a variable font. Placed in the `master_otf_interpolatable/` directory. (These differ from `otf` in that the outlines are unoptimized.)
 * `ttf-interpolatable`: TTF binaries suitable for merging into a variable font. Placed in the `master_ttf_interpolatable/` directory. (The outlines are converted to quadratic curves in an interpolation-compatible way.)
-* `ufo`: Glyphs sources can be converted to UFO. Placed in the `master_ufo/` directory.
+* `ufo`: Glyphs sources can be converted to UFO, or to UFO zip (`.ufoz`) format with the flag `--save-ufo-as-zip`. Placed in the `master_ufo/` directory. 
 
 If no format option is specified, the default is `-o otf ttf`.
 
