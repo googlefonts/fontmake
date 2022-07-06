@@ -667,6 +667,21 @@ def test_ufo_to_static_otf_cff2(data_dir, tmp_path):
     assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
 
 
+def test_ufoz_to_static_otf_cff2(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "DesignspaceTest" / "MyFont-Light.ufoz"),
+            "-o",
+            "otf-cff2",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.otf")} == {"MyFont-Light.otf"}
+
+
 def test_static_otf_cffsubr_subroutinizer(data_dir, tmp_path):
     fontmake.__main__.main(
         [
