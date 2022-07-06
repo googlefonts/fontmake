@@ -367,7 +367,7 @@ def main(args=None):
         const="zip",
         default="package",
         help="Save UFOs as .ufoz format. Only valid when generating UFO masters "
-        "from designspace or interpolating UFO instances.",
+        "from glyphs source or interpolating UFO instances.",
     )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
@@ -653,6 +653,7 @@ def main(args=None):
             ],
             inputs.format_name,
         )
+        args.pop("ufo_structure", None)  # unused for UFO output
         project.run_from_ufos(
             inputs.ufo_paths, is_instance=args.pop("masters_as_instances"), **args
         )

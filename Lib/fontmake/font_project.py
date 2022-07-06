@@ -1092,6 +1092,7 @@ class FontProject:
         feature_writers=None,
         expand_features_to_instances=False,
         use_mutatormath=False,
+        ufo_structure="package",
         **kwargs,
     ):
         ufos = []
@@ -1115,7 +1116,7 @@ class FontProject:
                         include=pattern,
                         round_instances=round_instances,
                         expand_features_to_instances=expand_features_to_instances,
-                        ufo_structure=kwargs.get("ufo_structure"),
+                        ufo_structure=ufo_structure,
                     )
                 )
 
@@ -1130,8 +1131,6 @@ class FontProject:
                 interpolate_layout_dir = interpolate_binary_layout
             else:
                 interpolate_layout_dir = None
-
-        kwargs.pop("ufo_structure", None)
 
         self.run_from_ufos(
             ufos,
@@ -1195,8 +1194,6 @@ class FontProject:
 
         if "otf" in output and "otf-cff2" in output:
             raise ValueError("'otf' and 'otf-cff2' outputs are mutually exclusive")
-
-        kwargs.pop("ufo_structure", None)
 
         # the `ufos` parameter can be a list of UFO objects
         # or it can be a path (string) with a glob syntax
