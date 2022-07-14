@@ -230,6 +230,24 @@ def test_variable_ttf(data_dir, tmp_path):
     assert {p.name for p in tmp_path.glob("*.*")} == {"DesignspaceTest-VF.ttf"}
 
 
+def test_static_ttf_and_variable_ttf(data_dir, tmp_path):
+    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
+
+    fontmake.__main__.main(
+        [
+            "-m",
+            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
+            "-o",
+            "ttf",
+            "variable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert {p.name for p in tmp_path.glob("*.*")} == {"DesignspaceTest-VF.ttf"}
+
+
 def test_variable_otf(data_dir, tmp_path):
     shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
 
