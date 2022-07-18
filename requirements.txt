@@ -1,5 +1,5 @@
 fonttools[ufo,lxml,unicode]==4.34.4; platform_python_implementation == 'CPython'
-fonttools[unicode,ufo]==4.34.0; platform_python_implementation != 'CPython'
+fonttools[ufo,unicode]==4.34.4; platform_python_implementation != 'CPython'
 cu2qu==1.6.7.post1
 glyphsLib==6.0.6
 ufo2ft==2.28.0
