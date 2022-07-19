@@ -2,8 +2,8 @@ import pytest
 import ufoLib2
 from fontTools import designspaceLib
 
-from fontmake.compatibility import CompatibilityChecker
 from fontmake.__main__ import main
+from fontmake.compatibility import CompatibilityChecker
 from fontmake.errors import FontmakeError
 
 
