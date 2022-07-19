@@ -346,8 +346,8 @@ def main(args=None):
     )
     compatibilityGroup.add_argument(
         "--no-check-compatibility",
-        action="store_true",
-        dest="disable_compatibility_check",
+        action="store_false",
+        dest="check_compatibility",
         help="Turns off the compatibility checker even when building variable fonts",
     )
 
@@ -646,7 +646,6 @@ def main(args=None):
                 "round_instances",
                 "expand_features_to_instances",
                 "check_compatibility",
-                "disable_compatibility_check",
             ],
             inputs.format_name,
         )

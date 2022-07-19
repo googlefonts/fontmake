@@ -959,8 +959,7 @@ class FontProject:
         filters=None,
         expand_features_to_instances=False,
         use_mutatormath=False,
-        check_compatibility=False,
-        disable_compatibility_check=False,
+        check_compatibility=None,
         **kwargs,
     ):
         """Run toolchain from a DesignSpace document to produce either static
@@ -1032,7 +1031,7 @@ class FontProject:
             explicit_check = any(
                 font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
             )
-            if not disable_compatibility_check and (interp_outputs or check_compatibility or explicit_check):
+            if check_compatibility is not False and (interp_outputs or check_compatibility or explicit_check):
                 if not CompatibilityChecker(source_fonts).check():
                     message = "Compatibility check failed"
                     if discrete_location:
