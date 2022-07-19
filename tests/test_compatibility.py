@@ -4,7 +4,6 @@ from fontTools import designspaceLib
 
 from fontmake.__main__ import main
 from fontmake.compatibility import CompatibilityChecker
-from fontmake.errors import FontmakeError
 
 
 def test_compatibility_checker(data_dir, caplog):
@@ -31,12 +30,12 @@ def test_compatibility_checker(data_dir, caplog):
 
 def test_compatibility_cli(data_dir, caplog):
     ds = str(data_dir / "IncompatibleSans" / "IncompatibleSans.designspace")
-    with pytest.raises(SystemExit) as e_info:
+    with pytest.raises(SystemExit):
         main(["-o", "variable", "-m", ds])
 
     main(["-o", "ttf", "-m", ds])
 
-    with pytest.raises(SystemExit) as e_info:
+    with pytest.raises(SystemExit):
         main(["--check-compatibility", "-o", "ttf", "-m", ds])
 
     # We stopped things before they got to the cu2qu level
