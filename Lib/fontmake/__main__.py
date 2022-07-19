@@ -335,7 +335,8 @@ def main(args=None):
         help="Enable ufoLib validation on reading/writing UFO files. It is "
         "disabled by default",
     )
-    outputGroup.add_argument(
+    compatibilityGroup = outputGroup.add_mutually_exclusive_group()
+    compatibilityGroup.add_argument(
         "--check-compatibility",
         action="store_true",
         help="Check if the source files are interpolatable. It is "
@@ -343,6 +344,13 @@ def main(args=None):
         "or what the 'Enforce Compatibility Check' custom parameter is "
         "set on a Glyphs file",
     )
+    compatibilityGroup.add_argument(
+        "--no-check-compatibility",
+        action="store_true",
+        dest="disable_compatibility_check",
+        help="Turns off the compatibility checker even when building variable fonts",
+    )
+
     outputGroup.add_argument(
         "--expand-features-to-instances",
         action="store_true",
@@ -638,6 +646,7 @@ def main(args=None):
                 "round_instances",
                 "expand_features_to_instances",
                 "check_compatibility",
+                "disable_compatibility_check",
             ],
             inputs.format_name,
         )
