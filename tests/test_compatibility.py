@@ -28,6 +28,7 @@ def test_compatibility_checker(data_dir, caplog):
         "Fonts had differing point type in glyph D, contour 0, point 10" in caplog.text
     )
 
+
 def test_compatibility_cli(data_dir, caplog):
     ds = str(data_dir / "IncompatibleSans" / "IncompatibleSans.designspace")
     with pytest.raises(SystemExit) as e_info:
