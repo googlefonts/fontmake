@@ -339,6 +339,7 @@ def main(args=None):
     compatibilityGroup.add_argument(
         "--check-compatibility",
         action="store_true",
+        default=None,
         help="Check if the source files are interpolatable. It is "
         "disabled by default, but enabled when building variable fonts "
         "or what the 'Enforce Compatibility Check' custom parameter is "
@@ -347,6 +348,7 @@ def main(args=None):
     compatibilityGroup.add_argument(
         "--no-check-compatibility",
         action="store_false",
+        default=None,
         dest="check_compatibility",
         help="Turns off the compatibility checker even when building variable fonts",
     )
