@@ -1031,7 +1031,9 @@ class FontProject:
             explicit_check = any(
                 font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
             )
-            if check_compatibility is not False and (interp_outputs or check_compatibility or explicit_check):
+            if check_compatibility is not False and (
+                interp_outputs or check_compatibility or explicit_check
+            ):
                 if not CompatibilityChecker(source_fonts).check():
                     message = "Compatibility check failed"
                     if discrete_location:
