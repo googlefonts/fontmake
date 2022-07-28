@@ -1,6 +1,9 @@
 import logging
 import platform
+import re
 import shutil
+import subprocess
+import sys
 from textwrap import dedent
 
 import fontTools.designspaceLib as designspaceLib
@@ -1018,3 +1021,33 @@ def test_main_designspace_v5_dont_interpolate_discrete_axis(data_dir, tmp_path):
     )
     assert (tmp_path / "MutatorSansCondensedVariable_Weight.ttf").exists()
     assert (tmp_path / "MutatorSansExtendedVariable_Weight.ttf").exists()
+
+
+def test_timing_logger(data_dir, tmp_path):
+    # check that --timing flag logs timing-related DEBUG messages even if the
+    # logging level (as set by --verbose flag) is higher
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "fontmake",
+            "--timing",
+            "--verbose",
+            "CRITICAL",
+            "-m",
+            str(data_dir / "DesignspaceTest" / "DesignspaceTest.designspace"),
+            "-i",
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path),
+        ],
+        capture_output=True,
+        check=True,
+    )
+
+    assert re.match(
+        r"^DEBUG:fontmake.timer:Took [\.0-9]+s to run 'save_otfs'\r?$",
+        result.stderr.decode(),
+        flags=re.MULTILINE,
+    )

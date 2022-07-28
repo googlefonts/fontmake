@@ -32,7 +32,7 @@ import ufo2ft.errors
 import ufoLib2
 from fontTools import designspaceLib
 from fontTools.designspaceLib.split import splitInterpolable
-from fontTools.misc.loggingTools import Timer, configLogger
+from fontTools.misc.loggingTools import Timer
 from fontTools.misc.plistlib import load as readPlist
 from fontTools.ttLib import TTFont
 from fontTools.varLib.interpolate_layout import interpolate_layout
@@ -115,11 +115,29 @@ def temporarily_disabling_axis_maps(designspace_path):
 class FontProject:
     """Provides methods for building fonts."""
 
-    def __init__(self, timing=False, verbose="INFO", validate_ufo=False):
-        logging.basicConfig(level=getattr(logging, verbose.upper()))
-        logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
-        if timing:
-            configLogger(logger=timer.logger, level=logging.DEBUG)
+    def __init__(
+        self,
+        timing=None,  # deprecated
+        verbose=None,  # deprecated
+        validate_ufo=False,
+    ):
+        if verbose is not None or timing is not None:
+            from warnings import warn
+
+            from fontmake.__main__ import _configure_logging
+
+            warn(
+                "The 'verbose'/'timing' arguments are deprecated. "
+                "Logging configuration is global and should not be "
+                "specified in the FontProject constructor. "
+                "Use the logging API to configure fontmake's loggers "
+                "for your application. E.g. fontmake main() function "
+                "uses logging.basicConfig().",
+                UserWarning,
+                stacklevel=2,
+            )
+
+            _configure_logging(verbose, timing)
 
         logger.debug(
             "ufoLib UFO validation is %s", "enabled" if validate_ufo else "disabled"
