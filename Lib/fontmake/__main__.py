@@ -20,6 +20,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
 
+from fontTools.misc.loggingTools import configLogger
 from ufo2ft import CFFOptimization
 from ufo2ft.featureWriters import loadFeatureWriterFromString
 from ufo2ft.filters import loadFilterFromString
@@ -179,6 +180,20 @@ def _make_tempdirs(parser, args):
 
         for td in tempdirs:
             shutil.rmtree(td)
+
+
+def _configure_logging(level=None, timing=False):
+    fmt = "%(levelname)s:%(name)s:%(message)s"
+    if level is not None:
+        # NOTE: configuring the root logger with basicConfig should be done only once,
+        # preferably from inside main(); calling subsequent times has no effect.
+        logging.basicConfig(level=level, format=fmt)
+    # fontTools.subset's logger is too chatty, we set it to WARNING
+    logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
+    if timing:
+        # timing-related DEBUG messages get a separate configuration so we
+        # can enable them without needing to lower the global verbosity level
+        configLogger(logger="fontmake.timer", level=logging.DEBUG, format=fmt)
 
 
 def main(args=None):
@@ -564,6 +579,9 @@ def main(args=None):
 
     args = vars(parser.parse_args(args))
 
+    level = args.pop("verbose")
+    _configure_logging(level, timing=args.pop("timing"))
+
     specs = args.pop("feature_writer_specs")
     if specs is not None:
         args["feature_writers"] = _loadFeatureWriters(parser, specs)
@@ -607,13 +625,9 @@ def main(args=None):
                     "[mutatormath] extra"
                 )
 
-    PRINT_TRACEBACK = args.get("verbose", "INFO") == "DEBUG"
+    PRINT_TRACEBACK = level == "DEBUG"
     try:
-        project = FontProject(
-            timing=args.pop("timing"),
-            verbose=args.pop("verbose"),
-            validate_ufo=args.pop("validate_ufo"),
-        )
+        project = FontProject(validate_ufo=args.pop("validate_ufo"))
 
         if inputs.glyphs_path:
             with _make_tempdirs(parser, args):
