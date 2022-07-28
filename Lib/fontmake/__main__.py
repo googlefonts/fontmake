@@ -194,6 +194,7 @@ def _configure_logging(level=None, timing=False):
         # timing-related DEBUG messages get a separate configuration so we
         # can enable them without needing to lower the global verbosity level
         configLogger(logger="fontmake.timer", level=logging.DEBUG, format=fmt)
+        configLogger(logger="ufo2ft.timer", level=logging.DEBUG, format=fmt)
 
 
 def main(args=None):
