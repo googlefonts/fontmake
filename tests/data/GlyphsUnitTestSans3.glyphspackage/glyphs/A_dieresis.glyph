@@ -1,0 +1,45 @@
+{
+glyphname = Adieresis;
+layers = (
+{
+layerId = "C4872ECA-A3A9-40AB-960A-1DB2202F16DE";
+shapes = (
+{
+ref = A;
+},
+{
+pos = (110,230);
+ref = dieresis;
+}
+);
+width = 593;
+},
+{
+layerId = "3E7589AA-8194-470F-8E2F-13C1C581BE24";
+shapes = (
+{
+ref = A;
+},
+{
+pos = (128,220);
+ref = dieresis;
+}
+);
+width = 657;
+},
+{
+layerId = "BFFFD157-90D3-4B85-B99D-9A2F366F03CA";
+shapes = (
+{
+ref = A;
+},
+{
+pos = (110,210);
+ref = dieresis;
+}
+);
+width = 753;
+}
+);
+unicode = 196;
+}

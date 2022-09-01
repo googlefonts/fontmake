@@ -1,0 +1,215 @@
+{
+export = 0;
+glyphname = _part.stem;
+layers = (
+{
+anchors = (
+{
+name = connect;
+pos = (117,0);
+}
+);
+layerId = "C4872ECA-A3A9-40AB-960A-1DB2202F16DE";
+partSelection = {
+height = 1;
+};
+shapes = (
+{
+closed = 1;
+nodes = (
+(119,368,l),
+(115,470,l),
+(100,470,l),
+(100,0,l),
+(117,0,l),
+(117,306,l)
+);
+}
+);
+width = 600;
+},
+{
+anchors = (
+{
+name = connect;
+pos = (167,0);
+}
+);
+layerId = "3E7589AA-8194-470F-8E2F-13C1C581BE24";
+partSelection = {
+height = 1;
+};
+shapes = (
+{
+closed = 1;
+nodes = (
+(149,393,l),
+(139,480,l),
+(77,480,l),
+(77,0,l),
+(167,0,l),
+(167,286,l)
+);
+}
+);
+width = 600;
+},
+{
+anchors = (
+{
+name = connect;
+pos = (250,0);
+}
+);
+layerId = "BFFFD157-90D3-4B85-B99D-9A2F366F03CA";
+partSelection = {
+height = 1;
+};
+shapes = (
+{
+closed = 1;
+nodes = (
+(181,385,l),
+(162,490,l),
+(30,490,l),
+(30,0,l),
+(250,0,l),
+(250,256,l)
+);
+}
+);
+width = 600;
+},
+{
+anchors = (
+{
+name = connect;
+pos = (117,0);
+}
+);
+associatedMasterId = "C4872ECA-A3A9-40AB-960A-1DB2202F16DE";
+layerId = "0D68D3E9-A0B2-4D78-A161-EB65D8511F0A";
+name = TallStem;
+partSelection = {
+height = 2;
+};
+shapes = (
+{
+closed = 1;
+nodes = (
+(117,368,l),
+(117,800,l),
+(100,800,l),
+(100,0,l),
+(117,0,l),
+(117,306,l)
+);
+}
+);
+width = 600;
+},
+{
+anchors = (
+{
+name = connect;
+pos = (167,0);
+}
+);
+associatedMasterId = "3E7589AA-8194-470F-8E2F-13C1C581BE24";
+layerId = "3E1733D9-3B83-4E6A-B1E9-6381BBE1BD3A";
+name = TallStem;
+partSelection = {
+height = 2;
+};
+shapes = (
+{
+closed = 1;
+nodes = (
+(167,393,l),
+(167,800,l),
+(77,800,l),
+(77,0,l),
+(167,0,l),
+(167,286,l)
+);
+}
+);
+width = 600;
+},
+{
+anchors = (
+{
+name = connect;
+pos = (250,0);
+}
+);
+associatedMasterId = "BFFFD157-90D3-4B85-B99D-9A2F366F03CA";
+layerId = "FD65D427-9013-43E2-9F74-398D99AA4763";
+name = TallStem;
+partSelection = {
+height = 2;
+};
+shapes = (
+{
+closed = 1;
+nodes = (
+(250,385,l),
+(250,800,l),
+(30,800,l),
+(30,0,l),
+(250,0,l),
+(250,256,l)
+);
+}
+);
+userData = {
+com.typemytype.robofont.layerData = {
+"Regular Nov 6 15, 18:44" = {
+anchors = (
+);
+components = (
+{
+baseGlyph = tmA;
+transformation = (
+1,
+0,
+0,
+1,
+0,
+0
+);
+}
+);
+contours = (
+{
+points = (
+{
+smooth = 0;
+x = 2570;
+y = -907;
+}
+);
+}
+);
+lib = {
+};
+name = tmAA;
+unicodes = (
+);
+width = 3047;
+};
+};
+};
+width = 600;
+}
+);
+partsSettings = (
+{
+bottomName = Low;
+bottomValue = 0;
+name = height;
+topName = High;
+topValue = 100;
+}
+);
+}
