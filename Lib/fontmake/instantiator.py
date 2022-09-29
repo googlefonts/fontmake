@@ -780,3 +780,98 @@ class Variator:
             return copy.deepcopy(self.location_to_master[normalized_location_key])
 
         return self.model.interpolateFromMasters(normalized_location, self.masters)
+
+
+if __name__ == "__main__":
+    import argparse
+    import os
+    import sys
+
+    from fontTools.designspaceLib import DesignSpaceDocument, InstanceDescriptor
+
+    parser = argparse.ArgumentParser(
+        description="Generate instances from a Designspace file."
+    )
+    parser.add_argument(
+        "--overwrite", action="store_true", help="Overwrite existing instances."
+    )
+    parser.add_argument(
+        "--round-coordinates",
+        action="store_true",
+        help="Round coordinates to integer values.",
+    )
+    parser.add_argument(
+        "designspace_path",
+        metavar="DESIGNSPACE",
+        type=str,
+        help="Path to the Designspace file.",
+    )
+    parser.add_argument(
+        "instance",
+        metavar="LOCATION_OR_INSTANCE",
+        type=str,
+        help="Name of the instance to generate, or a location in the form "
+        "of 'wght=100,wdth=100'.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        metavar="DIR",
+        type=str,
+        help="Directory to write the instance to."
+        " Defaults to the current directory.",
+    )
+    args = parser.parse_args()
+
+    designspace_path = args.designspace_path
+    instance_name = args.instance
+    output_dir = args.output_dir
+
+    if output_dir is None:
+        output_dir = "."
+    elif not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+
+    designspace = DesignSpaceDocument.fromfile(designspace_path)
+    axes = {axis.tag: axis for axis in designspace.axes}
+
+    if "=" in instance_name:
+        # Parse instance as location
+        instance_location = {}
+        for axis_value in instance_name.split(","):
+            axis_name, axis_value = axis_value.split("=")
+            if axis_name not in axes:
+                print(f"Unknown axis {axis_name}", file=sys.stderr)
+                sys.exit(1)
+            instance_location[axis_name] = axes[axis_name].map_forward(
+                float(axis_value)
+            )
+
+        # Add it
+        instance = InstanceDescriptor()
+        instance.location = instance_location
+        instance.familyName = designspace.sources[0].familyName.replace(" ", "")
+        instance.name = instance_name.replace(",", "-").replace("=", "")
+        instance.styleName = instance.name
+        instance.filename = f"{instance.familyName}-{instance.styleName}.ufo"
+        designspace.instances.append(instance)
+    else:
+        instances = [
+            i
+            for i in designspace.instances
+            if i.name == instance_name
+            or i.styleName == instance_name
+            or i.filename == instance_name
+        ]
+        if not instances:
+            print(f"Instance '{instance_name}' not found in Designspace file.")
+            sys.exit(1)
+        instance = instances[0]
+
+    instantiator = Instantiator.from_designspace(
+        designspace, round_geometry=args.round_coordinates
+    )
+    font = instantiator.generate_instance(instance)
+    output = os.path.join(output_dir, os.path.basename(instance.filename))
+    font.save(output, overwrite=args.overwrite)
+    print(f"Generated instance '{instance_name}'.")
+    print(f"Saved to '{output}'.")
