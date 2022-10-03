@@ -12,4 +12,4 @@ ufoLib2==0.13.1
 attrs==22.1.0
 cffsubr==0.2.9.post1
 compreffor==0.5.2
-ttfautohint-py==0.5.0
+ttfautohint-py==0.5.1
