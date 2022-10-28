@@ -1023,6 +1023,22 @@ def test_main_designspace_v5_dont_interpolate_discrete_axis(data_dir, tmp_path):
     assert (tmp_path / "MutatorSansExtendedVariable_Weight.ttf").exists()
 
 
+def test_main_glyphspackage(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(data_dir / "GlyphsUnitTestSans3.glyphspackage"),
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+    assert (tmp_path / "GlyphsUnitTestSans-Light.ttf").exists()
+    assert (tmp_path / "GlyphsUnitTestSans-Regular.ttf").exists()
+    assert (tmp_path / "GlyphsUnitTestSans-Bold.ttf").exists()
+
+
 def test_timing_logger(data_dir, tmp_path):
     # check that --timing flag logs timing-related DEBUG messages even if the
     # logging level (as set by --verbose flag) is higher

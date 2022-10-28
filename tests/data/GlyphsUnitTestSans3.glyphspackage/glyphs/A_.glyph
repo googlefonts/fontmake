@@ -1,0 +1,193 @@
+{
+category = "";
+color = (120,220,20,4);
+glyphname = A;
+kernLeft = A;
+kernRight = A;
+layers = (
+{
+anchors = (
+{
+name = bottom;
+pos = (377,0);
+},
+{
+name = ogonek;
+pos = (678,10);
+},
+{
+name = top;
+pos = (377,700);
+}
+);
+background = {
+shapes = (
+{
+closed = 1;
+nodes = (
+(566.99,700,l),
+(191,700,l),
+(24,0,l),
+(270,0,l),
+(364,470,l),
+(379,470,l),
+(477,0,l),
+(733,0,l)
+);
+}
+);
+};
+layerId = "BFFFD157-90D3-4B85-B99D-9A2F366F03CA";
+shapes = (
+{
+closed = 1;
+nodes = (
+(555,700,l),
+(205,700,l),
+(20,0,l),
+(253,0,l),
+(356,470,l),
+(385,470,l),
+(491,0,l),
+(733,0,l)
+);
+},
+{
+closed = 1;
+nodes = (
+(162,268,l),
+(154,103,l),
+(596,103,l),
+(600,268,l)
+);
+}
+);
+width = 753;
+},
+{
+anchors = (
+{
+name = bottom;
+pos = (329,0);
+},
+{
+name = ogonek;
+pos = (591,10);
+},
+{
+name = top;
+pos = (329,700);
+}
+);
+hints = (
+{
+horizontal = 1;
+origin = (1,1);
+target = (1,0);
+type = Stem;
+},
+{
+horizontal = 1;
+origin = (0,1);
+target = (0,4);
+type = Stem;
+}
+);
+layerId = "3E7589AA-8194-470F-8E2F-13C1C581BE24";
+shapes = (
+{
+closed = 1;
+nodes = (
+(412,700,l),
+(248,700,l),
+(40,0,l),
+(134,0,l),
+(313,610,l),
+(342,610,l),
+(521,0,l),
+(617,0,l)
+);
+},
+{
+closed = 1;
+nodes = (
+(150,269,l),
+(148,178,l),
+(510,178,l),
+(514,269,l)
+);
+}
+);
+width = 657;
+},
+{
+anchors = (
+{
+name = bottom;
+pos = (297,0);
+},
+{
+name = ogonek;
+pos = (548,0);
+},
+{
+name = top;
+pos = (297,700);
+}
+);
+background = {
+shapes = (
+{
+closed = 1;
+nodes = (
+(133,253,l),
+(134,215,l),
+(451,215,l),
+(455,253,l)
+);
+}
+);
+};
+backgroundImage = {
+imagePath = A.jpg;
+};
+guides = (
+{
+angle = 71.7587;
+pos = (45,0);
+}
+);
+layerId = "C4872ECA-A3A9-40AB-960A-1DB2202F16DE";
+shapes = (
+{
+closed = 1;
+nodes = (
+(321,700,l,{
+name = "Hello World";
+}),
+(275,700,l),
+(45,0,l),
+(65,0,l),
+(289,679,l),
+(307,679,l),
+(527,0,l),
+(548,0,l)
+);
+},
+{
+closed = 1;
+nodes = (
+(128,225,l),
+(123,207,l),
+(472,207,l),
+(467,225,l)
+);
+}
+);
+width = 593;
+}
+);
+script = "";
+subCategory = "";
+unicode = 65;
+}

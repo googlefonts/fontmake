@@ -202,7 +202,7 @@ class FontProject:
             ) from e
 
         try:
-            font = glyphsLib.GSFont(glyphs_path)
+            font = glyphsLib.load(glyphs_path)
         except Exception as e:
             raise FontmakeError("Loading Glyphs file failed", glyphs_path) from e
 

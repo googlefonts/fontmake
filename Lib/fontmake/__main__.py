@@ -124,7 +124,7 @@ def parse_mutually_exclusive_inputs(parser, args):
         )
 
     for filename in posargs:
-        if filename.endswith(".glyphs"):
+        if filename.endswith(".glyphs") or filename.endswith(".glyphspackage"):
             if glyphs_path:
                 parser.error("Only one *.glyphs source file is allowed")
             glyphs_path = filename
