@@ -1,15 +1,15 @@
-fonttools[unicode,lxml,ufo]==4.34.0; platform_python_implementation == 'CPython'
-fonttools[unicode,ufo]==4.34.0; platform_python_implementation != 'CPython'
+fonttools[unicode,ufo,lxml]==4.38.0; platform_python_implementation == 'CPython'
+fonttools[unicode,ufo]==4.38.0; platform_python_implementation != 'CPython'
 cu2qu==1.6.7.post1
 glyphsLib==6.1.0
 ufo2ft==2.28.0
 MutatorMath==3.0.1
-fontMath==0.9.1
-defcon[lxml]==0.10.0; platform_python_implementation == 'CPython'
-defcon==0.10.0; platform_python_implementation != 'CPython'
+fontMath==0.9.2
+defcon[lxml]==0.10.2; platform_python_implementation == 'CPython'
+defcon==0.10.2; platform_python_implementation != 'CPython'
 booleanOperations==0.9.0
 ufoLib2==0.13.1
-attrs==21.4.0
+attrs==22.1.0
 cffsubr==0.2.9.post1
-compreffor==0.5.1.post1
-ttfautohint-py==0.5.0
+compreffor==0.5.2
+ttfautohint-py==0.5.1
