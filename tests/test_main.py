@@ -35,14 +35,15 @@ def test_interpolation(data_dir, tmp_path):
 
     test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.ttf")
     assert test_output_ttf["OS/2"].usWeightClass == 400
-    glyph = test_output_ttf.getGlyphSet()["l"]._glyph
+    glyph = test_output_ttf["glyf"]["l"]
     assert glyph.xMin == 50
     assert glyph.xMax == 170
 
     test_output_otf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.otf")
     assert test_output_otf["OS/2"].usWeightClass == 400
     glyph_set = test_output_otf.getGlyphSet()
-    glyph = glyph_set["l"]._glyph
+    charstrings = list(test_output_otf["CFF "].cff.values())[0].CharStrings
+    glyph = charstrings["l"]
     x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
     assert x_min == 50
     assert x_max == 170
@@ -91,14 +92,15 @@ def test_interpolation_mutatormath(data_dir, tmp_path):
 
     test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.ttf")
     assert test_output_ttf["OS/2"].usWeightClass == 400
-    glyph = test_output_ttf.getGlyphSet()["l"]._glyph
+    glyph = test_output_ttf["glyf"]["l"]
     assert glyph.xMin == 50
     assert glyph.xMax == 170
 
     test_output_otf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.otf")
     assert test_output_otf["OS/2"].usWeightClass == 400
     glyph_set = test_output_otf.getGlyphSet()
-    glyph = glyph_set["l"]._glyph
+    charstrings = list(test_output_otf["CFF "].cff.values())[0].CharStrings
+    glyph = charstrings["l"]
     x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
     assert x_min == 50
     assert x_max == 170
@@ -145,14 +147,15 @@ def test_interpolation_and_masters_as_instances(data_dir, tmp_path):
 
     test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.ttf")
     assert test_output_ttf["OS/2"].usWeightClass == 400
-    glyph = test_output_ttf.getGlyphSet()["l"]._glyph
+    glyph = test_output_ttf["glyf"]["l"]
     assert glyph.xMin == 50
     assert glyph.xMax == 170
 
     test_output_otf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.otf")
     assert test_output_otf["OS/2"].usWeightClass == 400
     glyph_set = test_output_otf.getGlyphSet()
-    glyph = glyph_set["l"]._glyph
+    charstrings = list(test_output_otf["CFF "].cff.values())[0].CharStrings
+    glyph = charstrings["l"]
     x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
     assert x_min == 50
     assert x_max == 170
