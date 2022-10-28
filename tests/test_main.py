@@ -1065,7 +1065,7 @@ def test_timing_logger(data_dir, tmp_path):
         check=True,
     )
 
-    assert re.match(
+    assert re.search(
         r"^DEBUG:fontmake.timer:Took [\.0-9]+s to run 'save_otfs'\r?$",
         result.stderr.decode(),
         flags=re.MULTILINE,

@@ -381,6 +381,13 @@ def main(args=None):
         "external files, as instances can end up elsewhere.",
     )
     outputGroup.add_argument(
+        "--fea-include-dir",
+        default=None,
+        help="Overrides the default directory where to search for included "
+        "feature files with relative paths. This only works when the input is a "
+        "Designspace or UFOs, not from Glyphs at the moment.",
+    )
+    outputGroup.add_argument(
         "--no-generate-GDEF",
         dest="generate_GDEF",
         action="store_false",
@@ -641,6 +648,10 @@ def main(args=None):
         project = FontProject(validate_ufo=args.pop("validate_ufo"))
 
         if inputs.glyphs_path:
+            # we don't support customizing include directory for .glyphs input
+            # for Glyphs.app does not either.
+            exclude_args(parser, args, ["fea_include_dir"], inputs.format_name)
+
             with _make_tempdirs(parser, args):
                 project.run_from_glyphs(inputs.glyphs_path, **args)
             return
