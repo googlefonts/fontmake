@@ -367,6 +367,15 @@ def test_subsetting(data_dir, tmp_path, write_skipexportglyphs):
             font = fontTools.ttLib.TTFont(font_path)
             assert font.getGlyphOrder() == [".notdef", "space", "A", "C"]
 
+
+@pytest.mark.parametrize(
+    "write_skipexportglyphs",
+    [
+        pytest.param(True, id="default"),
+        pytest.param(False, id="no-write-skipexportglyphs"),
+    ],
+)
+def test_keep_glyphs(data_dir, tmp_path, write_skipexportglyphs):
     shutil.copyfile(data_dir / "TestSubset2.glyphs", tmp_path / "TestSubset2.glyphs")
 
     args = [
