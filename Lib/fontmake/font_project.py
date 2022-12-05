@@ -54,9 +54,13 @@ PUBLIC_PREFIX = "public."
 GLYPHS_PREFIX = "com.schriftgestaltung."
 # for glyphsLib < 2.3.0
 KEEP_GLYPHS_OLD_KEY = GLYPHS_PREFIX + "Keep Glyphs"
+REMOVE_GLYPHS_OLD_KEY = GLYPHS_PREFIX + "Remove Glyphs"
 # for glyphsLib >= 2.3.0
 KEEP_GLYPHS_NEW_KEY = (
     GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.Keep Glyphs"
+)
+REMOVE_GLYPHS_NEW_KEY = (
+    GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.Remove Glyphs"
 )
 GLYPH_EXPORT_KEY = GLYPHS_PREFIX + "Glyphs.Export"
 COMPAT_CHECK_KEY = GLYPHS_PREFIX + "customParameter.GSFont.Enforce Compatibility Check"
@@ -110,6 +114,16 @@ def temporarily_disabling_axis_maps(designspace_path):
         yield temp_designspace_path
     finally:
         os.remove(temp_designspace_path)
+
+
+def needs_subsetting(ufo):
+    if KEEP_GLYPHS_OLD_KEY in ufo.lib or KEEP_GLYPHS_NEW_KEY in ufo.lib:
+        return True
+    if REMOVE_GLYPHS_OLD_KEY in ufo.lib or REMOVE_GLYPHS_NEW_KEY in ufo.lib:
+        return True
+    if any(glyph.lib.get(GLYPH_EXPORT_KEY, True) is False for glyph in ufo):
+        return True
+    return False
 
 
 class FontProject:
@@ -654,10 +668,7 @@ class FontProject:
             # None (default), we check the presence of custom parameters
             if subset is False:
                 pass
-            elif subset is True or (
-                (KEEP_GLYPHS_OLD_KEY in ufo.lib or KEEP_GLYPHS_NEW_KEY in ufo.lib)
-                or any(glyph.lib.get(GLYPH_EXPORT_KEY, True) is False for glyph in ufo)
-            ):
+            elif subset is True or needs_subsetting(ufo):
                 self.subset_otf_from_ufo(otf_path, ufo)
 
             if autohint_thisfont is None:
@@ -706,10 +717,10 @@ class FontProject:
         designspace.write(designspace_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
-        """Subset a font using "Keep Glyphs" custom parameter and export flags as set
-        by glyphsLib.
+        """Subset a font using "Keep Glyphs"/"Remove Glyphs" custom parameters,
+        and export flags as set by glyphsLib.
 
-        "Export Glyphs" and "Remove Glyphs" are currently not supported:
+        "Export Glyphs" is currently not supported:
         https://github.com/googlei18n/glyphsLib/issues/295.
         """
         from fontTools import subset
@@ -736,9 +747,20 @@ class FontProject:
         else:
             keep_glyphs = None
 
+        for key in (REMOVE_GLYPHS_NEW_KEY, REMOVE_GLYPHS_OLD_KEY):
+            remove_glyphs_list = ufo.lib.get(key)
+            if remove_glyphs_list is not None:
+                remove_glyphs = set(remove_glyphs_list)
+                break
+        else:
+            remove_glyphs = None
+
         include = []
         for source_name, binary_name in zip(ufo_order, ot_order):
             if keep_glyphs and source_name not in keep_glyphs:
+                continue
+
+            if remove_glyphs and source_name in remove_glyphs:
                 continue
 
             if source_name in ufo:

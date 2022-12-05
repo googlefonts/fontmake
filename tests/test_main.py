@@ -368,6 +368,42 @@ def test_subsetting(data_dir, tmp_path, write_skipexportglyphs):
             assert font.getGlyphOrder() == [".notdef", "space", "A", "C"]
 
 
+@pytest.mark.parametrize(
+    "write_skipexportglyphs",
+    [
+        pytest.param(True, id="default"),
+        pytest.param(False, id="no-write-skipexportglyphs"),
+    ],
+)
+def test_keep_glyphs(data_dir, tmp_path, write_skipexportglyphs):
+    shutil.copyfile(data_dir / "TestSubset2.glyphs", tmp_path / "TestSubset2.glyphs")
+
+    args = [
+        "-g",
+        str(tmp_path / "TestSubset2.glyphs"),
+        "--master-dir",
+        str(tmp_path / "master_ufos"),
+        "--instance-dir",
+        str(tmp_path / "instance_ufos"),
+        "-i",
+        "Test Subset Regular",
+        "-o",
+        "ttf",
+        "otf",
+        "--output-dir",
+        str(tmp_path),
+    ]
+    if not write_skipexportglyphs:
+        args.append("--no-write-skipexportglyphs")
+
+    fontmake.__main__.main(args)
+
+    for output_format in ("ttf", "otf"):
+        for font_path in tmp_path.glob("*." + output_format):
+            font = fontTools.ttLib.TTFont(font_path)
+            assert font.getGlyphOrder() == [".notdef", "space", "D"]
+
+
 def test_shared_features_expansion(data_dir, tmp_path):
     shutil.copytree(data_dir / "DesignspaceTestSharedFeatures", tmp_path / "sources")
 
