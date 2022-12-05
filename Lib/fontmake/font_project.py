@@ -717,8 +717,8 @@ class FontProject:
         designspace.write(designspace_path)
 
     def subset_otf_from_ufo(self, otf_path, ufo):
-        """Subset a font using "Keep Glyphs" custom parameter and export flags as set
-        by glyphsLib.
+        """Subset a font using "Keep Glyphs"/"Remove Glyphs" custom parameters,
+        and export flags as set by glyphsLib.
 
         "Export Glyphs" is currently not supported:
         https://github.com/googlei18n/glyphsLib/issues/295.
