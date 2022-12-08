@@ -603,7 +603,7 @@ def collect_glyph_masters(
             source.location, axis_bounds
         )
         locations_and_masters.append(
-            (normalized_location, fontMath.MathGlyph(source_glyph))
+            (normalized_location, fontMath.MathGlyph(source_glyph, strict=True))
         )
 
     # Filter out empty glyphs if the default glyph is not empty.
