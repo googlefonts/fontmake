@@ -51,6 +51,8 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: true
+        # see https://github.com/codecov/codecov-action/issues/557
+        token: ${{ secrets.CODECOV_TOKEN }}
   deploy:
     # only run if the commit is tagged...
     if: startsWith(github.ref, 'refs/tags/v')
