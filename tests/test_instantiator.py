@@ -656,3 +656,17 @@ def test_designspace_v5_discrete_axis_raises_error(data_dir):
         fontmake.instantiator.InstantiatorError, match="splitInterpolable"
     ):
         fontmake.instantiator.Instantiator.from_designspace(designspace)
+
+
+def test_strict_math_glyph(data_dir):
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "InstantiatorStrictMathGlyph" / "StrictMathGlyph.designspace"
+    )
+    generator = fontmake.instantiator.Instantiator.from_designspace(
+        designspace, round_geometry=True
+    )
+    fonts = [generator.generate_instance(instance) for instance in designspace.instances]
+    assert len(fonts) == 1
+    glyph = fonts[0]["test"]
+    assert len(glyph.contours) == 1
+    assert len(glyph.contours[0].points) == 16
