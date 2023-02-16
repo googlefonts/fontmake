@@ -147,6 +147,8 @@ UFO_INFO_ATTRIBUTES_TO_COPY_TO_INSTANCES = {
     "woffMinorVersion",
 }
 
+DEFAULT_LAYER_NAME = "foreground"
+
 
 # Custom exception for this module
 class InstantiatorError(Exception):
@@ -224,21 +226,33 @@ class Instantiator:
         # because the math behind varLib and MutatorMath uses the default font as the
         # point of reference for all data.
         default_font = designspace.default.font
+        non_default_layer_name = designspace.default.layerName
+        non_default_layer_flag = (
+            non_default_layer_name is not None
+            and non_default_layer_name != DEFAULT_LAYER_NAME
+        )
+
         glyph_names: Set[str] = set(default_font.keys())
 
-        for source in designspace.sources:
-            other_names = set(source.font.keys())
-            diff_names = other_names - glyph_names
-            if diff_names:
-                logger.warning(
-                    "The source %s (%s) contains glyphs that are missing from the "
-                    "default source, which will be ignored: %s. If this is unintended, "
-                    "check that these glyphs have the exact same name as the "
-                    "corresponding glyphs in the default source.",
-                    source.name,
-                    source.filename,
-                    ", ".join(sorted(diff_names)),
-                )
+        if non_default_layer_flag:
+            if non_default_layer_name in default_font.layers:
+                layer = default_font.layers[non_default_layer_name]
+                glyph_names = layer.keys()
+                logger.info(f"Building from layer {layer.name}")
+        else:
+            for source in designspace.sources:
+                other_names = set(source.font.keys())
+                diff_names = other_names - glyph_names
+                if diff_names:
+                    logger.warning(
+                        "The source %s (%s) contains glyphs that are missing from the "
+                        "default source, which will be ignored: %s. If this is unintended, "
+                        "check that these glyphs have the exact same name as the "
+                        "corresponding glyphs in the default source.",
+                        source.name,
+                        source.filename,
+                        ", ".join(sorted(diff_names)),
+                    )
 
         # Construct Variators
         axis_bounds: AxisBounds = {}  # Design space!
@@ -517,9 +531,11 @@ def collect_info_masters(
 ) -> List[Tuple[Location, FontMathObject]]:
     """Return master Info objects wrapped by MathInfo."""
     locations_and_masters = []
+
     for source in designspace.sources:
-        if source.layerName is not None:
-            continue  # No font info in source layers.
+        if source.layerName is not None and source.layerName != DEFAULT_LAYER_NAME:
+            if source != designspace.default:
+                continue  # No font info in source layers.
 
         normalized_location = varLib.models.normalizeLocation(
             source.location, axis_bounds
@@ -541,9 +557,11 @@ def collect_kerning_masters(
     groups = designspace.default.font.groups
 
     locations_and_masters = []
+
     for source in designspace.sources:
-        if source.layerName is not None:
-            continue  # No kerning in source layers.
+        if source.layerName is not None and source.layerName != DEFAULT_LAYER_NAME:
+            if source != designspace.default:
+                continue  # No kerning in source layers.
 
         # If a source has groups, they should match the default's.
         if source.font.groups and source.font.groups != groups:
