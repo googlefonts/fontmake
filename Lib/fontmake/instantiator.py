@@ -225,11 +225,10 @@ class Instantiator:
         # point of reference for all data.
         default_font = designspace.default.font
         non_default_layer_name = designspace.default.layerName
-        default_source_uses_non_default_layer = non_default_layer_name is not None
 
         glyph_names: Set[str] = set(default_font.keys())
 
-        if default_source_uses_non_default_layer:
+        if non_default_layer_name is not None:
             try:
                 layer = default_font.layers[non_default_layer_name]
             except KeyError as e:
@@ -240,20 +239,27 @@ class Instantiator:
             layer = default_font.layers[non_default_layer_name]
             glyph_names = layer.keys()
             logger.info(f"Building from layer {layer.name}")
-        else:
-            for source in designspace.sources:
-                other_names = set(source.font.keys())
-                diff_names = other_names - glyph_names
-                if diff_names:
-                    logger.warning(
-                        "The source %s (%s) contains glyphs that are missing from the "
-                        "default source, which will be ignored: %s. If this is unintended, "
-                        "check that these glyphs have the exact same name as the "
-                        "corresponding glyphs in the default source.",
-                        source.name,
-                        source.filename,
-                        ", ".join(sorted(diff_names)),
-                    )
+
+        for source in designspace.sources:
+            other_names = set(source.font.keys())
+            diff_names = other_names - glyph_names
+            if diff_names:
+                max_diff_glyphs = 10
+                logger.warning(
+                    "The source %s (%s)%s contains glyphs that are missing from the "
+                    "default source, which will be ignored: %s%s; if this is unintended, "
+                    "check that these glyphs have the exact same name as the "
+                    "corresponding glyphs in the default source.",
+                    source.name,
+                    source.filename,
+                    f" [layer: {source.layerName}]"
+                    if non_default_layer_name is not None
+                    else "",
+                    ", ".join(sorted(diff_names)[0:max_diff_glyphs]),
+                    f"... ({len(diff_names)} total)"
+                    if len(diff_names) > max_diff_glyphs
+                    else "",
+                )
 
         # Construct Variators
         axis_bounds: AxisBounds = {}  # Design space!
@@ -534,9 +540,8 @@ def collect_info_masters(
     locations_and_masters = []
 
     for source in designspace.sources:
-        if source.layerName is not None:
-            if source is not designspace.default:
-                continue  # No font info in source layers.
+        if source.layerName is not None and source is not designspace.default:
+            continue  # No font info in non-default source layers.
 
         normalized_location = varLib.models.normalizeLocation(
             source.location, axis_bounds
@@ -560,9 +565,8 @@ def collect_kerning_masters(
     locations_and_masters = []
 
     for source in designspace.sources:
-        if source.layerName is not None:
-            if source is not designspace.default:
-                continue  # No kerning in source layers.
+        if source.layerName is not None and source is not designspace.default:
+            continue  # No kerning in non-default source layers.
 
         # If a source has groups, they should match the default's.
         if source.font.groups and source.font.groups != groups:
