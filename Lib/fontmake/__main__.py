@@ -137,7 +137,7 @@ def parse_mutually_exclusive_inputs(parser, args):
         ):
             ufo_paths.append(filename)
         else:
-            parser.error("Unknown input file extension: {!r}".format(filename))
+            parser.error(f"Unknown input file extension: {filename!r}")
 
     count = sum(bool(p) for p in (glyphs_path, ufo_paths, designspace_path))
     if count == 0:

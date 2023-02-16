@@ -147,8 +147,6 @@ UFO_INFO_ATTRIBUTES_TO_COPY_TO_INSTANCES = {
     "woffMinorVersion",
 }
 
-DEFAULT_LAYER_NAME = "foreground"
-
 
 # Custom exception for this module
 class InstantiatorError(Exception):
@@ -227,18 +225,21 @@ class Instantiator:
         # point of reference for all data.
         default_font = designspace.default.font
         non_default_layer_name = designspace.default.layerName
-        non_default_layer_flag = (
-            non_default_layer_name is not None
-            and non_default_layer_name != DEFAULT_LAYER_NAME
-        )
+        default_source_uses_non_default_layer = non_default_layer_name is not None
 
         glyph_names: Set[str] = set(default_font.keys())
 
-        if non_default_layer_flag:
-            if non_default_layer_name in default_font.layers:
+        if default_source_uses_non_default_layer:
+            try:
                 layer = default_font.layers[non_default_layer_name]
-                glyph_names = layer.keys()
-                logger.info(f"Building from layer {layer.name}")
+            except KeyError as e:
+                raise InstantiatorError(
+                    f"Layer {non_default_layer_name!r} not found "
+                    f"in {designspace.default.filename}"
+                ) from e
+            layer = default_font.layers[non_default_layer_name]
+            glyph_names = layer.keys()
+            logger.info(f"Building from layer {layer.name}")
         else:
             for source in designspace.sources:
                 other_names = set(source.font.keys())
@@ -396,7 +397,7 @@ class Instantiator:
                 # whatever reason (usually outline incompatibility)...
                 if glyph_name not in self.skip_export_glyphs:
                     raise InstantiatorError(
-                        f"Failed to generate instance of glyph {glyph_name}: "
+                        f"Failed to generate instance of glyph {glyph_name!r}: "
                         f"{str(e)}. (Note: the most common cause for an error here is "
                         "that the glyph outlines are not point-for-point compatible or "
                         "have the same starting point or are in the same order in all "
@@ -533,8 +534,8 @@ def collect_info_masters(
     locations_and_masters = []
 
     for source in designspace.sources:
-        if source.layerName is not None and source.layerName != DEFAULT_LAYER_NAME:
-            if source != designspace.default:
+        if source.layerName is not None:
+            if source is not designspace.default:
                 continue  # No font info in source layers.
 
         normalized_location = varLib.models.normalizeLocation(
@@ -559,8 +560,8 @@ def collect_kerning_masters(
     locations_and_masters = []
 
     for source in designspace.sources:
-        if source.layerName is not None and source.layerName != DEFAULT_LAYER_NAME:
-            if source != designspace.default:
+        if source.layerName is not None:
+            if source is not designspace.default:
                 continue  # No kerning in source layers.
 
         # If a source has groups, they should match the default's.
