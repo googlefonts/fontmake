@@ -574,6 +574,7 @@ class FontProject:
             warnings.warn(
                 "the 'subroutinize' argument is deprecated, use 'optimize_cff'",
                 UserWarning,
+                stacklevel=2,
             )
             if subroutinize:
                 optimize_cff = CFFOptimization.SUBROUTINIZE
@@ -909,13 +910,15 @@ class FontProject:
                 if include is not None and not fullmatch(include, instance.name):
                     continue
 
-                logger.info(f'Generating instance UFO for "{instance.name}"')
+                logger.info("Generating instance UFO for {!r}".format(instance.name))
 
                 try:
                     instance.font = generator.generate_instance(instance)
                 except instantiator.InstantiatorError as e:
                     raise FontmakeError(
-                        f"Interpolating instance '{instance.styleName}' failed.",
+                        "Interpolating instance {!r} failed.".format(
+                            instance.styleName
+                        ),
                         designspace.path,
                     ) from e
 

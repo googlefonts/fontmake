@@ -26,7 +26,7 @@ class FontmakeError(Exception):
 
     def __str__(self):
         trail = " -> ".join(
-            f"'{str(_try_relative_path(s))}'"
+            "{!r}".format(f"{str(_try_relative_path(s))}")
             for s in reversed(self.source_trail)
             if s is not None
         )

@@ -293,7 +293,7 @@ class Instantiator:
                 glyph_mutators[glyph_name] = Variator.from_masters(items, axis_order)
             except varLib.errors.VarLibError as e:
                 raise InstantiatorError(
-                    f"Cannot set up glyph '{glyph_name}' for interpolation: {e}'"
+                    f"Cannot set up glyph {glyph_name} for interpolation: {e}'"
                 ) from e
             glyph_name_to_unicodes[glyph_name] = default_font[glyph_name].unicodes
 
@@ -396,7 +396,7 @@ class Instantiator:
                 # whatever reason (usually outline incompatibility)...
                 if glyph_name not in self.skip_export_glyphs:
                     raise InstantiatorError(
-                        f"Failed to generate instance of glyph '{glyph_name}': "
+                        f"Failed to generate instance of glyph {glyph_name}: "
                         f"{str(e)}. (Note: the most common cause for an error here is "
                         "that the glyph outlines are not point-for-point compatible or "
                         "have the same starting point or are in the same order in all "
@@ -508,9 +508,9 @@ def _error_msg_no_default(designspace: designspaceLib.DesignSpaceDocument) -> st
 
     return (
         "Can't generate UFOs from this Designspace because there is no default "
-        f"master source at location '{default_location}'. Check that all 'default' "
+        "master source at location {!r}. Check that all 'default' "
         "values of all axes together point to a single actual master source. "
-        f"{bonus_msg}"
+        "{!s}".format(default_location, bonus_msg)
     )
 
 
@@ -683,8 +683,9 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
 
     if name_old not in font or name_new not in font:
         raise InstantiatorError(
-            f"Cannot swap glyphs '{name_old}' and '{name_new}', as either or both are "
-            "missing."
+            "Cannot swap glyphs {!r} and {!r}, as either or both are missing".format(
+                name_old, name_new
+            )
         )
 
     # 1. Swap outlines and glyph width. Ignore lib content and other properties.
