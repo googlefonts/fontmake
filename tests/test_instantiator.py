@@ -420,6 +420,18 @@ def test_interpolation_masters_as_instances(data_dir):
     assert instance_font["l"].width == 280
 
 
+def test_non_default_layer(data_dir, caplog):
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "MutatorSans" / "MutatorSans-non-default-layer.designspace"
+    )
+    designspace.loadSourceFonts(ufoLib2.Font.open)
+    generator = fontmake.instantiator.Instantiator.from_designspace(
+        designspace, round_geometry=True
+    )
+    instance_font = generator.generate_instance(designspace.instances[0])
+    assert {g.name for g in instance_font} == {"A", "S", "W"}
+
+
 def test_instance_attributes(data_dir):
     designspace = designspaceLib.DesignSpaceDocument.fromfile(
         data_dir / "DesignspaceTest" / "DesignspaceTest-instance-attrs.designspace"

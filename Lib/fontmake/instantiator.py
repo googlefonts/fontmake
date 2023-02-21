@@ -224,20 +224,41 @@ class Instantiator:
         # because the math behind varLib and MutatorMath uses the default font as the
         # point of reference for all data.
         default_font = designspace.default.font
+        non_default_layer_name = designspace.default.layerName
+
         glyph_names: Set[str] = set(default_font.keys())
+
+        if non_default_layer_name is not None:
+            try:
+                layer = default_font.layers[non_default_layer_name]
+            except KeyError as e:
+                raise InstantiatorError(
+                    f"Layer {non_default_layer_name!r} not found "
+                    f"in {designspace.default.filename}"
+                ) from e
+            layer = default_font.layers[non_default_layer_name]
+            glyph_names = layer.keys()
+            logger.info(f"Building from layer {layer.name}")
 
         for source in designspace.sources:
             other_names = set(source.font.keys())
             diff_names = other_names - glyph_names
             if diff_names:
+                max_diff_glyphs = 10
                 logger.warning(
-                    "The source %s (%s) contains glyphs that are missing from the "
-                    "default source, which will be ignored: %s. If this is unintended, "
+                    "The source %s (%s)%s contains glyphs that are missing from the "
+                    "default source, which will be ignored: %s%s; if this is unintended, "
                     "check that these glyphs have the exact same name as the "
                     "corresponding glyphs in the default source.",
                     source.name,
                     source.filename,
-                    ", ".join(sorted(diff_names)),
+                    f" [layer: {source.layerName}]"
+                    if non_default_layer_name is not None
+                    else "",
+                    ", ".join(sorted(diff_names)[0:max_diff_glyphs]),
+                    f"... ({len(diff_names)} total)"
+                    if len(diff_names) > max_diff_glyphs
+                    else "",
                 )
 
         # Construct Variators
@@ -279,7 +300,7 @@ class Instantiator:
                 glyph_mutators[glyph_name] = Variator.from_masters(items, axis_order)
             except varLib.errors.VarLibError as e:
                 raise InstantiatorError(
-                    f"Cannot set up glyph '{glyph_name}' for interpolation: {e}'"
+                    f"Cannot set up glyph {glyph_name} for interpolation: {e}'"
                 ) from e
             glyph_name_to_unicodes[glyph_name] = default_font[glyph_name].unicodes
 
@@ -382,7 +403,7 @@ class Instantiator:
                 # whatever reason (usually outline incompatibility)...
                 if glyph_name not in self.skip_export_glyphs:
                     raise InstantiatorError(
-                        f"Failed to generate instance of glyph '{glyph_name}': "
+                        f"Failed to generate instance of glyph {glyph_name!r}: "
                         f"{str(e)}. (Note: the most common cause for an error here is "
                         "that the glyph outlines are not point-for-point compatible or "
                         "have the same starting point or are in the same order in all "
@@ -494,9 +515,9 @@ def _error_msg_no_default(designspace: designspaceLib.DesignSpaceDocument) -> st
 
     return (
         "Can't generate UFOs from this Designspace because there is no default "
-        f"master source at location '{default_location}'. Check that all 'default' "
+        "master source at location {!r}. Check that all 'default' "
         "values of all axes together point to a single actual master source. "
-        f"{bonus_msg}"
+        "{!s}".format(default_location, bonus_msg)
     )
 
 
@@ -517,9 +538,10 @@ def collect_info_masters(
 ) -> List[Tuple[Location, FontMathObject]]:
     """Return master Info objects wrapped by MathInfo."""
     locations_and_masters = []
+
     for source in designspace.sources:
-        if source.layerName is not None:
-            continue  # No font info in source layers.
+        if source.layerName is not None and source is not designspace.default:
+            continue  # No font info in non-default source layers.
 
         normalized_location = varLib.models.normalizeLocation(
             source.location, axis_bounds
@@ -541,9 +563,10 @@ def collect_kerning_masters(
     groups = designspace.default.font.groups
 
     locations_and_masters = []
+
     for source in designspace.sources:
-        if source.layerName is not None:
-            continue  # No kerning in source layers.
+        if source.layerName is not None and source is not designspace.default:
+            continue  # No kerning in non-default source layers.
 
         # If a source has groups, they should match the default's.
         if source.font.groups and source.font.groups != groups:
@@ -665,8 +688,9 @@ def swap_glyph_names(font: ufoLib2.Font, name_old: str, name_new: str):
 
     if name_old not in font or name_new not in font:
         raise InstantiatorError(
-            f"Cannot swap glyphs '{name_old}' and '{name_new}', as either or both are "
-            "missing."
+            "Cannot swap glyphs {!r} and {!r}, as either or both are missing".format(
+                name_old, name_new
+            )
         )
 
     # 1. Swap outlines and glyph width. Ignore lib content and other properties.
