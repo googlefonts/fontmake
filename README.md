@@ -7,7 +7,7 @@ Version][]][1]
 
 ## Installation
 
-Fontmake requires Python 3.7 or later.
+Fontmake requires Python 3.8 or later.
 
 Releases are available on [PyPI][] and can be installed with [pip][].
 
