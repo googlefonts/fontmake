@@ -504,6 +504,12 @@ def main(args=None):
         "in the UFO lib. You can use an ellipsis --filter='...' to keep the "
         "latter and insert additional --filter(s), either before or after it.",
     )
+    contourGroup.add_argument(
+        "--no-auto-use-my-metrics",
+        dest="auto_use_my_metrics",
+        action="store_false",
+        help="Don't automatically set USE_MY_METRICS glyf component flags (0x0200).",
+    )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
     layoutGroup.add_argument(

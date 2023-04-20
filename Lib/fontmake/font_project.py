@@ -312,6 +312,7 @@ class FontProject:
         fea_include_dir=None,
         flatten_components=False,
         filters=None,
+        auto_use_my_metrics=True,
         **kwargs,
     ):
         if ttf:
@@ -325,6 +326,7 @@ class FontProject:
                 feaIncludeDir=fea_include_dir,
                 filters=filters,
                 flattenComponents=flatten_components,
+                autoUseMyMetrics=auto_use_my_metrics,
                 inplace=True,
             )
         else:
@@ -369,6 +371,7 @@ class FontProject:
         fea_include_dir=None,
         flatten_components=False,
         filters=None,
+        auto_use_my_metrics=True,
         **kwargs,
     ):
         """Build OpenType variable fonts from masters in a designspace."""
@@ -430,6 +433,7 @@ class FontProject:
                 filters=filters,
                 inplace=True,
                 variableFontNames=list(vf_name_to_output_path),
+                autoUseMyMetrics=auto_use_my_metrics,
             )
         else:
             fonts = ufo2ft.compileVariableCFF2s(
@@ -461,6 +465,7 @@ class FontProject:
                 "cubicConversionError",
                 "reverseDirection",
                 "flattenComponents",
+                "autoUseMyMetrics",
             ):
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileOTF, "OTF"
@@ -507,6 +512,7 @@ class FontProject:
         filters=None,
         generate_GDEF=True,
         fea_include_dir=None,
+        auto_use_my_metrics=True,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -562,6 +568,8 @@ class FontProject:
                 pre-filters or post-filters, called before or after the default
                 filters. The default filters are format specific and some can
                 be disabled with other arguments.
+            auto_use_my_metrics: whether to automatically set USE_MY_METRICS glyf
+                component flags (0x0200). Not needed unless the font has hinted metrics.
         """  # noqa: B950
         assert not (output_path and output_dir), "mutually exclusive args"
 
@@ -615,6 +623,7 @@ class FontProject:
             subroutinizer=subroutinizer,
             flattenComponents=flatten_components,
             filters=filters,
+            autoUseMyMetrics=auto_use_my_metrics,
             inplace=True,  # avoid extra copy
         )
 
