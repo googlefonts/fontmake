@@ -11,5 +11,5 @@ booleanOperations==0.9.0
 ufoLib2==0.14.0
 attrs==23.1.0
 cffsubr==0.2.9.post1
-compreffor==0.5.2
+compreffor==0.5.3
 ttfautohint-py==0.5.1
