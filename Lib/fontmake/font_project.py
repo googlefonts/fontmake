@@ -372,6 +372,7 @@ class FontProject:
         flatten_components=False,
         filters=None,
         auto_use_my_metrics=True,
+        drop_implied_oncurves=False,
         **kwargs,
     ):
         """Build OpenType variable fonts from masters in a designspace."""
@@ -434,6 +435,7 @@ class FontProject:
                 inplace=True,
                 variableFontNames=list(vf_name_to_output_path),
                 autoUseMyMetrics=auto_use_my_metrics,
+                dropImpliedOnCurves=drop_implied_oncurves,
             )
         else:
             fonts = ufo2ft.compileVariableCFF2s(
@@ -466,6 +468,7 @@ class FontProject:
                 "reverseDirection",
                 "flattenComponents",
                 "autoUseMyMetrics",
+                "dropImpliedOnCurves",
             ):
                 options.pop(key, None)
             compile_func, fmt = ufo2ft.compileOTF, "OTF"
@@ -513,6 +516,7 @@ class FontProject:
         generate_GDEF=True,
         fea_include_dir=None,
         auto_use_my_metrics=True,
+        drop_implied_oncurves=False,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -570,6 +574,8 @@ class FontProject:
                 be disabled with other arguments.
             auto_use_my_metrics: whether to automatically set USE_MY_METRICS glyf
                 component flags (0x0200). Not needed unless the font has hinted metrics.
+            drop_implied_oncurves: drop on-curve points that can be implied when exactly
+                in the middle of two off-curve points (TrueType only; default: False).
         """  # noqa: B950
         assert not (output_path and output_dir), "mutually exclusive args"
 
@@ -624,6 +630,7 @@ class FontProject:
             flattenComponents=flatten_components,
             filters=filters,
             autoUseMyMetrics=auto_use_my_metrics,
+            dropImpliedOnCurves=drop_implied_oncurves,
             inplace=True,  # avoid extra copy
         )
 
