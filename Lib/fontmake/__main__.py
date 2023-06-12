@@ -510,6 +510,12 @@ def main(args=None):
         action="store_false",
         help="Don't automatically set USE_MY_METRICS glyf component flags (0x0200).",
     )
+    contourGroup.add_argument(
+        "--drop-implied-oncurves",
+        action="store_true",
+        help="drop on-curve points that can be implied when exactly in the middle of "
+        "two off-curve points (TrueType only; default: %(default)s).",
+    )
 
     layoutGroup = parser.add_argument_group(title="Handling of OpenType Layout")
     layoutGroup.add_argument(

@@ -1,8 +1,7 @@
-fonttools[unicode,ufo,lxml]==4.39.3; platform_python_implementation == 'CPython'
-fonttools[unicode,ufo]==4.39.3; platform_python_implementation != 'CPython'
-cu2qu==1.6.7.post1
+fonttools[unicode,ufo,lxml]==4.40.0; platform_python_implementation == 'CPython'
+fonttools[unicode,ufo]==4.40.0; platform_python_implementation != 'CPython'
 glyphsLib==6.2.1
-ufo2ft==2.31.1
+ufo2ft==2.32.0
 MutatorMath==3.0.1
 fontMath==0.9.3
 defcon[lxml]==0.10.2; platform_python_implementation == 'CPython'
