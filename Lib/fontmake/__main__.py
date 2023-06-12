@@ -132,9 +132,9 @@ def parse_mutually_exclusive_inputs(parser, args):
             if designspace_path:
                 parser.error("Only one *.designspace source file is allowed")
             designspace_path = filename
-        elif (filename.endswith(".ufo") and os.path.isdir(filename)) or (
-            filename.endswith(".ufoz") and os.path.isfile(filename)
-        ):
+        elif (
+            os.path.normpath(filename).endswith(".ufo") and os.path.isdir(filename)
+        ) or (filename.endswith(".ufoz") and os.path.isfile(filename)):
             ufo_paths.append(filename)
         else:
             parser.error(f"Unknown input file extension: {filename!r}")
