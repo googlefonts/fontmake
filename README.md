@@ -124,7 +124,7 @@ environments.
 3. Push the tag like so: `git push origin v3.1.1`, where `origin` is the name of the usual remote you want to push the version to.
 
   [GitHub Actions Build Status]: https://github.com/googlefonts/fontmake/workflows/Test%20+%20Deploy/badge.svg
-  [Python Versions]: https://img.shields.io/badge/python-3.7-blue.svg
+  [Python Versions]: https://img.shields.io/badge/python-3.8-blue.svg
   [PyPI Version]: https://img.shields.io/pypi/v/fontmake.svg
   [1]: https://pypi.org/project/fontmake/
   [PyPI]: https://pypi.org/project/fontmake
