@@ -1,6 +1,6 @@
 fonttools[unicode,lxml,ufo]==4.41.0; platform_python_implementation == 'CPython'
 fonttools[unicode,ufo]==4.41.0; platform_python_implementation != 'CPython'
-glyphsLib==6.2.1
+glyphsLib==6.2.5
 ufo2ft==2.32.0
 MutatorMath==3.0.1
 fontMath==0.9.3
