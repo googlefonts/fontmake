@@ -232,6 +232,17 @@ def main(args=None):
         help="Either one *.designspace or *.glyphs file, or one or more *.ufo",
     )
 
+    otherInputGroup = parser.add_argument_group(title="Handling of contours")
+    otherInputGroup.add_argument(
+        "--glyph-data",
+        action="append",
+        default=None,
+        metavar="GLYPHDATA",
+        help="Custom GlyphData XML file with glyph info (production name, "
+        "script, category, subCategory, etc.). Can be used more than once "
+        "(for Glyphs sources only).",
+    )
+
     outputGroup = parser.add_argument_group(title="Output arguments")
     outputGroup.add_argument(
         "-o",
@@ -677,6 +688,7 @@ def main(args=None):
                 "designspace_path",
                 "master_dir",
                 "instance_dir",
+                "glyph_data",
             ],
             inputs.format_name,
         )
