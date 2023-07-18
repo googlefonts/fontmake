@@ -1,6 +1,6 @@
-fonttools[unicode,ufo,lxml]==4.40.0; platform_python_implementation == 'CPython'
-fonttools[unicode,ufo]==4.40.0; platform_python_implementation != 'CPython'
-glyphsLib==6.2.1
+fonttools[unicode,ufo,lxml]==4.41.0; platform_python_implementation == 'CPython'
+fonttools[unicode,ufo]==4.41.0; platform_python_implementation != 'CPython'
+glyphsLib==6.2.5
 ufo2ft==2.32.0
 MutatorMath==3.0.1
 fontMath==0.9.3
@@ -8,7 +8,7 @@ defcon[lxml]==0.10.2; platform_python_implementation == 'CPython'
 defcon==0.10.2; platform_python_implementation != 'CPython'
 booleanOperations==0.9.0
 ufoLib2==0.14.0
-attrs==22.1.0
+attrs==23.1.0
 cffsubr==0.2.9.post1
-compreffor==0.5.2
+compreffor==0.5.3
 ttfautohint-py==0.5.1
