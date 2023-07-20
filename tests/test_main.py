@@ -694,6 +694,55 @@ def test_debug_feature_file(data_dir, tmp_path):
     assert "### GlyphsUnitTestSans-Black" in features
 
 
+def test_glyph_data(data_dir, tmp_path):
+    shutil.copyfile(
+        data_dir / "GlyphsUnitTestSans.glyphs", tmp_path / "GlyphsUnitTestSans.glyphs"
+    )
+    shutil.copyfile(data_dir / "GlyphData.xml", tmp_path / "GlyphData.xml")
+
+    args = [
+        "-g",
+        str(tmp_path / "GlyphsUnitTestSans.glyphs"),
+        "--master-dir",
+        str(tmp_path / "master_ufos"),
+        "--instance-dir",
+        str(tmp_path / "instance_ufos"),
+        "-o",
+        "ufo",
+    ]
+    fontmake.__main__.main(args)
+
+    for path in (tmp_path / "master_ufos").glob("*.ufo"):
+        with ufoLib2.Font.open(path) as ufo:
+            assert "public.openTypeCategories" in ufo.lib
+            assert ufo.lib["public.openTypeCategories"].get("fatha-ar") == "mark"
+
+            fatha = ufo["fatha-ar"]
+            assert fatha.width == 0
+            assert "com.schriftgestaltung.Glyphs.originalWidth" in fatha.lib
+
+    shutil.rmtree(tmp_path / "master_ufos")
+
+    fontmake.__main__.main(
+        args
+        + [
+            "--glyph-data",
+            str(tmp_path / "GlyphData.xml"),
+        ]
+    )
+
+    for path in (tmp_path / "master_ufos").glob("*.ufo"):
+        with ufoLib2.Font.open(path) as ufo:
+            assert "public.openTypeCategories" in ufo.lib
+            assert ufo.lib["public.openTypeCategories"].get("fatha-ar") is None
+
+            fatha = ufo["fatha-ar"]
+            assert fatha.width != 0
+            assert "com.schriftgestaltung.Glyphs.originalWidth" not in fatha.lib
+            assert fatha.lib.get("com.schriftgestaltung.Glyphs.category") == "Letter"
+            assert fatha.lib.get("com.schriftgestaltung.Glyphs.subCategory") is None
+
+
 def test_ufo_to_static_otf_cff2(data_dir, tmp_path):
     fontmake.__main__.main(
         [

@@ -1371,6 +1371,58 @@ rightKerningGroup = A.sc;
 rightMetricsKey = "=|";
 },
 {
+glyphname = "fatha-ar";
+lastChange = "2023-07-18 21:25:18 +0000";
+layers = (
+{
+layerId = "C4872ECA-A3A9-40AB-960A-1DB2202F16DE";
+paths = (
+{
+closed = 1;
+nodes = (
+"363 466 LINE",
+"363 486 LINE",
+"100 417 LINE",
+"100 397 LINE"
+);
+}
+);
+width = 463;
+},
+{
+layerId = "3E7589AA-8194-470F-8E2F-13C1C581BE24";
+paths = (
+{
+closed = 1;
+nodes = (
+"363 446 LINE",
+"363 486 LINE",
+"100 417 LINE",
+"100 377 LINE"
+);
+}
+);
+width = 463;
+},
+{
+layerId = "BFFFD157-90D3-4B85-B99D-9A2F366F03CA";
+paths = (
+{
+closed = 1;
+nodes = (
+"363 426 LINE",
+"363 486 LINE",
+"100 417 LINE",
+"100 357 LINE"
+);
+}
+);
+width = 463;
+}
+);
+unicode = 064E;
+},
+{
 glyphname = dieresis;
 lastChange = "2015-12-31 14:44:23 +0000";
 layers = (

@@ -187,6 +187,7 @@ class FontProject:
         write_skipexportglyphs=True,
         generate_GDEF=True,
         ufo_structure="package",
+        glyph_data=None,
     ):
         """Build UFOs and MutatorMath designspace from Glyphs source."""
         import glyphsLib
@@ -229,6 +230,7 @@ class FontProject:
             generate_GDEF=generate_GDEF,
             store_editor_state=False,
             minimal=True,
+            glyph_data=glyph_data,
         )
 
         masters = {}
@@ -816,6 +818,7 @@ class FontProject:
         mti_source=None,
         write_skipexportglyphs=True,
         generate_GDEF=True,
+        glyph_data=None,
         **kwargs,
     ):
         """Run toolchain from Glyphs source.
@@ -833,6 +836,7 @@ class FontProject:
                 mapping UFO masters to dictionaries mapping layout table
                 tags to MTI source paths which should be compiled into
                 those tables.
+            glyph_data: A list of GlyphData XML file paths.
             kwargs: Arguments passed along to run_from_designspace.
         """
 
@@ -847,6 +851,7 @@ class FontProject:
             write_skipexportglyphs=write_skipexportglyphs,
             generate_GDEF=generate_GDEF,
             ufo_structure=kwargs.get("ufo_structure"),
+            glyph_data=glyph_data,
         )
         # 'include' statements in features.fea should be resolved relative to
         # the input .glyphs path, like Glyphs.app would do, and not relative
