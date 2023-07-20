@@ -232,7 +232,7 @@ def main(args=None):
         help="Either one *.designspace or *.glyphs file, or one or more *.ufo",
     )
 
-    otherInputGroup = parser.add_argument_group(title="Handling of contours")
+    otherInputGroup = parser.add_argument_group(title="Other input arguments")
     otherInputGroup.add_argument(
         "--glyph-data",
         action="append",
