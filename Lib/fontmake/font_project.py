@@ -454,7 +454,9 @@ class FontProject:
             )
 
         for name, font in fonts.items():
-            font.save(vf_name_to_output_path[name])
+            output_path = vf_name_to_output_path[name]
+            logger.info("Saving %s", output_path)
+            font.save(output_path)
 
     def _iter_compile(self, ufos, ttf=False, debugFeatureFile=None, **kwargs):
         # generator function that calls ufo2ft compiler for each ufo and
