@@ -33,7 +33,6 @@ extras_require = {
     "lxml": [
         # "lxml>=4.2.4",
     ],
-    "mutatormath": ["MutatorMath>=2.1.2"],
     "autohint": ["ttfautohint-py>=0.5.0"],
 }
 # use a special 'all' key as shorthand to includes all the extra dependencies

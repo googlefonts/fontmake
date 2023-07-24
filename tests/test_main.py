@@ -71,57 +71,6 @@ def test_interpolation_designspace_5(data_dir, tmp_path):
     }
 
 
-def test_interpolation_mutatormath(data_dir, tmp_path):
-    shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
-
-    fontmake.__main__.main(
-        [
-            "-m",
-            str(tmp_path / "sources" / "DesignspaceTest.designspace"),
-            "-i",
-            "--use-mutatormath",
-            "--output-dir",
-            str(tmp_path),
-        ]
-    )
-
-    assert {p.name for p in tmp_path.glob("*.*")} == {
-        "MyFont-Regular.ttf",
-        "MyFont-Regular.otf",
-    }
-
-    test_output_ttf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.ttf")
-    assert test_output_ttf["OS/2"].usWeightClass == 400
-    glyph = test_output_ttf["glyf"]["l"]
-    assert glyph.xMin == 50
-    assert glyph.xMax == 170
-
-    test_output_otf = fontTools.ttLib.TTFont(tmp_path / "MyFont-Regular.otf")
-    assert test_output_otf["OS/2"].usWeightClass == 400
-    glyph_set = test_output_otf.getGlyphSet()
-    charstrings = list(test_output_otf["CFF "].cff.values())[0].CharStrings
-    glyph = charstrings["l"]
-    x_min, _, x_max, _ = glyph.calcBounds(glyph_set)
-    assert x_min == 50
-    assert x_max == 170
-
-
-def test_interpolation_mutatormath_source_layer(data_dir, tmp_path):
-    shutil.copytree(data_dir / "MutatorSans", tmp_path / "layertest")
-
-    with pytest.raises(SystemExit, match="sources with 'layer'"):
-        fontmake.__main__.main(
-            [
-                "-m",
-                str(tmp_path / "layertest" / "MutatorSans.designspace"),
-                "-i",
-                "--use-mutatormath",
-                "--output-dir",
-                str(tmp_path),
-            ]
-        )
-
-
 def test_interpolation_and_masters_as_instances(data_dir, tmp_path):
     shutil.copytree(data_dir / "DesignspaceTest", tmp_path / "sources")
 
