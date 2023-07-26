@@ -870,7 +870,7 @@ class FontProject:
             instance_dir = self._output_dir("ufo", is_instance=True)
 
         instance_path = Path(instance_dir) / f"{Path(instance_path).stem}{ext}"
-        return _normpath(instance_path)
+        return os.path.normpath(instance_path)
 
     def interpolate_instance_ufos(
         self,
