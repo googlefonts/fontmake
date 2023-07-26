@@ -363,15 +363,13 @@ def test_shared_features_expansion(data_dir, tmp_path):
             "-i",
             "--expand-features-to-instances",
             "-o",
-            "ttf",
+            "ufo",
             "--output-dir",
             str(tmp_path),
         ]
     )
 
-    test_feature_file = (
-        tmp_path / "sources/instance_ufo/DesignspaceTest-Light.ufo/features.fea"
-    )
+    test_feature_file = tmp_path / "DesignspaceTest-Light.ufo/features.fea"
     assert test_feature_file.read_text() == "# test"
 
 
@@ -422,7 +420,6 @@ def test_mti_sources(data_dir, tmp_path):
         "InterpolateLayoutTest-Bold.ttf",
         "InterpolateLayoutTest-Light.otf",
         "InterpolateLayoutTest-Light.ttf",
-        "InterpolateLayoutTest.designspace",
     }
 
     font_bold = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Bold.ttf")

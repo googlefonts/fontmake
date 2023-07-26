@@ -31,6 +31,7 @@ import ufo2ft.errors
 import ufoLib2
 from fontTools import designspaceLib
 from fontTools.designspaceLib.split import splitInterpolable
+from fontTools.misc.cliTools import makeOutputFileName
 from fontTools.misc.loggingTools import Timer
 from fontTools.misc.plistlib import load as readPlist
 from fontTools.ttLib import TTFont
@@ -71,6 +72,10 @@ INTERPOLATABLE_OUTPUTS = frozenset(
 AUTOHINTING_PARAMETERS = (
     GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
 )
+
+# tempLib keys for fontmake's internal use only, won't be saved to disk
+INSTANCE_LOCATION_KEY = "com.github.googlefonts.fontmake.instance_location"
+INSTANCE_FILENAME_KEY = "com.github.googlefonts.fontmake.instance_filename"
 
 
 def needs_subsetting(ufo):
@@ -145,14 +150,13 @@ class FontProject:
         generate_GDEF=True,
         ufo_structure="package",
         glyph_data=None,
+        save_ufos=True,
     ):
         """Build UFOs and designspace from Glyphs source."""
         import glyphsLib
 
         if master_dir is None:
             master_dir = self._output_dir("ufo")
-        if not os.path.isdir(master_dir):
-            os.mkdir(master_dir)
         if instance_dir is None:
             instance_dir = self._output_dir("ufo", is_instance=True)
 
@@ -194,25 +198,30 @@ class FontProject:
         # multiple sources can have the same font/filename (but different layer),
         # we want to save a font only once
         for source in designspace.sources:
-            if source.path in masters:
-                assert source.font is masters[source.path]
-                continue
             ufo_path = os.path.join(master_dir, source.filename)
-            # no need to also set the relative 'filename' attribute as that
-            # will be auto-updated on writing the designspace document
             source.path = ufo_path
+            # relative 'filename' would be auto-updated upon writing the designspace
+            # but we may not always write one out, thus we keep it up-to-date
+            source.filename = os.path.relpath(ufo_path, designspace_dir)
+            if ufo_path in masters:
+                assert source.font is masters[ufo_path]
+                continue
             masters[ufo_path] = source.font
 
-        if designspace_path is None:
-            designspace_path = os.path.join(master_dir, designspace.filename)
-        designspace.write(designspace_path)
         if mti_source:
             self.add_mti_features_to_master_ufos(mti_source, masters)
 
-        for ufo_path, ufo in masters.items():
-            self.save_ufo_as(ufo, ufo_path, ufo_structure)
+        if designspace_path is None:
+            designspace_path = os.path.join(master_dir, designspace.filename)
+        designspace.path = designspace_path
+        if save_ufos:
+            logger.info("Saving %s", designspace_path)
+            designspace.write(_ensure_parent_dir(designspace_path))
+            for ufo_path, ufo in masters.items():
+                logger.info("Saving %s", ufo_path)
+                self.save_ufo_as(ufo, ufo_path, ufo_structure)
 
-        return designspace_path
+        return designspace
 
     @timer()
     def add_mti_features_to_master_ufos(self, mti_source, masters):
@@ -240,23 +249,6 @@ class FontProject:
     def build_ttfs(self, ufos, **kwargs):
         """Build OpenType binaries with TrueType outlines."""
         self.save_otfs(ufos, ttf=True, **kwargs)
-
-    def _load_designspace_sources(self, designspace):
-        if isinstance(designspace, (str, os.PathLike)):
-            ds_path = os.fspath(designspace)
-        else:
-            # reload designspace from its path so we have a new copy
-            # that can be modified in-place.
-            ds_path = designspace.path
-        if ds_path is not None:
-            try:
-                designspace = designspaceLib.DesignSpaceDocument.fromfile(ds_path)
-            except Exception as e:
-                raise FontmakeError("Reading Designspace failed", ds_path) from e
-
-        designspace.loadSourceFonts(opener=self.open_ufo)
-
-        return designspace
 
     def _build_interpolatable_masters(
         self,
@@ -595,12 +587,16 @@ class FontProject:
             inplace=True,  # avoid extra copy
         )
 
+        if interpolate_layout_from is not None:
+            master_locations = self._designspace_full_source_locations(
+                interpolate_layout_from
+            )
         for font, ufo in zip(fonts, ufos):
-            if interpolate_layout_from is not None:
-                master_locations, instance_locations = self._designspace_locations(
-                    interpolate_layout_from
-                )
-                loc = instance_locations[_normpath(ufo.path)]
+            if (
+                interpolate_layout_from is not None
+                and INSTANCE_LOCATION_KEY in ufo.tempLib
+            ):
+                loc = ufo.tempLib[INSTANCE_LOCATION_KEY]
                 gpos_src = interpolate_layout(
                     interpolate_layout_from, loc, finder, mapped=True
                 )
@@ -782,6 +778,9 @@ class FontProject:
         write_skipexportglyphs=True,
         generate_GDEF=True,
         glyph_data=None,
+        output=(),
+        output_dir=None,
+        interpolate=False,
         **kwargs,
     ):
         """Run toolchain from Glyphs source.
@@ -802,9 +801,21 @@ class FontProject:
             glyph_data: A list of GlyphData XML file paths.
             kwargs: Arguments passed along to run_from_designspace.
         """
+        # only save *master* UFOs when explicitly requested: i.e. outputs contain
+        # 'ufo' and the -i/--interpolate option was not passed (that's for *instances*)
+        # or a --master-dir was set
+        save_ufos = "ufo" in output and (not interpolate or master_dir is not None)
+        # take --output-dir to mean same as --master-dir when -o ufo and not -i
+        if (
+            set(output) == {"ufo"}
+            and not interpolate
+            and master_dir is None
+            and output_dir is not None
+        ):
+            master_dir = output_dir
 
         logger.info("Building master UFOs and designspace from Glyphs source")
-        designspace_path = self.build_master_ufos(
+        designspace = self.build_master_ufos(
             glyphs_path,
             designspace_path=designspace_path,
             master_dir=master_dir,
@@ -815,6 +826,7 @@ class FontProject:
             generate_GDEF=generate_GDEF,
             ufo_structure=kwargs.get("ufo_structure"),
             glyph_data=glyph_data,
+            save_ufos=save_ufos,
         )
         # 'include' statements in features.fea should be resolved relative to
         # the input .glyphs path, like Glyphs.app would do, and not relative
@@ -822,11 +834,43 @@ class FontProject:
         fea_include_dir = os.path.dirname(glyphs_path)
         try:
             self.run_from_designspace(
-                designspace_path, fea_include_dir=fea_include_dir, **kwargs
+                designspace,
+                output=output,
+                fea_include_dir=fea_include_dir,
+                output_dir=output_dir,
+                interpolate=interpolate,
+                **kwargs,
             )
         except FontmakeError as e:
             e.source_trail.append(glyphs_path)
             raise
+
+    def _instance_ufo_path(
+        self, instance, designspace_path, output_dir=None, ext=".ufo"
+    ):
+        """Return an instance path, optionally overriding output dir or extension"""
+        # prefer absolute instance.path over relative instance.filename
+        instance_path = instance.path
+        if instance_path is not None:
+            instance_dir = Path(instance_path).parent
+        elif instance.filename is not None:
+            instance_path = Path(designspace_path).parent / instance.filename
+            instance_dir = instance_path.parent
+        else:
+            # if neither is set, make one up from UFO family/style names
+            instance_path = self._font_name(instance.font)
+            instance_dir = None
+
+        # let --output-dir override the instance UFO directory
+        if output_dir is not None:
+            instance_dir = output_dir
+
+        # fall back to 'instance_ufo/' if we can't find a suitable directory
+        if instance_dir is None:
+            instance_dir = self._output_dir("ufo", is_instance=True)
+
+        instance_path = Path(instance_dir) / f"{Path(instance_path).stem}{ext}"
+        return _normpath(instance_path)
 
     def interpolate_instance_ufos(
         self,
@@ -836,6 +880,9 @@ class FontProject:
         expand_features_to_instances=False,
         fea_include_dir=None,
         ufo_structure="package",
+        save_ufos=True,
+        output_path=None,
+        output_dir=None,
     ):
         """Interpolate master UFOs with Instantiator and return instance UFOs.
 
@@ -860,12 +907,9 @@ class FontProject:
         """
         from glyphsLib.interpolation import apply_instance_data_to_ufo
 
-        logger.info("Interpolating master UFOs from designspace")
-        try:
-            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace.path)
-        except Exception as e:
-            raise FontmakeError("Reading Designspace failed", designspace.path) from e
+        assert not (output_path and output_dir), "mutually exclusive args"
 
+        logger.info("Interpolating master UFOs from designspace")
         for _location, subDoc in splitInterpolable(designspace):
             try:
                 generator = instantiator.Instantiator.from_designspace(
@@ -908,24 +952,41 @@ class FontProject:
 
                 apply_instance_data_to_ufo(instance.font, instance, subDoc)
 
-                # TODO: Making filenames up on the spot is complicated, ideally don't save
-                # anything if filename is not set, but make something up when "ufo" is in
-                # output formats, but also consider output_path.
-                if instance.filename is None:
-                    raise ValueError(
-                        "It is currently required that instances have filenames set."
-                    )
-                ufo_path = os.path.join(
-                    os.path.dirname(designspace.path), instance.filename
-                )
-                os.makedirs(os.path.dirname(ufo_path), exist_ok=True)
-                self.save_ufo_as(instance.font, ufo_path, ufo_structure)
+                if save_ufos:
+                    ext = ".ufoz" if ufo_structure == "zip" else ".ufo"
+                    if output_path is not None:
+                        # we don't know in advance how many instances we will generate
+                        # (depends on splitInterpolable and include filter); if we
+                        # overwrite or stop in the middle of the build it'd be worse,
+                        # so we make the output_path unique using #1, #2, etc. suffix
+                        instance_path = makeOutputFileName(output_path, extension=ext)
+                    else:
+                        instance_path = self._instance_ufo_path(
+                            instance, designspace.path, output_dir, ext
+                        )
+                    logger.info("Saving %s", instance_path)
+                    self.save_ufo_as(instance.font, instance_path, ufo_structure)
+                elif instance.filename is not None:
+                    # saving a UFO sets its path attribute; when saving the binary font
+                    # compiled from this UFO, self._output_path() uses the ufo.path to
+                    # make up the output path. Since we aren't saving the UFO in this
+                    # case, the ufo.path is not set (it's a read-only attribute).
+                    # Therefore we resort to this temporary lib key to pass down the DS
+                    # instance filename to self._output_path() method and make sure the
+                    # font is named correctly whether or not the UFO is saved to disk.
+                    instance.font.tempLib[INSTANCE_FILENAME_KEY] = instance.filename
+
+                # --interpolate-binary-layout needs to know the location of each
+                # instance UFO; the previous code relied on matching instance.path and
+                # ufo.path, but we no longer necessarily save the UFO thus the ufo.path
+                # may not be set. Instead store the location directly in the ufo.tempLib
+                instance.font.tempLib[INSTANCE_LOCATION_KEY] = instance.location
 
                 yield instance.font
 
     def run_from_designspace(
         self,
-        designspace_path,
+        designspace,
         output=(),
         interpolate=False,
         variable_fonts: str = ".*",
@@ -942,7 +1003,7 @@ class FontProject:
         instance fonts (ttf or otf), interpolatable or variable fonts.
 
         Args:
-            designspace_path: Path to designspace document.
+            designspace: Path to designspace or DesignSpaceDocument object.
             interpolate: If True output all instance fonts, otherwise just
                 masters. If the value is a string, only build instance(s) that
                 match given name. The string is compiled into a regular
@@ -980,12 +1041,25 @@ class FontProject:
                         % (argname, ", ".join(sorted(interp_outputs)))
                     )
 
-        try:
-            designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
-        except Exception as e:
-            raise FontmakeError("Reading Designspace failed", designspace_path) from e
+        if isinstance(designspace, (str, os.PathLike)):
+            designspace_path = os.fspath(designspace)
+            try:
+                designspace = designspaceLib.DesignSpaceDocument.fromfile(
+                    designspace_path
+                )
+            except Exception as e:
+                raise FontmakeError(
+                    "Reading Designspace failed", designspace_path
+                ) from e
+        elif isinstance(designspace, designspaceLib.DesignSpaceDocument):
+            # get our own DS copy so we can modify in-place
+            designspace = designspace.deepcopyExceptFonts()
+        else:
+            raise TypeError(
+                f"expected path or DesignSpaceDocument, found {type(designspace.__name__)}"
+            )
 
-        designspace = self._load_designspace_sources(designspace)
+        designspace.loadSourceFonts(opener=self.open_ufo)
 
         # if no --feature-writers option was passed, check in the designspace's
         # <lib> element if user supplied a custom featureWriters configuration;
@@ -1062,13 +1136,24 @@ class FontProject:
         expand_features_to_instances=False,
         fea_include_dir=None,
         ufo_structure="package",
+        output_path=None,
+        output_dir=None,
         **kwargs,
     ):
+        save_ufos = "ufo" in outputs
         ufos = []
         if not interpolate or masters_as_instances:
-            ufos.extend(s.path for s in designspace.sources if s.path)
+            unique_srcs = {id(s.font): s.font for s in designspace.sources}
+            ufos.extend(unique_srcs.values())
         if interpolate:
             pattern = interpolate if isinstance(interpolate, str) else None
+            # use --output-{path,dir} options for instance UFOs if 'ufo' is the only -o
+            ufo_output_path = ufo_output_dir = None
+            if set(outputs) == {"ufo"}:
+                if output_path is not None:
+                    ufo_output_path = output_path
+                if output_dir is not None:
+                    ufo_output_dir = output_dir
             ufos.extend(
                 self.interpolate_instance_ufos(
                     designspace,
@@ -1077,6 +1162,9 @@ class FontProject:
                     expand_features_to_instances=expand_features_to_instances,
                     fea_include_dir=fea_include_dir,
                     ufo_structure=ufo_structure,
+                    save_ufos=save_ufos,
+                    output_path=ufo_output_path,
+                    output_dir=ufo_output_dir,
                 )
             )
 
@@ -1100,6 +1188,8 @@ class FontProject:
             interpolate_layout_dir=interpolate_layout_dir,
             feature_writers=feature_writers,
             fea_include_dir=fea_include_dir,
+            output_path=output_path,
+            output_dir=output_dir,
             **kwargs,
         )
 
@@ -1158,31 +1248,27 @@ class FontProject:
 
         # the `ufos` parameter can be a list of UFO objects
         # or it can be a path (string) with a glob syntax
-        ufo_paths = []
         if isinstance(ufos, str):
-            ufo_paths = glob.glob(ufos)
-            ufos = [self.open_ufo(x) for x in ufo_paths]
+            ufos = [self.open_ufo(x) for x in glob.glob(ufos)]
         elif isinstance(ufos, list):
             # ufos can be either paths or open Font objects, so normalize them
             ufos = [self.open_ufo(x) if isinstance(x, str) else x for x in ufos]
-            ufo_paths = [x.path for x in ufos]
         else:
             raise TypeError(
                 "UFOs parameter is neither a ufoLib2.Font object, a path or a glob, "
                 f"nor a list of any of these: {ufos:r}."
             )
 
-        need_reload = False
         cff_version = 1 if "otf" in output else 2 if "otf-cff2" in output else None
+
+        # if building both OTF & TTF we must tell ufo2ft to compile with inplace=False
+        inplace = not (cff_version is not None and "ttf" in output)
+
         if cff_version is not None:
-            self.build_otfs(ufos, cff_version=cff_version, **kwargs)
-            need_reload = True
+            self.build_otfs(ufos, cff_version=cff_version, inplace=inplace, **kwargs)
 
         if "ttf" in output:
-            if need_reload:
-                ufos = [self.open_ufo(path) for path in ufo_paths]
-            self.build_ttfs(ufos, **kwargs)
-            need_reload = True
+            self.build_ttfs(ufos, inplace=inplace, **kwargs)
 
     @staticmethod
     def _search_instances(designspace, pattern):
@@ -1258,12 +1344,16 @@ class FontProject:
 
         if isinstance(ufo_or_font_name, str):
             font_name = ufo_or_font_name
-        elif ufo_or_font_name.path:
-            font_name = os.path.splitext(
-                os.path.basename(os.path.normpath(ufo_or_font_name.path))
-            )[0]
         else:
-            font_name = self._font_name(ufo_or_font_name)
+            ufo = ufo_or_font_name
+            if ufo.path:
+                font_name = os.path.splitext(
+                    os.path.basename(os.path.normpath(ufo.path))
+                )[0]
+            elif INSTANCE_FILENAME_KEY in ufo.tempLib:
+                font_name = Path(ufo.tempLib[INSTANCE_FILENAME_KEY]).stem
+            else:
+                font_name = self._font_name(ufo)
 
         if output_dir is None:
             output_dir = self._output_dir(
@@ -1275,17 +1365,18 @@ class FontProject:
         else:
             return os.path.join(output_dir, f"{font_name}.{ext}")
 
-    def _designspace_locations(self, designspace):
-        """Map font filenames to their locations in a designspace."""
+    def _designspace_full_source_locations(self, designspace):
+        """Map "full" sources' paths to their locations in a designspace.
 
-        maps = []
-        for elements in (designspace.sources, designspace.instances):
-            location_map = {}
-            for element in elements:
-                path = _normpath(element.path)
-                location_map[path] = element.location
-            maps.append(location_map)
-        return maps
+        'Sparse layer' sources only contributing glyph outlines but no
+        info/kerning/features are ignored.
+        """
+        location_map = {}
+        default_source = designspace.findDefault()
+        for source in designspace.sources:
+            if source is default_source or source.layerName is not None:
+                location_map[_normpath(source.path)] = source.location
+        return location_map
 
     def _closest_location(self, location_map, target):
         """Return path of font whose location is closest to target."""
