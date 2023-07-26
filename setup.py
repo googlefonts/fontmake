@@ -60,7 +60,7 @@ setup(
         "glyphsLib>=6.2.5",
         "ufo2ft[compreffor]>=2.32.0",
         "fontMath>=0.9.3",
-        "ufoLib2>=0.14.0",
+        "ufoLib2>=0.16.0",
         "attrs>=19",
     ],
     extras_require=extras_require,
