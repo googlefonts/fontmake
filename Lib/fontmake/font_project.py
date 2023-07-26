@@ -124,7 +124,7 @@ class FontProject:
     def save_ufo_as(self, font, path, ufo_structure="package"):
         try:
             font.save(
-                path,
+                _ensure_parent_dir(path),
                 overwrite=True,
                 validate=self.validate_ufo,
                 structure=ufo_structure,
@@ -413,7 +413,7 @@ class FontProject:
         for name, font in fonts.items():
             output_path = vf_name_to_output_path[name]
             logger.info("Saving %s", output_path)
-            font.save(output_path)
+            font.save(_ensure_parent_dir(output_path))
 
     def _iter_compile(self, ufos, ttf=False, debugFeatureFile=None, **kwargs):
         # generator function that calls ufo2ft compiler for each ufo and
@@ -639,7 +639,7 @@ class FontProject:
                 otf_path = output_path
 
             logger.info("Saving %s", otf_path)
-            font.save(otf_path)
+            font.save(_ensure_parent_dir(otf_path))
 
             # 'subset' is an Optional[bool], can be None, True or False.
             # When False, we never subset; when True, we always do; when
@@ -660,7 +660,11 @@ class FontProject:
                 )
             try:
                 logger.info("Autohinting %s", hinted_otf_path)
-                ttfautohint(otf_path, hinted_otf_path, args=autohint_thisfont)
+                ttfautohint(
+                    otf_path,
+                    _ensure_parent_dir(hinted_otf_path),
+                    args=autohint_thisfont,
+                )
             except TTFAError:
                 # copy unhinted font to destination before re-raising error
                 shutil.copyfile(otf_path, hinted_otf_path)
@@ -682,7 +686,7 @@ class FontProject:
                 suffix=source.layerName,
             )
             logger.info("Saving %s", otf_path)
-            source.font.save(otf_path)
+            source.font.save(_ensure_parent_dir(otf_path))
             source.path = otf_path
             source.layerName = None
         for instance in designspace.instances:
@@ -1265,8 +1269,6 @@ class FontProject:
             output_dir = self._output_dir(
                 ext, is_instance, interpolatable, autohinted, is_variable
             )
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
 
         if suffix:
             return os.path.join(output_dir, f"{font_name}-{suffix}.{ext}")
@@ -1314,3 +1316,8 @@ def _varLib_finder(source, directory="", ext="ttf"):
 
 def _normpath(fname):
     return os.path.normcase(os.path.normpath(fname))
+
+
+def _ensure_parent_dir(path):
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    return path
