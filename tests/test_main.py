@@ -420,6 +420,7 @@ def test_mti_sources(data_dir, tmp_path):
         "InterpolateLayoutTest-Bold.ttf",
         "InterpolateLayoutTest-Light.otf",
         "InterpolateLayoutTest-Light.ttf",
+        "InterpolateLayoutTest.designspace",
     }
 
     font_bold = fontTools.ttLib.TTFont(tmp_path / "InterpolateLayoutTest-Bold.ttf")

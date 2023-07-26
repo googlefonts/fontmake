@@ -211,12 +211,17 @@ class FontProject:
         if mti_source:
             self.add_mti_features_to_master_ufos(mti_source, masters)
 
+        save_ds = designspace_path is not None or save_ufos
         if designspace_path is None:
             designspace_path = os.path.join(master_dir, designspace.filename)
-        designspace.path = designspace_path
-        if save_ufos:
+
+        if save_ds:
             logger.info("Saving %s", designspace_path)
             designspace.write(_ensure_parent_dir(designspace_path))
+        else:
+            designspace.path = designspace_path
+
+        if save_ufos:
             for ufo_path, ufo in masters.items():
                 logger.info("Saving %s", ufo_path)
                 self.save_ufo_as(ufo, ufo_path, ufo_structure)
