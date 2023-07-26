@@ -21,7 +21,6 @@ import os
 import shutil
 import tempfile
 from collections import OrderedDict
-from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 from re import fullmatch
@@ -72,48 +71,6 @@ INTERPOLATABLE_OUTPUTS = frozenset(
 AUTOHINTING_PARAMETERS = (
     GLYPHS_PREFIX + "customParameter.InstanceDescriptorAsGSInstance.TTFAutohint options"
 )
-
-
-@contextmanager
-def temporarily_disabling_axis_maps(designspace_path):
-    """Context manager to prevent MutatorMath from warping designspace locations.
-
-    MutatorMath assumes that the masters and instances' locations are in
-    user-space coordinates -- whereas they actually are in internal design-space
-    coordinates, and thus they do not need any 'bending'. To work around this we
-    we create a temporary designspace document without the axis maps, and with the
-    min/default/max triplet mapped "forward" from user-space coordinates (input)
-    to internal designspace coordinates (output).
-
-    Args:
-        designspace_path: A path to a designspace document.
-
-    Yields:
-        A temporary path string to the thus modified designspace document.
-        After the context is exited, it removes the temporary file.
-
-    Related issues:
-        https://github.com/LettError/designSpaceDocument/issues/16
-        https://github.com/fonttools/fonttools/pull/1395
-    """
-    try:
-        designspace = designspaceLib.DesignSpaceDocument.fromfile(designspace_path)
-    except Exception as e:
-        raise FontmakeError("Reading Designspace failed", designspace_path) from e
-
-    for axis in designspace.axes:
-        axis.minimum = axis.map_forward(axis.minimum)
-        axis.default = axis.map_forward(axis.default)
-        axis.maximum = axis.map_forward(axis.maximum)
-        del axis.map[:]
-
-    fd, temp_designspace_path = tempfile.mkstemp()
-    os.close(fd)
-    try:
-        designspace.write(temp_designspace_path)
-        yield temp_designspace_path
-    finally:
-        os.remove(temp_designspace_path)
 
 
 def needs_subsetting(ufo):
@@ -189,7 +146,7 @@ class FontProject:
         ufo_structure="package",
         glyph_data=None,
     ):
-        """Build UFOs and MutatorMath designspace from Glyphs source."""
+        """Build UFOs and designspace from Glyphs source."""
         import glyphsLib
 
         if master_dir is None:
@@ -962,84 +919,6 @@ class FontProject:
 
                 yield instance.font
 
-    def interpolate_instance_ufos_mutatormath(
-        self,
-        designspace,
-        include=None,
-        round_instances=False,
-        expand_features_to_instances=False,
-        fea_include_dir=None,
-    ):
-        """Interpolate master UFOs with MutatorMath and return instance UFOs.
-
-        Args:
-            designspace: a DesignSpaceDocument object containing sources and
-                instances.
-            include (str): optional regular expression pattern to match the
-                DS instance 'name' attribute and only interpolate the matching
-                instances.
-            round_instances (bool): round instances' coordinates to integer.
-            expand_features_to_instances: parses the master feature file, expands all
-                include()s and writes the resulting full feature file to all instance
-                UFOs. Use this if you share feature files among masters in external
-                files. Otherwise, the relative include paths can break as instances
-                may end up elsewhere. Only done on interpolation.
-        Returns:
-            list of defcon.Font objects corresponding to the UFO instances.
-        Raises:
-            FontmakeError: if any of the sources defines a custom 'layer', for
-                this is not supported by MutatorMath.
-            ValueError: "expand_features_to_instances" is True but no source in the
-                designspace document is designated with '<features copy="1"/>'.
-        """
-        from glyphsLib.interpolation import apply_instance_data
-        from mutatorMath.ufo.document import DesignSpaceDocumentReader
-
-        if any(source.layerName is not None for source in designspace.sources):
-            raise FontmakeError(
-                "MutatorMath doesn't support DesignSpace sources with 'layer' "
-                "attribute",
-                None,
-            )
-
-        with temporarily_disabling_axis_maps(designspace.path) as temp_designspace_path:
-            builder = DesignSpaceDocumentReader(
-                temp_designspace_path,
-                ufoVersion=3,
-                roundGeometry=round_instances,
-                verbose=True,
-            )
-            logger.info("Interpolating master UFOs from designspace")
-            if include is not None:
-                instances = self._search_instances(designspace, pattern=include)
-                for instance_name in instances:
-                    builder.readInstance(("name", instance_name))
-                filenames = set(instances.values())
-            else:
-                builder.readInstances()
-                filenames = None  # will include all instances
-
-        logger.info("Applying instance data from designspace")
-        instance_ufos = apply_instance_data(designspace, include_filenames=filenames)
-
-        if expand_features_to_instances:
-            logger.debug("Expanding features to instance UFOs")
-            master_source = next(
-                (s for s in designspace.sources if s.copyFeatures), None
-            )
-            if not master_source:
-                raise ValueError("No source is designated as the master for features.")
-            else:
-                master_source_font = builder.sources[master_source.name][0]
-                master_source_features = parseLayoutFeatures(
-                    master_source_font, includeDir=fea_include_dir
-                ).asFea()
-                for instance_ufo in instance_ufos:
-                    instance_ufo.features.text = master_source_features
-                    instance_ufo.save()
-
-        return instance_ufos
-
     def run_from_designspace(
         self,
         designspace_path,
@@ -1052,7 +931,6 @@ class FontProject:
         feature_writers=None,
         filters=None,
         expand_features_to_instances=False,
-        use_mutatormath=False,
         check_compatibility=None,
         **kwargs,
     ):
@@ -1074,8 +952,8 @@ class FontProject:
             masters_as_instances: If True, output master fonts as instances.
             interpolate_binary_layout: Interpolate layout tables from compiled
                 master binaries.
-            round_instances: apply integer rounding when interpolating with
-                MutatorMath.
+            round_instances: apply integer rounding when interpolating static
+                instance UFOs.
             kwargs: Arguments passed along to run_from_ufos.
 
         Raises:
@@ -1145,7 +1023,6 @@ class FontProject:
                     round_instances=round_instances,
                     feature_writers=feature_writers,
                     expand_features_to_instances=expand_features_to_instances,
-                    use_mutatormath=use_mutatormath,
                     filters=filters,
                     **kwargs,
                 )
@@ -1180,7 +1057,6 @@ class FontProject:
         feature_writers=None,
         expand_features_to_instances=False,
         fea_include_dir=None,
-        use_mutatormath=False,
         ufo_structure="package",
         **kwargs,
     ):
@@ -1189,27 +1065,16 @@ class FontProject:
             ufos.extend(s.path for s in designspace.sources if s.path)
         if interpolate:
             pattern = interpolate if isinstance(interpolate, str) else None
-            if use_mutatormath:
-                ufos.extend(
-                    self.interpolate_instance_ufos_mutatormath(
-                        designspace,
-                        include=pattern,
-                        round_instances=round_instances,
-                        expand_features_to_instances=expand_features_to_instances,
-                        fea_include_dir=fea_include_dir,
-                    )
+            ufos.extend(
+                self.interpolate_instance_ufos(
+                    designspace,
+                    include=pattern,
+                    round_instances=round_instances,
+                    expand_features_to_instances=expand_features_to_instances,
+                    fea_include_dir=fea_include_dir,
+                    ufo_structure=ufo_structure,
                 )
-            else:
-                ufos.extend(
-                    self.interpolate_instance_ufos(
-                        designspace,
-                        include=pattern,
-                        round_instances=round_instances,
-                        expand_features_to_instances=expand_features_to_instances,
-                        fea_include_dir=fea_include_dir,
-                        ufo_structure=ufo_structure,
-                    )
-                )
+            )
 
         if interpolate_binary_layout is False:
             interpolate_layout_from = interpolate_layout_dir = None
@@ -1299,7 +1164,7 @@ class FontProject:
             ufo_paths = [x.path for x in ufos]
         else:
             raise TypeError(
-                "UFOs parameter is neither a defcon.Font object, a path or a glob, "
+                "UFOs parameter is neither a ufoLib2.Font object, a path or a glob, "
                 f"nor a list of any of these: {ufos:r}."
             )
 

@@ -15,7 +15,7 @@
 import logging
 import os
 import sys
-from argparse import ArgumentParser, FileType
+from argparse import SUPPRESS, ArgumentParser, FileType
 from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
@@ -288,7 +288,7 @@ def main(args=None):
         'match a given "name" attribute, you can pass as argument '
         "the full instance name or a regular expression. "
         'E.g.: -i "Noto Sans Bold"; or -i ".* UI Condensed". '
-        "(for Glyphs or MutatorMath sources only). ",
+        "(for Glyphs or DesignSpace sources only). ",
     )
     outputGroup.add_argument(
         "--variable-fonts",
@@ -308,14 +308,8 @@ def main(args=None):
         """
         ),
     )
-    outputGroup.add_argument(
-        "--use-mutatormath",
-        action="store_true",
-        help=(
-            "Use MutatorMath to generate instances (supports extrapolation and "
-            "anisotropic locations)."
-        ),
-    )
+    # no longer show option in --help but keep to produce nice error message
+    outputGroup.add_argument("--use-mutatormath", action="store_true", help=SUPPRESS)
     outputGroup.add_argument(
         "-M",
         "--masters-as-instances",
@@ -536,7 +530,7 @@ def main(args=None):
         const=True,
         metavar="MASTER_DIR",
         help="Interpolate layout tables from compiled master binaries. "
-        "Requires Glyphs or MutatorMath source.",
+        "Requires Glyphs or DesignSpace source.",
     )
     layoutGroup.add_argument(
         "--feature-writer",
@@ -620,6 +614,13 @@ def main(args=None):
 
     args = vars(parser.parse_args(args))
 
+    use_mutatormath = args.pop("use_mutatormath")
+    if use_mutatormath:
+        parser.error(
+            "MutatorMath is no longer supported by fontmake. "
+            "Try to use ufoProcessor: https://github.com/LettError/ufoProcessor"
+        )
+
     level = args.pop("verbose")
     _configure_logging(level, timing=args.pop("timing"))
 
@@ -643,7 +644,6 @@ def main(args=None):
                 "interpolate",
                 "masters_as_instances",
                 "interpolate_binary_layout",
-                "use_mutatormath",
             ],
             "variable output",
         )
@@ -655,16 +655,6 @@ def main(args=None):
             "static output",
             positive=False,
         )
-
-    if args.get("use_mutatormath"):
-        for module in ("defcon", "mutatorMath"):
-            try:
-                __import__(module)
-            except ImportError:
-                parser.error(
-                    f"{module} module not found; reinstall fontmake with the "
-                    "[mutatormath] extra"
-                )
 
     PRINT_TRACEBACK = level == "DEBUG"
     try:
@@ -705,7 +695,6 @@ def main(args=None):
             [
                 "interpolate",
                 "variable_fonts",
-                "use_mutatormath",
                 "interpolate_binary_layout",
                 "round_instances",
                 "expand_features_to_instances",

@@ -33,7 +33,9 @@ extras_require = {
     "lxml": [
         # "lxml>=4.2.4",
     ],
-    "mutatormath": ["MutatorMath>=2.1.2"],
+    # MutatorMath is no longer supported but a dummy extras is kept below
+    # to avoid fontmake installation failing if requested
+    "mutatormath": [],
     "autohint": ["ttfautohint-py>=0.5.0"],
 }
 # use a special 'all' key as shorthand to includes all the extra dependencies
