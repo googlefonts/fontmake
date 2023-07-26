@@ -15,7 +15,7 @@
 import logging
 import os
 import sys
-from argparse import ArgumentParser, FileType
+from argparse import SUPPRESS, ArgumentParser, FileType
 from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
@@ -308,6 +308,8 @@ def main(args=None):
         """
         ),
     )
+    # no longer show option in --help but keep to produce nice error message
+    outputGroup.add_argument("--use-mutatormath", action="store_true", help=SUPPRESS)
     outputGroup.add_argument(
         "-M",
         "--masters-as-instances",
@@ -611,6 +613,13 @@ def main(args=None):
     )
 
     args = vars(parser.parse_args(args))
+
+    use_mutatormath = args.pop("use_mutatormath")
+    if use_mutatormath:
+        parser.error(
+            "MutatorMath is no longer supported by fontmake. "
+            "Try to use ufoProcessor: https://github.com/LettError/ufoProcessor"
+        )
 
     level = args.pop("verbose")
     _configure_logging(level, timing=args.pop("timing"))
