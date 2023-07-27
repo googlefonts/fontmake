@@ -363,15 +363,13 @@ def test_shared_features_expansion(data_dir, tmp_path):
             "-i",
             "--expand-features-to-instances",
             "-o",
-            "ttf",
+            "ufo",
             "--output-dir",
             str(tmp_path),
         ]
     )
 
-    test_feature_file = (
-        tmp_path / "sources/instance_ufo/DesignspaceTest-Light.ufo/features.fea"
-    )
+    test_feature_file = tmp_path / "DesignspaceTest-Light.ufo/features.fea"
     assert test_feature_file.read_text() == "# test"
 
 
@@ -1049,11 +1047,12 @@ def test_main_designspace_v5_can_use_output_path_with_1_vf(data_dir, tmp_path):
             "--variable-fonts",
             "MutatorSansVariable_Width",
             "--output-path",
-            str(tmp_path / "MySingleVF.ttf"),
+            str(tmp_path / "output" / "MySingleVF.ttf"),
         ]
     )
 
-    assert (tmp_path / "MySingleVF.ttf").exists()
+    # 'output' subfolder was created automatically
+    assert (tmp_path / "output" / "MySingleVF.ttf").exists()
 
 
 def test_main_designspace_v5_dont_interpolate_discrete_axis(data_dir, tmp_path):
