@@ -78,6 +78,12 @@ INSTANCE_LOCATION_KEY = "com.github.googlefonts.fontmake.instance_location"
 INSTANCE_FILENAME_KEY = "com.github.googlefonts.fontmake.instance_filename"
 
 
+UFO_STRUCTURE_EXTENSIONS = {
+    "package": ".ufo",
+    "zip": ".ufoz",
+}
+
+
 def needs_subsetting(ufo):
     if KEEP_GLYPHS_OLD_KEY in ufo.lib or KEEP_GLYPHS_NEW_KEY in ufo.lib:
         return True
@@ -125,6 +131,13 @@ class FontProject:
             return ufoLib2.Font.open(path, validate=self.validate_ufo)
         except Exception as e:
             raise FontmakeError("Reading UFO source failed", path) from e
+
+    @staticmethod
+    def _fix_ufo_path(path, ufo_structure):
+        """Normalizes UFO path and updates extension suffix to match its structure"""
+        return os.path.normpath(
+            Path(path).with_suffix(UFO_STRUCTURE_EXTENSIONS[ufo_structure])
+        )
 
     def save_ufo_as(self, font, path, ufo_structure="package"):
         try:
@@ -198,7 +211,9 @@ class FontProject:
         # multiple sources can have the same font/filename (but different layer),
         # we want to save a font only once
         for source in designspace.sources:
-            ufo_path = os.path.join(master_dir, source.filename)
+            ufo_path = self._fix_ufo_path(
+                os.path.join(master_dir, source.filename), ufo_structure
+            )
             source.path = ufo_path
             # relative 'filename' would be auto-updated upon writing the designspace
             # but we may not always write one out, thus we keep it up-to-date
@@ -851,7 +866,7 @@ class FontProject:
             raise
 
     def _instance_ufo_path(
-        self, instance, designspace_path, output_dir=None, ext=".ufo"
+        self, instance, designspace_path, output_dir=None, ufo_structure="package"
     ):
         """Return an instance path, optionally overriding output dir or extension"""
         # prefer absolute instance.path over relative instance.filename
@@ -874,8 +889,8 @@ class FontProject:
         if instance_dir is None:
             instance_dir = self._output_dir("ufo", is_instance=True)
 
-        instance_path = Path(instance_dir) / f"{Path(instance_path).stem}{ext}"
-        return os.path.normpath(instance_path)
+        instance_path = Path(instance_dir) / Path(instance_path).name
+        return self._fix_ufo_path(instance_path, ufo_structure)
 
     def interpolate_instance_ufos(
         self,
@@ -958,16 +973,18 @@ class FontProject:
                 apply_instance_data_to_ufo(instance.font, instance, subDoc)
 
                 if save_ufos:
-                    ext = ".ufoz" if ufo_structure == "zip" else ".ufo"
                     if output_path is not None:
                         # we don't know in advance how many instances we will generate
                         # (depends on splitInterpolable and include filter); if we
                         # overwrite or stop in the middle of the build it'd be worse,
                         # so we make the output_path unique using #1, #2, etc. suffix
-                        instance_path = makeOutputFileName(output_path, extension=ext)
+                        instance_path = makeOutputFileName(
+                            output_path,
+                            extension=UFO_STRUCTURE_EXTENSIONS[ufo_structure],
+                        )
                     else:
                         instance_path = self._instance_ufo_path(
-                            instance, designspace.path, output_dir, ext
+                            instance, designspace.path, output_dir, ufo_structure
                         )
                     logger.info("Saving %s", instance_path)
                     self.save_ufo_as(instance.font, instance_path, ufo_structure)
