@@ -81,6 +81,7 @@ INSTANCE_FILENAME_KEY = "com.github.googlefonts.fontmake.instance_filename"
 UFO_STRUCTURE_EXTENSIONS = {
     "package": ".ufo",
     "zip": ".ufoz",
+    "json": ".ufo.json",
 }
 
 
@@ -146,12 +147,19 @@ class FontProject:
 
     def save_ufo_as(self, font, path, ufo_structure="package"):
         try:
-            font.save(
-                _ensure_parent_dir(path),
-                overwrite=True,
-                validate=self.validate_ufo,
-                structure=ufo_structure,
-            )
+            path = _ensure_parent_dir(path)
+            if ufo_structure == "json":
+                with open(path, "wb") as f:
+                    # TODO: make indentation optional?
+                    # pylint: disable=no-member
+                    font.json_dump(f, indent=2)  # type: ignore
+            else:
+                font.save(
+                    path,
+                    overwrite=True,
+                    validate=self.validate_ufo,
+                    structure=ufo_structure,
+                )
         except Exception as e:
             raise FontmakeError("Writing UFO source failed", path) from e
 

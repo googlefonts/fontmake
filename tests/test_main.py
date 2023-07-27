@@ -1118,3 +1118,95 @@ def test_timing_logger(data_dir, tmp_path):
         result.stderr.decode(),
         flags=re.MULTILINE,
     )
+
+
+@pytest.fixture(params=["package", "zip", "json"])
+def ufo_structure(request):
+    if request.param == "json":
+        # skip if ufoLib2's extra dep is not installed
+        pytest.importorskip("cattrs")
+    return request.param
+
+
+@pytest.mark.parametrize("interpolate", [False, True])
+def test_main_export_custom_ufo_structure(
+    data_dir, tmp_path, ufo_structure, interpolate
+):
+    args = [
+        str(data_dir / "GlyphsUnitTestSans.glyphs"),
+        "-o",
+        "ufo",
+        "--output-dir",
+        str(tmp_path),
+        "--ufo-structure",
+        ufo_structure,
+    ]
+    if interpolate:
+        args.append("-i")
+    else:
+        # strictly not needed, added just to make Windows happy about relative
+        # instance.filename when designspace is written to a different mount point
+        args.extend(["--instance-dir", str(tmp_path)])
+
+    fontmake.__main__.main(args)
+
+    ext = {"package": ".ufo", "zip": ".ufoz", "json": ".ufo.json"}[ufo_structure]
+
+    for style in ["Light", "Regular", "Bold"]:
+        assert (tmp_path / f"GlyphsUnitTestSans-{style}").with_suffix(ext).exists()
+
+    if interpolate:
+        for style in ["Thin", "ExtraLight", "Medium", "Black", "Web"]:
+            assert (tmp_path / f"GlyphsUnitTestSans-{style}").with_suffix(ext).exists()
+
+
+@pytest.mark.parametrize("ufo_structure", ["zip", "json"])
+def test_main_build_from_custom_ufo_structure(data_dir, tmp_path, ufo_structure):
+    pytest.importorskip("cattrs")
+
+    # export designspace pointing to {json,zip}-flavored source UFOs
+    fontmake.__main__.main(
+        [
+            str(data_dir / "GlyphsUnitTestSans.glyphs"),
+            "-o",
+            "ufo",
+            "--output-dir",
+            str(tmp_path / "master_ufos"),
+            "--ufo-structure",
+            ufo_structure,
+            # makes Windows happy about relative instance.filename across drives
+            "--instance-dir",
+            str(tmp_path / "instance_ufos"),
+        ]
+    )
+
+    # interpolate one static TTF instance from this designspace
+    fontmake.__main__.main(
+        [
+            str(tmp_path / "master_ufos" / "GlyphsUnitTestSans.designspace"),
+            "-o",
+            "ttf",
+            "-i",
+            "Glyphs Unit Test Sans Extra Light",
+            "--output-path",
+            str(tmp_path / "instance_ttfs" / "GlyphsUnitTestSans-ExtraLight.ttf"),
+        ]
+    )
+
+    assert len(list((tmp_path / "instance_ttfs").glob("*.ttf"))) == 1
+    assert (tmp_path / "instance_ttfs" / "GlyphsUnitTestSans-ExtraLight.ttf").exists()
+
+    # build one {json,zip} UFO => OTF
+    ext = {"json": ".ufo.json", "zip": ".ufoz"}[ufo_structure]
+    fontmake.__main__.main(
+        [
+            str(tmp_path / "master_ufos" / f"GlyphsUnitTestSans-Regular{ext}"),
+            "-o",
+            "otf",
+            "--output-path",
+            str(tmp_path / "master_otfs" / "GlyphsUnitTestSans-Regular.otf"),
+        ]
+    )
+
+    assert len(list((tmp_path / "master_otfs").glob("*.otf"))) == 1
+    assert (tmp_path / "master_otfs" / "GlyphsUnitTestSans-Regular.otf").exists()

@@ -9,3 +9,6 @@ attrs==23.1.0
 cffsubr==0.2.9.post1
 compreffor==0.5.3
 ttfautohint-py==0.5.1
+
+# optional, for experimental reading/writing ufoLib2's UFO as json
+cattrs==23.1.2
