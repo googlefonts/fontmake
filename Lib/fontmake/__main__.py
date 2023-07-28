@@ -416,6 +416,12 @@ def main(args=None):
         help="Select UFO format structure. Choose between: %(choices)s "
         "(default: %(default)s). NOTE: json export is unofficial/experimental.",
     )
+    outputGroup.add_argument(
+        "--indent-json",
+        action="store_true",
+        help="Whether to format the JSON files created with --ufo-structure=json "
+        "as multiple lines with 2-space indentation. Default: single line, no indent.",
+    )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
     contourGroup.add_argument(
@@ -715,6 +721,7 @@ def main(args=None):
             inputs.format_name,
         )
         args.pop("ufo_structure", None)  # unused for UFO output
+        args.pop("indent_json", None)
         project.run_from_ufos(
             inputs.ufo_paths, is_instance=args.pop("masters_as_instances"), **args
         )

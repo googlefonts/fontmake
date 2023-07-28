@@ -145,14 +145,19 @@ class FontProject:
             Path(path).with_suffix(UFO_STRUCTURE_EXTENSIONS[ufo_structure])
         )
 
-    def save_ufo_as(self, font, path, ufo_structure="package"):
+    def save_ufo_as(self, font, path, ufo_structure="package", indent_json=False):
         try:
             path = _ensure_parent_dir(path)
             if ufo_structure == "json":
                 with open(path, "wb") as f:
-                    # TODO: make indentation optional?
                     # pylint: disable=no-member
-                    font.json_dump(f, indent=2)  # type: ignore
+                    font.json_dump(
+                        f,
+                        # orjson only supports either 2 or none
+                        indent=2 if indent_json else None,
+                        # makes output deterministic
+                        sort_keys=True,
+                    )  # type: ignore
             else:
                 font.save(
                     path,
@@ -175,6 +180,7 @@ class FontProject:
         write_skipexportglyphs=True,
         generate_GDEF=True,
         ufo_structure="package",
+        indent_json=False,
         glyph_data=None,
         save_ufos=True,
     ):
@@ -252,7 +258,7 @@ class FontProject:
         if save_ufos:
             for ufo_path, ufo in masters.items():
                 logger.info("Saving %s", ufo_path)
-                self.save_ufo_as(ufo, ufo_path, ufo_structure)
+                self.save_ufo_as(ufo, ufo_path, ufo_structure, indent_json)
 
         return designspace
 
@@ -858,6 +864,7 @@ class FontProject:
             write_skipexportglyphs=write_skipexportglyphs,
             generate_GDEF=generate_GDEF,
             ufo_structure=kwargs.get("ufo_structure"),
+            indent_json=kwargs.get("indent_json"),
             glyph_data=glyph_data,
             save_ufos=save_ufos,
         )
@@ -913,6 +920,7 @@ class FontProject:
         expand_features_to_instances=False,
         fea_include_dir=None,
         ufo_structure="package",
+        indent_json=False,
         save_ufos=True,
         output_path=None,
         output_dir=None,
@@ -1000,7 +1008,9 @@ class FontProject:
                             instance, designspace.path, output_dir, ufo_structure
                         )
                     logger.info("Saving %s", instance_path)
-                    self.save_ufo_as(instance.font, instance_path, ufo_structure)
+                    self.save_ufo_as(
+                        instance.font, instance_path, ufo_structure, indent_json
+                    )
                 elif instance.filename is not None:
                     # saving a UFO sets its path attribute; when saving the binary font
                     # compiled from this UFO, self._output_path() uses the ufo.path to
@@ -1171,6 +1181,7 @@ class FontProject:
         expand_features_to_instances=False,
         fea_include_dir=None,
         ufo_structure="package",
+        indent_json=False,
         output_path=None,
         output_dir=None,
         **kwargs,
@@ -1197,6 +1208,7 @@ class FontProject:
                     expand_features_to_instances=expand_features_to_instances,
                     fea_include_dir=fea_include_dir,
                     ufo_structure=ufo_structure,
+                    indent_json=indent_json,
                     save_ufos=save_ufos,
                     output_path=ufo_output_path,
                     output_dir=ufo_output_dir,

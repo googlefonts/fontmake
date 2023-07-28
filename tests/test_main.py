@@ -1210,3 +1210,32 @@ def test_main_build_from_custom_ufo_structure(data_dir, tmp_path, ufo_structure)
 
     assert len(list((tmp_path / "master_otfs").glob("*.otf"))) == 1
     assert (tmp_path / "master_otfs" / "GlyphsUnitTestSans-Regular.otf").exists()
+
+
+@pytest.mark.parametrize("indent_json", [False, True])
+def test_main_export_ufo_json_with_indentation(data_dir, tmp_path, indent_json):
+    pytest.importorskip("cattrs")
+
+    fontmake.__main__.main(
+        [
+            str(data_dir / "GlyphsUnitTestSans.glyphs"),
+            "-o",
+            "ufo",
+            "--output-dir",
+            str(tmp_path / "master_ufos"),
+            "--ufo-structure",
+            "json",
+            # makes Windows happy about relative instance.filename across drives
+            "--instance-dir",
+            str(tmp_path / "instance_ufos"),
+        ]
+        + (["--indent-json"] if indent_json else [])
+    )
+
+    regular_ufo = tmp_path / "master_ufos" / "GlyphsUnitTestSans-Regular.ufo.json"
+    assert (regular_ufo).exists()
+
+    if indent_json:
+        assert regular_ufo.read_text().startswith('{\n  "features"')
+    else:
+        assert regular_ufo.read_text().startswith('{"features"')
