@@ -37,6 +37,8 @@ extras_require = {
     # to avoid fontmake installation failing if requested
     "mutatormath": [],
     "autohint": ["ttfautohint-py>=0.5.0"],
+    # For reading/writing ufoLib2's .ufo.json files (cattrs + orjson)
+    "json": ["ufoLib2[json]"],
 }
 # use a special 'all' key as shorthand to includes all the extra dependencies
 extras_require["all"] = sum(extras_require.values(), [])

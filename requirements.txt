@@ -9,3 +9,13 @@ attrs==23.1.0
 cffsubr==0.2.9.post1
 compreffor==0.5.3
 ttfautohint-py==0.5.1
+
+# optional, for experimental reading/writing ufoLib2's UFO as json
+cattrs==23.1.2
+# orjson currently doesn't ship 32-bit wheels for Windows
+# https://github.com/ijl/orjson/issues/409
+# platform_machine environment marker returns 'AMD64' on Windows even if Python is 32-bit
+# so there's no way to tell pip to install orjson only on 64-bit Win Python; hence
+# don't install orjson on Windows (works fine without it using stdlib json module)
+# https://stackoverflow.com/a/75411662
+orjson==3.9.2; platform_python_implementation == 'CPython' and platform_system != 'Windows'

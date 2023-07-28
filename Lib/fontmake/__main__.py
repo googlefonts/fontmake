@@ -132,9 +132,7 @@ def parse_mutually_exclusive_inputs(parser, args):
             if designspace_path:
                 parser.error("Only one *.designspace source file is allowed")
             designspace_path = filename
-        elif (
-            os.path.normpath(filename).endswith(".ufo") and os.path.isdir(filename)
-        ) or (filename.endswith(".ufoz") and os.path.isfile(filename)):
+        elif filename.endswith((".ufo", ".ufoz", ".ufo.json")):
             ufo_paths.append(filename)
         else:
             parser.error(f"Unknown input file extension: {filename!r}")
@@ -144,6 +142,10 @@ def parse_mutually_exclusive_inputs(parser, args):
         parser.error("No input files specified")
     elif count > 1:
         parser.error(f"Expected 1, got {count} different types of inputs files")
+
+    for filename in [glyphs_path] + [designspace_path] + ufo_paths:
+        if filename is not None and not os.path.exists(filename):
+            parser.error(f"{filename} not found")
 
     format_name = (
         "Glyphs" if glyphs_path else "designspace" if designspace_path else "UFO"
@@ -398,14 +400,27 @@ def main(args=None):
         action="store_false",
         help="Do not auto-generate a GDEF table, but keep an existing one intact.",
     )
-    outputGroup.add_argument(
+
+    ufoStructureGroup = outputGroup.add_mutually_exclusive_group(required=False)
+    # kept for backward compat
+    ufoStructureGroup.add_argument(
         "--save-ufo-as-zip",
-        dest="ufo_structure",
-        action="store_const",
-        const="zip",
+        dest="save_ufo_as_zip",
+        action="store_true",
+        help="Deprecated. Use --ufo-structure=zip instead.",
+    )
+    ufoStructureGroup.add_argument(
+        "--ufo-structure",
         default="package",
-        help="Save UFOs as .ufoz format. Only valid when generating UFO masters "
-        "from glyphs source or interpolating UFO instances.",
+        choices=("package", "zip", "json"),
+        help="Select UFO format structure. Choose between: %(choices)s "
+        "(default: %(default)s). NOTE: json export is unofficial/experimental.",
+    )
+    outputGroup.add_argument(
+        "--indent-json",
+        action="store_true",
+        help="Whether to format the JSON files created with --ufo-structure=json "
+        "as multiple lines with 2-space indentation. Default: single line, no indent.",
     )
 
     contourGroup = parser.add_argument_group(title="Handling of contours")
@@ -632,6 +647,9 @@ def main(args=None):
     if specs is not None:
         args["filters"] = _loadFilters(parser, specs)
 
+    if args.pop("save_ufo_as_zip"):
+        args["ufo_structure"] = "zip"
+
     inputs = parse_mutually_exclusive_inputs(parser, args)
 
     if INTERPOLATABLE_OUTPUTS.intersection(args["output"]):
@@ -703,6 +721,7 @@ def main(args=None):
             inputs.format_name,
         )
         args.pop("ufo_structure", None)  # unused for UFO output
+        args.pop("indent_json", None)
         project.run_from_ufos(
             inputs.ufo_paths, is_instance=args.pop("masters_as_instances"), **args
         )
