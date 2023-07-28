@@ -128,6 +128,11 @@ class FontProject:
 
     def open_ufo(self, path):
         try:
+            path = Path(path)
+            if path.suffix == ".json":
+                with open(path, "rb") as f:
+                    # pylint: disable=no-member
+                    return ufoLib2.Font.json_load(f)  # type: ignore
             return ufoLib2.Font.open(path, validate=self.validate_ufo)
         except Exception as e:
             raise FontmakeError("Reading UFO source failed", path) from e
