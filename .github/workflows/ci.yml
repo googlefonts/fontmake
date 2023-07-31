@@ -96,18 +96,6 @@ jobs:
           echo "Tag does not contain pre-release suffix"
           echo "IS_PRERELEASE=false" >> "$GITHUB_ENV"
         fi
-    - name: Create GitHub release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        # This token is provided by Actions, you do not need to create your own token
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        body_path: "${{ runner.temp }}/release_notes.md"
-        draft: false
-        prerelease: ${{ env.IS_PRERELEASE }}
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
@@ -120,3 +108,10 @@ jobs:
         fi
         python setup.py sdist bdist_wheel
         twine upload dist/*
+    - name: Create GitHub release
+      id: create_release
+      uses: ncipollo/release-action@v1
+      with:
+        bodyFile: "${{ runner.temp }}/release_notes.md"
+        draft: false
+        prerelease: ${{ env.IS_PRERELEASE }}
