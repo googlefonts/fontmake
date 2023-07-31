@@ -27,7 +27,7 @@ from ufo2ft.filters import loadFilterFromString
 
 from fontmake import __version__
 from fontmake.errors import FontmakeError
-from fontmake.font_project import INTERPOLATABLE_OUTPUTS, FontProject
+from fontmake.font_project import INTERPOLATABLE_OUTPUTS, CurveConversion, FontProject
 
 
 def _loadPlugins(parser, specs, from_string_func, parser_error_message):
@@ -445,6 +445,17 @@ def main(args=None):
         action="store_false",
         help="Do not reverse contour direction when output is ttf or "
         "ttf-interpolatable",
+    )
+    contourGroup.add_argument(
+        "--ttf-curves",
+        dest="ttf_curves",
+        default=CurveConversion.default().value,
+        choices=[e.value for e in CurveConversion],
+        help="Controls conversion of cubic Bézier curves to TrueType quadratic splines."
+        " By default ('cu2qu'), all cubics are converted to quadratic (glyf v0). With"
+        " 'mixed', cubics are converted to quadratic only when more economical."
+        " If 'keep-quad' or 'keep-cubic', cu2qu is skipped altogether and curves are"
+        " compiled unchanged. NOTE: cubics in TTF use glyf v1 which is still draft!",
     )
     contourGroup.add_argument(
         "-e",
