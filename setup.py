@@ -62,7 +62,7 @@ setup(
         "fonttools[ufo,lxml,unicode]>=4.41.1 ; implementation_name == 'cpython'",
         "fonttools[ufo,unicode]>=4.41.1 ; implementation_name != 'cpython'",
         "glyphsLib>=6.2.5",
-        "ufo2ft[compreffor]>=2.32.0",
+        "ufo2ft[compreffor]>=2.33.2",
         "fontMath>=0.9.3",
         "ufoLib2>=0.16.0",
         "attrs>=19",
