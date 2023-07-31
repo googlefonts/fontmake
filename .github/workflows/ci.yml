@@ -109,7 +109,7 @@ jobs:
         python setup.py sdist bdist_wheel
         twine upload dist/*
     - name: Create .pyz
-      # currently this only builds a self-contained zip app for macOS python 3.11 only
+      # currently this only builds a self-contained zip app for macOS python 3.11
       # to be used for fontmake export plugin for Glyphs.app
       run: ./build_pyz.sh
     - name: Create GitHub release
@@ -119,4 +119,4 @@ jobs:
         bodyFile: "${{ runner.temp }}/release_notes.md"
         draft: false
         prerelease: ${{ env.IS_PRERELEASE }}
-        artifacts: "shiv/*.zip"
+        artifacts: "shivs/*.zip"
