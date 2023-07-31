@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import enum
 import glob
 import logging
 import math
@@ -83,6 +84,35 @@ UFO_STRUCTURE_EXTENSIONS = {
     "zip": ".ufoz",
     "json": ".ufo.json",
 }
+
+
+class CurveConversion(enum.Enum):
+    # convert all cubic Bezier curves to quadratic splines: glyf format 0
+    ALL_CUBIC_TO_QUAD = "cu2qu"
+    # convert cubic curves to quadratic when more economical: glyf format 1
+    MIXED_CUBIC_TO_QUAD = "mixed"
+    # skip conversion, treat original curves as quadratic: glyf format 0
+    KEEP_QUAD = "keep-quad"
+    # skip conversion, treat original curves as cubic or mixed: glyf format 1
+    KEEP_CUBIC = "keep-cubic"
+
+    @classmethod
+    def default(cls):
+        return cls.ALL_CUBIC_TO_QUAD
+
+    @property
+    def convertCubics(self):
+        return self in (
+            CurveConversion.ALL_CUBIC_TO_QUAD,
+            CurveConversion.MIXED_CUBIC_TO_QUAD,
+        )
+
+    @property
+    def allQuadratic(self):
+        return self in (
+            CurveConversion.ALL_CUBIC_TO_QUAD,
+            CurveConversion.KEEP_QUAD,
+        )
 
 
 def needs_subsetting(ufo):
@@ -295,6 +325,7 @@ class FontProject:
         ttf,
         use_production_names=None,
         reverse_direction=True,
+        ttf_curves=CurveConversion.ALL_CUBIC_TO_QUAD,
         conversion_error=None,
         feature_writers=None,
         cff_round_tolerance=None,
@@ -306,10 +337,13 @@ class FontProject:
         **kwargs,
     ):
         if ttf:
+            ttf_curves = CurveConversion(ttf_curves)
             return ufo2ft.compileInterpolatableTTFsFromDS(
                 designspace,
                 useProductionNames=use_production_names,
                 reverseDirection=reverse_direction,
+                convertCubics=ttf_curves.convertCubics,
+                allQuadratic=ttf_curves.allQuadratic,
                 cubicConversionError=conversion_error,
                 featureWriters=feature_writers,
                 debugFeatureFile=debug_feature_file,
@@ -354,6 +388,7 @@ class FontProject:
         optimize_cff=CFFOptimization.SPECIALIZE,
         use_production_names=None,
         reverse_direction=True,
+        ttf_curves=CurveConversion.ALL_CUBIC_TO_QUAD,
         conversion_error=None,
         feature_writers=None,
         cff_round_tolerance=None,
@@ -411,10 +446,13 @@ class FontProject:
         )
 
         if ttf:
+            ttf_curves = CurveConversion(ttf_curves)
             fonts = ufo2ft.compileVariableTTFs(
                 designspace,
                 featureWriters=feature_writers,
                 useProductionNames=use_production_names,
+                convertCubics=ttf_curves.convertCubics,
+                allQuadratic=ttf_curves.allQuadratic,
                 cubicConversionError=conversion_error,
                 reverseDirection=reverse_direction,
                 optimizeGvar=optimize_gvar,
@@ -456,7 +494,9 @@ class FontProject:
             compile_func, fmt = ufo2ft.compileTTF, "TTF"
         else:
             for key in (
+                "convertCubics",
                 "cubicConversionError",
+                "allQuadratic",
                 "reverseDirection",
                 "flattenComponents",
                 "autoUseMyMetrics",
@@ -493,6 +533,7 @@ class FontProject:
         remove_overlaps=True,
         overlaps_backend=None,
         reverse_direction=True,
+        ttf_curves=CurveConversion.ALL_CUBIC_TO_QUAD,
         conversion_error=None,
         feature_writers=None,
         interpolate_layout_from=None,
@@ -540,6 +581,8 @@ class FontProject:
                 either "booleanOperations" (default) or "pathops".
             reverse_direction: If True, reverse contour directions when
                 compiling TrueType outlines.
+            ttf_curves: Choose between "cu2qu" (default), "mixed", "keep-quad" or
+                "keep-cubic". NOTE: cubics in TTF use glyf v1 which is still draft!
             conversion_error: Error to allow when converting cubic CFF contours
                 to quadratic TrueType contours.
             feature_writers: list of ufo2ft-compatible feature writer classes
@@ -573,6 +616,8 @@ class FontProject:
 
         if output_path is not None and len(ufos) > 1:
             raise ValueError("output_path requires a single input")
+
+        ttf_curves = CurveConversion(ttf_curves)
 
         if subroutinize is not None:
             import warnings
@@ -613,6 +658,8 @@ class FontProject:
             roundTolerance=cff_round_tolerance,
             useProductionNames=use_production_names,
             reverseDirection=reverse_direction,
+            convertCubics=ttf_curves.convertCubics,
+            allQuadratic=ttf_curves.allQuadratic,
             cubicConversionError=conversion_error,
             featureWriters=feature_writers,
             debugFeatureFile=debug_feature_file,
