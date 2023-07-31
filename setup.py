@@ -27,21 +27,59 @@ wheel = ["wheel"] if needs_wheel else []
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
+
+dep_versions = {
+    "attrs": ">=19",
+    "fontMath": ">=0.9.3",
+    "fonttools": ">=4.41.1",
+    "glyphsLib": ">=6.2.5",
+    "ufo2ft": ">=2.33.2",
+    "ufoLib2": ">=0.16.0",
+}
+
+dep_extras = {
+    "fonttools": {
+        "implementation_name == 'cpython'": "ufo,lxml,unicode",
+        "implementation_name != 'cpython'": "ufo,unicode",
+    },
+    "ufo2ft": "compreffor",
+}
+
 extras_require = {
     "pathops": ["skia-pathops>=0.3.0"],
     # this is now default; kept here for backward compatibility
-    "lxml": [
-        # "lxml>=4.2.4",
-    ],
+    "lxml": [],
     # MutatorMath is no longer supported but a dummy extras is kept below
     # to avoid fontmake installation failing if requested
     "mutatormath": [],
     "autohint": ["ttfautohint-py>=0.5.0"],
     # For reading/writing ufoLib2's .ufo.json files (cattrs + orjson)
-    "json": ["ufoLib2[json]"],
+    "json": [f"ufoLib2[json]{dep_versions['ufoLib2']}"],
+    # For compiling GPOS/GSUB using the harfbuzz repacker
+    "repacker": [
+        f"fonttools[{extras},repacker]{dep_versions['fonttools']}; {marker}"
+        for marker, extras in dep_extras["fonttools"].items()
+    ],
 }
 # use a special 'all' key as shorthand to includes all the extra dependencies
 extras_require["all"] = sum(extras_require.values(), [])
+
+install_requires = [
+    f"{name}{version}"
+    for name, version in dep_versions.items()
+    if name not in dep_extras
+]
+for name, extras in dep_extras.items():
+    if isinstance(extras, dict):
+        for marker, extras in extras.items():
+            install_requires.append(
+                f"{name}[{extras}]{dep_versions[name]}; {marker}"
+            )
+    elif isinstance(extras, str):
+        install_requires.append(f"{name}[{extras}]{dep_versions[name]}")
+    else:
+        raise TypeError(type(extras))
+
 
 setup(
     name="fontmake",
@@ -58,15 +96,7 @@ setup(
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
     python_requires=">=3.8",
-    install_requires=[
-        "fonttools[ufo,lxml,unicode]>=4.41.1 ; implementation_name == 'cpython'",
-        "fonttools[ufo,unicode]>=4.41.1 ; implementation_name != 'cpython'",
-        "glyphsLib>=6.2.5",
-        "ufo2ft[compreffor]>=2.33.2",
-        "fontMath>=0.9.3",
-        "ufoLib2>=0.16.0",
-        "attrs>=19",
-    ],
+    install_requires=install_requires,
     extras_require=extras_require,
     classifiers=[
         "Development Status :: 4 - Beta",
