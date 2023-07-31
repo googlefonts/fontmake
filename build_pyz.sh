@@ -5,7 +5,7 @@ set -x
 
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-PLATFORMS=(macosx_11_0_universal2 win_amd64)
+PLATFORMS=(macosx_11_0_universal2)  # win_amd64)
 PYTHON_VERSIONS=(3.11)
 FONTMAKE_VERSION="$(python setup.py --version)"
 
