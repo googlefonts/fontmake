@@ -71,8 +71,8 @@ install_requires = [
 ]
 for name, extras in dep_extras.items():
     if isinstance(extras, dict):
-        for marker, extras in extras.items():
-            install_requires.append(f"{name}[{extras}]{dep_versions[name]}; {marker}")
+        for marker, ext in extras.items():
+            install_requires.append(f"{name}[{ext}]{dep_versions[name]}; {marker}")
     elif isinstance(extras, str):
         install_requires.append(f"{name}[{extras}]{dep_versions[name]}")
     else:
