@@ -910,7 +910,7 @@ class FontProject:
             mti_source=mti_source,
             write_skipexportglyphs=write_skipexportglyphs,
             generate_GDEF=generate_GDEF,
-            ufo_structure=kwargs.get("ufo_structure"),
+            ufo_structure=kwargs.get("ufo_structure", "package"),
             indent_json=kwargs.get("indent_json"),
             glyph_data=glyph_data,
             save_ufos=save_ufos,
