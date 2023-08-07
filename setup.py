@@ -86,36 +86,9 @@ setup(
         "Compile fonts from sources (UFO, Glyphs) to binary (OpenType, TrueType)."
     ),
     long_description=long_description,
-    author=(
-        "fontmake authors and contributors:"
-        " James Godfrey-kittle,"
-        " Cosimo Lupo ,"
-        " Felipe Sanches,"
-        " Nikolaus Waxweiler,"
-        " Yanone ,"
-        " Behdad Esfahbod,"
-        "Jany Belluz ,"
-        " Khaled Hosny,"
-        " Just Van Rossum,"
-        " Marc Foley,"
-        "Dave Crossland ,"
-        "Misha Brukman,"
-        "Pyup-bot, "
-        "Dennis Moyogo Jacquerye,"
-        "Simon Cozens,"
-        "NFSL2001,"
-        "Bo Song,"
-        "Sascha Brawer,"
-        "Antonio Cavedoni,"
-        "Adam Twardoch,"
-        "Fabian Greffrath,"
-        "Thomas Rettig,"
-        "Chris Simpkins,"
-        "Adrien Tetar"
-    ),
-
-
-    
+    author="James Godfrey-kittle",
+    maintainer=" Cosimo Lupo",
+   
     long_description_content_type="text/markdown",
     url="https://github.com/googlei18n/fontmake",
     license="Apache Software License 2.0",
