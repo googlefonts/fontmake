@@ -18,4 +18,4 @@ cattrs==23.1.2
 # so there's no way to tell pip to install orjson only on 64-bit Win Python; hence
 # don't install orjson on Windows (works fine without it using stdlib json module)
 # https://stackoverflow.com/a/75411662
-orjson==3.9.2; platform_python_implementation == 'CPython' and platform_system != 'Windows'
+orjson==3.9.3
