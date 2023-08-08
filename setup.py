@@ -87,7 +87,7 @@ setup(
     ),
     long_description=long_description,
     author="James Godfrey-kittle",
-    maintainer=" Cosimo Lupo",
+    maintainer="Cosimo Lupo",
     maintainer_email="cosimo@anthrotype.com",
     long_description_content_type="text/markdown",
     url="https://github.com/googlei18n/fontmake",
