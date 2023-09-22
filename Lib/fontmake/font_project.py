@@ -19,9 +19,11 @@ import glob
 import logging
 import math
 import os
+import platform
 import shutil
 import tempfile
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path
 from re import fullmatch
@@ -286,9 +288,17 @@ class FontProject:
             designspace.path = designspace_path
 
         if save_ufos:
-            for ufo_path, ufo in masters.items():
+            def save_ufo(args):
+                ufo_path, ufo = args
                 logger.info("Saving %s", ufo_path)
                 self.save_ufo_as(ufo, ufo_path, ufo_structure, indent_json)
+
+            if platform.machine() == "wasm32":
+                for args in masters.items():
+                    save_ufo(args)
+            else:
+                with ThreadPoolExecutor() as executor:
+                    list(executor.map(save_ufo, masters.items()))
 
         return designspace
 
