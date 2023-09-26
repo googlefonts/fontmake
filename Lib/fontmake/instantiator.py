@@ -173,9 +173,7 @@ def process_rules_swaps(rules, location, glyphNames):
                 swap_exists = pair in swaps
                 if swap_exists:
                     logging.warning(
-                        "Duplicate rule for %s in location %s",
-                        pair,
-                        location
+                        "Duplicate rule for %s in location %s", pair, location
                     )
                 if oldName in glyphNames and not swap_exists:
                     swaps.append(pair)
