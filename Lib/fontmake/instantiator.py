@@ -169,7 +169,15 @@ def process_rules_swaps(rules, location, glyphNames):
                 # then it's better to error out later when we try to swap,
                 # instead of silently ignoring the rule here.
                 # Also checking for duplication of rules by oldName here:
-                if oldName in glyphNames and oldName not in [swap[0] for swap in swaps]:
+                oldName_exists = oldName in [swap[0] for swap in swaps]
+                if oldName_exists:
+                    logging.warning(
+                        "Duplicate rule for %s in location %s: %s",
+                        (oldName, newName),
+                        location,
+                        swaps[[swap[0] for swap in swaps].index(oldName)]
+                    )
+                if oldName in glyphNames and not oldName_exists:
                     swaps.append((oldName, newName))
     return swaps
 
