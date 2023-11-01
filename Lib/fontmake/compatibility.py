@@ -48,15 +48,15 @@ class CompatibilityChecker:
         )
         # Context for contextual anchors
         libs = [g.lib for g in glyphs]
-        for ix, anchors in enumerate(zip(*anchors)):
-            if anchors[0].name[0] == "*":
+        for each_anchors in zip(*anchors):
+            if each_anchors[0].name[0] == "*":
                 objectlibs = [
                     libs[font_ix]
                     .get("public.objectLibs", {})
                     .get(anchor.identifier, {})
-                    for font_ix, anchor in enumerate(anchors)
+                    for font_ix, anchor in enumerate(each_anchors)
                 ]
-                with Context(self, f"anchor {anchors[0].name}"):
+                with Context(self, f"anchor {each_anchors[0].name}"):
                     self.ensure_all_same(
                         lambda lib: lib.get("GPOS_Context", "None").strip(),
                         objectlibs,
