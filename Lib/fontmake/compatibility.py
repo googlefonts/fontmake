@@ -46,6 +46,22 @@ class CompatibilityChecker:
             anchors,
             "anchors",
         )
+        # Context for contextual anchors
+        libs = [g.lib for g in glyphs]
+        for each_anchors in zip(*anchors):
+            if each_anchors[0].name[0] == "*":
+                objectlibs = [
+                    libs[font_ix]
+                    .get("public.objectLibs", {})
+                    .get(anchor.identifier, {})
+                    for font_ix, anchor in enumerate(each_anchors)
+                ]
+                with Context(self, f"anchor {each_anchors[0].name}"):
+                    self.ensure_all_same(
+                        lambda lib: lib.get("GPOS_Context", "None").strip(),
+                        objectlibs,
+                        "GPOS context",
+                    )
 
         components = [g.components for g in glyphs]
         if self.ensure_all_same(len, components, "number of components"):
@@ -68,14 +84,17 @@ class CompatibilityChecker:
         if len(values) < 2:
             logger.debug(f"All fonts had same {what} in {context}")
             return True
-        logger.error(f"Fonts had differing {what} in {context}:")
+        report = f"\nFonts had differing {what} in {context}:\n"
         debug_enabled = logger.isEnabledFor(logging.DEBUG)
         for value, fonts in values.items():
             if debug_enabled or len(fonts) <= 6:
                 key = ", ".join(fonts)
             else:
                 key = f"{len(fonts)} fonts"
-            logger.error(f" * {key} had {value}")
+            if len(str(value)) > 20:
+                value = "\n    " + str(value)
+            report += f" * {key} had: {value}\n"
+        logger.error(report)
         self.okay = False
         return False
 
