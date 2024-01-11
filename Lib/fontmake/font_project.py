@@ -398,6 +398,7 @@ class FontProject:
         filters=None,
         auto_use_my_metrics=True,
         drop_implied_oncurves=False,
+        variable_features=True,
         **kwargs,
     ):
         """Build OpenType variable fonts from masters in a designspace."""
@@ -464,6 +465,7 @@ class FontProject:
                 variableFontNames=list(vf_name_to_output_path),
                 autoUseMyMetrics=auto_use_my_metrics,
                 dropImpliedOnCurves=drop_implied_oncurves,
+                variableFeatures=variable_features,
             )
         else:
             fonts = ufo2ft.compileVariableCFF2s(
@@ -477,6 +479,7 @@ class FontProject:
                 filters=filters,
                 inplace=True,
                 variableFontNames=list(vf_name_to_output_path),
+                variableFeatures=variable_features,
             )
 
         for name, font in fonts.items():
@@ -1086,6 +1089,7 @@ class FontProject:
         interpolate_binary_layout=False,
         round_instances=False,
         feature_writers=None,
+        variable_features=True,
         filters=None,
         expand_features_to_instances=False,
         check_compatibility=None,
@@ -1204,6 +1208,7 @@ class FontProject:
                     variable_fonts=variable_fonts,
                     feature_writers=feature_writers,
                     filters=filters,
+                    variable_features=variable_features,
                     **kwargs,
                 )
         except FontmakeError as e:
@@ -1293,6 +1298,7 @@ class FontProject:
         designspace,
         outputs,
         variable_fonts: str = ".*",
+        variable_features=True,
         output_path=None,
         output_dir=None,
         **kwargs,
@@ -1303,6 +1309,7 @@ class FontProject:
             self.build_variable_fonts(
                 designspace,
                 variable_fonts=variable_fonts,
+                variable_features=variable_features,
                 output_path=output_path,
                 output_dir=output_dir,
                 **kwargs,
@@ -1316,6 +1323,7 @@ class FontProject:
             self.build_variable_fonts(
                 designspace,
                 variable_fonts=variable_fonts,
+                variable_features=variable_features,
                 output_path=output_path,
                 output_dir=output_dir,
                 ttf=False,
