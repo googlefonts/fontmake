@@ -583,6 +583,16 @@ def main(args=None):
             "features (kern, mark, mkmk, etc.)."
         ),
     )
+    layoutGroup.add_argument(
+        "--no-variable-features",
+        action="store_false",
+        dest="variable_features",
+        help=(
+            "Disable generation of variable FEA in ufo2ft when compiling VFs; "
+            "instead build separate OT layout tables for each master and merge "
+            "them with varLib."
+        ),
+    )
 
     feaCompilerGroup = layoutGroup.add_mutually_exclusive_group(required=False)
     feaCompilerGroup.add_argument(
@@ -680,7 +690,7 @@ def main(args=None):
         exclude_args(
             parser,
             args,
-            ["variable_fonts", "optimize_gvar"],
+            ["variable_fonts", "optimize_gvar", "variable_features"],
             "static output",
             positive=False,
         )
