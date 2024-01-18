@@ -32,7 +32,7 @@ dep_versions = {
     "attrs": ">=19",
     "fontMath": ">=0.9.3",
     "fonttools": ">=4.47.2",
-    "glyphsLib": ">=6.6.0",
+    "glyphsLib": ">=6.6.1",
     "ufo2ft": ">=2.33.4,<3",
     "ufoLib2": ">=0.16.0",
 }
