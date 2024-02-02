@@ -252,13 +252,17 @@ class Instantiator:
                     "corresponding glyphs in the default source.",
                     source.name,
                     source.filename,
-                    f" [layer: {source.layerName}]"
-                    if non_default_layer_name is not None
-                    else "",
+                    (
+                        f" [layer: {source.layerName}]"
+                        if non_default_layer_name is not None
+                        else ""
+                    ),
                     ", ".join(sorted(diff_names)[0:max_diff_glyphs]),
-                    f"... ({len(diff_names)} total)"
-                    if len(diff_names) > max_diff_glyphs
-                    else "",
+                    (
+                        f"... ({len(diff_names)} total)"
+                        if len(diff_names) > max_diff_glyphs
+                        else ""
+                    ),
                 )
 
         # Construct Variators

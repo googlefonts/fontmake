@@ -701,11 +701,15 @@ class FontProject:
                 (
                     None
                     if autohint is False
-                    else ""  # use default options if autohint=True
-                    if autohint is True
-                    else autohint
-                    if autohint is not None
-                    else ufo.lib.get(AUTOHINTING_PARAMETERS)
+                    else (
+                        ""  # use default options if autohint=True
+                        if autohint is True
+                        else (
+                            autohint
+                            if autohint is not None
+                            else ufo.lib.get(AUTOHINTING_PARAMETERS)
+                        )
+                    )
                 )
                 if ttf
                 else None
