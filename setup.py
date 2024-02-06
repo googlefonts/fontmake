@@ -31,9 +31,9 @@ with open("README.md", "r", encoding="utf-8") as f:
 dep_versions = {
     "attrs": ">=19",
     "fontMath": ">=0.9.3",
-    "fonttools": ">=4.47.2",
-    "glyphsLib": ">=6.6.1",
-    "ufo2ft": ">=3.0.0a1",
+    "fonttools": ">=4.48.1",
+    "glyphsLib": ">=6.6.3",
+    "ufo2ft": ">=3.0.0",
     "ufoLib2": ">=0.16.0",
 }
 
