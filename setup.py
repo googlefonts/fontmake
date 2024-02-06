@@ -33,7 +33,7 @@ dep_versions = {
     "fontMath": ">=0.9.3",
     "fonttools": ">=4.48.1",
     "glyphsLib": ">=6.6.3",
-    "ufo2ft": ">=3.0.0",
+    "ufo2ft": ">=3.0.1",
     "ufoLib2": ">=0.16.0",
 }
 
