@@ -3,4 +3,4 @@
 This alias is only kept for backward compatibility.
 """
 
-from ufo2ft.instantiator import *
+from ufo2ft.instantiator import *  # noqa: F403, F401
