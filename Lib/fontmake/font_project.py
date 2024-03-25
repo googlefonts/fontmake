@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import enum
 import glob
 import logging
@@ -26,7 +27,6 @@ from functools import partial
 from pathlib import Path
 from re import fullmatch
 
-import attr
 import ufo2ft
 import ufo2ft.errors
 import ufoLib2
@@ -37,13 +37,12 @@ from fontTools.misc.loggingTools import Timer
 from fontTools.misc.plistlib import load as readPlist
 from fontTools.ttLib import TTFont
 from fontTools.varLib.interpolate_layout import interpolate_layout
-from ufo2ft import CFFOptimization
+from ufo2ft import CFFOptimization, instantiator
 from ufo2ft.featureCompiler import parseLayoutFeatures
 from ufo2ft.featureWriters import FEATURE_WRITERS_KEY, loadFeatureWriters
 from ufo2ft.filters import FILTERS_KEY, loadFilters
 from ufo2ft.util import makeOfficialGlyphOrder
 
-from fontmake import instantiator
 from fontmake.compatibility import CompatibilityChecker
 from fontmake.errors import FontmakeError, TTFAError
 from fontmake.ttfautohint import ttfautohint
@@ -1021,7 +1020,7 @@ class FontProject:
                 fea_txt = parseLayoutFeatures(
                     subDoc.default.font, includeDir=fea_include_dir
                 ).asFea()
-                generator = attr.evolve(generator, copy_feature_text=fea_txt)
+                generator = dataclasses.replace(generator, copy_feature_text=fea_txt)
 
             for instance in subDoc.instances:
                 # Skip instances that have been set to non-export in Glyphs, stored as the

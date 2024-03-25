@@ -29,7 +29,6 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 
 dep_versions = {
-    "attrs": ">=19",
     "fontMath": ">=0.9.3",
     "fonttools": ">=4.48.1",
     "glyphsLib": ">=6.6.3",
