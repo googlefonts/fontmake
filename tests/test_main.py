@@ -11,6 +11,7 @@ import fontTools.ttLib
 import pytest
 import ufoLib2
 from fontTools.misc.testTools import getXML
+from ufo2ft.util import zip_strict
 
 import fontmake.__main__
 
@@ -1239,3 +1240,119 @@ def test_main_export_ufo_json_with_indentation(data_dir, tmp_path, indent_json):
         assert regular_ufo.read_text().startswith('{\n  "features"')
     else:
         assert regular_ufo.read_text().startswith('{"features"')
+
+
+def assert_tuple_variation_regions(tvs, expected_regions):
+    for tv, expected_region in zip_strict(tvs, expected_regions):
+        assert set(tv.axes.keys()) == set(expected_region.keys())
+        for axis in tv.axes:
+            assert tv.axes[axis] == pytest.approx(expected_region[axis], rel=1e-3)
+
+
+def test_main_sparse_composite_glyphs_variable_ttf(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(data_dir / "IntermediateComponents.glyphs"),
+            "-o",
+            "variable",
+            "--output-path",
+            str(tmp_path / "IntermediateComponents-VF.ttf"),
+            "--no-production-names",
+        ]
+    )
+
+    vf = fontTools.ttLib.TTFont(tmp_path / "IntermediateComponents-VF.ttf")
+    assert [a.axisTag for a in vf["fvar"].axes] == ["wght"]
+    glyf = vf["glyf"]
+    gvar = vf["gvar"]
+
+    # 'aacute' defines more masters than its components; no problem
+    aacute = glyf["aacute"]
+    assert aacute.isComposite()
+    assert [c.glyphName for c in aacute.components] == ["a", "acutecomb"]
+    assert_tuple_variation_regions(
+        gvar.variations["aacute"],
+        [{"wght": (0.0, 0.2, 1.0)}, {"wght": (0.2, 1.0, 1.0)}],
+    )
+    assert_tuple_variation_regions(gvar.variations["a"], [{"wght": (0.0, 1.0, 1.0)}])
+    assert_tuple_variation_regions(
+        gvar.variations["acutecomb"], [{"wght": (0.0, 1.0, 1.0)}]
+    )
+
+    # other composites that use 'aacute' as component don't need additional masters
+    # as long as they stay composite
+    aacutecommaaccent = glyf["aacutecommaaccent"]
+    assert aacutecommaaccent.isComposite()
+    assert [c.glyphName for c in aacutecommaaccent.components] == [
+        "aacute",
+        "commaaccentcomb",
+    ]
+    for name in ("aacutecommaaccent", "commaaccentcomb"):
+        assert_tuple_variation_regions(
+            gvar.variations[name], [{"wght": (0.0, 1.0, 1.0)}]
+        )
+
+    # 'i' gets decomposed to simple glyph because it originally had a mix of contour
+    # and component ('idotless'); it also inherits an additional master from the latter
+    i = glyf["i"]
+    assert i.numberOfContours == 2
+    idotless = glyf["idotless"]
+    assert idotless.numberOfContours == 1
+    for name in ("i", "idotless"):
+        assert_tuple_variation_regions(
+            gvar.variations[name],
+            [
+                {"wght": (0.0, 0.6, 1.0)},
+                {"wght": (0.6, 1.0, 1.0)},
+            ],
+        )
+
+    # but 'iacute' and 'imacron' using 'idotless' as a component don't need to be
+    # decomposed, nor do they inherit any additional master
+    for name in ("iacute", "imacron"):
+        glyph = glyf[name]
+        assert "idotless" in {c.glyphName for c in glyph.components}
+        assert glyph.isComposite()
+        assert_tuple_variation_regions(
+            gvar.variations[name], [{"wght": (0.0, 1.0, 1.0)}]
+        )
+
+    # nor does 'iacutecedilla' which uses 'iacute' as components
+    iacutecedilla = glyf["iacutecedilla"]
+    assert iacutecedilla.isComposite()
+    assert [c.glyphName for c in iacutecedilla.components] == ["iacute", "cedillacomb"]
+    for name in ("iacutecedilla", "iacute", "cedillacomb"):
+        assert_tuple_variation_regions(
+            gvar.variations[name], [{"wght": (0.0, 1.0, 1.0)}]
+        )
+
+    # 'nmacronbelow' is similar to 'aacute', defines more masters than its components
+    nmacronbelow = glyf["nmacronbelow"]
+    assert nmacronbelow.isComposite()
+    assert [c.glyphName for c in nmacronbelow.components] == ["n", "macronbelowcomb"]
+    assert_tuple_variation_regions(
+        gvar.variations["nmacronbelow"],
+        [
+            {"wght": (0.0, 0.4, 1.0)},
+            {"wght": (0.4, 1.0, 1.0)},
+        ],
+    )
+    assert_tuple_variation_regions(gvar.variations["n"], [{"wght": (0.0, 1.0, 1.0)}])
+    assert_tuple_variation_regions(
+        gvar.variations["macronbelowcomb"], [{"wght": (0.0, 1.0, 1.0)}]
+    )
+
+    # 'aacutecedilla' originally comprised 'aacute' and 'cedillacomb' components, but
+    # since the latter had a 2x2 transform in one intermediate master only (wght=0.4),
+    # it gets decomposed; it also inherits the additional master from 'aacute' (wght=0.2)
+    aacutecedilla = glyf["aacutecedilla"]
+    assert aacutecedilla.numberOfContours == 4
+    assert_tuple_variation_regions(
+        gvar.variations["aacutecedilla"],
+        [
+            {"wght": (0.0, 0.2, 1.0)},
+            {"wght": (0.2, 0.4, 1.0)},
+            {"wght": (0.4, 1.0, 1.0)},
+        ],
+    )
