@@ -1356,3 +1356,125 @@ def test_main_sparse_composite_glyphs_variable_ttf(data_dir, tmp_path):
             {"wght": (0.4, 1.0, 1.0)},
         ],
     )
+
+
+def test_main_sparse_composite_glyphs_variable_cff2(data_dir, tmp_path):
+    # CFF/CFF2 have no concept of 'components' in the TrueType sense, so all glyphs
+    # will be decomposed into contours
+    fontmake.__main__.main(
+        [
+            "-g",
+            str(data_dir / "IntermediateComponents.glyphs"),
+            "-o",
+            "variable-cff2",
+            "--output-path",
+            str(tmp_path / "IntermediateComponents-VF.otf"),
+            "--no-production-names",
+        ]
+    )
+
+    vf = fontTools.ttLib.TTFont(tmp_path / "IntermediateComponents-VF.otf")
+    axes = vf["fvar"].axes
+    assert [a.axisTag for a in axes] == ["wght"]
+
+    font = vf["CFF2"].cff
+    font.desubroutinize()
+    top_dict = font.topDictIndex[0]
+    varstore = top_dict.VarStore.otVarStore
+    vardata = varstore.VarData
+    regions = varstore.VarRegionList.Region
+    charstrings = top_dict.CharStrings
+
+    def assert_charstring_regions(charstring, expected_regions):
+        vsindex = 0
+        for i, token in enumerate(charstring.program):
+            if token == "vsindex":
+                vsindex = charstring.program[i - 1]
+                break
+        cs_regions = [
+            regions[ri].get_support(axes) for ri in vardata[vsindex].VarRegionIndex
+        ]
+        for cs_region, expected_region in zip_strict(cs_regions, expected_regions):
+            assert set(cs_region.keys()) == set(expected_region.keys())
+            for axis in cs_region:
+                assert cs_region[axis] == pytest.approx(expected_region[axis], rel=1e-3)
+
+    # 'aacute' defines an extra intermediate master not present in 'a' or 'acutecomb',
+    # these get interpolated on the fly as 'aacute' gets decomposed; all other composite
+    # glyphs in turn using 'aacute' will similarly gain the extra master
+    for name in ("a", "acutecomb"):
+        assert_charstring_regions(charstrings[name], [{"wght": (0.0, 1.0, 1.0)}])
+    for name in ("aacute", "aacutecommaaccent", "aacutecommaaccentcedilla"):
+        assert_charstring_regions(
+            charstrings[name],
+            [
+                {"wght": (0.0, 0.2, 1.0)},
+                {"wght": (0.2, 1.0, 1.0)},
+            ],
+        )
+    # 'idotless' "infects" all the composite glyphs using it as a component with its
+    # extra master
+    for name in (
+        "idotless",
+        "i",
+        "iacute",
+        "iacutecedilla",
+        "icedilla",
+        "icommaaccent",
+    ):
+        assert_charstring_regions(
+            charstrings[name],
+            [
+                {"wght": (0.0, 0.6, 1.0)},
+                {"wght": (0.6, 1.0, 1.0)},
+            ],
+        )
+    # 'imacron' etc. inherit extra masters from both 'idotless' and 'macroncomb'
+    assert_charstring_regions(
+        charstrings["macroncomb"],
+        [{"wght": (0.0, 0.8, 1.0)}, {"wght": (0.8, 1.0, 1.0)}],
+    )
+    for name in ("imacron", "imacroncommaaccent"):
+        assert_charstring_regions(
+            charstrings[name],
+            [
+                {"wght": (0.0, 0.6, 1.0)},
+                {"wght": (0.6, 0.8, 1.0)},
+                {"wght": (0.8, 1.0, 1.0)},
+            ],
+        )
+    # nothing special here
+    for name in ("n", "nacute", "ncommaaccent", "acedilla"):
+        assert_charstring_regions(charstrings[name], [{"wght": (0.0, 1.0, 1.0)}])
+    # 'nmacronbelow' defines an extra master (peak wght=0.4) not present in 'n' or
+    # 'macronbelowcomb' so it ends up with 3 regions (one comes from 'macronbelowcomb')
+    for name in ("nmacronbelow", "nacutemacronbelow"):
+        assert_charstring_regions(
+            charstrings[name],
+            [
+                {"wght": (0.0, 0.4, 1.0)},
+                {"wght": (0.4, 0.8, 1.0)},
+                {"wght": (0.8, 1.0, 1.0)},
+            ],
+        )
+    # 'aacutecedilla' has one intermediate master of its own, plus inherits an other
+    # from 'aacute'
+    assert_charstring_regions(
+        charstrings["aacutecedilla"],
+        [
+            {"wght": (0.0, 0.2, 1.0)},
+            {"wght": (0.2, 0.4, 1.0)},
+            {"wght": (0.4, 1.0, 1.0)},
+        ],
+    )
+    # this monster combines the two additional masters from 'aacutecedilla' and the
+    # one from 'macronbelowcomb'
+    assert_charstring_regions(
+        charstrings["aacutemacronbelowcedilla"],
+        [
+            {"wght": (0.0, 0.2, 1.0)},
+            {"wght": (0.2, 0.4, 1.0)},
+            {"wght": (0.4, 0.8, 1.0)},
+            {"wght": (0.8, 1.0, 1.0)},
+        ],
+    )
