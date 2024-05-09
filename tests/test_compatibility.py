@@ -12,7 +12,7 @@ def test_compatibility_checker(data_dir, caplog):
     )
     designspace.loadSourceFonts(opener=ufoLib2.objects.Font.open)
 
-    CompatibilityChecker([s.font for s in designspace.sources]).check()
+    CompatibilityChecker(designspace).check()
     assert "differing number of contours in glyph A" in caplog.text
     assert "Incompatible Sans Regular had: 2" in caplog.text
 

@@ -1,4 +1,10 @@
+from __future__ import annotations
+
 import logging
+
+from ufoLib2 import Font
+from ufoLib2.objects import Layer
+from fontTools.designspaceLib import DesignSpaceDocument
 
 logger = logging.getLogger(__name__)
 
@@ -16,20 +22,32 @@ class Context:
 
 
 class CompatibilityChecker:
-    def __init__(self, fonts):
+    def __init__(self, designspace: DesignSpaceDocument):
         self.errors = []
         self.context = []
         self.okay = True
-        self.fonts = fonts
 
-    def check(self):
+        self.fonts: list[Font] = [source.font for source in designspace.sources]
+        self.layers: list[tuple[Font, Layer]] = [
+            (
+                source.font,
+                source.font.layers.defaultLayer
+                if source.layerName is None
+                else source.font.layers[source.layerName],
+            )
+            for source in designspace.sources
+        ]
+
+    def check(self) -> bool:
         first = self.fonts[0]
         skip_export_glyphs = set(first.lib.get("public.skipExportGlyphs", ()))
         for glyph in first.keys():
             if glyph in skip_export_glyphs:
                 continue
-            self.current_fonts = [font for font in self.fonts if glyph in font]
-            glyphs = [font[glyph] for font in self.current_fonts]
+            self.current_layers = [
+                (font, layer) for (font, layer) in self.layers if glyph in layer
+            ]
+            glyphs = [layer[glyph] for (_, layer) in self.current_layers]
             with Context(self, f"glyph {glyph}"):
                 self.check_glyph(glyphs)
         return self.okay
@@ -76,21 +94,21 @@ class CompatibilityChecker:
             with Context(self, f"point {ix}"):
                 self.ensure_all_same(lambda x: x.type, point, "point type")
 
-    def ensure_all_same(self, func, objs, what):
+    def ensure_all_same(self, func, objs, what) -> bool:
         values = {}
         context = ", ".join(self.context)
-        for obj, font in zip(objs, self.current_fonts):
-            values.setdefault(func(obj), []).append(self._name_for(font))
+        for obj, (font, layer) in zip(objs, self.current_layers):
+            values.setdefault(func(obj), []).append(self._name_for(font, layer))
         if len(values) < 2:
             logger.debug(f"All fonts had same {what} in {context}")
             return True
         report = f"\nFonts had differing {what} in {context}:\n"
         debug_enabled = logger.isEnabledFor(logging.DEBUG)
-        for value, fonts in values.items():
-            if debug_enabled or len(fonts) <= 6:
-                key = ", ".join(fonts)
+        for value, source_names in values.items():
+            if debug_enabled or len(source_names) <= 6:
+                key = ", ".join(source_names)
             else:
-                key = f"{len(fonts)} fonts"
+                key = f"{len(source_names)} fonts"
             if len(str(value)) > 20:
                 value = "\n    " + str(value)
             report += f" * {key} had: {value}\n"
@@ -98,6 +116,10 @@ class CompatibilityChecker:
         self.okay = False
         return False
 
-    def _name_for(self, font):
-        names = list(filter(None, [font.info.familyName, font.info.styleName]))
+    def _name_for(self, font: Font, layer: Layer) -> str:
+        names: list[str] = [
+            name
+            for name in (font.info.familyName, font.info.styleName, layer.name)
+            if name is not None and name != "public.default"
+        ]
         return " ".join(names)

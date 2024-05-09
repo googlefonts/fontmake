@@ -1177,14 +1177,14 @@ class FontProject:
         for discrete_location, subDoc in splitInterpolable(designspace):
             # glyphsLib currently stores this custom parameter on the fonts,
             # not the designspace, so we check if it exists in any font's lib.
-            source_fonts = [source.font for source in subDoc.sources]
             explicit_check = any(
-                font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
+                source.font.lib.get(COMPAT_CHECK_KEY, False)
+                for source in subDoc.sources
             )
             if check_compatibility is not False and (
                 interp_outputs or check_compatibility or explicit_check
             ):
-                if not CompatibilityChecker(source_fonts).check():
+                if not CompatibilityChecker(subDoc).check():
                     message = "Compatibility check failed"
                     if discrete_location:
                         message += f" in interpolable sub-space at {discrete_location}"
