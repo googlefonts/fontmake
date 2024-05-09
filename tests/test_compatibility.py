@@ -21,10 +21,10 @@ def test_compatibility_checker(data_dir, caplog):
     assert "differing anchors in glyph A" in caplog.text
     assert 'Incompatible Sans Bold had: "foo"' in caplog.text
 
-    assert "Fonts had differing number of components in glyph C" in caplog.text
+    assert "Sources had differing number of components in glyph C" in caplog.text
 
     assert (
-        "Fonts had differing point type in glyph D, contour 0, point 10" in caplog.text
+        "Sources had differing point type in glyph D, contour 0, point 10" in caplog.text
     )
 
 

@@ -1158,7 +1158,7 @@ class FontProject:
                 f"expected path or DesignSpaceDocument, found {type(designspace.__name__)}"
             )
 
-        logger.info("Loading %s DesignSpace source UFOs", len(designspace.sources))
+        logger.info("Loading %s DesignSpace sources", len(designspace.sources))
         designspace.loadSourceFonts(opener=self.open_ufo)
 
         # if no --feature-writers option was passed, check in the designspace's

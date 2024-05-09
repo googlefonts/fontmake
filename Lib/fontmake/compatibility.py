@@ -100,15 +100,15 @@ class CompatibilityChecker:
         for obj, (font, layer) in zip(objs, self.current_layers):
             values.setdefault(func(obj), []).append(self._name_for(font, layer))
         if len(values) < 2:
-            logger.debug(f"All fonts had same {what} in {context}")
+            logger.debug(f"All sources had same {what} in {context}")
             return True
-        report = f"\nFonts had differing {what} in {context}:\n"
+        report = f"\nSources had differing {what} in {context}:\n"
         debug_enabled = logger.isEnabledFor(logging.DEBUG)
         for value, source_names in values.items():
             if debug_enabled or len(source_names) <= 6:
                 key = ", ".join(source_names)
             else:
-                key = f"{len(source_names)} fonts"
+                key = f"{len(source_names)} sources"
             if len(str(value)) > 20:
                 value = "\n    " + str(value)
             report += f" * {key} had: {value}\n"
