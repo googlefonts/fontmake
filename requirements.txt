@@ -11,4 +11,4 @@ ttfautohint-py==0.5.1
 
 # optional, for experimental reading/writing ufoLib2's UFO as json
 cattrs==23.2.3
-orjson==3.10.6; platform_python_implementation == 'CPython'
+orjson==3.10.7; platform_python_implementation == 'CPython'
