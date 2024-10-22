@@ -29,10 +29,10 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 
 dep_versions = {
-    "fontMath": ">=0.9.3",
-    "fonttools": ">=4.50.0",
-    "glyphsLib": ">=6.7.0",
-    "ufo2ft": ">=3.2.0",
+    "fontMath": ">=0.9.4",
+    "fonttools": ">=4.54.1",
+    "glyphsLib": ">=6.9.2",
+    "ufo2ft": ">=3.3.1",
     "ufoLib2": ">=0.16.0",
 }
 
