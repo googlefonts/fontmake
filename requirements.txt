@@ -1,14 +1,14 @@
 fonttools[ufo,repacker,lxml,unicode]==4.54.1; platform_python_implementation == 'CPython'
 fonttools[ufo,repacker,unicode]==4.54.1; platform_python_implementation != 'CPython'
-glyphsLib==6.9.2
+glyphsLib==6.9.3
 ufo2ft==3.3.1
 fontMath==0.9.4
 booleanOperations==0.9.0
-ufoLib2==0.16.0
+ufoLib2==0.16.1
 cffsubr==0.3.0
 compreffor==0.5.6
 ttfautohint-py==0.5.1
 
 # optional, for experimental reading/writing ufoLib2's UFO as json
 cattrs==24.1.2
-orjson==3.10.10; platform_python_implementation == 'CPython'
+orjson==3.10.11; platform_python_implementation == 'CPython'
