@@ -869,12 +869,12 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
             <DesignAxisRecord>
               <Axis index="0">
                 <AxisTag value="wght"/>
-                <AxisNameID value="274"/>
+                <AxisNameID value="273"/>
                 <AxisOrdering value="0"/>
               </Axis>
               <Axis index="1">
                 <AxisTag value="wdth"/>
-                <AxisNameID value="276"/>
+                <AxisNameID value="275"/>
                 <AxisOrdering value="1"/>
               </Axis>
             </DesignAxisRecord>
@@ -883,7 +883,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
               <AxisValue index="0" Format="4">
                 <!-- AxisCount=2 -->
                 <Flags value="0"/>
-                <ValueNameID value="280"/>
+                <ValueNameID value="279"/>
                 <AxisValueRecord index="0">
                   <AxisIndex value="0"/>
                   <Value value="610.2436"/>
@@ -896,7 +896,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
               <AxisValue index="1" Format="4">
                 <!-- AxisCount=2 -->
                 <Flags value="0"/>
-                <ValueNameID value="281"/>
+                <ValueNameID value="280"/>
                 <AxisValueRecord index="0">
                   <AxisIndex value="0"/>
                   <Value value="642.2196"/>
@@ -909,7 +909,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
               <AxisValue index="2" Format="2">
                 <AxisIndex value="0"/>
                 <Flags value="0"/>
-                <ValueNameID value="275"/>
+                <ValueNameID value="274"/>
                 <NominalValue value="300.0"/>
                 <RangeMinValue value="300.0"/>
                 <RangeMaxValue value="400.0"/>
@@ -933,7 +933,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
               <AxisValue index="5" Format="2">
                 <AxisIndex value="1"/>
                 <Flags value="0"/>
-                <ValueNameID value="277"/>
+                <ValueNameID value="276"/>
                 <NominalValue value="50.0"/>
                 <RangeMinValue value="50.0"/>
                 <RangeMaxValue value="75.0"/>
@@ -941,7 +941,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
               <AxisValue index="6" Format="2">
                 <AxisIndex value="1"/>
                 <Flags value="2"/>  <!-- ElidableAxisValueName -->
-                <ValueNameID value="278"/>
+                <ValueNameID value="277"/>
                 <NominalValue value="100.0"/>
                 <RangeMinValue value="75.0"/>
                 <RangeMaxValue value="125.0"/>
@@ -949,13 +949,13 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
               <AxisValue index="7" Format="2">
                 <AxisIndex value="1"/>
                 <Flags value="0"/>
-                <ValueNameID value="279"/>
+                <ValueNameID value="278"/>
                 <NominalValue value="200.0"/>
                 <RangeMinValue value="125.0"/>
                 <RangeMaxValue value="200.0"/>
               </AxisValue>
             </AxisValueArray>
-            <ElidedFallbackNameID value="273"/>"""
+            <ElidedFallbackNameID value="2"/>"""
         ).splitlines()
     )
 
