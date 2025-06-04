@@ -552,6 +552,7 @@ class FontProject:
         fea_include_dir=None,
         auto_use_my_metrics=True,
         drop_implied_oncurves=False,
+        skip_export_glyphs=None,
     ):
         """Build OpenType binaries from UFOs.
 
@@ -672,6 +673,7 @@ class FontProject:
             filters=filters,
             autoUseMyMetrics=auto_use_my_metrics,
             dropImpliedOnCurves=drop_implied_oncurves,
+            skipExportGlyphs=skip_export_glyphs,
             inplace=True,  # avoid extra copy
         )
 
@@ -1242,6 +1244,11 @@ class FontProject:
         output_dir=None,
         **kwargs,
     ):
+        # The skipExportGlyphs list is supposed to be taken from the Designspace
+        # when this is used as the starting point of the compilation process,
+        # overriding any skipExportGlyphs key in each UFO's lib.plist.
+        # https://fonttools.readthedocs.io/en/latest/designspaceLib/index.html#public-skipexportglyphs
+        skip_export_glyphs = designspace.lib.get("public.skipExportGlyphs", [])
         save_ufos = "ufo" in outputs
         ufos = []
         if not interpolate or masters_as_instances:
@@ -1293,6 +1300,7 @@ class FontProject:
             fea_include_dir=fea_include_dir,
             output_path=output_path,
             output_dir=output_dir,
+            skip_export_glyphs=skip_export_glyphs,
             **kwargs,
         )
 
