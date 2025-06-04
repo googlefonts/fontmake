@@ -60,6 +60,10 @@ jobs:
     needs:
       - lint
       - test
+    # This is required to create a release using Github integration token
+    # https://github.com/softprops/action-gh-release?tab=readme-ov-file#permissions
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -114,10 +118,6 @@ jobs:
       run: ./build_pyz.sh
     - name: Create GitHub release
       id: create_release
-      # This is required to create a release using Github integration token
-      # https://github.com/softprops/action-gh-release?tab=readme-ov-file#permissions
-      permissions:
-        contents: write
       uses: ncipollo/release-action@v1
       with:
         bodyFile: "${{ runner.temp }}/release_notes.md"
