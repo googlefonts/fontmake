@@ -30,10 +30,10 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 dep_versions = {
     "fontMath": ">=0.9.4",
-    "fonttools": ">=4.54.1",
-    "glyphsLib": ">=6.9.2",
-    "ufo2ft": ">=3.3.1",
-    "ufoLib2": ">=0.16.0",
+    "fonttools": ">=4.59.1",
+    "glyphsLib": ">=6.11.6",
+    "ufo2ft": ">=3.6.0",
+    "ufoLib2": ">=0.18.1",
 }
 
 dep_extras = {
@@ -45,13 +45,13 @@ dep_extras = {
 }
 
 extras_require = {
-    "pathops": ["skia-pathops>=0.3.0"],
+    "pathops": ["skia-pathops>=0.8.0"],
     # this is now default; kept here for backward compatibility
     "lxml": [],
     # MutatorMath is no longer supported but a dummy extras is kept below
     # to avoid fontmake installation failing if requested
     "mutatormath": [],
-    "autohint": ["ttfautohint-py>=0.5.0"],
+    "autohint": ["ttfautohint-py>=0.6.0"],
     # For reading/writing ufoLib2's .ufo.json files (cattrs + orjson)
     "json": [f"ufoLib2[json]{dep_versions['ufoLib2']}"],
     # For compiling GPOS/GSUB using the harfbuzz repacker
@@ -95,7 +95,7 @@ setup(
     package_dir={"": "Lib"},
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=install_requires,
     extras_require=extras_require,
     classifiers=[
