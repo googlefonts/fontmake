@@ -11,6 +11,7 @@ import fontTools.ttLib
 import pytest
 import ufoLib2
 from fontTools.misc.testTools import getXML
+from fontTools.ttLib.tables._g_l_y_f import USE_MY_METRICS
 from ufo2ft.util import zip_strict
 
 import fontmake.__main__
@@ -1477,4 +1478,218 @@ def test_main_sparse_composite_glyphs_variable_cff2(data_dir, tmp_path):
             {"wght": (0.4, 0.8, 1.0)},
             {"wght": (0.8, 1.0, 1.0)},
         ],
+    )
+
+
+def has_use_my_metrics_flag(font_file, composite_glyph_name) -> bool:
+    font = fontTools.ttLib.TTFont(font_file)
+    glyf = font["glyf"]
+
+    glyph = glyf[composite_glyph_name]
+    assert glyph.isComposite()
+    assert len(glyph.components) > 0
+    return any(comp.flags & USE_MY_METRICS != 0 for comp in glyph.components)
+
+
+@pytest.mark.parametrize(
+    "source_type, source_name",
+    [
+        pytest.param("-g", "WghtVarComposite.glyphs", id="glyphs"),
+        pytest.param("-m", "WghtVarComposite.designspace", id="designspace"),
+    ],
+)
+def test_auto_use_my_metrics_disabled_by_default_for_variable(
+    data_dir, tmp_path, source_type, source_name
+):
+    fontmake.__main__.main(
+        [
+            source_type,
+            str(data_dir / "AutoUseMyMetrics" / source_name),
+            "-o",
+            "variable",
+            "--output-path",
+            str(tmp_path / "WghtVarComposite-VF.ttf"),
+        ]
+    )
+
+    assert not has_use_my_metrics_flag(tmp_path / "WghtVarComposite-VF.ttf", "equal")
+
+
+@pytest.mark.parametrize("auto_use_my_metrics", [True, False])
+@pytest.mark.parametrize(
+    "source_type, source_name",
+    [
+        pytest.param("-g", "WghtVarComposite.glyphs", id="glyphs"),
+        pytest.param("-m", "WghtVarComposite.designspace", id="designspace"),
+    ],
+)
+def test_auto_use_my_metrics_flag_for_variable(
+    data_dir, tmp_path, source_type, source_name, auto_use_my_metrics
+):
+    fontmake.__main__.main(
+        [
+            source_type,
+            str(data_dir / "AutoUseMyMetrics" / source_name),
+            "-o",
+            "variable",
+            f"--{'no-' if not auto_use_my_metrics else ''}auto-use-my-metrics",
+            "--output-path",
+            str(tmp_path / "WghtVarComposite-VF.ttf"),
+        ]
+    )
+
+    assert (
+        has_use_my_metrics_flag(tmp_path / "WghtVarComposite-VF.ttf", "equal")
+        == auto_use_my_metrics
+    )
+
+
+@pytest.mark.parametrize(
+    "source_type, source_name",
+    [
+        pytest.param("-g", "WghtVarComposite.glyphs", id="glyphs"),
+        pytest.param("-m", "WghtVarComposite.designspace", id="designspace"),
+    ],
+)
+def test_auto_use_my_metrics_disabled_by_default_for_interpolatable_ttfs(
+    data_dir, tmp_path, source_type, source_name
+):
+    fontmake.__main__.main(
+        [
+            source_type,
+            str(data_dir / "AutoUseMyMetrics" / source_name),
+            "-o",
+            "ttf-interpolatable",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    font_files = list(tmp_path.glob("*.ttf"))
+    assert len(list(font_files)) == 2
+    for font_file in font_files:
+        assert not has_use_my_metrics_flag(font_file, "equal")
+
+
+@pytest.mark.parametrize("auto_use_my_metrics", [True, False])
+@pytest.mark.parametrize(
+    "source_type, source_name",
+    [
+        pytest.param("-g", "WghtVarComposite.glyphs", id="glyphs"),
+        pytest.param("-m", "WghtVarComposite.designspace", id="designspace"),
+    ],
+)
+def test_auto_use_my_metrics_flag_for_interpolatable_ttfs(
+    data_dir, tmp_path, source_type, source_name, auto_use_my_metrics
+):
+    fontmake.__main__.main(
+        [
+            source_type,
+            str(data_dir / "AutoUseMyMetrics" / source_name),
+            "-o",
+            "ttf-interpolatable",
+            f"--{'no-' if not auto_use_my_metrics else ''}auto-use-my-metrics",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    font_files = list(tmp_path.glob("*.ttf"))
+    assert len(list(font_files)) == 2
+    for font_file in font_files:
+        assert has_use_my_metrics_flag(font_file, "equal") == auto_use_my_metrics
+
+
+@pytest.mark.parametrize(
+    "source_type, source_name",
+    [
+        pytest.param("-g", "WghtVarComposite.glyphs", id="glyphs"),
+        pytest.param("-m", "WghtVarComposite.designspace", id="designspace"),
+    ],
+)
+def test_auto_use_my_metrics_enabled_by_default_for_interpolated_statics(
+    data_dir, tmp_path, source_type, source_name
+):
+    fontmake.__main__.main(
+        [
+            source_type,
+            str(data_dir / "AutoUseMyMetrics" / source_name),
+            "--interpolate",
+            "-o",
+            "ttf",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    font_files = list(tmp_path.glob("*.ttf"))
+    assert len(list(font_files)) == 2
+    for font_file in font_files:
+        assert has_use_my_metrics_flag(font_file, "equal")
+
+
+@pytest.mark.parametrize("auto_use_my_metrics", [True, False])
+@pytest.mark.parametrize(
+    "source_type, source_name",
+    [
+        pytest.param("-g", "WghtVarComposite.glyphs", id="glyphs"),
+        pytest.param("-m", "WghtVarComposite.designspace", id="designspace"),
+    ],
+)
+def test_auto_use_my_metrics_flag_for_interpolated_statics(
+    data_dir, tmp_path, source_type, source_name, auto_use_my_metrics
+):
+    fontmake.__main__.main(
+        [
+            source_type,
+            str(data_dir / "AutoUseMyMetrics" / source_name),
+            "--interpolate",
+            "-o",
+            "ttf",
+            f"--{'no-' if not auto_use_my_metrics else ''}auto-use-my-metrics",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    font_files = list(tmp_path.glob("*.ttf"))
+    assert len(list(font_files)) == 2
+    for font_file in font_files:
+        assert has_use_my_metrics_flag(font_file, "equal") == auto_use_my_metrics
+
+
+def test_auto_use_my_metrics_enabled_by_default_for_single_ufo(data_dir, tmp_path):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "AutoUseMyMetrics" / "WghtVarComposite-Regular.ufo"),
+            "-o",
+            "ttf",
+            "--output-path",
+            str(tmp_path / "WghtVarComposite-Regular.ttf"),
+        ]
+    )
+
+    assert has_use_my_metrics_flag(tmp_path / "WghtVarComposite-Regular.ttf", "equal")
+
+
+@pytest.mark.parametrize("auto_use_my_metrics", [True, False])
+def test_auto_use_my_metrics_flag_for_single_ufo(
+    data_dir, tmp_path, auto_use_my_metrics
+):
+    fontmake.__main__.main(
+        [
+            "-u",
+            str(data_dir / "AutoUseMyMetrics" / "WghtVarComposite-Regular.ufo"),
+            "-o",
+            "ttf",
+            f"--{'no-' if not auto_use_my_metrics else ''}auto-use-my-metrics",
+            "--output-path",
+            str(tmp_path / "WghtVarComposite-Regular.ttf"),
+        ]
+    )
+
+    assert (
+        has_use_my_metrics_flag(tmp_path / "WghtVarComposite-Regular.ttf", "equal")
+        == auto_use_my_metrics
     )

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="5.0">
+  <axes>
+    <axis tag="wght" name="Weight" minimum="400" maximum="700" default="400"/>
+  </axes>
+  <sources>
+    <source filename="WghtVarComposite-Regular.ufo" name="WghtVar Composite Regular" familyname="WghtVar Composite" stylename="Regular">
+      <lib copy="1"/>
+      <groups copy="1"/>
+      <features copy="1"/>
+      <info copy="1"/>
+      <location>
+        <dimension name="Weight" xvalue="400"/>
+      </location>
+    </source>
+    <source filename="WghtVarComposite-Bold.ufo" name="WghtVar Composite Bold" familyname="WghtVar Composite" stylename="Bold">
+      <location>
+        <dimension name="Weight" xvalue="700"/>
+      </location>
+    </source>
+  </sources>
+  <instances>
+    <instance name="WghtVar Composite Regular" familyname="WghtVar Composite" stylename="Regular" filename="../../instance_ufo/WghtVarComposite-Regular.ufo" stylemapfamilyname="WghtVar Composite" stylemapstylename="regular">
+      <location>
+        <dimension name="Weight" xvalue="400"/>
+      </location>
+    </instance>
+    <instance name="WghtVar Composite Bold" familyname="WghtVar Composite" stylename="Bold" filename="../../instance_ufo/WghtVarComposite-Bold.ufo" stylemapfamilyname="WghtVar Composite" stylemapstylename="bold">
+      <location>
+        <dimension name="Weight" xvalue="700"/>
+      </location>
+    </instance>
+  </instances>
+</designspace>
