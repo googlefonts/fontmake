@@ -332,7 +332,7 @@ class FontProject:
         fea_include_dir=None,
         flatten_components=False,
         filters=None,
-        auto_use_my_metrics=True,
+        auto_use_my_metrics=False,
         **kwargs,
     ):
         if ttf:
@@ -395,7 +395,7 @@ class FontProject:
         fea_include_dir=None,
         flatten_components=False,
         filters=None,
-        auto_use_my_metrics=True,
+        auto_use_my_metrics=False,
         drop_implied_oncurves=False,
         variable_features=True,
         **kwargs,
@@ -1098,6 +1098,7 @@ class FontProject:
         filters=None,
         expand_features_to_instances=False,
         check_compatibility=None,
+        auto_use_my_metrics=None,
         **kwargs,
     ):
         """Run toolchain from a DesignSpace document to produce either static
@@ -1194,6 +1195,9 @@ class FontProject:
 
         try:
             if static_outputs:
+                # keep setting the USE_MY_METRICS flag for the static outputs only
+                if auto_use_my_metrics is None:
+                    auto_use_my_metrics = True
                 self._run_from_designspace_static(
                     designspace,
                     outputs=static_outputs,
@@ -1204,9 +1208,19 @@ class FontProject:
                     feature_writers=feature_writers,
                     expand_features_to_instances=expand_features_to_instances,
                     filters=filters,
+                    auto_use_my_metrics=auto_use_my_metrics,
                     **kwargs,
                 )
             if interp_outputs:
+                # for interpolatable outputs, prefer not to set the flag automatically
+                # and let the user decide. For VFs in particular this is either useless
+                # (if the VF isn't going to be hinted) or wrong (if the composite and
+                # component metrics are not the same throughout the variation space,
+                # leading to potential mismatch between the metrics computed from HVAR
+                # vs glyf+gvar phantom points, depending on whether the flag is honored
+                # by the renderer).
+                if auto_use_my_metrics is None:
+                    auto_use_my_metrics = False
                 self._run_from_designspace_interpolatable(
                     designspace,
                     outputs=interp_outputs,
@@ -1214,6 +1228,7 @@ class FontProject:
                     feature_writers=feature_writers,
                     filters=filters,
                     variable_features=variable_features,
+                    auto_use_my_metrics=auto_use_my_metrics,
                     **kwargs,
                 )
         except FontmakeError as e:

@@ -539,7 +539,19 @@ def main(args=None):
         "--no-auto-use-my-metrics",
         dest="auto_use_my_metrics",
         action="store_false",
-        help="Don't automatically set USE_MY_METRICS glyf component flags (0x0200).",
+        default=None,
+    )
+    contourGroup.add_argument(
+        "--auto-use-my-metrics",
+        dest="auto_use_my_metrics",
+        action="store_true",
+        default=None,
+        help=(
+            "Automatically set (or not) USE_MY_METRICS glyf component flags (0x0200). "
+            "By default, fontmake only enables this for static fonts, though it can "
+            "also be enabled for variable fonts. This is not needed unless the font "
+            "is going to have hinted horizontal glyph metrics."
+        ),
     )
     contourGroup.add_argument(
         "--drop-implied-oncurves",
@@ -605,8 +617,7 @@ def main(args=None):
         "--production-names",
         dest="use_production_names",
         action="store_true",
-        help="Rename glyphs with production names if available otherwise use "
-        "uninames.",
+        help="Rename glyphs with production names if available otherwise use uninames.",
     )
     glyphnamesGroup.add_argument(
         "--no-production-names", dest="use_production_names", action="store_false"
@@ -743,6 +754,9 @@ def main(args=None):
         )
         args.pop("ufo_structure", None)  # unused for UFO output
         args.pop("indent_json", None)
+        # keep the old default for statics, where it doesn't harm
+        if args["auto_use_my_metrics"] is None:
+            args["auto_use_my_metrics"] = True
         project.run_from_ufos(
             inputs.ufo_paths, is_instance=args.pop("masters_as_instances"), **args
         )
