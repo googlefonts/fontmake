@@ -60,10 +60,15 @@ jobs:
     needs:
       - lint
       - test
-    # This is required to create a release using Github integration token
-    # https://github.com/softprops/action-gh-release?tab=readme-ov-file#permissions
+    environment:
+      name: publish-to-pypi
+      url: https://pypi.org/p/fontmake
     permissions:
+      # This is required to create a release using Github integration token
+      # https://github.com/softprops/action-gh-release?tab=readme-ov-file#permissions
       contents: write
+      # IMPORTANT: mandatory for trusted publishing:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -101,9 +106,6 @@ jobs:
           echo "IS_PRERELEASE=false" >> "$GITHUB_ENV"
         fi
     - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         if [ "$IS_PRERELEASE" == true ]; then
           echo "DEBUG: This is a pre-release"
