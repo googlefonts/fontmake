@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<glyph name="space" format="2">
+<glyph name="E" format="2">
   <advance width="600"/>
-  <unicode hex="0020"/>
+  <unicode hex="0045"/>
   <outline>
     <contour>
-      <point x="0" y="0" type="line"/>
+      <point x="1" y="1" type="line"/>
     </contour>
   </outline>
 </glyph>
