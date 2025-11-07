@@ -1178,16 +1178,19 @@ class FontProject:
         # axes (that do not interpolate) and thus only some sub-spaces are
         # actually compatible for interpolation.
         for discrete_location, subDoc in splitInterpolable(designspace):
+            default_source = subDoc.findDefault()
+            assert default_source is not None, "Default source not found!"
+            default_source_idx = subDoc.sources.index(default_source)
+            source_fonts = [source.font for source in subDoc.sources]
             # glyphsLib currently stores this custom parameter on the fonts,
             # not the designspace, so we check if it exists in any font's lib.
-            source_fonts = [source.font for source in subDoc.sources]
             explicit_check = any(
                 font.lib.get(COMPAT_CHECK_KEY, False) for font in source_fonts
             )
             if check_compatibility is not False and (
                 interp_outputs or check_compatibility or explicit_check
             ):
-                if not CompatibilityChecker(source_fonts).check():
+                if not CompatibilityChecker(source_fonts, default_source_idx).check():
                     message = "Compatibility check failed"
                     if discrete_location:
                         message += f" in interpolable sub-space at {discrete_location}"
