@@ -21,6 +21,7 @@ class FontmakeError(Exception):
     """
 
     def __init__(self, msg, source_file):
+        super().__init__(msg, source_file)
         self.msg = msg
         self.source_trail = [source_file]
 
@@ -45,5 +46,5 @@ class FontmakeError(Exception):
 class TTFAError(FontmakeError):
     def __init__(self, exitcode, source_file):
         self.exitcode = exitcode
-        self.msg = f"ttfautohint failed with error code {str(self.exitcode)}"
-        self.source_trail = [source_file]
+        msg = f"ttfautohint failed with error code {str(exitcode)}"
+        super().__init__(msg, source_file)

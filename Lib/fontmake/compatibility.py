@@ -16,25 +16,38 @@ class Context:
 
 
 class CompatibilityChecker:
-    def __init__(self, fonts):
+    def __init__(self, fonts, default_source_idx=0):
         self.errors = []
         self.context = []
         self.okay = True
         self.fonts = fonts
+        self.default_source_idx = default_source_idx
+
+    @staticmethod
+    def glyph_is_empty(glyph):
+        return (
+            len(glyph) == 0 and len(glyph.components) == 0 and len(glyph.anchors) == 0
+        )
 
     def check(self):
-        first = self.fonts[0]
-        skip_export_glyphs = set(first.lib.get("public.skipExportGlyphs", ()))
-        for glyph in first.keys():
+        default = self.fonts[self.default_source_idx]
+        skip_export_glyphs = set(default.lib.get("public.skipExportGlyphs", ()))
+        for glyph in default.keys():
             if glyph in skip_export_glyphs:
                 continue
             self.current_fonts = [font for font in self.fonts if glyph in font]
             glyphs = [font[glyph] for font in self.current_fonts]
+            default_is_empty = self.glyph_is_empty(default[glyph])
             with Context(self, f"glyph {glyph}"):
-                self.check_glyph(glyphs)
+                self.check_glyph(glyphs, default_is_empty)
         return self.okay
 
-    def check_glyph(self, glyphs):
+    def check_glyph(self, glyphs, default_is_empty=False):
+        if not default_is_empty:
+            # when the default glyph is NOT empty, skip non-default empty glyphs, so
+            # they will be treated as 'sparse' (as if not present)
+            glyphs = [g for g in glyphs if not self.glyph_is_empty(g)]
+
         if self.ensure_all_same(len, glyphs, "number of contours"):
             for ix, contours in enumerate(zip(*glyphs)):
                 with Context(self, f"contour {ix}"):
