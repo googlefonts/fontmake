@@ -95,7 +95,7 @@ setup(
     package_dir={"": "Lib"},
     entry_points={"console_scripts": ["fontmake = fontmake.__main__:main"]},
     setup_requires=wheel + ["setuptools_scm"],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=install_requires,
     extras_require=extras_require,
     classifiers=[
