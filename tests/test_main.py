@@ -860,10 +860,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
         tmp_path / "MutatorSans_v5_implicit_one_vf-VF.ttf"
     )
     stat = test_output_ttf["STAT"]
-    assert (
-        getXML(stat.toXML)
-        == dedent(
-            """\
+    assert getXML(stat.toXML) == dedent("""\
             <Version value="0x00010002"/>
             <DesignAxisRecordSize value="8"/>
             <!-- DesignAxisCount=2 -->
@@ -956,9 +953,7 @@ def test_main_designspace_v5_builds_STAT(data_dir, tmp_path):
                 <RangeMaxValue value="200.0"/>
               </AxisValue>
             </AxisValueArray>
-            <ElidedFallbackNameID value="2"/>"""
-        ).splitlines()
-    )
+            <ElidedFallbackNameID value="2"/>""").splitlines()
 
 
 def test_main_designspace_v5_builds_all_vfs(data_dir, tmp_path):

@@ -298,8 +298,7 @@ def main(args=None):
         default=".*",
         const=True,
         metavar="VARIABLE_FONT_FILENAME",
-        help=dedent(
-            """\
+        help=dedent("""\
             Filter the list of variable fonts produced from the input
             Designspace file. By default all listed variable fonts are
             generated. To generate a specific variable font (or variable fonts)
@@ -307,8 +306,7 @@ def main(args=None):
             the full filename or a regular expression. E.g.: --variable-fonts
             "MyFontVF_WeightOnly.ttf"; or --variable-fonts
             "MyFontVFItalic_.*.ttf".
-        """
-        ),
+        """),
     )
     # no longer show option in --help but keep to produce nice error message
     outputGroup.add_argument("--use-mutatormath", action="store_true", help=SUPPRESS)
