@@ -15,6 +15,7 @@ from fontTools.ttLib.tables._g_l_y_f import USE_MY_METRICS
 from ufo2ft.util import zip_strict
 
 import fontmake.__main__
+from fontmake.font_project import OPENTYPE_CATEGORIES_KEY
 
 
 def test_interpolation(data_dir, tmp_path):
@@ -1688,3 +1689,184 @@ def test_auto_use_my_metrics_flag_for_single_ufo(
         has_use_my_metrics_flag(tmp_path / "WghtVarComposite-Regular.ttf", "equal")
         == auto_use_my_metrics
     )
+
+
+# GDEF GlyphClassDef values
+_BASE = 1
+_LIGATURE = 2
+_MARK = 3
+
+
+_PROPAGATE_ANCHORS_FILTER = {"name": "propagateAnchors"}
+
+
+def _make_test_font():
+    """Return a font with base, mark, ligature, and composite glyphs.
+
+    No public.openTypeCategories — preliminary categories must be generated
+    from GlyphData.xml for GDEF to be correct.  The PropagateAnchorsFilter
+    is enabled via the ufo2ft filters lib key.
+    """
+    font = ufoLib2.Font()
+    font.info.unitsPerEm = 1000
+    font.lib["com.github.googlei18n.ufo2ft.filters"] = [
+        _PROPAGATE_ANCHORS_FILTER,
+    ]
+
+    g = font.newGlyph(".notdef")
+    g.width = 500
+
+    g = font.newGlyph("space")
+    g.width = 250
+    g.unicodes = [0x0020]
+
+    g = font.newGlyph("a")
+    g.width = 350
+    g.unicodes = [0x0061]
+    pen = g.getPen()
+    pen.moveTo((0, 0))
+    pen.lineTo((300, 0))
+    pen.lineTo((300, 300))
+    pen.lineTo((0, 300))
+    pen.closePath()
+    g.appendAnchor(dict(name="top", x=150, y=300))
+    g.appendAnchor(dict(name="bottom", x=150, y=0))
+
+    g = font.newGlyph("acutecomb")
+    g.width = 0
+    g.unicodes = [0x0301]
+    pen = g.getPen()
+    pen.moveTo((0, 400))
+    pen.lineTo((100, 500))
+    pen.lineTo((0, 500))
+    pen.closePath()
+    g.appendAnchor(dict(name="_top", x=50, y=400))
+    g.appendAnchor(dict(name="top", x=50, y=550))
+
+    # Ligature: two 'a' components, no explicit anchors — should get
+    # top_1/top_2 etc. from anchor propagation
+    g = font.newGlyph("f_i")
+    g.width = 700
+    pen = g.getPen()
+    pen.addComponent("a", (1, 0, 0, 1, 0, 0))
+    pen.addComponent("a", (1, 0, 0, 1, 350, 0))
+
+    # Composite base — should be inferred as base from attaching anchors
+    g = font.newGlyph("aacute")
+    g.width = 350
+    g.unicodes = [0x00E1]
+    pen = g.getPen()
+    pen.addComponent("a", (1, 0, 0, 1, 0, 0))
+    pen.addComponent("acutecomb", (1, 0, 0, 1, 0, 0))
+
+    return font
+
+
+def _save_test_ufo(path, font=None):
+    """Save the test font as a UFO at *path*."""
+    if font is None:
+        font = _make_test_font()
+    font.save(str(path))
+
+
+def _save_test_designspace(tmp_path, ds_lib=None):
+    """Save a two-source designspace + UFOs under *tmp_path*.
+
+    Returns the path to the .designspace file.
+    """
+    light = _make_test_font()
+    bold = _make_test_font()
+
+    light_path = tmp_path / "TestLight.ufo"
+    bold_path = tmp_path / "TestBold.ufo"
+    light.save(str(light_path))
+    bold.save(str(bold_path))
+
+    ds = designspaceLib.DesignSpaceDocument()
+    ds.addAxisDescriptor(
+        name="weight", tag="wght", minimum=400, default=400, maximum=700
+    )
+    light_source = designspaceLib.SourceDescriptor()
+    light_source.filename = "TestLight.ufo"
+    light_source.location = {"weight": 400}
+    ds.sources.append(light_source)
+    bold_source = designspaceLib.SourceDescriptor()
+    bold_source.filename = "TestBold.ufo"
+    bold_source.location = {"weight": 700}
+    ds.sources.append(bold_source)
+    if ds_lib:
+        ds.lib.update(ds_lib)
+    ds_path = tmp_path / "Test.designspace"
+    ds.write(str(ds_path))
+    return ds_path
+
+
+def test_preliminary_categories_variable_gdef(tmp_path):
+    """Building a DS without explicit categories should produce correct
+    GDEF via preliminary categories from GlyphData.xml."""
+    ds_path = _save_test_designspace(tmp_path)
+    fontmake.__main__.main(
+        ["-m", str(ds_path), "-o", "variable", "--output-dir", str(tmp_path)]
+    )
+    ttfont = fontTools.ttLib.TTFont(tmp_path / "Test-VF.ttf")
+
+    assert "GDEF" in ttfont
+    classDefs = ttfont["GDEF"].table.GlyphClassDef.classDefs
+    assert classDefs["acutecomb"] == _MARK
+    assert classDefs["f_i"] == _LIGATURE
+    assert classDefs["a"] == _BASE
+    assert classDefs["aacute"] == _BASE
+
+
+def test_preliminary_categories_variable_explicit_precedence(tmp_path):
+    """When the DS lib has explicit categories, preliminary generation
+    is skipped and the explicit categories drive GDEF."""
+    ds_path = _save_test_designspace(
+        tmp_path,
+        ds_lib={OPENTYPE_CATEGORIES_KEY: {"acutecomb": "mark", "a": "base"}},
+    )
+    fontmake.__main__.main(
+        ["-m", str(ds_path), "-o", "variable", "--output-dir", str(tmp_path)]
+    )
+    ttfont = fontTools.ttLib.TTFont(tmp_path / "Test-VF.ttf")
+
+    assert "GDEF" in ttfont
+    classDefs = ttfont["GDEF"].table.GlyphClassDef.classDefs
+    assert classDefs["acutecomb"] == _MARK
+    assert classDefs.get("f_i") != _LIGATURE
+
+
+def test_preliminary_categories_static_gdef(tmp_path):
+    """Building a single UFO without explicit categories should produce
+    correct GDEF via preliminary categories from GlyphData.xml."""
+    ufo_path = tmp_path / "Test.ufo"
+    _save_test_ufo(ufo_path)
+    fontmake.__main__.main(
+        ["-u", str(ufo_path), "-o", "ttf", "--output-dir", str(tmp_path)]
+    )
+    ttfont = fontTools.ttLib.TTFont(tmp_path / "Test.ttf")
+
+    assert "GDEF" in ttfont
+    classDefs = ttfont["GDEF"].table.GlyphClassDef.classDefs
+    assert classDefs["acutecomb"] == _MARK
+    assert classDefs["f_i"] == _LIGATURE
+    assert classDefs["a"] == _BASE
+    assert classDefs["aacute"] == _BASE
+
+
+def test_preliminary_categories_static_explicit_precedence(tmp_path):
+    """When the font lib has explicit categories, preliminary generation
+    is skipped and the explicit categories drive GDEF."""
+    font = _make_test_font()
+    font.lib[OPENTYPE_CATEGORIES_KEY] = {"acutecomb": "mark", "a": "base"}
+    ufo_path = tmp_path / "Test.ufo"
+    _save_test_ufo(ufo_path, font=font)
+    fontmake.__main__.main(
+        ["-u", str(ufo_path), "-o", "ttf", "--output-dir", str(tmp_path)]
+    )
+    ttfont = fontTools.ttLib.TTFont(tmp_path / "Test.ttf")
+
+    assert "GDEF" in ttfont
+    classDefs = ttfont["GDEF"].table.GlyphClassDef.classDefs
+    assert classDefs["acutecomb"] == _MARK
+    assert classDefs.get("f_i") != _LIGATURE
