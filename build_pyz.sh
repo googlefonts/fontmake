@@ -7,9 +7,8 @@ HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 PLATFORMS=(macosx_11_0_universal2)  # win_amd64)
 PYTHON_VERSIONS=(3.11)
-FONTMAKE_VERSION="$(python setup.py --version)"
-
-FONTMAKE_WHEEL="${HERE}/dist/fontmake-${FONTMAKE_VERSION}-py3-none-any.whl"
+FONTMAKE_WHEEL="$(ls "${HERE}"/dist/fontmake-*-py3-none-any.whl)"
+FONTMAKE_VERSION="$(basename "${FONTMAKE_WHEEL}" | sed 's/fontmake-\(.*\)-py3-none-any.whl/\1/')"
 REQUIREMENTS="${HERE}/requirements.txt"
 LICENSE_FILE="${HERE}/LICENSE"
 
