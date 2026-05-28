@@ -114,6 +114,92 @@ class CurveConversion(enum.Enum):
         )
 
 
+OPENTYPE_CATEGORIES_KEY = PUBLIC_PREFIX + "openTypeCategories"
+
+try:
+    from dataclasses import fields as _dc_fields
+
+    from ufo2ft._compilers.baseCompiler import BaseCompiler as _BC
+
+    _HAS_PRELIMINARY_CATEGORIES = any(
+        f.name == "preliminaryOpenTypeCategories" for f in _dc_fields(_BC)
+    )
+except Exception:
+    _HAS_PRELIMINARY_CATEGORIES = False
+
+
+def _preliminary_categories_for_font(font):
+    """Generate preliminary openTypeCategories from GlyphData.xml for a font.
+
+    Returns a dict {glyphName: "mark"|"ligature"} for glyphs that can be
+    classified from GlyphData.xml alone, or None if the font already has
+    explicit categories or if ufo2ft is too old to support them.
+    The dict is intended for ufo2ft's ``preliminaryOpenTypeCategories`` kwarg;
+    ufo2ft finalizes it after anchor propagation (pruning anchorless ligatures
+    and inferring bases).
+
+    The classification logic matches glyphsLib's
+    ``_build_public_opentype_categories``:
+    https://github.com/googlefonts/glyphsLib/blob/75c07d42/Lib/glyphsLib/builder/features.py#L213-L272
+    """
+    from glyphsLib import glyphdata
+
+    if not _HAS_PRELIMINARY_CATEGORIES:
+        return None
+
+    if OPENTYPE_CATEGORIES_KEY in font.lib:
+        return None
+
+    categories = {}
+    for glyph in font:
+        if glyph.name is None:
+            continue
+        glyphinfo = glyphdata.get_glyph(
+            glyph.name, unicodes=[f"{c:04X}" for c in glyph.unicodes]
+        )
+        category = (
+            glyph.lib.get(GLYPHS_PREFIX + "Glyphs.category") or glyphinfo.category
+        )
+        subCategory = (
+            glyph.lib.get(GLYPHS_PREFIX + "Glyphs.subCategory") or glyphinfo.subCategory
+        )
+        if category == "Mark" and subCategory in ("Nonspacing", "Spacing Combining"):
+            categories[glyph.name] = "mark"
+        elif subCategory == "Ligature":
+            categories[glyph.name] = "ligature"
+
+    if not categories:
+        return None
+    logger.info(
+        "Generated preliminary openTypeCategories from GlyphData.xml: "
+        "%d mark, %d ligature",
+        sum(1 for v in categories.values() if v == "mark"),
+        sum(1 for v in categories.values() if v == "ligature"),
+    )
+    return categories
+
+
+def _generate_preliminary_categories(designspace):
+    """Generate preliminary openTypeCategories for a designspace.
+
+    ufo2ft's anchor propagation and GDEF generation rely on
+    public.openTypeCategories to classify glyphs as marks and ligatures.
+    DS+UFO sources authored outside Glyphs.app may not have them, so we
+    generate them from GlyphData.xml when they're absent.
+
+    Returns None if the designspace or its default source already has
+    explicit categories.
+    """
+    if OPENTYPE_CATEGORIES_KEY in designspace.lib:
+        return None
+
+    default_source = designspace.findDefault()
+    if default_source is None or default_source.font is None:
+        return None
+
+    return _preliminary_categories_for_font(default_source.font)
+
+
 def needs_subsetting(ufo):
     if KEEP_GLYPHS_OLD_KEY in ufo.lib or KEEP_GLYPHS_NEW_KEY in ufo.lib:
         return True
@@ -335,6 +421,11 @@ class FontProject:
         auto_use_my_metrics=False,
         **kwargs,
     ):
+        preliminary_categories = _generate_preliminary_categories(designspace)
+        extra = {}
+        if preliminary_categories:
+            extra["preliminaryOpenTypeCategories"] = preliminary_categories
+
         if ttf:
             ttf_curves = CurveConversion(ttf_curves)
             return ufo2ft.compileInterpolatableTTFsFromDS(
@@ -351,6 +442,7 @@ class FontProject:
                 flattenComponents=flatten_components,
                 autoUseMyMetrics=auto_use_my_metrics,
                 inplace=True,
+                **extra,
             )
         else:
             return ufo2ft.compileInterpolatableOTFsFromDS(
@@ -362,6 +454,7 @@ class FontProject:
                 feaIncludeDir=fea_include_dir,
                 filters=filters,
                 inplace=True,
+                **extra,
             )
 
     def build_interpolatable_ttfs(self, designspace, **kwargs):
@@ -445,6 +538,11 @@ class FontProject:
             "Building variable fonts " + ", ".join(vf_name_to_output_path.values())
         )
 
+        preliminary_categories = _generate_preliminary_categories(designspace)
+        extra = {}
+        if preliminary_categories:
+            extra["preliminaryOpenTypeCategories"] = preliminary_categories
+
         if ttf:
             ttf_curves = CurveConversion(ttf_curves)
             fonts = ufo2ft.compileVariableTTFs(
@@ -465,6 +563,7 @@ class FontProject:
                 autoUseMyMetrics=auto_use_my_metrics,
                 dropImpliedOnCurves=drop_implied_oncurves,
                 variableFeatures=variable_features,
+                **extra,
             )
         else:
             fonts = ufo2ft.compileVariableCFF2s(
@@ -479,6 +578,7 @@ class FontProject:
                 inplace=True,
                 variableFontNames=list(vf_name_to_output_path),
                 variableFeatures=variable_features,
+                **extra,
             )
 
         for name, font in fonts.items():
@@ -511,6 +611,10 @@ class FontProject:
         for ufo in ufos:
             name = self._font_name(ufo)
             logger.info(f"Building {fmt} for {name}")
+
+            preliminary = _preliminary_categories_for_font(ufo)
+            if preliminary:
+                options["preliminaryOpenTypeCategories"] = preliminary
 
             if debugFeatureFile and writeFontName:
                 debugFeatureFile.write(f"\n### {name} ###\n")
