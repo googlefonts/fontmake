@@ -60,11 +60,10 @@ jobs:
     needs:
       - lint
       - test
-    # This is required to create a release using Github integration token
-    # https://github.com/softprops/action-gh-release?tab=readme-ov-file#permissions
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+      id-token: write
     steps:
     - uses: actions/checkout@v4
       with:
@@ -74,10 +73,6 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.x"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine shiv
     - name: Extract release notes from annotated tag message
       id: release_notes
       env:
@@ -100,27 +95,20 @@ jobs:
           echo "Tag does not contain pre-release suffix"
           echo "IS_PRERELEASE=false" >> "$GITHUB_ENV"
         fi
-    - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        if [ "$IS_PRERELEASE" == true ]; then
-          echo "DEBUG: This is a pre-release"
-        else
-          echo "DEBUG: This is a final release"
-        fi
-        python setup.py sdist bdist_wheel
-        twine upload --skip-existing dist/*
+    - name: Build
+      run: pipx run build
     - name: Create .pyz
       # currently this only builds a self-contained zip app for macOS python 3.11
       # to be used for fontmake export plugin for Glyphs.app
-      run: ./build_pyz.sh
+      run: |
+        pip install shiv
+        ./build_pyz.sh
     - name: Create GitHub release
-      id: create_release
-      uses: ncipollo/release-action@v1
+      uses: softprops/action-gh-release@v2
       with:
-        bodyFile: "${{ runner.temp }}/release_notes.md"
+        body_path: "${{ runner.temp }}/release_notes.md"
         draft: false
         prerelease: ${{ env.IS_PRERELEASE }}
-        artifacts: "shivs/*.zip"
+        files: "shivs/*.zip"
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
