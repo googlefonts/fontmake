@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<designspace format="4.1">
+  <!-- Regression fixture for https://github.com/googlefonts/fontmake/issues/1166
+       A single-master source whose only master does not sit at the axis default
+       location: the Weight axis defaults to 400 but the lone source is at design
+       coordinate 700. So no source lies at the default and findDefault() returns
+       None (splitInterpolable also drops the out-of-range source, leaving an empty
+       sub-space). This is the shape glyphsLib produces for single-master Glyphs
+       sources whose master coordinate differs from the axis default.
+       A static (-o ttf) build must not crash with "Default source not found!". -->
+  <axes>
+    <axis tag="wght" name="Weight" minimum="400" maximum="400" default="400"/>
+  </axes>
+  <sources>
+    <source filename="../IncompatibleSans/IncompatibleSans-Regular.ufo" name="regular">
+      <location><dimension name="Weight" xvalue="700"/></location>
+    </source>
+  </sources>
+</designspace>
