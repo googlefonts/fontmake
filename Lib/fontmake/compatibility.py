@@ -1,5 +1,7 @@
 import logging
 
+from fontmake.errors import FontmakeError
+
 logger = logging.getLogger(__name__)
 
 
@@ -21,6 +23,9 @@ class CompatibilityChecker:
         self.context = []
         self.okay = True
         self.fonts = fonts
+        # Defaults to the first source for backwards compatibility. Callers pass
+        # None to signal the designspace has no source at the default location,
+        # which check() rejects when there are two or more sources to interpolate.
         self.default_source_idx = default_source_idx
 
     @staticmethod
@@ -30,6 +35,19 @@ class CompatibilityChecker:
         )
 
     def check(self):
+        if len(self.fonts) < 2:
+            # fewer than two sources: nothing to interpolate, nothing to check
+            return self.okay
+        if self.default_source_idx is None:
+            # With two or more interpolatable sources we need a default to check
+            # (and later interpolate) against. If the designspace has no source
+            # at the default location, fail now with a clear message instead of
+            # later in varLib. https://github.com/googlefonts/fontmake/issues/1166
+            raise FontmakeError(
+                "Can't check compatibility: no source found at the default "
+                "location of the designspace",
+                None,
+            )
         default = self.fonts[self.default_source_idx]
         skip_export_glyphs = set(default.lib.get("public.skipExportGlyphs", ()))
         for glyph in default.keys():

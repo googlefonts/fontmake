@@ -1282,9 +1282,6 @@ class FontProject:
         # axes (that do not interpolate) and thus only some sub-spaces are
         # actually compatible for interpolation.
         for discrete_location, subDoc in splitInterpolable(designspace):
-            default_source = subDoc.findDefault()
-            assert default_source is not None, "Default source not found!"
-            default_source_idx = subDoc.sources.index(default_source)
             source_fonts = [source.font for source in subDoc.sources]
             # glyphsLib currently stores this custom parameter on the fonts,
             # not the designspace, so we check if it exists in any font's lib.
@@ -1294,6 +1291,16 @@ class FontProject:
             if check_compatibility is not False and (
                 interp_outputs or check_compatibility or explicit_check
             ):
+                # Only resolve the default source when we are actually going to
+                # check compatibility: a static-only build doesn't interpolate
+                # and must not require a default source.
+                # https://github.com/googlefonts/fontmake/issues/1166
+                default_source = subDoc.findDefault()
+                default_source_idx = (
+                    subDoc.sources.index(default_source)
+                    if default_source is not None
+                    else None
+                )
                 if not CompatibilityChecker(source_fonts, default_source_idx).check():
                     message = "Compatibility check failed"
                     if discrete_location:
