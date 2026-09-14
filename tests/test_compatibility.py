@@ -1,3 +1,5 @@
+import shutil
+
 import pytest
 import ufoLib2
 from fontTools import designspaceLib
@@ -87,3 +89,111 @@ def test_no_default_source_static_build(data_dir, tmp_path):
     main(
         ["--check-compatibility", "-o", "ttf", "-m", ds, "--output-dir", str(tmp_path)]
     )
+
+
+@pytest.fixture
+def mutator_sans_fonts(data_dir):
+    designspace = designspaceLib.DesignSpaceDocument.fromfile(
+        data_dir / "MutatorSans" / "MutatorSans.designspace"
+    )
+    designspace.loadSourceFonts(opener=ufoLib2.objects.Font.open)
+    return [s.font for s in designspace.sources]
+
+
+def _rotate_contour(contour, n):
+    points = list(contour)
+    contour.points[:] = points[n:] + points[:n]
+
+
+def test_compatibility_start_point_rotation(mutator_sans_fonts, caplog):
+    # A closed contour's point list is a cycle with no canonical first entry.
+    # Beginning one master's list with the off-curve points that close another's
+    # draws the same contour from the same node and compiles to the same point
+    # sequence, so it must not be reported.
+    contour = mutator_sans_fonts[1]["O"][0]
+    assert [p.type for p in contour][-2:] == [None, None]
+    _rotate_contour(contour, -2)
+    assert [p.type for p in contour][:3] == [None, None, "curve"]
+
+    assert CompatibilityChecker(mutator_sans_fonts).check()
+    assert "glyph O" not in caplog.text
+
+
+def test_compatibility_start_point_rotation_raw_order(mutator_sans_fonts, caplog):
+    # ... unless the caller says the raw point order is what gets interpolated,
+    # in which case the same rotation is a real incompatibility, reported by
+    # glif point index.
+    contour = mutator_sans_fonts[1]["O"][0]
+    _rotate_contour(contour, -2)
+
+    checker = CompatibilityChecker(mutator_sans_fonts, normalize_start_points=False)
+    assert not checker.check()
+    assert "differing point type in glyph O, contour 0, point 0:" in caplog.text
+    assert "counting from" not in caplog.text
+
+
+def test_compatibility_different_start_node(mutator_sans_fonts, caplog):
+    # Starting at a different on-curve node is a genuine incompatibility;
+    # normalizing the rotation must not hide it.
+    contour = mutator_sans_fonts[1]["O"][0]
+    assert [p.type for p in contour][:2] == ["curve", "line"]
+    _rotate_contour(contour, 1)
+
+    assert not CompatibilityChecker(mutator_sans_fonts).check()
+    assert (
+        "differing point type in glyph O, contour 0, "
+        "point 0 (counting from the first on-curve point)" in caplog.text
+    )
+
+
+def test_compatibility_start_point_rotation_cli(data_dir, tmp_path, caplog):
+    # Whether the checker normalizes start points follows what the compiler
+    # will do to them.
+    shutil.copytree(data_dir / "MutatorSansLite", tmp_path / "sources")
+    ufo_path = tmp_path / "sources" / "MutatorSansBoldWide.ufo"
+    font = ufoLib2.Font.open(ufo_path)
+    contour = font["S"][0]
+    assert [p.type for p in contour][-2:] == [None, None]
+    _rotate_contour(contour, -2)
+    font.save(ufo_path, overwrite=True)
+    ds = str(tmp_path / "sources" / "MutatorSans_v5_implicit_one_vf.designspace")
+    args = ["-m", ds, "--output-dir", str(tmp_path)]
+
+    # By default cu2qu redraws every glyph, rotating it to the first on-curve
+    # point, so the glif start point doesn't matter.
+    main(args + ["-o", "variable"])
+    assert list(tmp_path.glob("*.ttf"))
+
+    # Static builds interpolate through fontMath, which rotates the same way,
+    # whatever the TrueType options.
+    main(args + ["-o", "ttf", "--check-compatibility", "--keep-direction"])
+    assert "glyph S" not in caplog.text
+
+    # But for interpolatable glyf built without cu2qu redrawing the glyphs the
+    # raw point order is what gets interpolated, so it is checked as is.
+    with pytest.raises(SystemExit, match="Compatibility check failed"):
+        main(
+            args + ["-o", "variable", "--keep-direction", "--ttf-curves", "keep-cubic"]
+        )
+    assert "differing point type in glyph S, contour 0, point 0:" in caplog.text
+
+
+def test_normalize_start_point():
+    def contour(*types):
+        return ufoLib2.objects.Contour(
+            points=[ufoLib2.objects.Point(0, 0, type=t) for t in types]
+        )
+
+    def normalized(*types):
+        return [
+            p.type for p in CompatibilityChecker.normalize_start_point(contour(*types))
+        ]
+
+    # a closed contour is rotated to start on its first on-curve point
+    assert normalized("line", None, None) == ["line", None, None]
+    assert normalized(None, None, "line") == ["line", None, None]
+    # open contours, all-off-curve (quadratic) contours and empty contours are
+    # not rotated: there is nothing to rotate to
+    assert normalized("move", "line") == ["move", "line"]
+    assert normalized(None, None, None) == [None, None, None]
+    assert normalized() == []

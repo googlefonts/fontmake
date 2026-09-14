@@ -18,7 +18,7 @@ class Context:
 
 
 class CompatibilityChecker:
-    def __init__(self, fonts, default_source_idx=0):
+    def __init__(self, fonts, default_source_idx=0, normalize_start_points=True):
         self.errors = []
         self.context = []
         self.okay = True
@@ -27,6 +27,9 @@ class CompatibilityChecker:
         # None to signal the designspace has no source at the default location,
         # which check() rejects when there are two or more sources to interpolate.
         self.default_source_idx = default_source_idx
+        # Rotate closed contours to their first on-curve point before comparing,
+        # as the point pen does; False compares raw point indices instead.
+        self.normalize_start_points = normalize_start_points
 
     @staticmethod
     def glyph_is_empty(glyph):
@@ -100,11 +103,36 @@ class CompatibilityChecker:
                 with Context(self, f"component {ix}"):
                     self.ensure_all_same(lambda c: c.baseGlyph, component, "base glyph")
 
+    @staticmethod
+    def normalize_start_point(contour):
+        """Rotate a closed contour's points to start on its first on-curve point.
+
+        fontTools' point pen rotates contours the same way (ending on that point
+        rather than starting on it) before anything interpolates them, so masters
+        that differ only by such a rotation compile to the same point sequence:
+        https://github.com/fonttools/fonttools/blob/82cd560fd9/Lib/fontTools/pens/pointPen.py#L186-L188
+        """
+        points = list(contour)
+        if not points or points[0].type == "move":
+            # An open contour starts where it says it starts.
+            return points
+        for i, point in enumerate(points):
+            if point.type is not None:
+                return points[i:] + points[:i]
+        # A closed contour with no on-curve point at all (the TrueType
+        # quadratic special case) has nothing to rotate to.
+        return points
+
     def check_contours(self, contours):
+        if self.normalize_start_points:
+            contours = [self.normalize_start_point(c) for c in contours]
+            point_label = "point {} (counting from the first on-curve point)"
+        else:
+            point_label = "point {}"
         if not self.ensure_all_same(len, contours, "number of points"):
             return
         for ix, point in enumerate(zip(*contours)):
-            with Context(self, f"point {ix}"):
+            with Context(self, point_label.format(ix)):
                 self.ensure_all_same(lambda x: x.type, point, "point type")
 
     def ensure_all_same(self, func, objs, what):
