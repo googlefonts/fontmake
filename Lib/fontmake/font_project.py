@@ -1278,6 +1278,16 @@ class FontProject:
             preFilters, postFilters = loadFilters(designspace)
             filters = preFilters + postFilters
 
+        # The checker should normalize contour start points exactly when the
+        # pen that compiles the glyphs will: always, except for interpolatable
+        # glyf built without cu2qu redrawing every glyph.
+        ttf_curves = CurveConversion(
+            kwargs.get("ttf_curves", CurveConversion.default())
+        )
+        normalize_start_points = not interp_outputs.intersection(
+            ("ttf-interpolatable", "variable")
+        ) or (ttf_curves.convertCubics and kwargs.get("reverse_direction", True))
+
         # Since Designspace version 5, one designspace file can have discrete
         # axes (that do not interpolate) and thus only some sub-spaces are
         # actually compatible for interpolation.
@@ -1301,7 +1311,10 @@ class FontProject:
                     if default_source is not None
                     else None
                 )
-                if not CompatibilityChecker(source_fonts, default_source_idx).check():
+                checker = CompatibilityChecker(
+                    source_fonts, default_source_idx, normalize_start_points
+                )
+                if not checker.check():
                     message = "Compatibility check failed"
                     if discrete_location:
                         message += f" in interpolable sub-space at {discrete_location}"

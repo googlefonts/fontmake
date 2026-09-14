@@ -18,7 +18,7 @@ class Context:
 
 
 class CompatibilityChecker:
-    def __init__(self, fonts, default_source_idx=0):
+    def __init__(self, fonts, default_source_idx=0, normalize_start_points=True):
         self.errors = []
         self.context = []
         self.okay = True
@@ -27,6 +27,9 @@ class CompatibilityChecker:
         # None to signal the designspace has no source at the default location,
         # which check() rejects when there are two or more sources to interpolate.
         self.default_source_idx = default_source_idx
+        # Rotate closed contours to their first on-curve point before comparing,
+        # as the point pen does; False compares raw point indices instead.
+        self.normalize_start_points = normalize_start_points
 
     @staticmethod
     def glyph_is_empty(glyph):
@@ -102,16 +105,12 @@ class CompatibilityChecker:
 
     @staticmethod
     def normalize_start_point(contour):
-        """Return the contour's points in the order the compilers will see them.
+        """Rotate a closed contour's points to start on its first on-curve point.
 
-        A closed contour's point list is a cycle with no canonical first entry.
-        Before anything interpolates it, fontTools' point pen rotates it so that
-        it ends on the first on-curve point:
+        fontTools' point pen rotates contours the same way (ending on that point
+        rather than starting on it) before anything interpolates them, so masters
+        that differ only by such a rotation compile to the same point sequence:
         https://github.com/fonttools/fonttools/blob/82cd560fd9/Lib/fontTools/pens/pointPen.py#L186-L188
-        Two masters that draw the same contour from the same start node, but
-        serialize it rotated relative to one another, compile to the identical
-        point sequence, so compare them in that rotated form rather than by raw
-        point index.
         """
         points = list(contour)
         if not points or points[0].type == "move":
@@ -119,17 +118,21 @@ class CompatibilityChecker:
             return points
         for i, point in enumerate(points):
             if point.type is not None:
-                return points[i + 1 :] + points[: i + 1]
+                return points[i:] + points[:i]
         # A closed contour with no on-curve point at all (the TrueType
         # quadratic special case) has nothing to rotate to.
         return points
 
     def check_contours(self, contours):
-        contours = [self.normalize_start_point(c) for c in contours]
+        if self.normalize_start_points:
+            contours = [self.normalize_start_point(c) for c in contours]
+            point_label = "point {} (counting from the first on-curve point)"
+        else:
+            point_label = "point {}"
         if not self.ensure_all_same(len, contours, "number of points"):
             return
         for ix, point in enumerate(zip(*contours)):
-            with Context(self, f"point {ix}"):
+            with Context(self, point_label.format(ix)):
                 self.ensure_all_same(lambda x: x.type, point, "point type")
 
     def ensure_all_same(self, func, objs, what):
