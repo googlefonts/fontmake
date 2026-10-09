@@ -87,8 +87,8 @@ jobs:
         git fetch --tags --force
         # strip leading 'refs/tags/' to get the tag name
         TAG_NAME="${GITHUB_REF##*/}"
-        # Dump tag message to temporary .md file (excluding the PGP signature at the bottom)
-        TAG_MESSAGE=$(git tag -l --format='%(contents)' $TAG_NAME | sed -n '/-----BEGIN PGP SIGNATURE-----/q;p')
+        # Dump tag message to temporary .md file (excluding the PGP or SSH signature at the bottom)
+        TAG_MESSAGE=$(git tag -l --format='%(contents)' $TAG_NAME | sed -nE '/-----BEGIN (PGP|SSH) SIGNATURE-----/q;p')
         echo "$TAG_MESSAGE" > "${{ runner.temp }}/release_notes.md"
         # if the tag has a pre-release suffix mark the Github Release accordingly
         if egrep -q "$PRERELEASE_TAG_PATTERN" <<< "$TAG_NAME"; then
