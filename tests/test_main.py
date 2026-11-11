@@ -1870,3 +1870,12 @@ def test_preliminary_categories_static_explicit_precedence(tmp_path):
     classDefs = ttfont["GDEF"].table.GlyphClassDef.classDefs
     assert classDefs["acutecomb"] == _MARK
     assert classDefs.get("f_i") != _LIGATURE
+
+
+def test_otf_and_otf_cff2_are_mutually_exclusive(tmp_path):
+    """Combining 'otf' and 'otf-cff2' outputs must fail with a clean error."""
+    ufo_path = tmp_path / "Test.ufo"
+    _save_test_ufo(ufo_path)
+    with pytest.raises(SystemExit) as excinfo:
+        fontmake.__main__.main(["-u", str(ufo_path), "-o", "otf", "otf-cff2"])
+    assert "mutually exclusive" in str(excinfo.value.code)
